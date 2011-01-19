@@ -40,6 +40,10 @@ format short
 format compact
 warning off
 
+% add path to additional matlab scripts
+path(path,[pwd '/util']);
+path(path,[pwd '/func']);
+
 ireg  = input(' Type 1 for new inversion or 0 otherwise: ');
 
 if ireg == 1

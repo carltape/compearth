@@ -483,7 +483,8 @@ end
 %========================================================
 % FIGURES
 
-load('safdata');
+[lonsaf,latsaf,xsay,ysaf] = textread('../gmt/input/safdata.dat','%f%f%f%f');
+%load('safdata');
 
 if ifigs_socal==1
     socal_gps_figs;     % NOTE: modify this script (CHT)

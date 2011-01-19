@@ -1,7 +1,6 @@
 %
 % function read_gps_3D.m
-% CARL TAPE, 02-Aug-2007
-% printed xxx
+% Carl Tape, 02-Aug-2007
 %
 % This program reads in 3D velocity files that were generated using write_gps_3D.m
 %
