@@ -27,17 +27,19 @@
 clear
 close all
 
+% add path to additional matlab scripts
+path(path,[pwd '/util']);
+path(path,[pwd '/func']);
+path(path,[pwd '/misc/okada']);
+
 deg = 180/pi;
 earthr = 6371*1e3;
 izone = 11;
 szone = '11S';
 
-bdir = '/home/carltape/SURFACEVEL2STRAIN/';   % USER change
+bdir = '/home/carltape/compearth/surfacevel2strain/';   % USER change
 
 iwrite = 0;
-
-dir0 = pwd;
-path([dir0 '/Okada'],path);
 
 %===========================================
 % USER INPUT
@@ -70,7 +72,8 @@ ngc = 1000;
 %-------------------------------------------
 
 % load the SAF for plotting: isaf, latsaf, lonsaf, xsaf, ysaf
-load('/home/carltape/matlab/scripts/safdata2');
+[lonsaf,latsaf,xsay,ysaf] = textread('../gmt/input/safdata.dat','%f%f%f%f');
+%load('/home/carltape/matlab/scripts/safdata2');
 nsaf = length(lonsaf);
 
 %===========================================
@@ -78,7 +81,8 @@ nsaf = length(lonsaf);
 % this load a velocity field -- UNITS IN METERS and METERS/YR
 dopt_0 = 1;   % NASA REASON cGPS dataset (408 pts in socal)
 dopt_0 = 2;   % CCMMv1 (1093 pts in socal)
-[lon_gps,lat_gps,vu_gps,vs_gps,ve_gps,su,sn,se,ax0,dir1,slabel,stref] = get_gps_dataset(ropt,dopt_0,1,0);
+[lon_gps,lat_gps,vu_gps,vs_gps,ve_gps,su,sn,se,ax0,dir1,slabel,stref] ...
+    = get_gps_dataset(ropt,dopt_0,1,0);
 
 lonmin = ax0(1); lonmax = ax0(2);
 latmin = ax0(3); latmax = ax0(4);

@@ -1,7 +1,6 @@
 %
 % read_gps_japan.m
-% CARL TAPE, 08-March-2009
-% printed xxx
+% Carl Tape, 08-March-2009
 %
 % This file reads in a GPS field from Japan.
 %

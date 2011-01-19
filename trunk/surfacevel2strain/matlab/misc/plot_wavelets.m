@@ -4,6 +4,8 @@
 % 
 % This outputs a set of figures for our 2009 GPS paper.
 %
+% 
+%
 
 close all, clear
 clc, format short, format compact
@@ -47,7 +49,7 @@ end
 
 %-----------------------------------------------------------
 
-icompute = 0;
+icompute = 1;
 
 if icompute == 1
 

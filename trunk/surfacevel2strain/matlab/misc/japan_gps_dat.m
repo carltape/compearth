@@ -1,7 +1,6 @@
 %
 % japan_gps_dat.m
-% CARL TAPE, 20-Mar-2009
-% printed xxx
+% Carl Tape, 20-Mar-2009
 %
 % This file reads in the japan GPS dataset and makes some crude plots.
 % The output files are written in a format that is ready to load for
@@ -92,7 +91,8 @@ else
     izeroerr_u = find( su == 0); length(izeroerr_u)
 
     izeroerr = unique([izeroerr_e ; izeroerr_n ; izeroerr_u ]);
-    inonzero = vec_anti(nobs, izeroerr);
+    inonzero = setdiff([1:nobs]',izeroerr(:));
+    %inonzero = vec_anti(nobs, izeroerr);
 
     plot(lon(izeroerr_e),lat(izeroerr_e),'ro');
     plot(lon(izeroerr_n),lat(izeroerr_n),'ro');
