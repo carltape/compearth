@@ -1,0 +1,59 @@
+function [datosSalida]=agregaRuido(nombreArchivoCorrimientos,ruido)
+%function [datosSalida]=agregaRuido(nombreArchivoCorrimientos,ruido)
+%  - datosSalida = matriz de corrimientos [i,n,e,v,Un,Ue,Uv,Ulos] a la que se le ha agregado
+%                   un ruido aleatorio de amplitud ruido.
+%  - nombreArchivoCorrimientos : archivo con las observaciones de los
+%                                corrimientos en superficie sin ruido [i,n,e,v,Uni,Uei,Uvi,Ulosi]
+%  - ruido: nivel del ruido (en metros, ya que el archivo sin ruido debe ir
+%           en metros).
+%
+
+disp(['Leyendo el archivo : ' n]);
+archivo=load(nombreArchivoCorrimientos);
+Un=archivo(:,5);
+Ue=archivo(:,6);
+Uv=archivo(:,7);
+Ulos=archivo(:,8);
+
+
+L=length(Un);
+%se agrega ruido a Un
+rand('state',sum(100*clock));
+for i=1:L
+    UnRuido(i)=Un(i) + ruido*rand*(rand - 0.5);
+end
+
+%se agrega ruido a Ue
+rand('state',sum(500*clock));
+for i=1:L
+    UeRuido(i)=Ue(i) + ruido*rand*(rand - 0.5);
+end
+
+%se agrega ruido a Uv
+rand('state',sum(256*clock));
+for i=1:L
+    UvRuido(i)=Uv(i) + ruido*rand*(rand - 0.5);
+end
+
+%se agrega ruido a Uv
+rand('state',sum(256*clock));
+for i=1:L
+    UvRuido(i)=Uv(i) + ruido*rand*(rand - 0.5);
+end
+
+%se agrega ruido a Ulos
+rand('state',sum(1000*clock));
+for i=1:L
+    UlosRuido(i)=Ulos + ruido*rand*(rand - 0.5);
+end
+
+%generando matriz de salida
+datosSalida=zeros(size(archivo));
+datosSalida(:,1)=archivo(:,1);
+datosSalida(:,2)=archivo(:,2);
+datosSalida(:,3)=archivo(:,3);
+datosSalida(:,4)=archivo(:,4);
+datosSalida(:,5)=UnRuido;
+datosSalida(:,6)=UeRuido;
+datosSalida(:,1)=UvRuido;
+datosSalida(:,1)=UlosRuido;
