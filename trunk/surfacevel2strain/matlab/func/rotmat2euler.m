@@ -1,7 +1,6 @@
 %
 % function R = rotmat2euler(evec)
 % Carl Tape, 01-Nov-2005
-% printed 01-Nov-2005
 %
 % Given a finite rotation matrix, this program returns the three components
 % that describe the rotation (lat,lon,omega).

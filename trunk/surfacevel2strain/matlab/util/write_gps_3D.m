@@ -1,12 +1,10 @@
 %
-% function write_gps_psvelo.m
-% CARL TAPE, 02-Aug-2007
-% printed xxx
+% function write_gps_3D.m
 %
 % This program writes a 3D GPS velocity field into a semi-standard format
 % that can easily be loaded back into Matlab for other purposes.
 %
-% See also read_gps_3D.m for reading
+% See also read_gps_3D.m for reading such files.
 %
 % calls xxx
 % called by xxx

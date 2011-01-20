@@ -1,7 +1,6 @@
 %
 % function [lat_rot, lon_rot, R] = euler_rot_tec(lat,lon,evec)
 % Carl Tape, 01-Sept-2005
-% printed 01-Sept-2005
 %
 % This function inputs a set of latlon points and an euler rotation vector,
 % and outputs the new positions of the points, as well as the rotation

@@ -1,6 +1,5 @@
 %
 % surfacevel2strain_write.m
-% Carl Tape, 25-July-2008
 %
 % This generates various velocity and strain fields for plotting in GMT.
 %
@@ -401,7 +400,7 @@ write_euler_vector_psxy(flab,elon,elat,omega_rad);
 
 % write bounds to file
 fid = fopen([flab '_bounds.dat'],'w');
-fprintf(fid,'%18.8e%18.8e%18.8e%18.8e\n',ax1(1),ax1(2),ax1(3),ax1(4));
+fprintf(fid,'%18.8e%18.8e%18.8e%18.8e\n',ax0(1),ax0(2),ax0(3),ax0(4));
 fclose(fid);
 
 % spline gridpoints

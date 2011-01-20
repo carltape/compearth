@@ -1,7 +1,5 @@
 %
-% function write_gps_psvelo.m
-% CARL TAPE, 29-July-2007
-% printed xxx
+% function write_gps_psvelo(filetag,lon,lat,ve,vn,se,sn,ren,name)
 %
 % This file writes a GPS vector field into a format compatible with the GMT
 % plotting command psvelo.

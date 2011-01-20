@@ -1,7 +1,6 @@
 %
 % get_plate_model.m
-% CARL TAPE, 03-May-2006
-% printed xxx
+% Carl Tape, 03-May-2006
 %
 % This script is a header file that assigns directory names for reading and
 % writing data.

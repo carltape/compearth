@@ -1,7 +1,6 @@
 %
 % function T = global2local_rotmat(th,ph)
 % Carl Tape, 03-Sept-2005
-% printed 01-Sept-2005
 %
 % This function converts from a global basis (x,y,z) to a local basis in
 % (r, th, ph) or, equivalently, (up, south, east).  In other words, the
@@ -11,7 +10,7 @@
 % EXAMPLES in test_global2local.m.
 %
 % After Cox and Hart (1986), p. 155.
-% Convention is from Dahlen and Tromp (1998), p. 833.
+% Convention is from Dahlen and Tromp (1998), p. 832-833.
 %
 % format for conversion matrix (note ordering: r --> th --> ph):
 %

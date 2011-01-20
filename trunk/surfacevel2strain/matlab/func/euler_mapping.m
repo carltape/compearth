@@ -1,7 +1,6 @@
 %
 % function evec_out = euler_mapping(evec)
 % Carl Tape, 23-April-2007
-% printed xxx
 %
 % This reads in an euler vector in "non-standard" form and outputs an euler
 % vector in "standard" form.

@@ -1,7 +1,6 @@
 %
 % function outvecs = euler_convert(invecs,opts)
 % Carl Tape, 21-Oct-2005
-% printed 21-Oct-2005
 %
 % This function converts between two types of Euler pole conventions:
 % (1) (wx,wy,wz) --> (lat-deg,lon-deg,omega-deg/Myr)
@@ -69,7 +68,7 @@ end
 % EXAMPLE
 if 0==1
     % load rotation vectors (deg/Myr)
-    stdir = '/home/carltape/splines/eh_plate/Rotation_from_Craig_ONeill/';
+    stdir = '/home/carltape/gmt/plates/plate_models/oneill/';
     ww = 'ind2002.a1';
     [wx,wy,wz,names] = textread([stdir ww],'%f%f%f%s','headerlines',2);
     

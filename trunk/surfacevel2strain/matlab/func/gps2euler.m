@@ -1,7 +1,6 @@
 %
 % function [evec, ve_est, vn_est, Pxyz] = gps2euler(dlon, dlat, drad, ve, vn, se, sn)
 % Pablo Muse and Carl Tape, 21-July-2008
-% printed xxx
 %
 % This is a non-trivial program, unlike the reverse program euler2gps.m.
 % For V = E x P, given V and P, there is no unique E.

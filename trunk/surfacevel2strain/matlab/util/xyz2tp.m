@@ -1,7 +1,5 @@
 %
 % function [th, ph] = xyz2tp(xyz)
-% CARL TAPE, 01-Sept-2005
-% printed xxxx
 %
 % This function takes a matrix of 3-vectors in xyz
 % and returns a vector of theta values and phi values.
@@ -11,10 +9,10 @@
 % ph   = col vector of azimuthal angles in radians
 %
 % calls xxx
-% called by plotcmapsN.m, geteuler.m, spherelatlon.m, trigridN.m, tgMLerrorN.m
+% called by xxx
 %
 
-function [th, ph] = xyz2tp(xyz)
+function [th, ph, rho] = xyz2tp(xyz)
 
 % ensure that xyz is 3 x n
 [n, m] = size(xyz); if n~=3, xyz = xyz'; end

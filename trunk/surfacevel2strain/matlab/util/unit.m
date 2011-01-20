@@ -1,7 +1,5 @@
 %
 % function [Aunit, Alen] = unit(A)
-% Carl Tape, 01-Sept-2005
-% printed xxx
 %
 % This function inputs a 3 x n matrix of (x,y,z) points and ouputs the unit
 % vectors, as well as the norms.

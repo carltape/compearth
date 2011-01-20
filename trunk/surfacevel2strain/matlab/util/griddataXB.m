@@ -1,9 +1,6 @@
 %
 % function [X,Y,Z] = griddataXB(xvec,yvec,zvec,npts,stype)
-% Carl Tape, 09-July-2004
-% printed xxx
 %
-% Copied from griddataX.m on 08-May-2004
 % Converts irregular points to regular points, for mesh plotting.
 %
 % INPUT:
@@ -22,7 +19,7 @@
 %   Z           = interpolated function
 %
 % calls xxx
-% called by c164E.m, GPS_A.m, omsplotsF.m
+% called by xxx
 %
 
 function [X,Y,Z] = griddataXB(xvec, yvec, zvec, npts, stype)

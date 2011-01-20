@@ -1,14 +1,13 @@
 %
 % function Elatlon = poles2euler(Plat1,Plon1,Plat2,Plon2)
 % Carl Tape, 20-June-2008
-% printed xxxx
 %
 % This function takes two latitude-longitude points in degress,
 % and computes the pole of rotation.
 %
 % Example (see below).
 %
-% calls xxx
+% calls latlons2pole.m
 % called by xxx
 %
 
@@ -16,6 +15,7 @@ function Elatlon = poles2euler(Plat1,Plon1,Plat2,Plon2)
 
 [Exyz,Elat,Elon] = latlons2pole(Plat1,Plon1,Plat2,Plon2);
 
+% Matlab mapping toolbox
 [Pdist, az] = distance(Plat1,Plon1,Plat2,Plon2);
 
 %    evec(1) = latitude (deg) of euler pole

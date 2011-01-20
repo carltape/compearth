@@ -1,15 +1,8 @@
 %
 % function write_gps_psxy_vert.m
-% CARL TAPE, 12-Aug-2007
-% printed xxx
 %
 % This file writes the vertical components of a GPS velocity field to a
 % file for plotting in GMT using psxy.
-%
-% The sqrt is used so that the AREA of the plotting circle is proportional
-% to the scalar value.
-%
-% The input scaling option controls the size of the markers.
 %
 % calls xxx
 % called by xxx
@@ -22,7 +15,7 @@ nstation = length(lon);
 
 % sort in by decreasing dot size, so that small dots are not buried by
 % large ones in the psxy plot
-[junk,isort] = sort(abs(vu),'descend');
+[~,isort] = sort(abs(vu),'descend');
 
 % COLUMNS : lon lat vu su
 fid = fopen(filename,'w');

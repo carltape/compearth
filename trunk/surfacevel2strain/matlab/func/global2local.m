@@ -1,7 +1,6 @@
 %
 % function V_out = global2local(V_in, Pxyz, opts)
 % Carl Tape, 03-Sept-2005
-% printed 01-Sept-2005
 %
 % This function converts between a global basis and a local basis.
 % Pxyz describes points on the sphere (ax,ay,az).

@@ -1,9 +1,8 @@
 %
 % function N = plot_histo(hdat,edges)
-% CARL TAPE, 30-May-2007
-% printed xxx
 %
-% This function plots a histogram with cyan bars and black boundaries.
+% This function uses "histc" and "bar" to plot
+% a histogram with cyan bars and black boundaries.
 %
 % calls xxx
 % called by xxx

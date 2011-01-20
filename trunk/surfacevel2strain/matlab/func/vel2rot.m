@@ -1,12 +1,17 @@
 %
 % function [D, W, curlv] = vel2rot(rtp, vrtp, dvrtpdr, dvrtpdth, dvrtpdph, opts)
-% CARL TAPE, 17-May-2006
-% printed xxx
+% Carl Tape, 17-May-2006
 %
-% Copied from vel2Lmat.m on 21-June-2009.
+% This is similar to vel2Lmat.m, but here we return a decomposition of the
+% rotation matrix into two parts, based on whether the terms incorporate
+% vr.
+%
+% This decomposition is useful for GPS data, since the vertical components
+% may reflect a different process (i.e., sediment compaction or
+% hydrological processes) than the horizontal components (i.e., tectonic motion).
 %
 % calls xxx
-% called by spline_wang_D_figs.m
+% called by surfacevel2strain_figs.m
 %
 
 function [ws_r,ws_th,ws_ph,wt_r,wt_th,wt_ph] = vel2rot(rtp, vrtp, dvrtpdr, dvrtpdth, dvrtpdph)

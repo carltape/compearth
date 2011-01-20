@@ -1,7 +1,5 @@
 %
 % function mat = latlon2xyz(lat,lon,r)
-% CARL TAPE, 30-Aug-2005
-% printed xxxx
 %
 % This function takes the latitude and longitude of a point on a sphere
 % with radius r and outputs the (x,y,z) coordinates.
@@ -15,6 +13,8 @@
 %
 
 function mat = latlon2xyz(lat, lon, r)
+
+if nargin==2, r = ones(length(lat),1); end
 
 deg = 180/pi;
 

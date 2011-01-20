@@ -1,7 +1,5 @@
 %
 % function write_xy_points.m
-% CARL TAPE, 12-Aug-2007
-% printed xxx
 %
 % This file writes a simple 2-column file of x-y (or lon-lat) points.
 %

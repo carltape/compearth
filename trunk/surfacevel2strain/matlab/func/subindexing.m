@@ -1,7 +1,6 @@
 %
-% function 
-% CARL TAPE, 22-Sept-2006
-% printed xxxx
+% function [inds1,inds2,inds3] = subindexing(n,ndim,opts)
+% Carl Tape, 22-Sept-2006
 %
 % This function returns three index vectors that describe how to access the
 % n*ndim datapoint.
@@ -11,10 +10,10 @@
 %    2D: th-phi, that is, south-east
 %
 % calls xxx
-% called by test_platemodel2strain.m
+% called by xxx
 %
 
-function [inds1, inds2, inds3] = subindexing(n,ndim,opts)
+function [inds1,inds2,inds3] = subindexing(n,ndim,opts)
 
 iorder = opts{1};
 

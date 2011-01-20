@@ -1,12 +1,10 @@
 % 
 % colors.m
-% Carl Tape 01-Dec-2002
-% printed xxx
 %
-% This gets the color-mapping matrices.
+% This constructs various color-mapping matrices.
 %
 % calls cpt2cmap.m
-% called by trigridN.m, plotcmapsN.m, raysAGU.m, xxx
+% called by xxx
 %
 
 % blue = (0,0,1)
@@ -50,4 +48,4 @@ ana = [202 80 0; 255 90 0; 255 110 0; 255 130 0; 255 150 0; 255 170 0; 255 190 0
 br   = cpt2cmap(ana);
 seis = cpt2cmap(seis);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%=========================================================================

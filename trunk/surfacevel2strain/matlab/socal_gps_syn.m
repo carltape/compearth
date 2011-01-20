@@ -5,6 +5,10 @@
 % This program generates a synthetic GPS velocity field based on a simple
 % analytical model of strike-slip faulting.
 %
+% Several of these fields were analyzed in 
+%   Tape, Muse, Simons, Dong, Webb, "Multiscale Estimation of GPS velocity
+%   fields," Geophysicsl Journal International, 2009.
+%
 % SYNTHETIC VELOCITY FIELDS (isyn_field):
 %   10 -- strike-slip, uniform field, no errors
 %   11 -- strike-slip, uniform field, errors
@@ -18,9 +22,13 @@
 %   70-73 -- microplate rotation, II
 %   80-83 -- volcanic source (Mogi)
 %
-% Copied from c164_FINAL.m
+% NOTE: the UTM conversion function requires the Matlab Mapping Toolbox.
 %
-% calls fault_2D.m, platemodel2gps.m, get_gps_dataset.m, socal_gps_split.m
+% calls
+%    strike_slip_sphere.m
+%    platemodel2gps.m
+%    get_gps_dataset.m
+%    socal_gps_split.m
 % called by xxx
 %
 
@@ -72,16 +80,17 @@ ngc = 1000;
 %-------------------------------------------
 
 % load the SAF for plotting: isaf, latsaf, lonsaf, xsaf, ysaf
-[lonsaf,latsaf,xsay,ysaf] = textread('../gmt/input/safdata.dat','%f%f%f%f');
+[lonsaf,latsaf,xsay,ysaf] = textread('../gmt/input/safdata2.dat','%f%f%f%f');
 %load('/home/carltape/matlab/scripts/safdata2');
 nsaf = length(lonsaf);
 
 %===========================================
 
-% this load a velocity field -- UNITS IN METERS and METERS/YR
+% To get a realistic set of observation points, we load a real GPS dataset.
+% NOTE: units in METERS and METERS/YR
 dopt_0 = 1;   % NASA REASON cGPS dataset (408 pts in socal)
-dopt_0 = 2;   % CCMMv1 (1093 pts in socal)
-[lon_gps,lat_gps,vu_gps,vs_gps,ve_gps,su,sn,se,ax0,dir1,slabel,stref] ...
+%dopt_0 = 2;   % CCMMv1 (1093 pts in socal)
+[lon_gps,lat_gps,vu_gps,vs_gps,ve_gps,su,sn,se,ax0,slabel,stref] ...
     = get_gps_dataset(ropt,dopt_0,1,0);
 
 lonmin = ax0(1); lonmax = ax0(2);
@@ -442,7 +451,7 @@ elseif isyn_field == 2      % rotational field
     end
     
     gps_up = zeros(size(gps_e));
-    tmpfile = 'slip_constant.txt';
+    tmpfile = 'misc/slip_constant.txt';
     rakeslipchiIguales(rake,slip3D,slipelev,nL,nW,tmpfile);
     [vn_an,ve_an,vu_an,ux,uy,uz,tmpvar] = okadaparchesNEV(lambda,mu,L,nL,W,nW,...
         Z, strike, dip, tmpfile, gps_e-center_e, gps_n-center_n, gps_up);
@@ -779,7 +788,7 @@ end
 if iwrite == 0
     disp('Not writing any synthetic velocity fields.');
 else
-    odir = [bdir 'gps_data/synthetic/'];   % USER CHANGE
+    odir = [bdir 'data/synthetic/'];   % USER CHANGE
     filetag = [odir file1];
     disp(['write files of the form ' filetag]);
     

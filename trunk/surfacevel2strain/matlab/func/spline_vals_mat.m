@@ -1,7 +1,6 @@
 %
 % function [spline_tot, G, Gdph, Gdth] = spline_vals_mat(spline_tot, dlon, dlat)
-% CARL TAPE, 19-Sept-2006
-% printed xxx
+% Carl Tape, 19-Sept-2006
 %
 % Given a set of spherical splines and datapoints, this function returns
 % the design matrix for estimating functions on a sphere.
@@ -12,8 +11,8 @@
 %              ndim = 1 for scalar field
 %              ndim = 3 for 3-component vector field
 %
-% THIS FUNCTION COULD ALSO BE WRITTEN TO TAKE IN A MODEL VECTOR FOR A
-% SCALAR FIELD, AND THEN OUTPUT VECTORS g, dgdhh, and dgdth.
+% NOTE: This function could also be written to take in a model vector for a
+% scalar field, and then output the VECTORS g, dgdhh, and dgdth.
 %
 % calls spline_vals.m
 % called by test_platemodel2strain.m

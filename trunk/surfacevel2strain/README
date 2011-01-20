@@ -4,8 +4,8 @@ Code for a a spherical-wavelet-based estimation of velocity fields on the sphere
 
 Step 1:
 link your directory with GPS data files to the base directory:
-  rm gps_data
-  ln -s YOUR_GPS_DATA_DIR gps_data
+  rm data
+  ln -s YOUR_INPUT_DATA_DIR data
 
 Step 2:
 check out the documentation in USER_INFO

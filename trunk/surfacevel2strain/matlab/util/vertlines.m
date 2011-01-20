@@ -1,17 +1,14 @@
 %
 % function [xmat, ymat] = vertlines(xvec,ymin,ymax)
-% CARL TAPE, 15-June-2005
-% printed xxx
 %
-% This function inputs a vector of x-values and outputs
-% two matrices that will plot vertical lines
-% at the x-values specified in xvec.
+% This function inputs a vector of x-values and outputs two matrices that
+% will plot vertical lines at the x-values specified in xvec.
 %
 % EXAMPLE:
 %   [xmat,ymat] = vertlines(linspace(0,10,6),-1,4); figure; plot(xmat,ymat,'r');
 %
 % calls xxx
-% called by LOTS OF FILES
+% called by xxx
 % 
 
 function [xmat, ymat] = vertlines(xvec,ymin,ymax)

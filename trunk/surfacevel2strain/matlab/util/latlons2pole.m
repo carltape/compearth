@@ -1,25 +1,27 @@
 %
 % function Pxyz = latlons2pole(lat1,lon1,lat2,lon2)
 % Carl Tape, 20-June-2008
-% printed xxxx
 %
 % This function takes two latitude-longitude points in degress,
-% and computes the pole of rotation.
+% and computes the pole of the great circle containing the two points.
 %
 % Example (see below).
 %
-% calls xxx
+% calls xyz2latlon.m, unit.m
 % called by xxx
 %
 
 function [Pxyz,Plat,Plon] = latlons2pole(lat1,lon1,lat2,lon2)
 
-deg = 180/pi;
-
-Pvecs = latlon2xyz([lat1 lat2],[lon1 lon2],1);
+Pvecs = latlon2xyz([lat1 lat2], [lon1 lon2], 1);
 
 Pxyz = cross( Pvecs(:,1), Pvecs(:,2) );
 [Plat,Plon] = xyz2latlon(Pxyz);
+Pxyz = unit(Pxyz);
+
+%norm(Pvecs(:,1))
+%norm(Pvecs(:,2))
+%norm(Pxyz)
 
 %--------------
 

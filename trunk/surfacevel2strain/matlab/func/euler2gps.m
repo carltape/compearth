@@ -1,7 +1,6 @@
 %
 % function Vrtp = euler2gps(evec, Pxyz)
 % Carl Tape, 21-Oct-2005
-% printed 21-Oct-2005
 %
 % This function computes the linear velocity (vx,vy,vz) due to angular rotation
 % at a set of input points P(x,y,z), which are expressed in METERS.

@@ -1,18 +1,19 @@
 %
 % surfacevel2strain_figs.m
-% Carl Tape, 26-July-2008
-% printed xxx
 %
-% 
+% Script for plotting various figures.
 %
-% called by surfacevel2strain_pm.m
 % calls xxx
+% called by surfacevel2strain_pm.m
 %
+
+iplot_qcen = 0;
 
 if ifigs1==1
-
+    disp('surfacevel2strain_figs.m: plotting with ifigs1==1');
+    
     % velocity vector field: data, fit, and residuals
-    figure; nr=2; nc=2;
+    figure; nr=2; nc=1;
 
     if ndata <= 4000
         subplot(nr,nc,1); hold on;
@@ -20,30 +21,47 @@ if ifigs1==1
         quiver(dlon,dlat,ve_est,-vs_est,1,'r');
         if exist('lon_gc'), plot(lon_gc,lat_gc,'r','linewidth',2); end
         legend(' data field', ' estimated field');
-        axis equal, axis(ax1);
+        axis equal, axis(ax0);
 
         subplot(nr,nc,2); hold on;
         quiver(dlon,dlat,ve_res,-vs_res,'b');
         if exist('lon_gc'), plot(lon_gc,lat_gc,'r','linewidth',2); end
-        axis equal, axis(ax1);
+        axis equal, axis(ax0);
         title(' residual');
+        
+        orient tall, wysiwyg, fontsize(9)
     end
 
-    [X,Y,Z] = griddataXB(dlon,dlat,vmag*1e3,npts,'nearest');
-    subplot(nr,nc,3); hold on;
-    pcolor(X,Y,Z); shading flat;
-    plot(glon(inds_qmax),glat(inds_qmax),'k.');
-    axis equal, axis(ax1); %caxis(clims);
-    colorbar('horiz'); title(' |velocity field| (data)  (mm/yr)');
+    figure; nr=3; nc=1;
+    
+    %[X,Y,Z] = griddataXB(dlon,dlat,vmag*1e3,npts,'nearest');
+    subplot(nr,nc,1); hold on;
+    %pcolor(X,Y,Z); shading flat;
+    scatter(dlon,dlat,msize,vmag*1e3,'filled');
+    if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
+    axis equal, axis(ax0); %caxis(clims);
+    colorbar; %colorbar('horiz');
+    title(' |velocity field| (data)  (mm/yr)');
     cax = caxis;
 
-    [X,Y,Z] = griddataXB(dlon,dlat,vmag_est*1e3,npts,'cubic');
-    subplot(nr,nc,4); hold on;
-    pcolor(X,Y,Z); shading interp;
-    plot(glon(inds_qmax),glat(inds_qmax),'k.');
-    axis equal, axis(ax1); caxis(cax);
-    colorbar('horiz'); title(' estimated |velocity field|  (mm/yr)');
+    %[X,Y,Z] = griddataXB(dlon,dlat,vmag_est*1e3,npts,'cubic');
+    subplot(nr,nc,2); hold on;
+    %pcolor(X,Y,Z); shading interp;
+    scatter(dlon,dlat,msize,vmag_est*1e3,'filled');
+    if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
+    axis equal, axis(ax0); caxis(cax);
+    colorbar; %colorbar('horiz');
+    title(' estimated |velocity field|  (mm/yr)');
 
+    %[X,Y,Z] = griddataXB(dlon,dlat,vmag_res*1e3,npts,'cubic');
+    subplot(nr,nc,3); hold on;
+    %pcolor(X,Y,Z); shading interp;
+    scatter(dlon,dlat,msize,vmag_res*1e3,'filled');
+    if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
+    axis equal, axis(ax0); caxis([-1 1]*0.5*max(abs(vmag_res*1e3)));
+    colorbar; %colorbar('horiz');
+    title(' residual |velocity field|  (mm/yr)');
+    
     orient tall, wysiwyg, fontsize(9)
 
     if ispheroidal==1
@@ -60,11 +78,12 @@ if ifigs1==1
                 vmax = cfac*max(abs(cplot));
 
                 subplot(nr,nc,ip); hold on;
-                [X,Y,Z] = griddataXB(dlon,dlat,cplot,npts,'cubic');
-                pcolor(X,Y,Z); shading flat;
-                %plot(glon(inds_qmax),glat(inds_qmax),'k.');
+                %[X,Y,Z] = griddataXB(dlon,dlat,cplot,npts,'cubic');
+                %pcolor(X,Y,Z); shading flat;
+                scatter(dlon,dlat,msize,cplot,'filled');
+                if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
                 %plot(lonsaf,latsaf,'k');
-                axis equal, axis(ax1);
+                axis equal, axis(ax0);
                 %caxis([-1 1]*vmax);
                 colorbar('vert');
                 title([stks2{kk} ': ' stqs{ip} ', ' stis{ip}]);
@@ -79,14 +98,16 @@ if ifigs1==1
             if kk==1
                 [X,Y,Z] = griddataXB(dlon,dlat,norm_vS,npts,'cubic');
                 pcolor(X,Y,Z); shading flat;
+                %scatter(dlon, dlat, msize, norm_vS,'filled');
                 quiver( dlon, dlat, vSe, -vSs, 'k');
             else
                 [X,Y,Z] = griddataXB(dlon,dlat,norm_vT,npts,'cubic');
                 pcolor(X,Y,Z); shading flat;
+                %scatter(dlon, dlat, msize, norm_vT,'filled');
                 quiver( dlon, dlat, vTe, -vTs, 'k');
             end
 
-            axis equal, axis(ax1); colorbar('vert');
+            axis equal, axis(ax0); colorbar('vert');
             title([stks3{kk} ': ' stqs{1} ', ' stis{1}]);
             orient tall, wysiwyg, fontsize(8)
         end
@@ -103,17 +124,19 @@ if ifigs1==1
             %vmax = cfac*max(abs(cplot));
 
             figure(80); subplot(nr,nc,ip); hold on;
-            [X,Y,Z] = griddataXB(dlon,dlat,cplot1,npts,'cubic');
-            pcolor(X,Y,Z); shading flat;
-            plot(glon(inds_qmax),glat(inds_qmax),'k.');
-            axis equal, axis(ax1); colorbar('vert');
+            %[X,Y,Z] = griddataXB(dlon,dlat,cplot1,npts,'cubic');
+            %pcolor(X,Y,Z); shading flat;
+            scatter(dlon,dlat,msize,cplot1,'filled');
+            if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
+            axis equal, axis(ax0); colorbar('vert');
             title([stks1{kk} ': ' stqs{ip} ', ' stis{ip}]);
-
+            
             figure(81); subplot(nr,nc,ip); hold on;
-            [X,Y,Z] = griddataXB(dlon,dlat,cplot2,npts,'cubic');
-            pcolor(X,Y,Z); shading flat;
-            plot(glon(inds_qmax),glat(inds_qmax),'k.');
-            axis equal, axis(ax1); colorbar('vert');
+            %[X,Y,Z] = griddataXB(dlon,dlat,cplot2,npts,'cubic');
+            %pcolor(X,Y,Z); shading flat;
+            scatter(dlon,dlat,msize,cplot2,'filled');
+            if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
+            axis equal, axis(ax0); colorbar('vert');
             title([stks1{kk} ': ' stqs{ip} ', ' stis{ip}]);
         end
         figure(80), orient tall, wysiwyg, fontsize(8)
@@ -133,10 +156,11 @@ if ifigs1==1
                 vmax = cfac*max(abs(cplot));
 
                 subplot(nr,nc,ip); hold on;
-                [X,Y,Z] = griddataXB(dlon,dlat,cplot,npts,'cubic');
-                pcolor(X,Y,Z); shading flat;
-                plot(glon(inds_qmax),glat(inds_qmax),'k.');
-                axis equal, axis(ax1);
+                %[X,Y,Z] = griddataXB(dlon,dlat,cplot,npts,'cubic');
+                %pcolor(X,Y,Z); shading flat;
+                scatter(dlon,dlat,msize,cplot,'filled');
+                if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
+                axis equal, axis(ax0);
                 %caxis([-1 1]*vmax);
                 colorbar('vert');
                 title([stks1{kk} ': ' stqs{ip} ', ' stis{ip}]);
@@ -147,14 +171,21 @@ if ifigs1==1
     
 end  % ifigs1
 
+if ispheroidal==1
+    disp('surfacevel2strain_figs.m: spheroidal-toroidal decomposition');
+    disp('   has not yet been extended to the regular plotting mesh.');
+    disp('   EXIT HERE');
+    break
+end
+
 %========================================================
 % UNIFORM MESH FOR PLOTTING SCALAR FIELDS (from irregular data) --
 % MASK OUT AREAS OF POOR DATA COVERAGE
 % (compute new design matrices with more rows but same number of columns)
 
 % design matrix for UNIFORM plotting grid of scalar quantities
-numx_plot = 60;
-%numx_plot = npts;
+%numx_plot = 60;
+numx_plot = npts;
 [dlon_plot,dlat_plot] = gridvec(lonmin,lonmax,numx_plot,latmin,latmax);
 nplot = length(dlon_plot);
 
@@ -206,7 +237,7 @@ if imask == 1
     plot(dlon_plot,dlat_plot,'bx');
     plot(dlon_plot(m_ikeep),dlat_plot(m_ikeep),'r+');
     plot(dlon,dlat,'ko');
-    %plot(glon(inds_qmax),glat(inds_qmax),'k.');
+    if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
     legend('possible plotting gridpoint','kept plotting gridpoint','data','location','southwest');
     
     % initialize the mask
@@ -272,7 +303,7 @@ fprintf('%i out of %i plotting points are unmasked\n',length(igood),nplot);
 %                 plot(dlon_plot,dlat_plot,'b+');
 %                 plot(dlon_plot(m_ikeep),dlat_plot(m_ikeep),'r.');
 %                 plot(glon(inds_qmax),glat(inds_qmax),'k.');
-%                 axis equal, axis(ax1);
+%                 axis equal, axis(ax0);
 %                 title(['n = ' num2str(m_ntrsh) ',  q = ' num2str(m_qtrsh)]);
 %                 orient tall, wysiwyg, fontsize(8)
 %             end
@@ -314,7 +345,7 @@ figure; hold on;
 pcolor(X,Y,Z); shading flat;
 plot(spline_tot(:,1),spline_tot(:,2),'ko');
 plot(dlon,dlat,'k.');
-axis equal, axis(ax1); colorbar
+axis equal, axis(ax0); colorbar
 title('max q wavelet seen by each plotting point');
 
 %========================================================
@@ -347,8 +378,8 @@ else
 end
 
 % horizontal velocity field
-th   = (90 - dlat_plot)/deg;
-ph   = dlon_plot/deg;
+th  = (90 - dlat_plot)/deg;
+ph  = dlon_plot/deg;
 vth = G_plot*fs;
 vph = G_plot*fe;
 vmag_plot = sqrt( vth.^2 + vph.^2 );
@@ -357,8 +388,8 @@ if 0==1
     [X,Y,Z] = griddataXB(dlon_plot,dlat_plot,vmag_plot*1e3,npts,'nearest');
     figure; hold on;
     pcolor(X,Y,Z); shading flat;
-    plot(glon(inds_qmax),glat(inds_qmax),'k.');
-    axis equal, axis(ax1); %caxis(clims);
+    if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
+    axis equal, axis(ax0); %caxis(clims);
     colorbar('horiz'); title(' |velocity field| (data)  (mm/yr)');
     cax = caxis;
 end
@@ -409,7 +440,7 @@ wt_all = sqrt( wt_r.^2 + wt_th.^2 + wt_ph.^2 );
 % pcolor(X,Y,Z); shading flat;
 % plot(lonsaf,latsaf,'k');
 % %quiver(dlon_plot,dlat_plot,curlv(:,3),-curlv(:,2),'k');
-% axis equal, axis(ax1);
+% axis equal, axis(ax0);
 % colorbar('vert');
 % 
 % orient tall;  wysiwyg
@@ -536,7 +567,7 @@ if dopt == 3, cmat = [-5 5 -8 ; 0 5 -8 ; 0 5 -8 ; 0 5 -8]; end
 %-----------------------------
 
 if ifigs2==1
-    
+    disp('surfacevel2strain_figs.m: plotting with ifigs2==1');
     if ispheroidal==1
         
         disp(' plotting velocities at different scales ...');
@@ -553,9 +584,9 @@ if ifigs2==1
                 subplot(nr,nc,ip); hold on;
                 [X,Y,Z] = griddataXB(dlon_plot,dlat_plot,cplot,npts,'cubic');
                 pcolor(X,Y,Z); shading flat;
-                %plot(glon(inds_qmax),glat(inds_qmax),'k.');
+                if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
                 plot(lonsaf,latsaf,'k');
-                axis equal, axis(ax1);
+                axis equal, axis(ax0);
                 %caxis([-1 1]*vmax);
                 colorbar('vert');
                 title([stks1{kk} ': ' stqs{ip} ', ' stis{ip}]);
@@ -578,9 +609,9 @@ if ifigs2==1
                 subplot(nr,nc,ip); hold on;
                 [X,Y,Z] = griddataXB(dlon_plot,dlat_plot,cplot,npts,'cubic');
                 pcolor(X,Y,Z); shading flat;
-                %plot(glon(inds_qmax),glat(inds_qmax),'k.');
+                if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
                 plot(lonsaf,latsaf,'k');
-                axis equal, axis(ax1);
+                axis equal, axis(ax0);
                 %caxis([-1 1]*vmax);
                 colorbar('vert');
                 title([stks1{kk} ': ' stqs{ip} ', ' stis{ip}]);
@@ -598,9 +629,9 @@ if ifigs2==1
             subplot(nr,nc,ip); hold on;
             [X,Y,Z] = griddataXB(dlon_plot,dlat_plot,cplot,npts,'cubic');
             pcolor(X,Y,Z); shading flat;
-            %plot(glon(inds_qmax),glat(inds_qmax),'k.');
+            if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
             plot(lonsaf,latsaf,'k');
-            axis equal, axis(ax1);
+            axis equal, axis(ax0);
             %caxis([-1 1]*vmax);
             colorbar('vert');
             title(['sqrt(ve^2 + vs^2): ' stqs{ip} ', ' stis{ip}]);
@@ -638,7 +669,7 @@ if ifigs2==1
         figure; hold on;
         plot(lonseg,latseg,'k.');
         plot(lonseg(1),latseg(1),'rp','markersize',16);
-        plot(ax1([1 2 2 1 1]),ax1([3 3 4 4 3]),'r');
+        plot(ax0([1 2 2 1 1]),ax0([3 3 4 4 3]),'r');
         
         % normalize the discretized segment into a length = 1 curve
         [dvec_seg,azvec_seg] = lonlat2distaz(lonseg,latseg);
@@ -694,10 +725,10 @@ if ifigs2==1
         
         subplot(nr,nc,1); hold on;
         pcolor(X,Y,Z); shading flat;
-        %plot(glon(inds_qmax),glat(inds_qmax),'k.');
+        if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
         plot(lonseg,latseg,'k');
         plot(cuts_lon,cuts_lat,'k');
-        axis equal, axis(ax1);
+        axis equal, axis(ax0);
         %caxis([-1 1]*vmax);
         colorbar('vert');
         title(['sqrt(ve^2 + vs^2): ' stqs{1} ', ' stis{1}]);
@@ -754,7 +785,7 @@ if ifigs2==1
         pcolor(X,Y,Zest); shading flat;
         %if ik > 4, caxis(cmx*[-1 1]); else caxis(clim); end
         colorbar('vert');
-        axis equal; axis(ax1);
+        axis equal; axis(ax0);
         title(stit);
     end
     orient tall, wysiwyg, fontsize(8)
@@ -780,7 +811,7 @@ if ifigs2==1
             subplot(nr,nc,ik); hold on;
             pcolor(X,Y,Zest); shading flat;
             colorbar('vert');
-            axis equal; axis(ax1);
+            axis equal; axis(ax0);
             title(stit);
         end
     end
@@ -808,7 +839,7 @@ if ifigs2==1
         subplot(nr,nc,ik); hold on;
         pcolor(X,Y,Zest); shading interp;
         if ik <= 4, caxis([dmin dmax]); end
-        axis equal; axis(ax1); colorbar('vert');
+        axis equal; axis(ax0); colorbar('vert');
         title(stit);
         pause(0.5)
     end
@@ -842,7 +873,7 @@ if ifigs2==1
         %figure; hold on;
         pcolor(X,Y,Zest); shading interp;
         %%plot(lonseg,latseg,'k');
-        axis equal; axis(ax1); caxis(clim);
+        axis equal; axis(ax0); caxis(clim);
         colorbar('vert');
         title([stit '  (max = ' stcmx ')']);
     end
@@ -865,7 +896,7 @@ if ifigs2==1
         subplot(nr,nc,ik); hold on;
         pcolor(X,Y,Zest); shading interp;
         %%plot(lonseg,latseg,'k');
-        axis equal; axis(ax1);
+        axis equal; axis(ax0);
         colorbar('vert'); title(stit);
     end
     orient tall, wysiwyg, colormap(seis), fontsize(8)
@@ -914,5 +945,7 @@ if ifigs2==1
     orient tall;  wysiwyg
 
 end  % ifigs2
+
+disp('exiting surfacevel2strain_figs.m');
 
 %========================================================

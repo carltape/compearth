@@ -14,4 +14,3 @@ pos = get(gcf,'position');
 pos(3:4) = ppos(3:4);
 set(gcf,'position',pos);
 set(gcf,'units',unis);
-  
