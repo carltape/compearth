@@ -1,7 +1,6 @@
 %
 % function [D, W, curlv] = vel2Lmat(rtp, vrtp, dvrtpdr, dvrtpdth, dvrtpdph, opts)
-% CARL TAPE, 17-May-2006
-% printed xxx
+% Carl Tape, 17-May-2006
 %
 % Convention is r (up) - theta (south) - phi (east)
 %
@@ -15,8 +14,7 @@
 %           | 4 5 6 |
 %           | 7 8 9 |
 %
-% See Malvern, p. 671, for spherical formulas.
-%
+% Implements the spherical formulas in Malvern, p. 671.
 % Ths formulas are singular when th=0 or th=pi.
 %
 % sopt determines the reduction (if any) of the velocity gradient tensor.
@@ -26,10 +24,10 @@
 %
 % Also computes the curl of the velocity field.
 %
-% See Latex notes "Supplemental notes fot Tape, Muse, Simons (2008)".
+% See notes surfacevel2strain/USER_INFO/gps_paper_supplement.pdf
 %
 % calls xxx
-% called by spline_wang_D_figs.m
+% called by xxx
 %
 
 function [D, W, curlv] = vel2Lmat(rtp, vrtp, dvrtpdr, dvrtpdth, dvrtpdph, sopt)

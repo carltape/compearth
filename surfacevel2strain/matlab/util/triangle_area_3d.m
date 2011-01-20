@@ -1,6 +1,7 @@
-function area = triangle_area_3d ( t )
-
-%% TRIANGLE_AREA_3D computes the area of a triangle in 3D.
+%
+% function area = triangle_area_3d ( t )
+%
+% TRIANGLE_AREA_3D computes the area of a triangle in 3D.
 %
 %  Discussion:
 %
@@ -28,10 +29,12 @@ function area = triangle_area_3d ( t )
 %
 %    Output, real AREA, the area of the triangle.
 %
+
+function area = triangle_area_3d ( t )
+
   dim_num = 3;
-%
+
 %  Compute the cross product vector.
-%
   cross(1) = ( t(2,2) - t(2,1) ) * ( t(3,3) - t(3,1) ) ...
            - ( t(3,2) - t(3,1) ) * ( t(2,3) - t(2,1) );
 

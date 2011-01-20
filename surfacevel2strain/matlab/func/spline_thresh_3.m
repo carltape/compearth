@@ -1,10 +1,6 @@
 %
-% function 
-% CARL TAPE, 19-Jan-2006
-% printed xxx
-%
-% copied from spline_thresh_2.m on 19-Jan-2006
-% See spline_thresh_2.m for options on using convex hull options.
+% function spline_thresh_3.m
+% Carl Tape, 19-Jan-2006
 %
 % Inputs a matrix and thresholds the columns according to
 % whether there are NTRSH entries that exceed the value QTRSH.

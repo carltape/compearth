@@ -1,10 +1,11 @@
 %
 % function ff = spline_vals(clon,lat,q,lon_vec,lat_vec,opts)
-% CARL TAPE, 23-Feb-2007
-% printed xxxx
+% Carl Tape, 23-Feb-2007
 %
 % Given a spline gridpoint, this returns the value of the spline
-% at all the input datapoints.
+% at all the input datapoints. This program is based on
+%   Z. Wang and F. A. Dahlen, "Spherical-spline parameterization of
+%   three-dimensional Earth models," Geophysical Research Letters, 1995
 %
 % INPUT:
 %   clon, clat, q   = these describe the local spherical spline basis function
@@ -14,8 +15,6 @@
 % OUTPUT:
 %   ff              = value of the spline function (and derivatives)
 %                     evaluated at the specified lon-lat points
-%
-% This program is based on spline_vals.f90 (09-Jan-2006).
 %
 % calls xxx
 % called by test_spline_vals.m

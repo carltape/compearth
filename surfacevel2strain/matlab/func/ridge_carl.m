@@ -1,7 +1,5 @@
 %
-% function 
-% Carl Tape (Tapio Schneider, ACM 118)
-% 06-Nov-2006
+% function [m, rss, mss, Gvec, Fvec, dof, kap, iL, iGCV, iOCV] = ridge_carl(dvec, X, hvec)
 % 
 % This function inputs a design matrix, a data vector, and a vector of
 % regularization parameters, and it returns three different curves that may
@@ -90,7 +88,7 @@ end
 
 % In overdetermined case, add rss of least-squares problem
 if (n > p)
-    rss       = rss + sum((dvec - U(:, 1:q)*fc).^2);
+    rss = rss + sum((dvec - U(:, 1:q)*fc).^2);
 end
 
 %-----------------------
@@ -172,9 +170,12 @@ sty4 = ' GCV function, log10 G(\lambda)';
 
 %stfm = '%.4f';
 stfm = '%.2e';
-stlam_L   = [' \lambda-L = ' num2str(sprintf(stfm, lamL))];
-stlam_ocv = [' \lambda-OCV = ' num2str(sprintf(stfm, lamF))];
-stlam_gcv = [' \lambda-GCV = ' num2str(sprintf(stfm, lamG))];
+%stlam_L   = [' \lambda-L = ' num2str(sprintf(stfm, lamL))];
+%stlam_ocv = [' \lambda-OCV = ' num2str(sprintf(stfm, lamF))];
+%stlam_gcv = [' \lambda-GCV = ' num2str(sprintf(stfm, lamG))];
+stlam_L   = sprintf('\\lambda-L (%i) = %.2e',iL,lamL);
+stlam_ocv = sprintf('\\lambda-OCV (%i) = %.2e',iOCV,lamF);
+stlam_gcv = sprintf('\\lambda-GCV (%i) = %.2e',iGCV,lamG);
 
 %------------------------
 figure; nr=2; nc=2;
@@ -186,13 +187,13 @@ plot(x1,y1,'.');
 plot(log10(rssL),log10(mssL),'ko','markersize',8,'MarkerFaceColor','r');
 plot(log10(rssG),log10(mssG),'kV','markersize',8,'MarkerFaceColor','g');
 plot(log10(rssF),log10(mssF),'k^','markersize',8,'MarkerFaceColor','c');
-axis tight; ax1 = axis; axis(axes_expand(ax1,1.1));
+axis tight; ax1 = axis; axis(axes_expand(ax1,1.1,0));
 axy = axis; dx = axy(2)-axy(1);
 for kk=1:nlab
    ii = ilabs(kk);
    text(x1(ii)+dx*0.02,y1(ii),[num2str(sprintf(stfm, hvec(ii)))],'fontsize',8,'color','b');
 end
-legend(' \lambda',stlam_L,stlam_gcv,stlam_ocv);
+legend('\lambda',stlam_L,stlam_gcv,stlam_ocv);
 xlabel(stx1); ylabel(sty1); grid on;
 
 subplot(nr,nc,2); hold on;
@@ -200,8 +201,8 @@ plot(x2,y2,'.');
 plot(log10(lamL),kapL,'ko','markersize',8,'MarkerFaceColor','r');
 plot(log10(lamG),kapG,'kV','markersize',8,'MarkerFaceColor','g');
 plot(log10(lamF),kapF,'k^','markersize',8,'MarkerFaceColor','c');
-axis tight; ax1 = axis; axis(axes_expand(ax1,1.1));
-legend(' \lambda',stlam_L,stlam_gcv,stlam_ocv,'location','northwest');
+axis tight; ax1 = axis; axis(axes_expand(ax1,1.1,0));
+legend('\lambda',stlam_L,stlam_gcv,stlam_ocv,'location','northwest');
 xlabel(stx2); ylabel(sty2); grid on;
 
 subplot(nr,nc,3); hold on;
@@ -209,8 +210,8 @@ plot(x3,y3,'.');
 plot(log10(lamL),log10(FL),'ko','markersize',8,'MarkerFaceColor','r');
 plot(log10(lamG),log10(FG),'kV','markersize',8,'MarkerFaceColor','g');
 plot(log10(lamF),log10(FF),'k^','markersize',8,'MarkerFaceColor','c');
-axis tight; ax1 = axis; axis(axes_expand(ax1,1.1));
-legend(' \lambda',stlam_L,stlam_gcv,stlam_ocv,'location','northeast');
+axis tight; ax1 = axis; axis(axes_expand(ax1,1.1,0));
+legend('\lambda',stlam_L,stlam_gcv,stlam_ocv,'location','northeast');
 xlabel(stx3); ylabel(sty3); grid on;
 
 subplot(nr,nc,4); hold on;
@@ -218,8 +219,8 @@ plot(x4,y4,'.');
 plot(log10(lamL),log10(GL),'ko','markersize',8,'MarkerFaceColor','r');
 plot(log10(lamG),log10(GG),'kV','markersize',8,'MarkerFaceColor','g');
 plot(log10(lamF),log10(GF),'k^','markersize',8,'MarkerFaceColor','c');
-axis tight; ax1 = axis; axis(axes_expand(ax1,1.1));
-legend(' \lambda',stlam_L,stlam_gcv,stlam_ocv,'location','northwest');
+axis tight; ax1 = axis; axis(axes_expand(ax1,1.1,0));
+legend('\lambda',stlam_L,stlam_gcv,stlam_ocv,'location','northwest');
 xlabel(stx4); ylabel(sty4); grid on;
 
 orient tall, wysiwyg, fontsize(9)

@@ -1,12 +1,20 @@
 %
-% getspheregrid.m
+% function [glon,glat,gq,nvec,axmat] = getspheregrid(ax0,qmin,qmax)
 % Carl Tape, 01-Jan-2011
 %
-% Matlab version of Fortran code getsubgrids.f90 associated with the
-% software package SURFACEVEL2STRAIN (Tape et al., 2009, GJI).
+% Extract spherical-triangular gridpoints within a lat-lon box for grid
+% orders qmin to qmax. This is adapted from a Fortran77 code based on the
+% grids presented in 
+%   Z. Wang and F. A. Dahlen, "Spherical-spline parameterization of
+%   three-dimensional Earth models," Geophysical Research Letters, 1995
+%
+% These grids are part of the software package surfacevel2strain and
+% were used in
+%   Tape, Muse, Simons, Dong, Webb, "Multiscale Estimation of GPS velocity
+%   fields," Geophysicsl Journal International, 2009.
 %
 % calls xxx
-% called by test_getspheregrid.m
+% called by surfacevel2strain.m
 %
 
 function [glon,glat,gq,nvec,axmat] = getspheregrid(ax0,qmin,qmax)
@@ -28,7 +36,7 @@ latmax0 = ax0(4);
 % phmin = lonmin*rad;
 % phmax = lonmax*rad;
 
-% if the patch does not cover the sphere, then pick subset
+% if the patch does not cover the sphere, then a subset is desired
 Apatch = areaquad(ax0(3),ax0(1),ax0(4),ax0(2));
 if abs(Apatch - 1) < 1e-4
     disp('getspheregrid.m: full sphere');

@@ -1,8 +1,6 @@
 %
-% function [Vtheta_mod,Vphi_mod,dmin,Glat,Glon,R,evecA,evecB] = ...
-%    strike_slip_sphere(dlat,dlon,dep,amp,lat1,lon1,lat2,lon2)
+% function strike_slip_sphere.m
 % Carl Tape, 24-July-2008
-% printed xxx
 %
 % This generates the displacement field for an equatorial great-circle
 % strike-slip fault by approximating the Okada solution.
@@ -26,9 +24,6 @@
 % calls latlons2pole.m, euler_rot_tec.m, poles2euler.m
 % called by xxx
 %
-
-%function [Vtheta,Vphi,dmin,azi,Glat,Glon] = ...
-%    strike_slip_sphere(dlat,dlon,dep,amp,lat1,lon1,lat2,lon2)
 
 function [Vtheta_mod,Vphi_mod,dmin,Glat,Glon,evecA,evecB] = ...
     strike_slip_sphere(dlat,dlon,dep,amp,lat1,lon1,lat2,lon2)

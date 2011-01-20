@@ -1,7 +1,5 @@
 %
-% function function fontsize(fs,h)
-% Juliette Artru, 15-Sept-2004
-% printed xxxx
+% function fontsize(fs,h)
 %
 % This changes the font on an entire figure.
 %
@@ -9,7 +7,7 @@
 % h: handle graphics (optional)
 %
 
-function fontsize(fs,h);
+function fontsize(fs,h)
 
 if(nargin<2);h=gcf;end
 hc=get(gcf,'child');
@@ -20,5 +18,3 @@ for k=1:length(hc);
     end
 end
 set(hall,'fontsize',fs);
-  
- 

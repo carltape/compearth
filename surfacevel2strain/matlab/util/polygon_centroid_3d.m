@@ -1,6 +1,7 @@
-function centroid = polygon_centroid_3d( n, v )
-
-%% POLYGON_CENTROID_3D computes the centroid of a polygon in 3D.
+%
+%function centroid = polygon_centroid_3d( n, v )
+%
+% POLYGON_CENTROID_3D computes the centroid of a polygon in 3D.
 %
 %  Discussion:
 %
@@ -37,6 +38,9 @@ function centroid = polygon_centroid_3d( n, v )
 %
 %    Output, real CENTROID(3), the coordinates of the centroid.
 %
+
+function centroid = polygon_centroid_3d( n, v )
+
   dim_num = 3;
   
   area = 0.0;

@@ -1,6 +1,5 @@
 %
 % function get_gps_dataset.m
-% Carl Tape, 25-March-2009
 %
 % This function loads a velocity field for certain points on the sphere.
 % 
@@ -8,23 +7,38 @@
 % called by surfacevel2strain.m
 %
 
-function [dlon,dlat,vu,vs,ve,su,sn,se,slabel,stref] ...
-    = get_gps_dataset(ax1,dopt,istore,iplate_model)
+function [dlon,dlat,vu,vs,ve,su,sn,se,ax1,slabel,stref] ...
+    = get_gps_dataset(ropt,dopt,istore,iplate_model)
 
 %------------------------------
 % USER INPUT
 
 % directories
 dir0       = '/home/carltape/compearth/surfacevel2strain/';
-dir_gps    = [dir0 'gps_data/'];
+dir_gps    = [dir0 'data/'];
 %dir_grids  = [dir0 'fortran/grids_output/'];
 
-% geographic regions: lat-lon boxes specified in get_subgrids.f90
-% THESE GRIDPOINTS SHOULD BE GENERATED IN get_subgrids.f90
+% geographic regions
 % irow is only relevant when dealing with a plate model
 % --> add dopt index to the full list of possibilities below
 ropts_all = {'west_us','cal','socal','taiwan','tibet','cascadia','asia','parkfield','japan','wedge'};
 irow_all = [11 11 11 17 7 7 11 11 11 11];
+
+% bounds for the region
+switch ropt
+    case 1, ax1 = [-175 -85 -60 60];
+    case 2, ax1 = [-126 -113.3 30 43.5];
+    case 3, ax1 = [-122 -113 30 38];
+    case 4, ax1 = [115 125 18 28];
+    case 5, ax1 = [52 104 12 44];
+    case 6, ax1 = [-128 -122 38 52];
+    case 7, ax1 = [68 117 8 57];
+    case 8, ax1 = [-121.4 -119.8 35.1 36.5];
+    case 9, ax1 = [128 147 30 46];
+    case 10, ax1 = [-175 -85 -60 60];
+end
+lonmin = ax1(1); lonmax = ax1(2);
+latmin = ax1(3); latmax = ax1(4);
 
 %------------------------------
 
@@ -32,33 +46,12 @@ slabel = ropts_all{ropt};
 irow = irow_all(ropt);
 
 nropt = length(ropts_all);
-%if length( find(ropt == [1:nropt]) )==0, error(' check region options (ropt)'); end
+if length( find(ropt == [1:nropt]) )==0, error(' check region options (ropt)'); end
 if length( find(dopt == [0 1 2 3 4 10:13 20:23 30:33 40:43 50:53 60:63 70:73 80:83]) )==0
     error(' check data options (dopt)');
 end
 if dopt == 0, istore = 0; end
 sdopt = sprintf('d%2.2i', dopt);
-
-% % file label and region (see test_platemodel2gps.m)
-% % THESE GRIDPOINTS SHOULD BE GENERATED IN get_subgrids.f90
-% % irow is only relevant when dealing with a plate model
-% switch ropt
-%     case 1, slabel = 'west_us';  irow = 11;
-%     case 2, slabel = 'cal';      irow = 11;
-%     case 3, slabel = 'socal';    irow = 11;
-%     case 4, slabel = 'taiwan';   irow = 17;
-%     case 5, slabel = 'tibet';    irow = 7;
-%     case 6, slabel = 'cascadia'; irow = 7;
-% end
-
-% % directory containing the bounds and the spline gridpoints
-% sub_opt = 1;   % index in get_subgrids.f90
-% dir = [dir_grids 'subgrids_' slabel '_' sprintf('%2.2i', sub_opt) '/'];
-% 
-% % load the bounds for the region
-% ax1 = load([dir 'bounds_input.dat']);
-% lonmin = ax1(1); lonmax = ax1(2);
-% latmin = ax1(3); latmax = ax1(4);
 
 if istore == 1   % use specific v-field data (velocities in MM/YR)
 

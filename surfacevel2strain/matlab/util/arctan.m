@@ -1,7 +1,5 @@
 %
 % function atanx = arctan(x)
-% CARL TAPE, 27-Oct-2005
-% printed xxx
 %
 % Modified arc-tangent function.
 % Output is in the range [0, 180], not [-90, 90].

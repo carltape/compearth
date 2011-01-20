@@ -1,7 +1,7 @@
 %
 % function dvec = arcdist(slat, slon, rlat, rlon) 
-% CARL TAPE, 27-Feb-2007
-% printed xxx
+%
+% NOTE: JUST USE 'distance' IF YOU HAVE THE MATLAB MAPPING TOOLBOX.
 %
 % This function determines the arc distance from an
 % earthquake source (s) to a seismic receiver (r),

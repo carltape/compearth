@@ -1,16 +1,12 @@
 %
 % function [xvec,yvec] = gridvec(xmin,xmax,numx,ymin,ymax)
-% CARL TAPE, 23-March-2005
-% printed xxx
 %
 % This function inputs specifications for creating a grid
 % of uniformly spaced points, reshaped into column vectors
 % of the x- and y-coordinates.  Note that dx = dy.
 %
-% See griddataXB.m
-%
 % calls xxx
-% called by wave2d_basis_fun.m, spline_wang_D.m
+% called by xxx
 %
 
 function [xvec,yvec] = gridvec(xmin,xmax,numx,ymin,ymax)

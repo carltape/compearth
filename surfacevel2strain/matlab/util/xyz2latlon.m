@@ -1,7 +1,5 @@
 %
 % function [lat,lon] = xyz2latlon(xyz)
-% CARL TAPE, 01-Sept-2005
-% printed xxxx
 %
 % xyz  = 3 x n matrix of xyz vectors
 % lat  = col vector of latitudes (deg)
@@ -11,9 +9,9 @@
 % called by xxx
 %
 
-function [lat,lon] = xyz2latlon(xyz)
+function [lat,lon, rho] = xyz2latlon(xyz)
 
-[th, ph] = xyz2tp(xyz);
+[th, ph, rho] = xyz2tp(xyz);
 
 deg = 180/pi;
 lat = (pi/2 - th)*deg;

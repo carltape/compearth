@@ -1,7 +1,6 @@
 %
 % function R = euler2rotmat(evec)
 % Carl Tape, 01-Nov-2005
-% printed 01-Nov-2005
 %
 % Given an euler pole with corresponding angular rotation angle, this
 % program returns the rotation matrix that is to be applied to a set of

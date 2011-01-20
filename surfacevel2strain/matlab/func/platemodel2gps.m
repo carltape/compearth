@@ -2,11 +2,7 @@
 % function [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] ...
 %    = platemodel2gps(lon,lat,imodel,ifix,opts)
 %
-% CARL TAPE, 11-Jan-2006
-% printed xxx
-%
-% Comments, suggestions, or corrections: please email me!
-%   carltape@gps.caltech.edu
+% Carl Tape, 11-Jan-2006
 %
 % This model computed the surface velocity field based on a plate model
 % (Euler vectors and plate boundaries), given a specified fixed plate and

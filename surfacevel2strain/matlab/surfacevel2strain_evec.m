@@ -1,11 +1,12 @@
 %
 % surfacevel2strain_evec.m
-% Carl Tape, 12-June-2009
 %
-% 
+% Script for plotting and thresholding Euler vector associated with the
+% estimated rotation rate field. In essence, each plotting point has an
+% associated Euler vector.
 %
-% called by surfacevel2strain_figs.m
 % calls xxx
+% called by surfacevel2strain_figs.m
 %
 
 % invariant quantity
@@ -25,16 +26,22 @@ omega_rad = omega/(1e6*deg);   % rad/yr
 [elat_anti,elon_anti] = antipode(elat,elon);
 
 % plot euler poles and antipoles
-figure; nr=2; nc=1;
+figure; nr=3; nc=1;
 %ibig = find(omega_rad > 0.2e-7);
 subplot(nr,nc,1); hold on; plot(elon,elat,'b.'); title('euler poles');
 %plot(elon(ibig),elat(ibig),'k.'); 
 subplot(nr,nc,2); hold on; plot(elon_anti,elat_anti,'r.'); title('euler anti-poles');
 %plot(elon_anti(ibig),elat_anti(ibig),'k.'); 
+subplot(nr,nc,3);
+plot_histo(omega_rad,linspace(0,max(omega_rad),12));
+xlabel('rotation rate, rad/yr');
+orient tall, wysiwyg, fontsize(10)
 
 %=====================================================================
 
+% specific options for the synthetic rotational fields (GJI 2009 paper)
 if and(ropt==10, floor(dopt/10) == 1)
+    
     % select two sets of euler poles
     frac = 0.1;
     omega1 = 2.75e-9;   % qet poles and anti-poles within frac of this
