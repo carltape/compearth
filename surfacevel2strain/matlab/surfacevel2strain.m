@@ -62,7 +62,7 @@ if ireg == 1
     stks3 = {'norm-vS','norm-vT'};
 
     %========================================================
-    % INPUT PARAMETERS
+    % USER PARAMETERS
 
     % ANALYSIS
     istore = 1;         % =1 if using a pre-stored velocity field

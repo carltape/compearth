@@ -15,8 +15,7 @@ function [dlon,dlat,vu,vs,ve,su,sn,se,ax1,slabel,stref] ...
 
 % directories
 dir0       = '/home/carltape/compearth/surfacevel2strain/';
-dir_gps    = [dir0 'data/'];
-%dir_grids  = [dir0 'fortran/grids_output/'];
+dir_data    = [dir0 'data/gps_data/'];
 
 % geographic regions
 % irow is only relevant when dealing with a plate model
@@ -57,15 +56,15 @@ if istore == 1   % use specific v-field data (velocities in MM/YR)
 
     % OBSERVED VELOCITY FIELDS
     if dopt == 1        % NASA REASON dataset (modified in REASON_gps_dat.m)
-        %filename = [dir_gps 'US/reason_fixed_NAM_subset_3D.dat'];
-        %filename = [dir_gps 'US/reason_fixed_NAM_v2_subset_3D.dat'];
-        filename = [dir_gps 'US/reason_subset_3D.dat'];
+        %filename = [dir_data 'US/reason_fixed_NAM_subset_3D.dat'];
+        %filename = [dir_data 'US/reason_fixed_NAM_v2_subset_3D.dat'];
+        filename = [dir_data 'US/reason_subset_3D.dat'];
 
     elseif dopt == 2    % CCMM, v1.0 (modified in socal_gps_dat.m)
-        filename = [dir_gps 'US/california/socal_vfield_4p0_3D.dat'];
+        filename = [dir_data 'US/california/socal_vfield_4p0_3D.dat'];
         
     elseif dopt == 3    % Jean-Phillipe, central Asia
-        filename = [dir_gps 'ASIA/asia/data_JP.txt'];
+        filename = [dir_data 'ASIA/asia/data_JP.txt'];
         
         [name,dlon,dlat,vn,ve,sn,se] = textread(filename,'%s%f%f%f%f%f%f');
         dlon = lonshift(dlon,[1 1]);
@@ -75,11 +74,11 @@ if istore == 1   % use specific v-field data (velocities in MM/YR)
         su = zeros(ndata,1); sn = zeros(ndata,1); se = zeros(ndata,1);
         
     elseif dopt == 4    % Takeo Ito, Japan
-        filename = [dir_gps 'ASIA/japan/japan_takeo_ito_subset_3D.dat'];
+        filename = [dir_data 'ASIA/japan/japan_takeo_ito_subset_3D.dat'];
 
     % SYNTHETIC VELOCITY FIELDS
     elseif dopt >= 10
-        filename = [dir_gps 'synthetic/syn_vfield_' sdopt '_3D.dat'];
+        filename = [dir_data 'synthetic/syn_vfield_' sdopt '_3D.dat'];
     end
     
     % NOTE: It is simpler to store the velocity field in a format that can
