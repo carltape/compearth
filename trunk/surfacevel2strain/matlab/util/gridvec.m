@@ -9,7 +9,7 @@
 % called by xxx
 %
 
-function [xvec,yvec] = gridvec(xmin,xmax,numx,ymin,ymax)
+function [xvec,yvec,numy,a,b] = gridvec(xmin,xmax,numx,ymin,ymax)
 
 xvec0 = linspace(xmin,xmax,numx);
 dx = xvec0(2) - xvec0(1);
@@ -19,5 +19,6 @@ yvec0 = [ymin : dx : ymax];
 [a,b] = size(X);
 xvec = reshape(X,a*b,1);
 yvec = reshape(Y,a*b,1);
+numy = length(yvec0);
 
 %====================================================
