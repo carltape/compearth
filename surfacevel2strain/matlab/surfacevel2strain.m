@@ -12,7 +12,7 @@
 % tensors and rotation-rate tensors.
 %
 % SEE NOTES:
-%     surfacevel2strain/USER_INFO/surfacevel2strain_notes.pdf
+%     surfacevel2strain/USER_INFO/
 %
 % calls
 %    getspheregrid.m     -- get spherical gridpoints of order qmin to qmax
@@ -22,9 +22,6 @@
 %    spline_thresh_3_pm.m -- spline thresholding function
 %    ridge_carl.m        -- regularization for inversion (compares different methods)
 %    vel2Lmat.m          -- converts velocity field and gradients to L tensor
-%    socal_gps_figs.m    -- plots socal GPS data figures
-%    subindexing.m       --
-%    latlon_area.m       -- 
 %    surfacevel2strain_figs.m   -- 
 %    surfacevel2strain_write.m  -- 
 %
@@ -73,12 +70,12 @@ if ireg == 1
     % PLOTTING AND WRITING FILES
     ifigs1 = 1;         % =1 if plotting figures (velocity field)
     ifigs2 = 1;         % =1 if plotting figures (strain rate, etc)
-    ifigs_socal = 0;    % =1 if plotting socal GPS figures for paper (socal_gps_figs.m)
+    %ifigs_socal = 0;    % =1 if plotting socal GPS figures for paper (socal_gps_figs.m)
     imask  = input(' Type 1 to plot with the mask (0 otherwise) : ');
     iwrite = input(' Type 1 to write output to files for GMT plotting (0 otherwise) : ');
 
     iplate_model = 3;   % plate model (oneill, nuvel, revel, bird)
-    q      = 99;        % 99 for non-global gridpoints
+    q = 99;             % 99 for non-global gridpoints
     %ifig_extra = 0;     % extra figures
 
     mod_labs    = {'oneill','nuvel1A_nnr','revel','bird'};  % PLATE MODELS
@@ -92,7 +89,6 @@ if ireg == 1
     %dir_data     = [dir_base 'data/gps_data/'];  % carl
     %dir_grids   = [dir_base 'fortran/grids_output/full_grids/'];
     %dir_plates  = '/home/carltape/gmt/plates/';
-    %dir_spline  = '/home/carltape/splines/data_getgrids/';
 
     %========================================================
     % LOAD DATAPOINTS
@@ -114,8 +110,10 @@ if ireg == 1
     else            % specify arbitrary set of gridpoints
         
         % USER INPUT
-        ropt  = input(' Type an index corresponding to a region (1=us, 2=cal, 3=socal, ..., 8=parkfield, 9=japan): ');
-        dopt  = input(' Type an index corresponding to a v-field dataset (1=REASON, 2=CCMMv1.0, 3=ASIA, 4=japan, etc): ');
+        %ropt  = input(' Type an index corresponding to a region (1=us, 2=cal, 3=socal, ..., 8=parkfield, 9=japan): ');
+        %dopt  = input(' Type an index corresponding to a v-field dataset (1=REASON, 2=CCMMv1.0, 3=ASIA, 4=japan, etc): ');
+        ropt  = input(' Type an index corresponding to a region (1=us, 2=cal, 3=socal, ..., 8=parkfield): ');
+        dopt  = input(' Type an index corresponding to a v-field dataset (1=REASON): ');
         sdopt = sprintf('d%2.2i', dopt);
         
         % KEY COMMAND: get the velocity field (and error estimates)

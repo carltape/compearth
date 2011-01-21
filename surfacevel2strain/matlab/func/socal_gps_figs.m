@@ -1,7 +1,7 @@
 %
 % socal_gps_figs.m
 %
-% Plots test figures associated with Tape et al. (GJI 2009).
+% I THINK THIS FUNCTION IS NOW OBSOLETE.
 %
 % called by surfacevel2strain_figs.m
 %

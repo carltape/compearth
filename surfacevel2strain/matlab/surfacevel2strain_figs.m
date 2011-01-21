@@ -520,10 +520,14 @@ end
 %========================================================
 % FIGURES
 
-if ifigs_socal==1
-    socal_gps_figs;     % NOTE: modify this script (CHT)
-end
+%if ifigs_socal==1
+%    socal_gps_figs;
+%end
 
+%----------------------------------------------------------
+% USER PARAMETERS FOR COLOR SCALES
+% NOTE: This should be included within a single block of user parameters.
+%
 % hand-picked color plotting: cmin/cmax/cpwr, where max(z) = cmax * 10^cpwr
 %
 % THIS IS NEEDED FOR THE GMT PLOTS
@@ -567,7 +571,7 @@ end
 % asia
 if dopt == 3, cmat = [-5 5 -8 ; 0 5 -8 ; 0 5 -8 ; 0 5 -8]; end
 
-%-----------------------------
+%----------------------------------------------------------
 
 if ifigs2==1
     disp('surfacevel2strain_figs.m: plotting with ifigs2==1');
