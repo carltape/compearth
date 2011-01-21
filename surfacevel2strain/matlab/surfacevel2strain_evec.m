@@ -9,6 +9,8 @@
 % called by surfacevel2strain_figs.m
 %
 
+disp('surfacevel2strain_evec.m: computing euler vectors...');
+
 % invariant quantity
 rotat_radyr = sqrt( Wrth_all.^2 + Wrph_all.^2 + Wthph_all.^2 );
 rotat_degMyr = rotat_radyr*1e6*deg;
@@ -27,15 +29,29 @@ omega_rad = omega/(1e6*deg);   % rad/yr
 
 % plot euler poles and antipoles
 figure; nr=3; nc=1;
+oax = [0 0.5*max(omega_rad)];
+% sort so that larger magnitudes are plotted on top
+[~,imsort] = sort(omega_rad,'descend');
 %ibig = find(omega_rad > 0.2e-7);
-subplot(nr,nc,1); hold on; plot(elon,elat,'b.'); title('euler poles');
+
+subplot(nr,nc,1); hold on;
+scatter(elon(imsort),elat(imsort),msize,omega_rad(imsort),'filled');
+caxis(oax); colorbar; grid on;
+%plot(elon,elat,'b.');
 %plot(elon(ibig),elat(ibig),'k.'); 
-subplot(nr,nc,2); hold on; plot(elon_anti,elat_anti,'r.'); title('euler anti-poles');
+title('euler poles');
+
+subplot(nr,nc,2); hold on;
+scatter(elon_anti(imsort),elat_anti(imsort),msize,omega_rad(imsort),'filled');
+caxis(oax); colorbar; grid on;
+%plot(elon_anti,elat_anti,'r.');
 %plot(elon_anti(ibig),elat_anti(ibig),'k.'); 
+title('euler anti-poles');
+
 subplot(nr,nc,3);
 plot_histo(omega_rad,linspace(0,max(omega_rad),12));
 xlabel('rotation rate, rad/yr');
-orient tall, wysiwyg, fontsize(10)
+orient tall, wysiwyg
 
 %=====================================================================
 

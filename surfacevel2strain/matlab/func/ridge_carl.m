@@ -63,6 +63,9 @@ if (min(hvec) < 0)
     error('Impossible regularization parameter h.')
 end
 
+if sum(isnan(X(:))) ~= 0, error('input X has NaN'); end
+if sum(isinf(X(:))) ~= 0, error('input X has Inf'); end
+
 % Initialize outputs
 m         = zeros(p, nh);
 rss         = zeros(nh, 1); 

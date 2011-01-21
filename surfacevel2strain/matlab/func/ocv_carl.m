@@ -2,8 +2,6 @@
 % function rss_vec = ocv_carl(g, A, lamvec)
 % Carl Tape, 30-March-2006
 %
-% Copied from gcv_carl.m on 27-March-2006.
-%
 % Returns the ordinary cross-validation (OCV) function corresponding to a
 % set of input regularization (or damping) parameters.
 %
@@ -80,8 +78,11 @@ end
 
 rss_vec = rss_vec / ndata;  % normalization
 
-figure; loglog(lamvec, rss_vec, '.'); grid on;
-xlabel(' Regularization parameter, log (\lambda)');
-ylabel(' RSS at datapoints NOT used in computing model');
+ifigure = 0;
+if ifigure==1
+    figure; loglog(lamvec, rss_vec, '.'); grid on;
+    xlabel(' Regularization parameter, log (\lambda)');
+    ylabel(' RSS at datapoints NOT used in computing model');
+end
    
 %======================================================

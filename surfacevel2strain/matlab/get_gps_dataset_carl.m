@@ -1,5 +1,5 @@
 %
-% function get_gps_dataset.m
+% function get_gps_dataset_carl.m
 %
 % This function loads a velocity field for certain points on the sphere.
 % 
@@ -8,10 +8,14 @@
 %
 
 function [dlon,dlat,vu,vs,ve,su,sn,se,ax1,slabel,stref] ...
-    = get_gps_dataset(dir_data,ropt,dopt,istore,iplate_model)
+    = get_gps_dataset_carl(ropt,dopt,istore,iplate_model)
 
 %------------------------------
 % USER INPUT
+
+% directories
+dir0     = '/home/carltape/compearth/surfacevel2strain/';
+dir_data = [dir0 'data/gps_data/'];
 
 % geographic regions
 % irow is only relevant when dealing with a plate model
@@ -42,7 +46,7 @@ irow = irow_all(ropt);
 
 nropt = length(ropts_all);
 if length( find(ropt == [1:nropt]) )==0, error(' check region options (ropt)'); end
-if length( find(dopt == [0 1 10:13 20:23 60:63 70:73 80:83]) )==0
+if length( find(dopt == [0 1 2 3 4 10:13 20:23 30:33 40:43 50:53 60:63 70:73 80:83]) )==0
     error(' check data options (dopt)');
 end
 if dopt == 0, istore = 0; end
@@ -52,20 +56,29 @@ if istore == 1   % use specific v-field data (velocities in MM/YR)
 
     % OBSERVED VELOCITY FIELDS
     if dopt == 1        % NASA REASON dataset (modified in REASON_gps_dat.m)
-        filename = [dir_data 'reason_subset_3D.dat'];
+        %filename = [dir_data 'US/reason_fixed_NAM_subset_3D.dat'];
+        %filename = [dir_data 'US/reason_fixed_NAM_v2_subset_3D.dat'];
+        filename = [dir_data 'US/reason_subset_3D.dat'];
+
+    elseif dopt == 2    % CCMM, v1.0 (modified in socal_gps_dat.m)
+        filename = [dir_data 'US/california/socal_vfield_4p0_3D.dat'];
+        
+    elseif dopt == 3    % Jean-Phillipe, central Asia
+        filename = [dir_data 'ASIA/asia/data_JP.txt'];
+        
+        [name,dlon,dlat,vn,ve,sn,se] = textread(filename,'%s%f%f%f%f%f%f');
+        dlon = lonshift(dlon,[1 1]);
+        vs = -vn;
+        ndata = length(dlon);
+        vu = zeros(ndata,1);
+        su = zeros(ndata,1); sn = zeros(ndata,1); se = zeros(ndata,1);
+        
+    elseif dopt == 4    % Takeo Ito, Japan
+        filename = [dir_data 'ASIA/japan/japan_takeo_ito_subset_3D.dat'];
 
     % SYNTHETIC VELOCITY FIELDS
-    %   10 -- strike-slip, uniform field, no errors
-    %   11 -- strike-slip, uniform field, errors
-    %   12 -- strike-slip, irregular field, no errors
-    %   13 -- strike-slip, irregular field, errors
-    %   20-23 -- rotational
-    %   60-63 -- microplate rotation, I
-    %   70-73 -- microplate rotation, II
-    %   80-83 -- volcanic source (Mogi)
     elseif dopt >= 10
-        filename = [dir_data 'syn_vfield_' sdopt '_3D.dat'];
-        
+        filename = [dir_data 'synthetic/syn_vfield_' sdopt '_3D.dat'];
     end
     
     % NOTE: It is simpler to store the velocity field in a format that can
@@ -98,8 +111,6 @@ if istore == 1   % use specific v-field data (velocities in MM/YR)
 
 else   % not using GPS data, so get plate model velocity field
 
-    error('plate option has not yet been provided');
-    
     % generate uniform mesh for PLATE MODEL fields
     numx = 60;
     [dlon,dlat] = gridvec(lonmin,lonmax,numx,latmin,latmax);

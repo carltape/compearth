@@ -4,10 +4,8 @@
 % Script for plotting various figures.
 %
 % calls xxx
-% called by surfacevel2strain_pm.m
+% called by surfacevel2strain.m
 %
-
-iplot_qcen = 0;
 
 if ifigs1==1
     disp('surfacevel2strain_figs.m: plotting with ifigs1==1');
@@ -19,13 +17,13 @@ if ifigs1==1
         subplot(nr,nc,1); hold on;
         quiver(dlon,dlat,ve,-vs,1,'b');
         quiver(dlon,dlat,ve_est,-vs_est,1,'r');
-        if exist('lon_gc'), plot(lon_gc,lat_gc,'r','linewidth',2); end
+        if iplot_fault==1, plot(lonseg,latseg,'r','linewidth',2); end
         legend(' data field', ' estimated field');
         axis equal, axis(ax0);
 
         subplot(nr,nc,2); hold on;
         quiver(dlon,dlat,ve_res,-vs_res,'b');
-        if exist('lon_gc'), plot(lon_gc,lat_gc,'r','linewidth',2); end
+        if iplot_fault==1, plot(lonseg,latseg,'r','linewidth',2); end
         axis equal, axis(ax0);
         title(' residual');
         
@@ -39,6 +37,7 @@ if ifigs1==1
     %pcolor(X,Y,Z); shading flat;
     scatter(dlon,dlat,msize,vmag*1e3,'filled');
     if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
+    if iplot_fault==1, plot(lonseg,latseg,'k'); end
     axis equal, axis(ax0); %caxis(clims);
     colorbar; %colorbar('horiz');
     title(' |velocity field| (data)  (mm/yr)');
@@ -49,6 +48,7 @@ if ifigs1==1
     %pcolor(X,Y,Z); shading interp;
     scatter(dlon,dlat,msize,vmag_est*1e3,'filled');
     if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
+    if iplot_fault==1, plot(lonseg,latseg,'k'); end
     axis equal, axis(ax0); caxis(cax);
     colorbar; %colorbar('horiz');
     title(' estimated |velocity field|  (mm/yr)');
@@ -58,6 +58,7 @@ if ifigs1==1
     %pcolor(X,Y,Z); shading interp;
     scatter(dlon,dlat,msize,vmag_res*1e3,'filled');
     if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
+    if iplot_fault==1, plot(lonseg,latseg,'k'); end
     axis equal, axis(ax0); caxis([-1 1]*0.5*max(abs(vmag_res*1e3)));
     colorbar; %colorbar('horiz');
     title(' residual |velocity field|  (mm/yr)');
@@ -82,7 +83,7 @@ if ifigs1==1
                 %pcolor(X,Y,Z); shading flat;
                 scatter(dlon,dlat,msize,cplot,'filled');
                 if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
-                %plot(lonsaf,latsaf,'k');
+                if iplot_fault==1, plot(lonseg,latseg,'k'); end
                 axis equal, axis(ax0);
                 %caxis([-1 1]*vmax);
                 colorbar('vert');
@@ -99,11 +100,13 @@ if ifigs1==1
                 [X,Y,Z] = griddataXB(dlon,dlat,norm_vS,npts,'cubic');
                 pcolor(X,Y,Z); shading flat;
                 %scatter(dlon, dlat, msize, norm_vS,'filled');
+                if iplot_fault==1, plot(lonseg,latseg,'k'); end
                 quiver( dlon, dlat, vSe, -vSs, 'k');
             else
                 [X,Y,Z] = griddataXB(dlon,dlat,norm_vT,npts,'cubic');
                 pcolor(X,Y,Z); shading flat;
                 %scatter(dlon, dlat, msize, norm_vT,'filled');
+                if iplot_fault==1, plot(lonseg,latseg,'k'); end
                 quiver( dlon, dlat, vTe, -vTs, 'k');
             end
 
@@ -128,6 +131,7 @@ if ifigs1==1
             %pcolor(X,Y,Z); shading flat;
             scatter(dlon,dlat,msize,cplot1,'filled');
             if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
+            if iplot_fault==1, plot(lonseg,latseg,'k'); end
             axis equal, axis(ax0); colorbar('vert');
             title([stks1{kk} ': ' stqs{ip} ', ' stis{ip}]);
             
@@ -136,6 +140,7 @@ if ifigs1==1
             %pcolor(X,Y,Z); shading flat;
             scatter(dlon,dlat,msize,cplot2,'filled');
             if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
+            if iplot_fault==1, plot(lonseg,latseg,'k'); end
             axis equal, axis(ax0); colorbar('vert');
             title([stks1{kk} ': ' stqs{ip} ', ' stis{ip}]);
         end
@@ -160,6 +165,7 @@ if ifigs1==1
                 %pcolor(X,Y,Z); shading flat;
                 scatter(dlon,dlat,msize,cplot,'filled');
                 if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
+                if iplot_fault==1, plot(lonseg,latseg,'k'); end
                 axis equal, axis(ax0);
                 %caxis([-1 1]*vmax);
                 colorbar('vert');
@@ -514,9 +520,6 @@ end
 %========================================================
 % FIGURES
 
-[lonsaf,latsaf,xsay,ysaf] = textread('../gmt/input/safdata.dat','%f%f%f%f');
-%load('safdata');
-
 if ifigs_socal==1
     socal_gps_figs;     % NOTE: modify this script (CHT)
 end
@@ -585,7 +588,7 @@ if ifigs2==1
                 [X,Y,Z] = griddataXB(dlon_plot,dlat_plot,cplot,npts,'cubic');
                 pcolor(X,Y,Z); shading flat;
                 if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
-                plot(lonsaf,latsaf,'k');
+                if iplot_fault==1, plot(lonseg,latseg,'k'); end
                 axis equal, axis(ax0);
                 %caxis([-1 1]*vmax);
                 colorbar('vert');
@@ -610,7 +613,7 @@ if ifigs2==1
                 [X,Y,Z] = griddataXB(dlon_plot,dlat_plot,cplot,npts,'cubic');
                 pcolor(X,Y,Z); shading flat;
                 if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
-                plot(lonsaf,latsaf,'k');
+                if iplot_fault==1, plot(lonseg,latseg,'k'); end
                 axis equal, axis(ax0);
                 %caxis([-1 1]*vmax);
                 colorbar('vert');
@@ -630,7 +633,7 @@ if ifigs2==1
             [X,Y,Z] = griddataXB(dlon_plot,dlat_plot,cplot,npts,'cubic');
             pcolor(X,Y,Z); shading flat;
             if iplot_qcen==1, plot(glon(inds_qmax),glat(inds_qmax),'k.'); end
-            plot(lonsaf,latsaf,'k');
+            if iplot_fault==1, plot(lonseg,latseg,'k'); end
             axis equal, axis(ax0);
             %caxis([-1 1]*vmax);
             colorbar('vert');
@@ -654,13 +657,13 @@ if ifigs2==1
         if and(dopt >= 30, dopt < 40);
             fstart_cuts = [0.2 0.5 0.6];
             range_cuts = [100 200 300];
-            lonseg = lon_gc;
-            latseg = lat_gc;
+            %lonseg = lon_gc;
+            %latseg = lat_gc;
         else
             fstart_cuts = [0.2 0.5 0.6];
             range_cuts = [100 200 300];
-            lonseg = lonsaf;
-            latseg = latsaf;
+            %lonseg = lonsaf;
+            %latseg = latsaf;
         end
         numcuts = length(fstart_cuts);
         half_range_cuts_deg = km2deg(range_cuts/2);
@@ -784,6 +787,7 @@ if ifigs2==1
         subplot(nr,nc,ik); hold on;
         pcolor(X,Y,Zest); shading flat;
         %if ik > 4, caxis(cmx*[-1 1]); else caxis(clim); end
+        if iplot_fault==1, plot(lonseg,latseg,'k'); end
         colorbar('vert');
         axis equal; axis(ax0);
         title(stit);
@@ -810,6 +814,7 @@ if ifigs2==1
 
             subplot(nr,nc,ik); hold on;
             pcolor(X,Y,Zest); shading flat;
+            if iplot_fault==1, plot(lonseg,latseg,'k'); end
             colorbar('vert');
             axis equal; axis(ax0);
             title(stit);
@@ -838,6 +843,7 @@ if ifigs2==1
 
         subplot(nr,nc,ik); hold on;
         pcolor(X,Y,Zest); shading interp;
+        if iplot_fault==1, plot(lonseg,latseg,'k'); end
         if ik <= 4, caxis([dmin dmax]); end
         axis equal; axis(ax0); colorbar('vert');
         title(stit);
@@ -872,7 +878,7 @@ if ifigs2==1
         subplot(nr,nc,ik); hold on;
         %figure; hold on;
         pcolor(X,Y,Zest); shading interp;
-        %%plot(lonseg,latseg,'k');
+        if iplot_fault==1, plot(lonseg,latseg,'k'); end
         axis equal; axis(ax0); caxis(clim);
         colorbar('vert');
         title([stit '  (max = ' stcmx ')']);
@@ -895,7 +901,7 @@ if ifigs2==1
         [X,Y,Zest] = griddataXB(dlon_plot,dlat_plot,temp,npts,stype);
         subplot(nr,nc,ik); hold on;
         pcolor(X,Y,Zest); shading interp;
-        %%plot(lonseg,latseg,'k');
+        if iplot_fault==1, plot(lonseg,latseg,'k'); end
         axis equal; axis(ax0);
         colorbar('vert'); title(stit);
     end
