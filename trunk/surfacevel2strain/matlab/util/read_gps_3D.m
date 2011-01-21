@@ -9,9 +9,12 @@
 
 function [lon,lat,ve,vn,vu,se,sn,su,ren,reu,rnu,start_date,finish_date,name] = read_gps_3D(filename)
 
-if ~exist(filename), error([filename ' does not exist']); end    
-
-[lon,lat,ve,vn,vu,se,sn,su,ren,reu,rnu,start_date,finish_date,name] ...
-    = textread(filename,'%f%f%f%f%f%f%f%f%f%f%f%f%f%s','headerlines',1);
+if ~exist(filename,'file')
+    error([filename ' does not exist']);
+else
+    disp(['read_gps_3D.m: ' filename]);
+    [lon,lat,ve,vn,vu,se,sn,su,ren,reu,rnu,start_date,finish_date,name] ...
+        = textread(filename,'%f%f%f%f%f%f%f%f%f%f%f%f%f%s','headerlines',1);
+end    
     
 %=======================================================================

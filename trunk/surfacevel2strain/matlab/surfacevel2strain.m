@@ -53,7 +53,7 @@ if ireg == 1
     % plotting parameters
     colors;
     stype = 'cubic';
-    npts = 60;              % grid density for regular plotting meshes
+    npts = 100;              % grid density for regular plotting meshes
     msize = 6^2;            % marker size for circles in scatter plots
     lontick = [-180:60:180];
     lattick = [-90:30:90];
@@ -85,9 +85,11 @@ if ireg == 1
     smod = mod_labs{iplate_model};
     stq = num2str(sprintf('%2.2i', q));
 
-    dir_base    = '/home/carltape/compearth/surfacevel2strain/';   % USER: CHANGE THIS
+    % USER: CHANGE THESE
+    dir_base    = '/home/carltape/compearth/surfacevel2strain/';
     dir_output  = [dir_base 'matlab_output/'];
-    dir_gps     = [dir_base 'data/'];
+    dir_data     = [dir_base 'data/examples/'];
+    %dir_data     = [dir_base 'data/gps_data/'];  % carl
     %dir_grids   = [dir_base 'fortran/grids_output/full_grids/'];
     %dir_plates  = '/home/carltape/gmt/plates/';
     %dir_spline  = '/home/carltape/splines/data_getgrids/';
@@ -118,13 +120,24 @@ if ireg == 1
         
         % KEY COMMAND: get the velocity field (and error estimates)
         [dlon,dlat,vu,vs,ve,su,sn,se,ax0,slabel,stref] = ...
-            get_gps_dataset(ropt,dopt,istore,iplate_model);
+            get_gps_dataset(dir_data,ropt,dopt,istore,iplate_model);
+        %[dlon,dlat,vu,vs,ve,su,sn,se,ax0,slabel,stref] = ...
+        %    get_gps_dataset_carl(dir_data,ropt,dopt,istore,iplate_model);
     end
     
     % modify booleans (see get_gps_dataset.m)
-    if any(dopt == [10 11 20 21 30 31 40 41 50 51 60 61 70 71 80 81]), imask = 0; end   % uniform field
-    if any(dopt == [10 12 20 22 30 32 40 42 50 52 60 62]), icov = 0; end    % no errors
-    if any(dopt == [10:29 60:69]), ndim = 2; end          % 2D only
+    if any(dopt == [10 11 20 21 30 31 40 41 50 51 60 61 70 71 80 81])
+        imask = 0;
+        disp('setting imask = 0 for a uniform field');
+    end
+    if any(dopt == [10 12 20 22 30 32 40 42 50 52 60 62 70 72 80 82])
+        icov = 0;
+        disp('setting icov = 0 for no uncertainties');
+    end
+    if any(dopt == [10:29 60:69])
+        ndim = 2;
+        disp('setting ndim = 2 for 2D data (horizontal components)');
+    end
     
     lonmin = ax0(1); lonmax = ax0(2);
     latmin = ax0(3); latmax = ax0(4);
@@ -137,9 +150,15 @@ if ireg == 1
     
     % load synthetic fault trace, if there is one
     % (see socal_gps_syn.m)
-    idir = [dir_gps 'synthetic/'];
+    %idir = [dir_data 'synthetic/'];  % carl
+    idir = dir_data;
     if any(dopt == [10:13 30:33 50:53 60:63 70:73])
-        [lon_gc, lat_gc] = textread([idir 'gps_gc_' sdopt '.dat'],'%f%f');
+        gfile = [idir 'gps_gc_' sdopt '.dat'];
+        if ~exist(gfile,'file')
+            error(['file does not exist: ' gfile]);
+        else
+            [lon_gc, lat_gc] = textread(gfile,'%f%f');
+        end
     end
 
     figure; hold on;
@@ -480,9 +499,13 @@ if ireg == 1
 
     %-------------------------------
     % CONSTRUCT DESIGN MATRIX for spheroidal-toroidal components
-
+    
     % number of regularization parameters
-    if ispheroidal == 1, nreg = 2; else nreg = 3; end
+    if ispheroidal == 1
+        nreg = 2; stps = stks2;
+    else
+        nreg = 3; stps = stks1;
+    end
     lam0 = NaN * ones(1,nreg);       % NOTE: lam0(1) = NaN if ndim = 2
     
     if ispheroidal == 1
@@ -518,9 +541,9 @@ if ireg == 1
             ridge_carl(Whalf*dmode, Whalf*Gmode*Dhalfinv_mode, lamvec);
 
         % KEY: select regularization parameter
-        disp(sprintf('L-curve lambda = %.3f (index %i)',lamvec(iL),iL));
-        disp(sprintf('    OCV lambda = %.3f (index %i)',lamvec(iOCV),iOCV));
-        disp(sprintf('    GCV lambda = %.3f (index %i)',lamvec(iGCV),iGCV));
+        disp(sprintf('L-curve lambda = %.3e (index %i)',lamvec(iL),iL));
+        disp(sprintf('    OCV lambda = %.3e (index %i)',lamvec(iOCV),iOCV));
+        disp(sprintf('    GCV lambda = %.3e (index %i)',lamvec(iGCV),iGCV));
         ilam = input(sprintf('Type an index for lambda (try iOCV = %i): ',iOCV));
         lam = lamvec(ilam);
         lam0(end) = lam;
@@ -648,9 +671,9 @@ if ireg == 1
             Wvec = ones(ndata,1);
         end
         
-        disp(' creating the L-curve...');
+        disp(['regularization curves for scalar field ' stps{kk}]);
         trms = zeros(numlam,1);
-         mss = zeros(numlam,1);
+        mss = zeros(numlam,1);
 
         % KEY: choose parameter selection technique
         % CASE 1 is preferred, since it compares several techniques
@@ -775,9 +798,9 @@ if ireg == 1
         end  % for kk
 
         % KEY: select regularization parameter
-        disp(sprintf('L-curve lambda = %.3f (index %i)',lamvec(iL),iL));
-        disp(sprintf('    OCV lambda = %.3f (index %i)',lamvec(iOCV),iOCV));
-        disp(sprintf('    GCV lambda = %.3f (index %i)',lamvec(iGCV),iGCV));
+        disp(sprintf('L-curve lambda = %.3e (index %i)',lamvec(iL),iL));
+        disp(sprintf('    OCV lambda = %.3e (index %i)',lamvec(iOCV),iOCV));
+        disp(sprintf('    GCV lambda = %.3e (index %i)',lamvec(iGCV),iGCV));
         ilam = input(sprintf('Type an index for lambda (try iOCV = %i): ',iOCV));
         lam0(kk) = lamvec(ilam);
         
@@ -798,6 +821,7 @@ if ireg == 1
 end  % ireg
 %========================================================
 
+if ~exist('lam0','var'), error('must run inversion first'); end
 disp('  '); disp(' computing the model vector...');
 
 %--------------------------------
@@ -883,30 +907,53 @@ else
 end
 
 %--------------------------------
-% COMPUTE POWER, THEN PLOT
+% BASIC SET OF FIGURES
+
+iplot_qcen = 0;   % plot gridpoints at centers of basis functions
+iplot_fault = 1;  % plot fault
+
+[lonsaf,latsaf,xsay,ysaf] = textread([dir_base 'gmt/input/safdata.dat'],'%f%f%f%f');
+%load('safdata');
+
+% plot either the synthetic fault (great circle) or a different boundary
+if exist('lon_gc','var')
+    lonseg = lon_gc;
+    latseg = lat_gc;
+else
+    lonseg = lonsaf;
+    latseg = latsaf;
+end
+
+%------------------
 
 if ispheroidal == 1
-   fall = [fU fV fW]; stps = stks2;
+   fall = [fU fV fW];
 else
-   fall = [fu fs fe]; stps = stks1;
+   fall = [fu fs fe];
 end
 
-% compute power in each scale (wavelets only)
+% power in each scale
 Pq = zeros(numq,3);
-for jj=1:3
-    for iq = 1:numq
-        inds = [ifr(iq,1) : ifr(iq,2)];
-        Pq(iq,jj) = sum( fall(inds,jj).^2 );
-    end
-end
-
-% same as above, only putting all the "secular field" power together
 Pp = zeros(nump-1,3);
-for jj=1:3
-    for ip = 2:nump
-        inds = [iqr(ip,1) : iqr(ip,2)];
-        Pp(ip-1,jj) = sum( fall(inds,jj).^2 );
+if basistype==1
+    % compute power in each scale (wavelets)
+    for jj=1:3
+        for iq = 1:numq
+            inds = [ifr(iq,1) : ifr(iq,2)];
+            Pq(iq,jj) = sum( fall(inds,jj).^2 );
+        end
     end
+
+    % same as above, only putting all the "secular field" power together
+    for jj=1:3
+        for ip = 2:nump
+            inds = [iqr(ip,1) : iqr(ip,2)];
+            Pp(ip-1,jj) = sum( fall(inds,jj).^2 );
+        end
+    end
+    
+else
+    disp('computation of power is only implemented for wavelets');
 end
 
 % plot lines by scale
@@ -923,7 +970,7 @@ semilogx([1:ngrid],fall(:,1),'k.',[1:ngrid],fall(:,2),'b.',[1:ngrid],fall(:,3),'
 axis([0.9 ngrid -fmax fmax]); grid on;
 xlabel('k, index of frame function'); ylabel('f_k, coefficient');
 subplot(nr,nc,3);
-semilogy(qvec,Pq(:,1),'k.',qvec,Pq(:,2),'b.',qvec,Pq(:,3),'r.','markersize',18); grid on;
+semilogy(qvec,Pq(:,1),'k.-',qvec,Pq(:,2),'b.-',qvec,Pq(:,3),'r.-','markersize',18); grid on;
 legend(stps); xlabel('scale'); xlim([-1 qmax+1]); ylabel('Power = sum ( f_k^2 )');
 orient tall, wysiwyg, fontsize(9)
 
@@ -947,6 +994,7 @@ orient tall, wysiwyg, fontsize(9)
 
 %---------------------
 
+% residuals for horizontal components
 vs_res = vs - vs_est;
 ve_res = ve - ve_est;
 
@@ -998,22 +1046,25 @@ if ndim==3
     
     figure; nr=3; nc=1;
     
-    subplot(nr,nc,1);
+    subplot(nr,nc,1); hold on;
     scatter(dlon,dlat,msize,1e3*vu,'filled');
+    if iplot_fault==1, plot(lonseg,latseg,'k'); end
     axis equal, axis(ax0), grid on;
     caxis([-1 1]*0.2*vumax); colorbar;
     %xlabel('Longitude'); ylabel('Latitude');
     title('OBSERVED  v_r (mm/yr)');
     
-    subplot(nr,nc,2);
+    subplot(nr,nc,2); hold on;
     scatter(dlon,dlat,msize,1e3*vu_est,'filled');
+    if iplot_fault==1, plot(lonseg,latseg,'k'); end
     axis equal, axis(ax0), grid on;
     caxis([-1 1]*0.2*vumax); colorbar;
     %xlabel('Longitude'); ylabel('Latitude');
     title('ESTIMATED  v_r (mm/yr)');
     
-    subplot(nr,nc,3);
+    subplot(nr,nc,3); hold on;
     scatter(dlon,dlat,msize,1e3*vu_res,'filled');
+    if iplot_fault==1, plot(lonseg,latseg,'k'); end
     axis equal, axis(ax0), grid on;
     caxis([-1 1]*0.5*resmax); colorbar;
     %xlabel('Longitude'); ylabel('Latitude');
