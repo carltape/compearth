@@ -2,50 +2,57 @@
 % function get_gps_dataset_carl.m
 %
 % This function loads a velocity field for certain points on the sphere.
+% The examples in surfacevel2strain are for the socal REASON velocity field
+% and for a full set of synthetic velocity fields.
+%
+% The user can adapt this function such that it returns the following
+% output variables:
+%   dlon    longitude of observation
+%   dlat    latitude of observation
+%   vu      velocity, vertical component
+%   vs      velocity, south component
+%   ve      velocity, east component
+%   su      uncertainty (std), vu
+%   ss      uncertainty (std), vs
+%   se      uncertainty (std), ve
+%   ax1     lon-lat bounds for region containing observations
+%   slabel  string label for the region
+%   stref   reference plate (OPTIONAL)
 % 
 % calls platemodel2gps.m, read_gps_3D.m
 % called by surfacevel2strain.m
 %
 
-function [dlon,dlat,vu,vs,ve,su,sn,se,ax1,slabel,stref] ...
-    = get_gps_dataset_carl(ropt,dopt,istore,iplate_model)
+function [dlon,dlat,vu,vs,ve,su,ss,se,ax1,slabel,stref] ...
+    = get_gps_dataset_carl(dir_data,ropt,dopt,istore,iplate_model)
 
-%------------------------------
-% USER INPUT
-
-% directories
-dir0     = '/home/carltape/compearth/surfacevel2strain/';
-dir_data = [dir0 'data/gps_data/'];
-
-% geographic regions
-% irow is only relevant when dealing with a plate model
-% --> add dopt index to the full list of possibilities below
-ropts_all = {'west_us','cal','socal','taiwan','tibet','cascadia','asia','parkfield','japan','wedge'};
-irow_all = [11 11 11 17 7 7 11 11 11 11];
-
-% bounds for the region
+% GEOGRAPHIC REGION
+% slabel        label for the region
+% ax1           lon-lat box for the region
+% irow          only relevant when dealing with a plate model
 switch ropt
-    case 1, ax1 = [-175 -85 -60 60];
-    case 2, ax1 = [-126 -113.3 30 43.5];
-    case 3, ax1 = [-122 -113 30 38];
-    case 4, ax1 = [115 125 18 28];
-    case 5, ax1 = [52 104 12 44];
-    case 6, ax1 = [-128 -122 38 52];
-    case 7, ax1 = [68 117 8 57];
-    case 8, ax1 = [-121.4 -119.8 35.1 36.5];
-    case 9, ax1 = [128 147 30 46];
-    case 10, ax1 = [-175 -85 -60 60];
+    case 1, slabel = 'west_us'; ax1 = [-175 -85 -60 60]; irow = 11;
+    case 2, slabel = 'cal'; ax1 = [-126 -113.3 30 43.5]; irow = 11;
+    case 3, slabel = 'socal'; ax1 = [-122 -113 30 38]; irow = 11;
+    case 4, slabel = 'taiwan'; ax1 = [115 125 18 28]; irow = 17;
+    case 5, slabel = 'tibet'; ax1 = [52 104 12 44]; irow = 7;
+    case 6, slabel = 'cascadia'; ax1 = [-128 -122 38 52]; irow = 7;
+    case 7, slabel = 'asia'; ax1 = [68 117 8 57]; irow = 11;
+    case 8, slabel = 'parkfield'; ax1 = [-121.4 -119.8 35.1 36.5]; irow = 11;
+    case 9, slabel = 'japan'; ax1 = [128 147 30 46]; irow = 11;
+    case 10, slabel = 'wedge'; ax1 = [-175 -85 -60 60]; irow = 11;
 end
 lonmin = ax1(1); lonmax = ax1(2);
 latmin = ax1(3); latmax = ax1(4);
 
+if ~exist('slabel','var')
+    ropt, slabel
+    error('get_gps_dataset.m: invalid region index ropt');
+end
+
 %------------------------------
+% DATA SET (REAL OR SYNTHETIC)
 
-slabel = ropts_all{ropt};
-irow = irow_all(ropt);
-
-nropt = length(ropts_all);
-if length( find(ropt == [1:nropt]) )==0, error(' check region options (ropt)'); end
 if length( find(dopt == [0 1 2 3 4 10:13 20:23 30:33 40:43 50:53 60:63 70:73 80:83]) )==0
     error(' check data options (dopt)');
 end
@@ -66,29 +73,40 @@ if istore == 1   % use specific v-field data (velocities in MM/YR)
     elseif dopt == 3    % Jean-Phillipe, central Asia
         filename = [dir_data 'ASIA/asia/data_JP.txt'];
         
-        [name,dlon,dlat,vn,ve,sn,se] = textread(filename,'%s%f%f%f%f%f%f');
+        [name,dlon,dlat,vn,ve,ss,se] = textread(filename,'%s%f%f%f%f%f%f');
         dlon = lonshift(dlon,[1 1]);
         vs = -vn;
         ndata = length(dlon);
         vu = zeros(ndata,1);
-        su = zeros(ndata,1); sn = zeros(ndata,1); se = zeros(ndata,1);
+        su = zeros(ndata,1); ss = zeros(ndata,1); se = zeros(ndata,1);
         
     elseif dopt == 4    % Takeo Ito, Japan
         filename = [dir_data 'ASIA/japan/japan_takeo_ito_subset_3D.dat'];
 
     % SYNTHETIC VELOCITY FIELDS
+    %   10 -- strike-slip, uniform field, no errors
+    %   11 -- strike-slip, uniform field, errors
+    %   12 -- strike-slip, irregular field, no errors
+    %   13 -- strike-slip, irregular field, errors
+    %   20-23 -- rotational
+    %   30-33 -- 3D finite strike-slip
+    %   40-43 -- 3D infinite strike-slip
+    %   50-53 -- 3D coseismic subduction event
+    %   60-63 -- microplate rotation, I
+    %   70-73 -- microplate rotation, II
+    %   80-83 -- volcanic source (Mogi)
     elseif dopt >= 10
         filename = [dir_data 'synthetic/syn_vfield_' sdopt '_3D.dat'];
     end
     
     % NOTE: It is simpler to store the velocity field in a format that can
     % be read by read_gps_3D.m
-    [dlon,dlat,ve,vn,vu,se,sn,su,ren,reu,rnu,start_date,finish_date,name] = read_gps_3D(filename);
+    [dlon,dlat,ve,vn,vu,se,ss,su,ren,reu,rnu,start_date,finish_date,name] = read_gps_3D(filename);
     
     ndata = length(dlon);
 
     % combine into one array
-    data_all = [dlon dlat vu vn ve su sn se];
+    data_all = [dlon dlat vu vn ve su ss se];
 
     % ELIMINATE OBSERVATIONS OUTSIDE THE SPECIFIED REGION
     i_inregion = getsubset(dlon,dlat,ax1);
@@ -100,11 +118,9 @@ if istore == 1   % use specific v-field data (velocities in MM/YR)
     dlon = data_all(:,1);
     dlat = data_all(:,2);
     vu   = data_all(:,3); vs = -data_all(:,4); ve = data_all(:,5);
-    su   = data_all(:,6); sn =  data_all(:,7); se = data_all(:,8);
+    su   = data_all(:,6); ss =  data_all(:,7); se = data_all(:,8);
 
-    if 0==1
-        % see socal_gps_syn.m to add Gaussian noise to the velocity field
-    end
+    % see socal_gps_syn.m to add Gaussian noise to the velocity field
     
     % dummy variable to send back
     stref = 'NA';
@@ -155,7 +171,9 @@ else   % not using GPS data, so get plate model velocity field
     % initialize other vectors
     ndata = length(dlon);
     vu = zeros(ndata,1);
-    su = zeros(ndata,1); sn = zeros(ndata,1); se = zeros(ndata,1);
+    su = zeros(ndata,1); ss = zeros(ndata,1); se = zeros(ndata,1);
 end
+
+if isempty(dlon), error('get_gps_dataset.m: zero observations within specified region'); end
 
 %===================================================================
