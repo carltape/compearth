@@ -1,10 +1,10 @@
 %
 % function sphereinterp_est
-% Carl Tape, 04-Jan-2011
+% Carl Tape and Pablo Muse, 04-Jan-2011
 %
 % Estimate a smooth field on the sphere from discrete points using
 % spherical wavelets. This is a stripped-down version of the procedure
-% presented in SURFACEVEL2STRAIN (Tape et al. 2009, GJI).
+% presented in surfacevel2strain (Tape et al. 2009, GJI).
 %
 % INPUT
 %   dlon    longitude of data points
@@ -14,12 +14,12 @@
 %   ax0     lon-lat box contained desired region
 %   pparm   plotting parameters
 %        1. nx, number of gridpoints in x direction
-%        2. polyxlon, polygon containing plotting points (optional)
-%        3. polyylat, polygon containing plotting points (optional)
+%        2. ulabel, label for the observations (e.g., 'zdep, km')
+%        3. polyxlon, polygon containing plotting points (optional)
+%        4. polyylat, polygon containing plotting points (optional)
 %
-%
-% calls wavelet_thresh.m, dogsph_vals.m, ridge_carl.m
-% called by xxx
+% calls dogsph_vals.m, ridge_carl.m
+% called by sphereinterp.m
 %
 
 function [dest,dest_plot,lam0,dlon_plot,dlat_plot,na,nb] ...
@@ -33,16 +33,17 @@ deg = 180/pi;
 msize = 6^2;
 ngrid = length(spline_tot);
 
-dlab = 'zdep (km)';
+dlab = 'zdep (km)';  % USER PARAMETER
 
 nlam = rparm{1};
 ilampick = rparm{2};  % =1 (iL), =2 (iOCV), =3 (iGCV)
 
 numx_plot = pparm{1};
+ulabel = pparm{2};
 ipoly = 0;
-if length(pparm) > 1
-    polylon = pparm{2};
-    polylat = pparm{3};
+if length(pparm) > 2
+    polylon = pparm{3};
+    polylat = pparm{4};
     disp(sprintf('input polygon has %i points',length(polylon)));
     figure; plot(polylon,polylat,'.-');
     ipoly = 1;
@@ -158,60 +159,55 @@ Whalf = diag( sqrt(Wvec) );     % Weisberg, p. 97
 
 % (un-)transform model vector
 f_h = zeros(ngrid,nlam);
-%whos f_h_prime Dhalfinv f_h
 for ik = 1:nlam
     f_h(:,ik) = Dhalfinv * f_h_prime(:,ik);
 end
 
 % KEY: select on the basis of the OCV curve, GCV curve, or L curve
 if ilampick==1
-    lam0 = lamvec(iL);
+    ilam = iL;
 elseif ilampick==2
-    lam0 = lamvec(iOCV);
+    ilam = iOCV;
 elseif ilampick==3
-    lam0 = lamvec(iGCV);
+    ilam = iGCV;
 else
-    lam0 = lamvec(abs(ilampick));
+    ilam = abs(ilampick);
 end
-%lam0 = lamvec(iOCV);
-% switch imodel
-%     case 1, lam0 = lamvec(iOCV);
-%     case 2, lam0 = lamvec(iL);
-%     case 3, lam0 = lamvec(iL);
-%     case 4, lam0 = lamvec(iL);
-% end
-%if imodel==0, lam0 = 0; end  % no regularization needed
+lam0 = lamvec(ilam);
 
-disp('  '); disp([' got the regularization parameters: lam0 = ' sprintf('%.2e %.2e %.2e',lam0) ]);
+disp('  ');
+disp('Pick the regularization parameter:');
+disp(sprintf('L-curve lambda = %.3e (index %i)',lamvec(iL),iL));
+disp(sprintf('    OCV lambda = %.3e (index %i)',lamvec(iOCV),iOCV));
+disp(sprintf('    GCV lambda = %.3e (index %i)',lamvec(iGCV),iGCV));
+disp(sprintf('your pick lam0 = %.3e (index %i)',lam0,ilam));
 
 %========================================================
 
-disp('  '); disp(' computing the model vector...');
+disp(' computing the model vector...');
 
 %--------------------------------
 % COMPUTE MODEL VECTOR
 
 fu = zeros(ngrid,1);
 
-% regularization parameters
-lam_u = lam0;
-
 % least squares solution
-Cm_u = inv(G'*diag(wu)*G + lam_u^2*Dmat);   % m x m
+Cm_u = inv(G'*diag(wu)*G + lam0^2*Dmat);   % m x m
 fu = Cm_u*G'*diag(wu)*d;                   % m x 1
-dest = G*fu;                              % n x 1
-d_res = d - dest;                       % n x 1
-Cd_u_diag = diag(G*Cm_u*G');                % n x 1
-dsig_post = sqrt(Cd_u_diag);                  % n x 1
+dest = G*fu;                               % n x 1
+d_res = d - dest;                          % n x 1
+Cd_u_diag = diag(G*Cm_u*G');               % n x 1
+dsig_post = sqrt(Cd_u_diag);               % n x 1
 
 figure; nr=2; nc=2;
+resmax = max(abs(d_res));
 
 subplot(2,1,1); hold on;
 plot( d, dest, '.');
 %plot(max(abs(d))*[-1 1],max(abs(d))*[-1 1],'r--');
 plot([0 60],[0 60],'r--');
-xlabel(['OBSERVED ' dlab]);
-ylabel(['ESTIMATED ' dlab]);
+xlabel(['OBSERVED ' ulabel]);
+ylabel(['ESTIMATED ' ulabel]);
 %title(['cor(d-obs, d-est) = ' num2str(corr(d,dest))]);  %
 %STATISTICS TOOLBOX -- corr
 axis equal, grid on;
@@ -219,14 +215,13 @@ axis equal, grid on;
 subplot(nr,nc,3); hold on;
 plot(d_res, '.');
 xlabel('Observation number ');
-ylabel(['RESIDUALS ' dlab]);
+ylabel(['RESIDUALS (d - dest), ' ulabel]);
 title(['median(abs(res)) = ' num2str(median(abs(d_res))) ' km']);
 grid on;
 
-edges = [-10:2:10]; [N,bin] = histc(d_res,edges);
-subplot(nr,nc,4), bar(edges,N,'histc'); xlim([min(edges) max(edges)]);
-grid on;
-xlabel(['RESIDUALS ' dlab]); ylabel(' number');
+edges = linspace(-resmax,resmax,15);
+subplot(nr,nc,4); plot_histo(d_res,edges);
+xlabel(['RESIDUALS (d - dest), ' ulabel]);
 
 orient tall, wysiwyg, fontsize(9)
 
@@ -235,7 +230,7 @@ figure; hold on;
 scatter(dlon,dlat,msize,d_res,'filled');
 caxis([-1 1]*0.5*max(abs(d_res))); axis(ax0); grid on;
 colorbar; xlabel('Longitude'); ylabel('Latitude');
-title('Residuals: d - dest');
+title(['RESIDUALS (d - dest), ' ulabel]);
 
 %========================================================
 % UNIFORM MESH FOR PLOTTING SCALAR FIELDS (from irregular data)
@@ -256,18 +251,20 @@ end
 nplot = length(dlon_plot);
 
 figure; plot(dlon_plot,dlat_plot,'.'); axis(ax0);
-title(sprintf('%i x %i = %i plotting points',numx_plot,numy_plot,nplot));
+title(sprintf('%i x %i = %i plotting points in uniform grid',numx_plot,numy_plot,nplot));
 
 disp('  '); disp(' computing values at the plotting points...');
 
 % fill each column of G with a basis function evaluated at all the datapoints
-% NOTE: This is super slow, but it avoids having to compute Gplot (nplot x ngrid) in full.
+% NOTE: This is super slow, but it avoids having to compute Gplot (nplot x
+%       ngrid) in full, as done in surfacevel2strain.m
+%       A more efficient algorithm is needed.
 dest_plot = zeros(nplot,1);
 tic
-for ii=1:nplot
+for ii=1:nplot          % loop over data points
     if mod(ii,100)==0, disp(sprintf('%i out of %i',ii,nplot)); end
     Grow = zeros(1,ngrid);
-    for jj=1:ngrid
+    for jj=1:ngrid      % loop over basis functions
         Grow(jj) = dogsph_vals(spline_tot(jj,1), spline_tot(jj,2), spline_tot(jj,3), dlon_plot(ii), dlat_plot(ii), {1});
     end
     dest_plot(ii) = Grow * fu;
@@ -289,6 +286,6 @@ else
 end
 colorbar; axis(ax0);
 xlabel('Longitude'); ylabel('Latitude');
-title('Estimated field (plotting grid)');
+title(['Estimated field (plotting grid), ' ulabel]);
 
 %========================================================
