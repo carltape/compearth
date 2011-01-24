@@ -1,14 +1,11 @@
 #!/usr/bin/perl -w
 
 #==========================================================
-#
 #  foursub.pl
 #  Carl Tape
-#  23-Aug-2007
 #  
-#  This script inputs a surface velocity field and strain scalar fields
-#  computed in test_platemodel2strain.m and outputs a figure.
-#  
+#  This plots a four-subplot figures such as those presented
+#  in Tape et al. (GJI 2009).
 #==========================================================
 
 $cshfile = "foursub.csh";
@@ -16,27 +13,30 @@ $cshfile = "foursub.csh";
 $icolor = 1;    # ccc
 
 # plates and faults
-$plate_dir = "/home/carltape/gmt/plates";
-$plate_file  = "${plate_dir}/plate_boundaries/bird_boundaries";
+#$plate_dir = "/home/carltape/gmt/plates";
+#$plate_file  = "${plate_dir}/plate_boundaries/bird_boundaries";
+$plate_file  = "input/bird_boundaries";
 if (not -f ${plate_file}) { die("Check if ${plate_file} exist or not\n") }
-#$kcf_file     = "/home/carltape/gmt/faults/kcf.xy";
-$fault_file   = "/home/carltape/gmt/faults/jennings_more.xy";
+$fault_file   = "input/jennings_more.xy";
 if (not -f $fault_file) { die("Check if $fault_file exist or not\n") }
 
-$fault_info_k = "-M -W0.75p,0/0/0";
-$fault_info_r = "-M -W0.75p,255/0/0";
-$fault_info_w = "-M -W0.75p,255/255/255";
+$fault_info_k = "-m -W0.75p,0/0/0";
+$fault_info_r = "-m -W0.75p,255/0/0";
+$fault_info_w = "-m -W0.75p,255/255/255";
 
 $sinfo = "-Sc4p -G255 -W0.5p,0/0/0";
 $poleinfo1 = "-Sa20p -G0/255/255 -W0.75p,0/0/0";
 $poleinfo2 = "-Sc10p -G255 -W0.75p,0/0/0";
 $circleinfo = "-Sc25p -W1.0p,0/0/0,--";
 
-# velocity, strain rate, etc
-#$vel_dir0   = "${plate_dir}/surface_velocities";
-$vel_dir0   = "/home/carltape/SURFACEVEL2STRAIN/matlab_output";
-
 #----------------------------------
+# USER PARAMETERS
+
+# base directory
+$dir0 = "/home/carltape/compearth/surfacevel2strain";
+
+# velocity, strain rate, etc
+$vel_dir0 = "$dir0/matlab_output";
 
 # key parameters
 # NOTE: THESE ARE OVER-RIDDEN IN THE LOOP BELOW
@@ -44,7 +44,7 @@ $iregion = 3;      # region (1=west_us, 2=cal, 3=socal, 6=cascadia)
 $idata = 1;        # choose GPS dataset (1 = NASA REASON; 2 = CCMM; 1X = strike-slip; 2X = rotational)
 $ndim = 2;         # ndim = 3 for verticals; ndim = 2 for horizontals
 $qmin = 3;         # min grid order used
-$qmax = 8;         # max grid order used
+$qmax = 7;         # max grid order used
 $basis = 1;        # 1 for wavelets; 2 for splines
 $iLmat = 1;        # sopt : 0 (full L), 1 (elasticity), 2 (viscosity)
 $iunrotate = 1;    # 1 to remove rotation; 0 to leave original field
@@ -328,11 +328,11 @@ $coast_infoK   = "$coast_res -W1.5p,0/0/0 -Na/1.0p";
 $coast_infoW   = "$coast_res -W1.5p,255/255/255 -Na/1.5p,255/255/255,t";
 $coast_infoR   = "$coast_res -W1.5p,255/0/0 -Na/1.5p,255/0/0,t";
 
-$plate_infoG     = "-M -W1.5p,0/255/0";
-$plate_infoR     = "-M -W1.5p,255/0/0";
-$plate_infoK     = "-M -W1.5p,0/0/0";
-$plate_infoW     = "-M -W1.5p,255/255/255";
-$plate_infoGr    = "-M -W1.5p,200";
+$plate_infoG     = "-m -W1.5p,0/255/0";
+$plate_infoR     = "-m -W1.5p,255/0/0";
+$plate_infoK     = "-m -W1.5p,0/0/0";
+$plate_infoW     = "-m -W1.5p,255/255/255";
+$plate_infoGr    = "-m -W1.5p,200";
 
 $textinfo = "-G255 -S1p";
 
@@ -515,7 +515,7 @@ $B = $B0.$Bopts[7];
 
 print CSH "psbasemap $J1 $R1 $B -K -V -P $origin > $psfile\n"; # START
 print CSH "awk '{print \$1,\$2,\$3}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-if ($icolor==1) {print CSH "grdimage $grdfile $R1 $J1 -C$cptvmag -T -K -O -V >> $psfile\n";}
+if ($icolor==1) {print CSH "grdimage $grdfile $R1 $J1 -C$cptvmag -Sn -K -O -V >> $psfile\n";}
 if ($imask==1) {
   print CSH "echo MASK DATA FILE: ${mask_file}\n";
   print CSH "psmask ${mask_file} $R1 $J1 $mask_info -K -O -V >> $psfile\n";
@@ -572,7 +572,7 @@ if ($icolor == 1) {
   print CSH "echo STRAIN DATA FILE: ${strain_mag}\n";
   print CSH "awk '{print \$1,\$2,\$4}' $strain_mag > ${name}_dilat.xyz\n";
   print CSH "awk '{print \$1,\$2,\$4/$norm2}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-  print CSH "grdimage $grdfile $R1 $J1 -C$cptdilat -T -K -O -V >> $psfile\n";
+  print CSH "grdimage $grdfile $R1 $J1 -C$cptdilat -Sn -K -O -V >> $psfile\n";
   if ($imask==1) {
     print CSH "echo MASK DATA FILE: ${mask_file}\n";
     print CSH "psmask ${mask_file} $R1 $J1 $mask_info -K -O -V >> $psfile\n";
@@ -615,7 +615,7 @@ if($icolor==1) {
   print CSH "echo STRAIN DATA FILE: ${strain_mag}\n";
   print CSH "awk '{print \$1,\$2,\$5}' $strain_mag > ${name}_strain.xyz\n";
   print CSH "awk '{print \$1,\$2,\$5/$norm3}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-  print CSH "grdimage $grdfile $R1 $J1 -C$cptstrain -T -K -O -V >> $psfile\n";
+  print CSH "grdimage $grdfile $R1 $J1 -C$cptstrain -Sn -K -O -V >> $psfile\n";
   if ($imask==1) {
     print CSH "echo MASK DATA FILE: ${mask_file}\n";
     print CSH "psmask ${mask_file} $R1 $J1 $mask_info -K -O -V >> $psfile\n";
@@ -644,7 +644,8 @@ if ($igc==1) {print CSH "psxy $J1 $R1 ${gc_boundary} $plate_infoW -K -O -V >> $p
 # highlight the small volcanic source
 #if($k==3) {print CSH "psxy $J1 $R1 $B $circleinfo -K -O -V >>$psfile<<EOF\n -118.0 34.0\nEOF\n";}
 
-if ($idata==1) {		# SAFOD hole
+ # Parkfield region and SAFOD hole
+if ($idata==1 && 0==1) {
   #print CSH "psxy $J1 $R1 $poleinfo2 -K -O -V >>$psfile<<EOF\n$plon $plat\nEOF\n";
   $platmin = 35.5; $platmax = 36.1; $plonmin = -121.2; $plonmax = -119.8;
   print CSH "psxy $J1 $R1 -W2p,0/0/0 -A -O -K -V <<EOF>>$psfile\n"; 
@@ -670,7 +671,7 @@ if ($icolor==1) {
   #print CSH "awk '{print \$1,\$2,sqrt(\$11*\$11)/$norm4}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
   #print CSH "awk '{print \$1,\$2,sqrt(\$12*\$12+\$13*\$13)/$norm4}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
 
-  print CSH "grdimage $grdfile $R1 $J1 -C$cptrot -T -K -O -V >> $psfile\n";
+  print CSH "grdimage $grdfile $R1 $J1 -C$cptrot -Sn -K -O -V >> $psfile\n";
   if ($imask==1) {
     print CSH "echo MASK DATA FILE: ${mask_file}\n";
     print CSH "psmask ${mask_file} $R1 $J1 $mask_info -K -O -V >> $psfile\n";

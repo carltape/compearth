@@ -341,7 +341,6 @@ if ireg == 1
         [ikeep, inum] = spline_thresh_3(spline_tot0, qtrsh, ntrsh, ...
             dlon, dlat, {0});
     end
-    % END MODIF PM, 08/28/07
 
     spline_tot = spline_tot0(ikeep,:);
 
@@ -349,13 +348,14 @@ if ireg == 1
     if ngrid==0, error('ngrid = 0: check datapoints and gridpoints'); end
     glon = spline_tot(:,1);
     glat = spline_tot(:,2);
+    gq = spline_tot(:,3);
 
     % recompute qvec, nvec, ifr
     jj = 0;
     %nvec = zeros(qmax+1,1);
     nvec = []; qvec = [];
     for q = 0:qmax      % ALL possible q orders
-        n = length( find( spline_tot(:,3) == q ) );
+        n = length( find( gq == q ) );
         if n >= 1
             jj = jj+1; qvec(jj) = q; nvec(jj) = n;
             qmax0 = q;
@@ -403,7 +403,6 @@ if ireg == 1
     end
     disp('  '); disp(['Thresholding GRIDPOINTS '  stqran ':']); disp([strsh1 strsh2]); disp('  ');
 
-    %figure; hold on;
     nvec = zeros(nump,1);
     for ip = 1:nump
         q1 = iqvec(ip,1); q2 = iqvec(ip,2);
@@ -413,17 +412,9 @@ if ireg == 1
         stqs{ip} = [' q = ' num2str(q1) ' to ' num2str(q2)];
         stis{ip} = [' j = ' num2str(if1) ' to ' num2str(if2) ' (' num2str(nvec(ip)) ')'];
         stit = [stqs{ip} ',' stis{ip}]; disp(stit);
-
-        %     for q=q1:q2
-        %         ww = ['thph_q' num2str(sprintf('%2.2i',q))];
-        %         load([dir ww '.dat']); temp = eval(ww);
-        %         lon = temp(:,2)*deg; lat = (pi/2-temp(:,1))*deg;
-        %         plot(lon,lat,'k.');
-        %     end
     end
-    %axis equal, axis(ax0);
     
-     % indexing for multi-scale strain and multi-scale resudual field
+     % indexing for multi-scale strain and multi-scale residual field
     id2 = cumsum(nvec(2:end));
     iqr2 = [ ones(nump-1,1) id2];
     iqvec2 = [qvec(1)*ones(length(ipran),1) ipran];
@@ -431,24 +422,34 @@ if ireg == 1
 
     % plot ALL spline gridpoints
     figure; hold on;
-    plot(glon,glat,'.'); plot(ax0([1 2 2 1 1]), ax0([3 3 4 4 3]), 'k');
-    axis equal, axis tight; title({[slabel ' :  ' stqran],[strsh1 strsh2]});
+    scatter(glon,glat,4^2,gq,'filled');
+    %scatter(glon,glat,msize,'ko');
+    colorbar('ytick',qvec);
+    %plot(glon,glat,'.');
+    %plot(ax1([1 2 2 1 1]), ax1([3 3 4 4 3]), 'k');
+    plot(ax0([1 2 2 1 1]), ax0([3 3 4 4 3]), 'k');
+    axis equal, axis tight;
+    title({[slabel ' :  ' stqran],[strsh1 strsh2]},'interpreter','none');
     xlabel(' Latitude'); ylabel(' Longitude');
     orient tall, wysiwyg, fontsize(10)
 
     % plot spline gridpoints by order q
-    figure; nc=2; nr = ceil(nump/nc);
-    for ip=1:nump
+    figure; nc=2; nr=ceil(nump/nc);
+    for ip = 1:nump
         inds = [iqr(ip,1) : iqr(ip,2)];
         subplot(nr,nc,ip); hold on;
-        plot(dlon,dlat,'r+');
+        plot(dlon,dlat,'k+');
         if sum(inds) > 0
-            plot(glon(inds),glat(inds),'.');
+            %plot(glon(inds),glat(inds),'.');
+            scatter(glon(inds),glat(inds),4^2,gq(inds),'filled');
         end
-        axis equal, axis(ax0);
+        caxis([qvec(1) qvec(end)]); colorbar('ytick',qvec);
+        axis equal
+        axis(ax0);
+        %axis(ax1);
         title({stqs{ip}, stis{ip}});
     end
-    orient tall, wysiwyg, fontsize(8)
+    orient tall, wysiwyg, fontsize(9)
 
     % figure; nc=2; nr = ceil(numq/nc);
     % for iq=1:numq

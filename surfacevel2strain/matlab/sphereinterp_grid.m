@@ -30,7 +30,7 @@ disp('entering sphereinterp_grid.m to obtain spherical wavelet basis functions')
 
 earthr = 6371*1e3;      % earth radius (m)
 deg = 180/pi;
-msize = 6^2;
+msize = 4^2;
 
 qmin = qparm{1};
 qsec = qparm{2};
@@ -219,13 +219,14 @@ ngrid = length(spline_tot);
 if ngrid==0, error('ngrid = 0: check datapoints and gridpoints'); end
 glon = spline_tot(:,1);
 glat = spline_tot(:,2);
+gq = spline_tot(:,3);
 
 % recompute qvec, nvec, ifr
 jj = 0;
 %nvec = zeros(qmax+1,1);
 nvec = []; qvec = [];
 for q = 0:qmax      % ALL possible q orders
-    n = length( find( spline_tot(:,3) == q ) );
+    n = length( find( gq == q ) );
     if n >= 1
         jj = jj+1; qvec(jj) = q; nvec(jj) = n;
         qmax0 = q;
@@ -267,7 +268,6 @@ strsh2 = [' with >= ' num2str(ntrsh) ' stations inside their corresponding spati
 disp('  '); disp(['GRIDPOINTS '  stqran ':']);
 disp([strsh1 strsh2]); disp('  ');
 
-%figure; hold on;
 nvec = zeros(nump,1);
 for ip = 1:nump
     q1 = iqvec(ip,1); q2 = iqvec(ip,2);
@@ -287,8 +287,12 @@ iqvec2 = [qvec(1)*ones(length(ipran),1) ipran];
 
 % plot ALL spline gridpoints
 figure; hold on;
-plot(glon,glat,'.');
+scatter(glon,glat,msize,gq,'filled');
+%scatter(glon,glat,msize,'ko');
+colorbar('ytick',qvec);
+%plot(glon,glat,'.');
 %plot(ax1([1 2 2 1 1]), ax1([3 3 4 4 3]), 'k');
+plot(ax0([1 2 2 1 1]), ax0([3 3 4 4 3]), 'k');
 axis equal, axis tight;
 title({[slabel ' :  ' stqran],[strsh1 strsh2]},'interpreter','none');
 xlabel(' Latitude'); ylabel(' Longitude');
@@ -299,11 +303,14 @@ figure; nc=2; nr=ceil(nump/nc);
 for ip = 1:nump
     inds = [iqr(ip,1) : iqr(ip,2)];
     subplot(nr,nc,ip); hold on;
-    plot(dlon,dlat,'r+');
+    plot(dlon,dlat,'k+');
     if sum(inds) > 0
-        plot(glon(inds),glat(inds),'.');
+        %plot(glon(inds),glat(inds),'.');
+        scatter(glon(inds),glat(inds),msize,gq(inds),'filled');
     end
+    caxis([qvec(1) qvec(end)]); colorbar('ytick',qvec);
     axis equal
+    axis(ax0);
     %axis(ax1);
     title({stqs{ip}, stis{ip}});
 end
