@@ -1,0 +1,6 @@
+surfacevel2strain/gmt/input/README
+
+bird_boundaries   -- Peter Bird plate model (GGG, 2003)
+jennings_more.xy  -- Jennings (1994) compilation plus Ken Canyon fault (Nagin and Saleeby (GSAB 2010)
+safdata.dat       -- San Andreas fault, I
+safdata2.dat      -- San Andreas fault, II

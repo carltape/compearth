@@ -4,10 +4,10 @@
 #
 #  plot_strain.pl
 #  Carl Tape
-#  11-June-2009
+#  24-Jan-2011
 #  
-#  This script inputs a surface velocity field and strain scalar fields
-#  computed in test_platemodel2strain.m and outputs a figure.
+#  This script plots figures using output files from surfacevel2strain/matlab_output/
+#  See Tape et al. (GJI 2009) for examples and details.
 #  
 #==========================================================
 
@@ -18,24 +18,26 @@ $icolor = 1;    # ccc
 # plates and faults
 #$plate_dir = "/home/carltape/gmt/plates";
 #$plate_file  = "${plate_dir}/plate_boundaries/bird_boundaries";
-$plate_file  = "./bird_boundaries";
+$plate_file  = "input/bird_boundaries";
 if (not -f ${plate_file}) { die("Check if ${plate_file} exist or not\n") }
-#$kcf_file     = "/home/carltape/gmt/faults/kcf.xy";
-$fault_file   = "/home/carltape/gmt/faults/jennings_more.xy";
+$fault_file = "input/jennings_more.xy";
 if (not -f $fault_file) { die("Check if $fault_file exist or not\n") }
 
-$fault_info_k = "-M -W1.5p,0/0/0";
-$fault_info_r = "-M -W1.5p,255/0/0";
+$fault_info_k = "-m -W1.5p,0/0/0";
+$fault_info_r = "-m -W1.5p,255/0/0";
 
 $sinfo = "-Sc4p -G255 -W0.5p,0/0/0";
 $poleinfo1 = "-Sa20p -G0/255/255 -W0.75p,0/0/0";
 $circleinfo = "-Sc25p -W1.0p,0/0/0,--";
 
-# velocity, strain rate, etc
-$vel_dir0   = "/home/carltape/SURFACEVEL2STRAIN/matlab_output";
-#$vel_dir0   = "${plate_dir}/surface_velocities";
-
 #----------------------------------
+# USER PARAMETERS
+
+# base directory
+$dir0 = "/home/carltape/compearth/surfacevel2strain";
+
+# velocity, strain rate, etc
+$vel_dir0 = "$dir0/matlab_output";
 
 # file name, ticks, range for velocities
 # idata
@@ -47,7 +49,7 @@ $vel_dir0   = "/home/carltape/SURFACEVEL2STRAIN/matlab_output";
 #   ETC
 $iregion = 3;      # region (1=west_us, 2=cal, 3=socal, 6=cascadia, 8=parkfield, 9=japan, 10=wedge)
 $idata = 1;        # choose GPS dataset (see above)
-$ndim = 3;         # ndim = 3 for verticals; ndim = 2 for horizontals
+$ndim = 2;         # ndim = 3 for verticals; ndim = 2 for horizontals
 $qmin = 3;         # min grid order used
 $qmax = 7;         # max grid order used
 $basis = 1;        # 1 for wavelets; 2 for splines
@@ -55,7 +57,7 @@ $iLmat = 1;        # sopt : 0 (full L), 1 (elasticity), 2 (viscosity)
 $iunrotate = 1;    # 1 to remove rotation; 0 to leave original field
 
 $imask  = 1;       # plot mask
-$ieuler = 0;       # plot euler poles
+$ieuler = 1;       # plot euler poles
 $ifault = 0;       # plot faults
 $iplate = 0;       # plot plate boundaries
 
@@ -340,13 +342,13 @@ $coast_infoK   = "$coast_res -W1.5p,0/0/0 -Na/1.0p";
 $coast_infoW   = "$coast_res -W2.0p,255/255/255 -Na/2.0p,255/255/255,t";
 $coast_infoR   = "$coast_res -W2.0p,255/0/0 -Na/2.0p,255/0/0,t";
 
-$coast_infoW   = "$coast_res -W1.0p,255/255/255";
+#$coast_infoW   = "$coast_res -W1.0p,255/255/255";
 
-$plate_infoG     = "-M -W2p,0/255/0";
-$plate_infoR     = "-M -W2p,255/0/0";
-$plate_infoK     = "-M -W2p,0/0/0";
-$plate_infoW     = "-M -W2p,255/255/255";
-$plate_infoGr    = "-M -W3p,200";
+$plate_infoG     = "-m -W2p,0/255/0";
+$plate_infoR     = "-m -W2p,255/0/0";
+$plate_infoK     = "-m -W2p,0/0/0";
+$plate_infoW     = "-m -W2p,255/255/255";
+$plate_infoGr    = "-m -W3p,200";
 
 # NOTE: pen attribute (-W) does not work for psvelo
 #$vec_scale       = "-Se0.002/0.90/0";
@@ -367,13 +369,14 @@ $textinfo = "-G255 -S1p";
 $ixv    = 1;
 $ipdf   = 0;
 
-$ivel = 0;
+# single subplot figures
+$ivel = 1;
 $istrain = 0;
 $irotate = 0;
 $idilate = 0;
 $imaxlam = 0;
 $imap = 0;
-$imap2 = 0;
+$imap2 = 0;  # see utils/socal_centers.pl
 
 # 2-column figures
 $ivel3D = 0;         # estimated velocity field (Vmag, Vr)
@@ -382,7 +385,7 @@ $ivel3D = 0;         # estimated velocity field (Vmag, Vr)
 #$isetup = 0;
 
 # 3-column figures
-$imulti_vel = 1;
+$imulti_vel = 0;
 $imulti_strain_inc = 0;    # only one at a time!
 $imulti_strain_cum = 0;    # only one at a time!
 $ivel3Dall = 0;
@@ -658,13 +661,13 @@ print CSH "psbasemap $J1 $R1 $B -K -V -P $origin > $psfile\n";  # START
 if (0==1) {
   #$interp = "-I0.1";
   print CSH "awk '{print \$1,\$2,\$5}' $strain_mag | xyz2grd -G$grdfile $interp $R1\n";
-  print CSH "grdimage $grdfile $R1 $J1 -C$cptstrain -T -K -O -V >> $psfile\n";
+  print CSH "grdimage $grdfile $R1 $J1 -C$cptstrain -Sn -K -O -V >> $psfile\n";
 
 } else {
 
   #print CSH "awk '{print \$1,\$2,\$5}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
   print CSH "awk '{print \$1,\$2,\$5/$norm3}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-  print CSH "grdimage $grdfile $R1 $J1 -C$cptstrain -T -K -O -V >> $psfile\n";
+  print CSH "grdimage $grdfile $R1 $J1 -C$cptstrain -Sn -K -O -V >> $psfile\n";
 
   if ($imask==1) {
     print CSH "echo mask file is ${mask_file}\n";
@@ -719,96 +722,108 @@ $Bscale  = sprintf("-B%2.2f:\"Rotation rate, 10\@+%i\@+ yr\@+-1\@+\": -Ef10p",$c
 
 @wtags = ("w","wr","wh","ws","wt");
 
-for ($w = 1; $w <= 5; $w = $w+1) {
+# make several different plots of rotation magnitudes
+$wmin = 1; $wmax = 5;      # default
+$wmin = 1; $wmax = $wmin;
+for ($w = $wmin; $w <= $wmax; $w = $w+1) {
 
   $wtag = $wtags[$w-1];
-$fname = "${pname}_rotation_${wtag}";
-$title = "Rotation rate, |$wtag|, from $tag";
-$psfile = "$fname.ps"; $jpgfile = "$fname.jpg";
-$Bscale  = sprintf("-B%2.2f:\"Rotation rate, |%s|, 10\@+%i\@+ yr\@+-1\@+\": -Ef10p",$cmaxrot*0.25,$wtag,$cpwr4);
+  $fname = "${pname}_rotation_${wtag}";
+  $title = "Rotation rate, |$wtag|, from $tag";
+  $psfile = "$fname.ps"; $jpgfile = "$fname.jpg";
+  $Bscale  = sprintf("-B%2.2f:\"Rotation rate, |%s|, 10\@+%i\@+ yr\@+-1\@+\": -Ef10p",$cmaxrot*0.25,$wtag,$cpwr4);
 
-print CSH "psbasemap $J1 $R1 $B -K -V -P $origin > $psfile\n";  # START
-if($icolor==1) {
+  print CSH "psbasemap $J1 $R1 $B -K -V -P $origin > $psfile\n"; # START
+  if ($icolor==1) {
 
-  # plot magnitude of w (3D) or its vertical or horizontal components
-  if ($w==1) {
-    #print CSH "awk '{print \$1,\$2,\$6/$norm4}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-    print CSH "awk '{print \$1,\$2,sqrt(\$11*\$11+\$12*\$12+\$13*\$13)/$norm4}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-  } elsif ($w==2) {
-    print CSH "awk '{print \$1,\$2,sqrt(\$11*\$11)/$norm4}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-  } elsif ($w==3) {
-    print CSH "awk '{print \$1,\$2,sqrt(\$12*\$12+\$13*\$13)/$norm4}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-  } elsif ($w==4) {
-    print CSH "awk '{print \$1,\$2,sqrt(\$14*\$14)/$norm4}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-  } elsif ($w==5) {
-    print CSH "awk '{print \$1,\$2,sqrt(\$15*\$15)/$norm4}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
+    # plot magnitude of w (3D) or its vertical or horizontal components
+    if ($w==1) {
+      #print CSH "awk '{print \$1,\$2,\$6/$norm4}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
+      print CSH "awk '{print \$1,\$2,sqrt(\$11*\$11+\$12*\$12+\$13*\$13)/$norm4}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
+    } elsif ($w==2) {
+      print CSH "awk '{print \$1,\$2,sqrt(\$11*\$11)/$norm4}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
+    } elsif ($w==3) {
+      print CSH "awk '{print \$1,\$2,sqrt(\$12*\$12+\$13*\$13)/$norm4}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
+    } elsif ($w==4) {
+      print CSH "awk '{print \$1,\$2,sqrt(\$14*\$14)/$norm4}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
+    } elsif ($w==5) {
+      print CSH "awk '{print \$1,\$2,sqrt(\$15*\$15)/$norm4}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
+    }
+    print CSH "grdimage $grdfile $R1 $J1 -C$cptrot -Sn -K -O -V >> $psfile\n";
+  }
+  if ($imask==1) {
+    print CSH "echo mask file is ${mask_file}\n";
+    print CSH "psmask ${mask_file} $R1 $J1 $mask_info -K -O -V >> $psfile\n";
+    print CSH "psmask -C -K -O -V >> $psfile\n";
+  }
+  print CSH "psscale -C$cptrot $Dscale $Bscale -K -O -V >> $psfile\n";
+  print CSH "pscoast $J1 $R1 $B $coast_infoW -K -O -V >> $psfile\n";
+
+  # plot faults and/or plate boundary
+  if ($ifault==1) {
+    #print CSH "psxy $kcf_file $J1 $R1 $fault_info_k -K -V -O >> $psfile\n";
+    print CSH "psxy $fault_file $J1 $R1 $fault_info_k -K -V -O >> $psfile\n";
+  }
+  if ($iplate==1) {
+    print CSH "psxy ${plate_file} $J1 $R1 $plate_infoW -K -O -V >> $psfile\n";
+  }
+  if ($igc==1) {
+    print CSH "psxy $J1 $R1 ${gc_boundary} $plate_infoW -K -O -V >> $psfile\n";
   }
 
-  print CSH "grdimage $grdfile $R1 $J1 -C$cptrot -T -K -O -V >> $psfile\n";
-}
-if ($imask==1) {
-  print CSH "echo mask file is ${mask_file}\n";
-  print CSH "psmask ${mask_file} $R1 $J1 $mask_info -K -O -V >> $psfile\n";
-  print CSH "psmask -C -K -O -V >> $psfile\n";
-}
-print CSH "psscale -C$cptrot $Dscale $Bscale -K -O -V >> $psfile\n";
-print CSH "pscoast $J1 $R1 $B $coast_infoW -K -O -V >> $psfile\n";
+  # plot euler poles and anti-poles -- only for the first figure in the loop
+  if ($ieuler == 1 && $w == 1) {
+    $pinfo      = "-Sc4p -G255/255/255 -W0.5p,0/0/0";
+    $pinfo_anti = "-Sc4p -G255/0/0 -W0.5p,0/0/0";
+    $seis_info3 = "-Scp -W0.5p/255/255/255";
 
-# plot faults and/or plate boundary
-if ($ifault==1) {
-  #print CSH "psxy $kcf_file $J1 $R1 $fault_info_k -K -V -O >> $psfile\n";
-  print CSH "psxy $fault_file $J1 $R1 $fault_info_k -K -V -O >> $psfile\n";
-}
-if ($iplate==1) {print CSH "psxy ${plate_file} $J1 $R1 $plate_infoW -K -O -V >> $psfile\n";}
-if ($igc==1) {print CSH "psxy $J1 $R1 ${gc_boundary} $plate_infoW -K -O -V >> $psfile\n";}
+    # make binary colorpoint file
+    $cptfile = "bcolor.cpt"; $cmin = -0.01; $cmax = 0.01; $dc = ($cmax-$cmin)/2;
+    $T = "-T$cmin/$cmax/$dc -D -Z "; $colorbar = "-Cpolar";
+    print CSH "makecpt $colorbar $T > $cptfile\n";
 
-# plot euler poles and anti-poles
-if ($ieuler == 1 && $w == 1) {
-  $pinfo      = "-Sc4p -G255/255/255 -W0.5p,0/0/0";
-  $pinfo_anti = "-Sc4p -G255/0/0 -W0.5p,0/0/0";
-  $seis_info3 = "-Scp -W0.5p/255/255/255";
+    if (0==1) {
+      print CSH "echo checking euler poles file ${euler_poles}\n";
+      print CSH "awk '{print \$1,\$2,\$3/$norm4,$escale*sqrt(\$3*\$3)/$norm4}' ${euler_poles} > poles_test\n";
+    }
 
-  # make colorpoint file
-  $cptfile = "color.cpt"; $cmin = -0.01; $cmax = 0.01; $dc = ($cmax-$cmin)/2;
-  $T = "-T$cmin/$cmax/$dc -D -Z "; $colorbar = "-Cpolar";
-  print CSH "makecpt $colorbar $T > $cptfile\n";
+    # KEY: plot euler poles
+    print CSH "gmtset MEASURE_UNIT point\n";
+    #print CSH "psxy ${euler_poles} $J1 $R1 -C$cptfile ${seis_info3} -K -V -O >> $psfile\n";
+    #print CSH "psxy ${euler_anti_poles} $J1 $R1 -C$cptfile ${seis_info3} -K -V -O >> $psfile\n";
+    print CSH "awk '{print \$1,\$2,\$3/$norm4,$escale*sqrt(\$3*\$3)/$norm4}' ${euler_poles} | psxy $J1 $R1 -C$cptfile ${seis_info3} -K -V -O >> $psfile\n";
+    print CSH "awk '{print \$1,\$2,\$3/$norm4,$escale*sqrt(\$3*\$3)/$norm4}' ${euler_anti_poles} | psxy $J1 $R1 -C$cptfile ${seis_info3} -K -V -O >> $psfile\n";
 
-  #print CSH "awk '{print \$1,\$2,\$3/$norm4,$escale*sqrt(\$3*\$3)/$norm4}' ${euler_poles} > poles_test\n"; die("TESTING");
+    #if($idata >= 20 && $idata < 30) {print CSH "psxy $J1 $R1 $B $poleinfo1 -K -O -V >>$psfile<<EOF\n -116.0 35.0\nEOF\n";}
 
-  # KEY: plot euler poles
-  #print CSH "psxy ${euler_poles} $J1 $R1 -C$cptfile ${seis_info3} -K -V -O >> $psfile\n";
-  #print CSH "psxy ${euler_anti_poles} $J1 $R1 -C$cptfile ${seis_info3} -K -V -O >> $psfile\n";
-  print CSH "awk '{print \$1,\$2,\$3/$norm4,$escale*sqrt(\$3*\$3)/$norm4}' ${euler_poles} | psxy $J1 $R1 -C$cptfile ${seis_info3} -K -V -O >> $psfile\n";
-  print CSH "awk '{print \$1,\$2,\$3/$norm4,$escale*sqrt(\$3*\$3)/$norm4}' ${euler_anti_poles} | psxy $J1 $R1 -C$cptfile ${seis_info3} -K -V -O >> $psfile\n";
+    #-----------------------------
+    #$origin_arrow = "-Xa0.5 -Ya-1.5";
 
-  #if($idata >= 20 && $idata < 30) {print CSH "psxy $J1 $R1 $B $poleinfo1 -K -O -V >>$psfile<<EOF\n -116.0 35.0\nEOF\n";}
+    # in inches
+    $xdots = $xlegend;
+    $ydots = $ylegend - 0.5;
+    $origin_dots = "-Xa${xdots}i -Ya${ydots}i";
 
-  #-----------------------------
-  #$origin_arrow = "-Xa0.5 -Ya-1.5";
+    # plot euler vector scale
+    @vec_ref = ($evec_ref/2, $evec_ref, 1.5*$evec_ref);
+    $sv1 = sprintf("%.2f",$vec_ref[0]);
+    $sv2 = sprintf("%.2f",$vec_ref[1]);
+    $sv3 = sprintf("%.2f",$vec_ref[2]);
+    #open(IN,${euler_poles_scale}); $escale = <IN>; chomp($escale);
+    #if (not -f ${euler_poles_scale}) {die("Check if ${euler_poles_scale} exist or not\n");}
 
-  $xdots = $xlegend;
-  $ydots = $ylegend - 0.5;
-  $origin_dots = "-Xa${xdots} -Ya${ydots}";
-
-  # plot euler vector scale
-  @vec_ref = ($evec_ref/2, $evec_ref, 1.5*$evec_ref);
-  $sv1 = sprintf("%.2f",$vec_ref[0]);
-  $sv2 = sprintf("%.2f",$vec_ref[1]);
-  $sv3 = sprintf("%.2f",$vec_ref[2]);
-  #open(IN,${euler_poles_scale}); $escale = <IN>; chomp($escale);
-  #if (not -f ${euler_poles_scale}) {die("Check if ${euler_poles_scale} exist or not\n");}
-
-  # MAKE SURE THAT THIS FORMULA MATCHES WHAT IS USED IN PLOTTING THE POLES ABOVE
-  $dsize[0] = $escale*abs($vec_ref[0]);
-  $dsize[1] = $escale*abs($vec_ref[1]);
-  $dsize[2] = $escale*abs($vec_ref[2]);
-  $dy = 0.25;
-  for ($k = 0; $k < 5; $k = $k+1) {
-    $ytxt[$k] = $k*$dy;
-  }
-  $x1 = 0;
-  $x2 = $x1 + 1.00;
-  print CSH "psxy -JX1 -R0/1/0/1 -C$cptfile -N ${seis_info3} ${origin_dots} -K -O -V >>$psfile<<EOF
+    # MAKE SURE THAT THIS FORMULA MATCHES WHAT IS USED IN PLOTTING THE POLES ABOVE
+    # the factor 72 is to convert inches to dots
+    $dsize[0] = $escale*abs($vec_ref[0]);
+    $dsize[1] = $escale*abs($vec_ref[1]);
+    $dsize[2] = $escale*abs($vec_ref[2]);
+    $dy = 0.25*72;
+    for ($k = 0; $k < 5; $k = $k+1) {
+      $ytxt[$k] = $k*$dy;
+    }
+    $x1 = 0*72;
+    $x2 = $x1 + 1.00*72;
+    print CSH "psxy -JX1 -R0/1/0/1 -C$cptfile -N ${seis_info3} ${origin_dots} -K -O -V >>$psfile<<EOF
 $x1 $ytxt[3] $vec_ref[2] $dsize[2]
 $x1 $ytxt[2] $vec_ref[1] $dsize[1]
 $x1 $ytxt[1] $vec_ref[0] $dsize[0]
@@ -817,40 +832,46 @@ $x2 $ytxt[2] -$vec_ref[1] $dsize[1]
 $x2 $ytxt[1] -$vec_ref[0] $dsize[0]
 EOF\n";
 
-  $x1 = ($x1+$x2)/2;
-  $y1 = -0.8*$dy;
-  print CSH "pstext -JX -R0/1/0/1 -N -K -O -V ${origin_dots} >>$psfile<<EOF
+    $x1 = ($x1+$x2)/2;
+    $y1 = -0.8*$dy;
+    print CSH "pstext -JX -R0/1/0/1 -N -K -O -V ${origin_dots} >>$psfile<<EOF
 $x1 $ytxt[4] $fsize2 0 $fontno CM pos              neg
 $x1 $ytxt[3] $fsize1 0 $fontno CM $sv3
 $x1 $ytxt[2] $fsize1 0 $fontno CM $sv2
 $x1 $ytxt[1] $fsize1 0 $fontno CM $sv1
 $x1 $ytxt[0] $fsize2 0 $fontno CM $unit_rot
 EOF\n";
-  #-----------------------------
+    #-----------------------------
 
-}
+    print CSH "gmtset MEASURE_UNIT inch\n";
 
-if ( ($idata >= 60 and $idata < 80) || ($idata >= 20 && $idata < 30) ) {
-  $epoles = "${vel_dir0}/${name}_epole_mean_points.dat";
-  if (not -f $epoles) { die("Check if $epoles exist or not\n") }
-  print CSH "psxy $epoles $J1 $R1 $B $poleinfo1 -K -O -V >>$psfile\n";
-}
+  }  # plot euler poles as dots
 
-if ($idata == 11 and $iregion == 10) {
-print CSH "psxy $J1 $R1 $B $poleinfo1 -K -O -V >>$psfile<<EOF\n -170.6477 -41.5308\nEOF\n";
-}
+  if ( ($idata >= 60 and $idata < 80) || ($idata >= 20 && $idata < 30) ) {
+    $epoles = "${vel_dir0}/${name}_epole_mean_points.dat";
+    if (not -f $epoles) {
+      die("Check if $epoles exist or not\n");
+    }
+    print CSH "psxy $epoles $J1 $R1 $B $poleinfo1 -K -O -V >>$psfile\n";
+  }
 
-# plot spline centers
-#print CSH "psxy ${spline_centers} $J1 $R1 $sinfo -K -O -V >> $psfile\n";
+  if ($idata == 11 and $iregion == 10) {
+    print CSH "psxy $J1 $R1 $B $poleinfo1 -K -O -V >>$psfile<<EOF\n -170.6477 -41.5308\nEOF\n";
+  }
 
-print CSH "pstext -N $J_title $R_title -K -O -V >>$psfile<<EOF\n $x_title $z_title $fsize_title 0 $fontno CM $title\nEOF\n";
-print CSH "pstext -N -JX10 -R0/1/0/1 -O -V >>$psfile<<EOF\n 10 10 10 0 1 CM junk\nEOF\n";  # FINISH
+  # plot spline centers
+  #print CSH "psxy ${spline_centers} $J1 $R1 $sinfo -K -O -V >> $psfile\n";
 
-print CSH "echo done with $psfile\n";
-print CSH "convert $psfile $jpgfile\n";
-if($ixv==1) {print CSH "gv $psfile &\n"}
+  print CSH "pstext -N $J_title $R_title -K -O -V >>$psfile<<EOF\n $x_title $z_title $fsize_title 0 $fontno CM $title\nEOF\n";
+  print CSH "pstext -N -JX10 -R0/1/0/1 -O -V >>$psfile<<EOF\n 10 10 10 0 1 CM junk\nEOF\n"; # FINISH
 
-}  # for $w
+  print CSH "echo done with $psfile\n";
+  print CSH "convert $psfile $jpgfile\n";
+  if ($ixv==1) {
+    print CSH "gv $psfile &\n";
+  }
+
+}				# for $w
 }
 
 #==============================
@@ -864,7 +885,7 @@ $Bscale  = sprintf("-B%2.2f:\"Dilatation rate, 10\@+%i\@+ yr\@+-1\@+\": -E10p",$
 
 print CSH "psbasemap $J1 $R1 $B -K -V -P $origin > $psfile\n";  # START
 print CSH "awk '{print \$1,\$2,\$4/$norm2}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-print CSH "grdimage $grdfile $R1 $J1 -C$cptdilat -T -K -O -V >> $psfile\n";
+print CSH "grdimage $grdfile $R1 $J1 -C$cptdilat -Sn -K -O -V >> $psfile\n";
 if ($imask==1) {
   print CSH "echo mask file is ${mask_file}\n";
   print CSH "psmask ${mask_file} $R1 $J1 $mask_info -K -O -V >> $psfile\n";
@@ -902,7 +923,7 @@ $Bscale  = sprintf("-B%2.2f:\"Max strain rate, 10\@+%i\@+ yr\@+-1\@+\": -Ef10p",
 
 print CSH "psbasemap $J1 $R1 $B -K -V -P $origin > $psfile\n";  # START
 print CSH "awk '{print \$1,\$2,\$7/$norm5}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-print CSH "grdimage $grdfile $R1 $J1 -C$cptfile5 -T -K -O -V >> $psfile\n";
+print CSH "grdimage $grdfile $R1 $J1 -C$cptfile5 -Sn -K -O -V >> $psfile\n";
 if ($imask==1) {
   print CSH "echo mask file is ${mask_file}\n";
   print CSH "psmask ${mask_file} $R1 $J1 $mask_info -K -O -V >> $psfile\n";
@@ -940,7 +961,7 @@ $Bscale  = "-B$ctick:\" Surface Vel Mag (mm/yr)\": -Ef10p";
 
 print CSH "psbasemap $J1 $R1 $B -K -V -P $origin > $psfile\n";  # START
 print CSH "awk '{print \$1,\$2,\$3}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-print CSH "grdimage $grdfile $R1 $J1 -C$cptvmag -T -K -O -V >> $psfile\n";
+print CSH "grdimage $grdfile $R1 $J1 -C$cptvmag -Sn -K -O -V >> $psfile\n";
 if ($imask==1) {
   print CSH "echo mask file is ${mask_file}\n";
   print CSH "psmask ${mask_file} $R1 $J1 $mask_info -K -O -V >> $psfile\n";
@@ -1003,7 +1024,8 @@ if ($imap==1) {
 
 $fname = "${pname}_geometry";
 $psfile = "$fname.ps"; $jpgfile = "$fname.jpg";
-$title = "Geodetic observations used in SCEC Crustal Motion Map";
+$title = "$tag: Observations and basis functions";
+#$title = "Geodetic observations used in SCEC Crustal Motion Map";
 
 print CSH "psbasemap $J1 $R1 $B -K -V -P $origin > $psfile\n";  # START
 if ($imask==1) {
@@ -1040,69 +1062,77 @@ if($ixv==1) {print CSH "gv $psfile &\n"}
 
 if ($imap2==1) {
 
-$fname = "${pname}_geometry2";
-$psfile = "$fname.ps"; $jpgfile = "$fname.jpg";
-$title = "  ";
+  $fname = "${pname}_geometry2";
+  $psfile = "$fname.ps"; $jpgfile = "$fname.jpg";
+  $title = "  ";
 
-# color scale for qmax field
-$cptqmax = "color_qmax.cpt";
-$Tq = "-T5.5/9.5/1"; $crad0 = 40;
-#$Tq = "-T5.5/8.5/1"; $crad0 = 35;
-print CSH "makecpt -Cseis $Tq -D -I > $cptqmax\n";
+  # color scale for qmax field
+  $cptqmax = "color_qmax.cpt";
+  $Tq = "-T5.5/9.5/1"; $crad0 = 40;
+  #$Tq = "-T5.5/8.5/1"; $crad0 = 35;
+  print CSH "makecpt -Cseis $Tq -D -I > $cptqmax\n";
 
-print CSH "psbasemap $J1 $R1 $B -K -V -P $origin > $psfile\n";  # START
+  print CSH "psbasemap $J1 $R1 $B -K -V -P $origin > $psfile\n"; # START
 
-# plot colormap showing maxq at each plotting point
-$qmax_field = "${vel_dir0}/${name}_qmax_plotting.dat";
-if (not -f $qmax_field) { die("Check if qmax_field $qmax_field exist or not\n")}
+  # plot colormap showing maxq at each plotting point
+  $qmax_field = "${vel_dir0}/${name}_qmax_plotting.dat";
+  if (not -f $qmax_field) {
+    die("Check if qmax_field $qmax_field exist or not\n");
+  }
 
-print CSH "awk '{print \$1,\$2,\$3}' $qmax_field | surface -G$grdfile ${interp_surf} $R1\n";
-print CSH "grdimage $grdfile $R1 $J1 -C$cptqmax -T -K -O -V >> $psfile\n";
+  print CSH "awk '{print \$1,\$2,\$3}' $qmax_field | surface -G$grdfile ${interp_surf} $R1\n";
+  print CSH "grdimage $grdfile $R1 $J1 -C$cptqmax -Sn -K -O -V >> $psfile\n";
 
-# plot station locations
-$ginfo = "-Si6p -G0/255/255 -W0.5p,0/0/0";
-print CSH "psxy $gps_pts $J1 $R1 $ginfo -K -V -O >> $psfile\n";
+  # plot station locations
+  $ginfo = "-Si6p -G0/255/255 -W0.5p,0/0/0";
+  print CSH "psxy $gps_pts $J1 $R1 $ginfo -K -V -O >> $psfile\n";
 
-# plot spline gridpoints
+  # plot spline gridpoints
   $qvec = "${vel_dir0}/${name}_qvec.dat";
-  if (not -f $qvec) { die("Check if qvec $qvec exist or not\n")}
+  if (not -f $qvec) {
+    die("Check if qvec $qvec exist or not\n");
+  }
   open(IN,"$qvec"); @qvecs = <IN>; print "\n @qvecs\n";
   $numq = @qvecs;
   $crad = $crad0;
   for ($i = 1; $i <= $numq; $i = $i+1) {
-     $q = @qvecs[$i-1]; chomp($q);
-     $stq = sprintf("%2.2i",$q);
-     $qcen = "${vel_dir0}/${name}_gridpoints_q${stq}.dat";
-     if (not -f $qcen) { die("Check if qcen $qcen exist or not\n")}
-     $crad = $crad - 5;
-     $ginfo = "-Sc${crad}p -W0.5p,0/0/0";
-     print CSH "awk '{print \$1,\$2}' $qcen | psxy $qcen $J1 $R1 $ginfo -K -V -O >> $psfile\n";
+    $q = @qvecs[$i-1]; chomp($q);
+    $stq = sprintf("%2.2i",$q);
+    $qcen = "${vel_dir0}/${name}_gridpoints_q${stq}.dat";
+    if (not -f $qcen) {
+      die("Check if qcen $qcen exist or not\n");
+    }
+    $crad = $crad - 5;
+    $ginfo = "-Sc${crad}p -W0.5p,0/0/0";
+    print CSH "awk '{print \$1,\$2}' $qcen | psxy $qcen $J1 $R1 $ginfo -K -V -O >> $psfile\n";
   }
 
-print CSH "pscoast $J1 $R1 $B $coast_infoK -K -O -V >> $psfile\n";
-#print CSH "psxy $J1 $R1 ${plate_file} $plate_infoR -K -O -V >> $psfile\n";
+  print CSH "pscoast $J1 $R1 $B $coast_infoK -K -O -V >> $psfile\n";
+  #print CSH "psxy $J1 $R1 ${plate_file} $plate_infoR -K -O -V >> $psfile\n";
 
-# plot legend
+  # plot legend
   $crad = $crad0;
   for ($i = 1; $i <= $numq; $i = $i+1) {
-     $q = @qvecs[$i-1]; chomp($q);
-     $crad = $crad - 5;
-     $ginfo = "-Sc${crad}p -W0.5p,0/0/0 -N";
-     $xtxt = $i*0.2;
-     $ytxt = 0;
-     print CSH "psxy -JX1/1 -R0/1/0/1 $ginfo -K -O -V $origin_arrow >>$psfile<<EOF\n$xtxt $ytxt\nEOF\n";
+    $q = @qvecs[$i-1]; chomp($q);
+    $crad = $crad - 5;
+    $ginfo = "-Sc${crad}p -W0.5p,0/0/0 -N";
+    $xtxt = $i*0.2;
+    $ytxt = 0;
+    print CSH "psxy -JX1/1 -R0/1/0/1 $ginfo -K -O -V $origin_arrow >>$psfile<<EOF\n$xtxt $ytxt\nEOF\n";
 
   }
 
-print CSH "psscale -C$cptqmax $Dscale $Bscale -K -O -V >> $psfile\n";
+  print CSH "psscale -C$cptqmax $Dscale $Bscale -K -O -V >> $psfile\n";
 
-print CSH "pstext -N $J_title $R_title -K -O -V >>$psfile<<EOF\n $x_title $z_title $fsize_title 0 $fontno CM $title\nEOF\n";
-#--------
-print CSH "pstext -N -JX10 -R0/1/0/1 -O -V >>$psfile<<EOF\n 10 10 10 0 1 CM junk\nEOF\n";  # FINISH
+  print CSH "pstext -N $J_title $R_title -K -O -V >>$psfile<<EOF\n $x_title $z_title $fsize_title 0 $fontno CM $title\nEOF\n";
+  #--------
+  print CSH "pstext -N -JX10 -R0/1/0/1 -O -V >>$psfile<<EOF\n 10 10 10 0 1 CM junk\nEOF\n"; # FINISH
 
-print CSH "echo done with $psfile\n";
-print CSH "convert $psfile $jpgfile\n";
-if($ixv==1) {print CSH "gv $psfile &\n"}
+  print CSH "echo done with $psfile\n";
+  print CSH "convert $psfile $jpgfile\n";
+  if ($ixv==1) {
+    print CSH "gv $psfile &\n";
+  }
 
 }
 
@@ -1110,8 +1140,10 @@ if($ixv==1) {print CSH "gv $psfile &\n"}
 # from here on out, use portrait plotting with 2-column figures
 
 @labs = ("A","B","C","D");
-$fault_info_k    = "-M -W1.0p,0/0/0";
-$fault_info_r    = "-M -W1.0p,255/0/0";
+$fault_info_k    = "-m -W1.0p,0/0/0";
+$fault_info_r    = "-m -W1.0p,255/0/0";
+$dX1 = 0; $dY1 = 0;
+$dX2 = 0; $dY2 = 0;
 
 if ($iregion == 1 ) {
   $wid = 3; $vscale = 0.005;
@@ -1166,7 +1198,7 @@ $J_title = "-JX${wid}";
 $shift = "-X$dX1 -Y$dY1";
 $shift2 = "-X-$dX2 -Y$dY2";
 
-print CSH "gmtset BASEMAP_TYPE plain PAPER_MEDIA letter PLOT_DEGREE_FORMAT D TICK_LENGTH $tick LABEL_FONT_SIZE 10 ANOT_FONT_SIZE 10  HEADER_FONT $fontno ANOT_FONT $fontno LABEL_FONT $fontno HEADER_FONT_SIZE 10 FRAME_PEN 1p TICK_PEN 1p D_FORMAT \%lg\n";
+print CSH "gmtset BASEMAP_TYPE plain PAPER_MEDIA letter PLOT_DEGREE_FORMAT D MEASURE_UNIT inch TICK_LENGTH $tick LABEL_FONT_SIZE 10 ANOT_FONT_SIZE 10  HEADER_FONT $fontno ANOT_FONT $fontno LABEL_FONT $fontno HEADER_FONT_SIZE 10 FRAME_PEN 1p TICK_PEN 1p D_FORMAT \%lg\n";
 
 #==============================
 
@@ -1180,7 +1212,7 @@ if ($ivel3D==1) {
 
   print CSH "psbasemap $J1 $R1 $B -K -V -P $origin > $psfile\n"; # START
   print CSH "awk '{print \$1,\$2,\$3}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-  print CSH "grdimage $grdfile $R1 $J1 -C$cptvmag -T -K -O -V >> $psfile\n";
+  print CSH "grdimage $grdfile $R1 $J1 -C$cptvmag -Sn -K -O -V >> $psfile\n";
   if ($imask==1) {
     print CSH "echo mask file is ${mask_file}\n";
     print CSH "psmask ${mask_file} $R1 $J1 $mask_info -K -O -V >> $psfile\n";
@@ -1233,7 +1265,7 @@ if ($ivel3D==1) {
 
   print CSH "psbasemap $J1 $R1 $B -K -V -O $shift >> $psfile\n";
   print CSH "awk '{print \$1,\$2,\$8}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-  print CSH "grdimage $grdfile $R1 $J1 -C$cptup -T -K -O -V >> $psfile\n";
+  print CSH "grdimage $grdfile $R1 $J1 -C$cptup -Sn -K -O -V >> $psfile\n";
   print CSH "psscale -C$cptup $Dscale $Bscale -K -O -V >> $psfile\n";
   if ($imask==1) {
     print CSH "echo mask file is ${mask_file}\n";
@@ -1287,7 +1319,7 @@ if ($igc==1) {print CSH "psxy $J1 $R1 ${gc_boundary} $plate_infoW -K -O -V >> $p
 
 #print CSH "psbasemap $J1 $R1 $B -K -V -P $origin > $psfile\n";  # START
 #print CSH "awk '{print \$1,\$2,\$3}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-#print CSH "grdimage $grdfile $R1 $J1 -C$cptvmag -T -K -O -V >> $psfile\n";
+#print CSH "grdimage $grdfile $R1 $J1 -C$cptvmag -Sn -K -O -V >> $psfile\n";
 #if ($imask==1) {
 #  print CSH "echo mask file is ${mask_file}\n";
 #  print CSH "psmask ${mask_file} $R1 $J1 $mask_info -K -O -V >> $psfile\n";
@@ -1336,7 +1368,7 @@ if ($igc==1) {print CSH "psxy $J1 $R1 ${gc_boundary} $plate_infoW -K -O -V >> $p
 ## make grd file, then plot
 ##print CSH "awk '{print \$1,\$2,\$5}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
 #print CSH "awk '{print \$1,\$2,\$5/$norm3}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-#print CSH "grdimage $grdfile $R1 $J1 -C$cptstrain -T -K -O -V >> $psfile\n";
+#print CSH "grdimage $grdfile $R1 $J1 -C$cptstrain -Sn -K -O -V >> $psfile\n";
 
 #if ($imask==1) {
 #  print CSH "echo mask file is ${mask_file}\n";
@@ -1399,7 +1431,7 @@ if ($igc==1) {print CSH "psxy $J1 $R1 ${gc_boundary} $plate_infoW -K -O -V >> $p
    
 #}
 #print CSH "awk '{print \$1,\$2,\$3}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-#print CSH "grdimage $grdfile $R1 $J1 -C$cptvmag -T -K -O -V >> $psfile\n";
+#print CSH "grdimage $grdfile $R1 $J1 -C$cptvmag -Sn -K -O -V >> $psfile\n";
 
 #if($k==1) {
 #print CSH "echo mask file is ${mask_file}\n";
@@ -1459,7 +1491,7 @@ if ($igc==1) {print CSH "psxy $J1 $R1 ${gc_boundary} $plate_infoW -K -O -V >> $p
 ## make grd file, then plot
 ##print CSH "awk '{print \$1,\$2,\$5}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
 #print CSH "awk '{print \$1,\$2,\$5/$norm3}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-#print CSH "grdimage $grdfile $R1 $J1 -C$cptstrain -T -K -O -V >> $psfile\n";
+#print CSH "grdimage $grdfile $R1 $J1 -C$cptstrain -Sn -K -O -V >> $psfile\n";
 
 #if($k==1) {
 #print CSH "echo mask file is ${mask_file}\n";
@@ -1531,7 +1563,7 @@ if ($igc==1) {print CSH "psxy $J1 $R1 ${gc_boundary} $plate_infoW -K -O -V >> $p
 
 #print CSH "psbasemap $J1 $R1 $B -K -V -O $shift >> $psfile\n";
 #print CSH "awk '{print \$1,\$2,\$3}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-#print CSH "grdimage $grdfile $R1 $J1 -C$cptvmag -T -K -O -V >> $psfile\n";
+#print CSH "grdimage $grdfile $R1 $J1 -C$cptvmag -Sn -K -O -V >> $psfile\n";
 #if ($imask==1) {
 #  print CSH "echo mask file is ${mask_file}\n";
 #  print CSH "psmask ${mask_file} $R1 $J1 $mask_info -K -O -V >> $psfile\n";
@@ -1567,13 +1599,13 @@ if ($igc==1) {print CSH "psxy $J1 $R1 ${gc_boundary} $plate_infoW -K -O -V >> $p
 # from here on out, use portrait plotting with 3-column figures
 
 @labs = ("A","B","C","D");
-$fault_info_k  = "-M -W0.5p,0/0/0";
-$fault_info_r  = "-M -W0.5p,255/0/0";
+$fault_info_k  = "-m -W0.5p,0/0/0";
+$fault_info_r  = "-m -W0.5p,255/0/0";
 $coast_infoK   = "$coast_res -W1.0p,0/0/0 -Na/1.0p";
 $coast_infoW   = "$coast_res -W1.0p,255/255/255 -Na/1.0p,255/255/255,t";
-$plate_infoK   = "-M -W1p,0/0/0";
-$plate_infoW   = "-M -W1p,255/255/255";
-$plate_infoR   = "-M -W1p,255/0/0";
+$plate_infoK   = "-m -W1p,0/0/0";
+$plate_infoW   = "-m -W1p,255/255/255";
+$plate_infoR   = "-m -W1p,255/0/0";
 
 if ($iregion == 1 ) {
   $wid = 2.0; $vscale = 0.005;
@@ -1772,7 +1804,7 @@ if ($imulti_vel == 1) {
     #print CSH "awk '{print \$1,\$2,\$3}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
     if ($icolor==1) {
       print CSH "awk '{print \$1,\$2,\$${col}}' $vu_file | surface -G$grdfile ${interp_surf} $R1\n";
-      print CSH "grdimage $grdfile $R1 $J1 -C$cptfile -T -K -O -V >> $psfile\n";
+      print CSH "grdimage $grdfile $R1 $J1 -C$cptfile -Sn -K -O -V >> $psfile\n";
     }
 
     if ($nline > 0) {
@@ -1816,7 +1848,7 @@ if ($imulti_vel == 1) {
     if ($icolor==1) {
       print CSH "awk '{print \$1,\$2,\$${col}}' $vs_file | surface -G$grdfile ${interp_surf} $R1\n";
       #print CSH "surface ${vs_file} -G$grdfile ${interp_surf} $R1\n";
-      print CSH "grdimage $grdfile $R1 $J1 -C$cptfile -T -K -O -V >> $psfile\n";
+      print CSH "grdimage $grdfile $R1 $J1 -C$cptfile -Sn -K -O -V >> $psfile\n";
     }
 
     #print "\n $cptfile\n $vs_file\n column ${col}\n"; die("testing");
@@ -1859,7 +1891,7 @@ if ($imulti_vel == 1) {
     if ($icolor==1) {
       print CSH "awk '{print \$1,\$2,\$${col}}' $ve_file | surface -G$grdfile ${interp_surf} $R1\n";
       #print CSH "surface ${ve_file} -G$grdfile ${interp_surf} $R1\n";
-      print CSH "grdimage $grdfile $R1 $J1 -C$cptfile -T -K -O -V >> $psfile\n";
+      print CSH "grdimage $grdfile $R1 $J1 -C$cptfile -Sn -K -O -V >> $psfile\n";
     }
 
     if ($nline > 0) {
@@ -1973,7 +2005,7 @@ if ($imulti_strain_inc == 1 || $imulti_strain_cum == 1) {
     #print CSH "psbasemap $J1 $R1 $B $shift1 -K -O -V >> $psfile\n";
     if ($icolor==1) {
       print CSH "awk '{print \$1,\$2,\$${col}/$norm}' $multi_strain | surface -G$grdfile ${interp_surf} $R1\n";
-      print CSH "grdimage $grdfile $R1 $J1 -C$cptfile -T -K -O -V >> $psfile\n";
+      print CSH "grdimage $grdfile $R1 $J1 -C$cptfile -Sn -K -O -V >> $psfile\n";
     }
 
     if ($nline > 0) {
@@ -2010,7 +2042,7 @@ if ($imulti_strain_inc == 1 || $imulti_strain_cum == 1) {
     print CSH "psbasemap $J1 $R1 $B $shift1 -K -O -V >> $psfile\n";
     if ($icolor==1) {
       print CSH "awk '{print \$1,\$2,\$${col}/$norm}' $multi_strain | surface -G$grdfile ${interp_surf} $R1\n";
-      print CSH "grdimage $grdfile $R1 $J1 -C$cptfile -T -K -O -V >> $psfile\n";
+      print CSH "grdimage $grdfile $R1 $J1 -C$cptfile -Sn -K -O -V >> $psfile\n";
     }
 
     if ($nline > 0) {
@@ -2049,7 +2081,7 @@ if ($imulti_strain_inc == 1 || $imulti_strain_cum == 1) {
     print CSH "psbasemap $J1 $R1 $B $shift1 -K -O -V >> $psfile\n";
     if ($icolor==1) {
       print CSH "awk '{print \$1,\$2,\$${col}/$norm}' $multi_strain | surface -G$grdfile ${interp_surf} $R1\n";
-      print CSH "grdimage $grdfile $R1 $J1 -C$cptfile -T -K -O -V >> $psfile\n";
+      print CSH "grdimage $grdfile $R1 $J1 -C$cptfile -Sn -K -O -V >> $psfile\n";
     }
 
     if ($nline > 0) {
@@ -2118,7 +2150,7 @@ if ($ivel3Dall==1) {
     }
     if ($icolor==1) {
       print CSH "awk '{print \$1,\$2,\$$col}' $strain_mag | surface -G$grdfile ${interp_surf} $R1\n";
-      print CSH "grdimage $grdfile $R1 $J1 -C$cpts[$i-1] -T -K -O -V >> $psfile\n";
+      print CSH "grdimage $grdfile $R1 $J1 -C$cpts[$i-1] -Sn -K -O -V >> $psfile\n";
     }
     print CSH "psscale -C$cpts[$i-1] $Dscale $Bscale -K -O -V >> $psfile\n";
     if ($imask==1) {
