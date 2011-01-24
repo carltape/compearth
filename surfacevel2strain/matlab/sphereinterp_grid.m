@@ -1,10 +1,10 @@
 %
 % function spline_tot = sphereinterp_grid(dlon,dlat,ax0,qparm)
-% Carl Tape, 04-Jan-2011
+% Carl Tape and Pablo Muse, 04-Jan-2011
 %
-% Estimate a smooth field on the sphere from discrete points using
-% spherical wavelets. This is a stripped-down version of the procedure
-% presented in SURFACEVEL2STRAIN (Tape et al. 2009, GJI).
+% This function obtains the centerpoints and scale indices for a set of
+% spherical wavelet basis functions, given a set of discrete observations
+% on the sphere.
 %
 % INPUT
 %   dlon    longitude of data points
@@ -20,7 +20,7 @@
 %   q       grid index (higher q is desner grid)
 %
 % calls wavelet_thresh.m
-% called by xxx
+% called by sphereinterp.m
 %
 
 function spline_tot = sphereinterp_grid(dlon,dlat,ax0,qparm)
@@ -134,7 +134,7 @@ ang_support_meters(qmin0+1),qmin0,2*Lscale));
 
 if qmin < qmin0
     disp(sprintf('WARNING: qmin (%i) < qmin0 (%i)',qmin,qmin0));
-    disp(sprintf('consider using qmin = %i',qmin));
+    disp(sprintf('consider using qmin = %i',qmin0));
 end
 
 % user picks the max allowable grid (finest scale basis functions)
@@ -278,7 +278,6 @@ for ip = 1:nump
     stis{ip} = [' j = ' num2str(if1) ' to ' num2str(if2) ' (' num2str(nvec(ip)) ')'];
     stit = [stqs{ip} ',' stis{ip}]; disp(stit);
 end
-%axis equal, axis(ax0);
 
 % indexing for multi-scale strain and multi-scale residual field
 id2 = cumsum(nvec(2:end));
@@ -288,8 +287,10 @@ iqvec2 = [qvec(1)*ones(length(ipran),1) ipran];
 
 % plot ALL spline gridpoints
 figure; hold on;
-plot(glon,glat,'.'); plot(ax1([1 2 2 1 1]), ax1([3 3 4 4 3]), 'k');
-axis equal, axis tight; title({[slabel ' :  ' stqran],[strsh1 strsh2]});
+plot(glon,glat,'.');
+%plot(ax1([1 2 2 1 1]), ax1([3 3 4 4 3]), 'k');
+axis equal, axis tight;
+title({[slabel ' :  ' stqran],[strsh1 strsh2]},'interpreter','none');
 xlabel(' Latitude'); ylabel(' Longitude');
 orient tall, wysiwyg, fontsize(10)
 
@@ -302,9 +303,10 @@ for ip = 1:nump
     if sum(inds) > 0
         plot(glon(inds),glat(inds),'.');
     end
-    axis equal, axis(ax1);
+    axis equal
+    %axis(ax1);
     title({stqs{ip}, stis{ip}});
 end
-orient tall, wysiwyg, fontsize(8)
+orient tall, wysiwyg, fontsize(9)
 
 %========================================================

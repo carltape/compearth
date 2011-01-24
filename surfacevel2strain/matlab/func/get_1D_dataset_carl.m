@@ -1,11 +1,14 @@
 %
-% 
+% [dlon,dlat,d,dsig,ax0,slabel,ulabel,iall] = get_1D_dataset_carl(ropt,dopt)
 %
-% calls sphereinterp_grid.m, sphereinterp_est.m, utm2ll.m
-% called by xxx
+% This loads a set of discrete (1D) observations on the sphere
+% that we will use to estimate a smooth continuous field.
+%
+% calls xxx
+% called by sphereinterp.m
 %
 
-function [dlon,dlat,d,dsig,ax0,slabel,iall] = get_1D_dataset_carl(ropt,dopt)
+function [dlon,dlat,d,dsig,ax0,slabel,ulabel,iall] = get_1D_dataset_carl(ropt,dopt)
 
 % GEOGRAPHIC REGION 
 % switch ropt
@@ -37,10 +40,10 @@ if dopt == 1
     % 7: Gilbert (2010)
     % 8: digitized points from SJB gocad project
 
-    idata = 3;  % KEY: refers to type of combination of data sets (see below)
+    % USER INPUT: refers to type of combination of data sets (see below)
+    idata = 3;
     
     stmlabs = {'crust2','EARS','salton','bryant-jones','chulick-mooney','yan-clayton','gilbert','gocad'};
-    dlabel = sprintf('moho_%2.2i',idata);
     
     % 1: Crust2.0 global model
     [xlon_crust2,ylat_crust2,zdep_crust2] = read_moho_crust2;
@@ -185,30 +188,36 @@ if dopt == 1
     dlat = ylat_all;
     d = zdep_all;
     dsig = zdep_sigma_all;
+    dlabel = sprintf('moho%2.2i',idata);
+    ulabel = 'zdep, km';
     
 elseif dopt==2
-    dlabel = 'USGS_xtalbasement';
     [dlon,dlat,zdep,zdep_sigma] = read_basement_cal;
     d = zdep;
     dsig = zdep_sigma;
+    dlabel = 'USGSxtalbasement';
+    ulabel = 'zdep, km';
     
 elseif dopt==3
-    dlabel = 'maricopa_basement';
     [dlon,dlat,zdep,zdep_sigma] = read_basement_maricopa;
     d = zdep;
     dsig = zdep_sigma;
+    dlabel = 'maricopa_basement';
+    ulabel = 'zdep, km';
     
 elseif dopt==4
-    dlabel = 'base_tertiary';
     [dlon,dlat,zdep,zdep_sigma] = read_basement_sjb; 
     d = zdep;
     dsig = zdep_sigma;
+    dlabel = 'base_tertiary';
+    ulabel = 'zdep, km';
     
 elseif dopt==5
-    dlabel = 'USGS_grav';
     [dlon,dlat,dg,gsig] = read_grav_akusgs(ax0);
     d = dg(:,5);
     dsig = gsig;
+    dlabel = 'USGSgrav';
+    ulabel = 'dgrav, mgal';
 end
 
 % subset
@@ -221,6 +230,7 @@ if dopt==1, iall = iall(inds); end
 
 if isempty(dlon), error('get_1D_dataset.m: zero observations within specified region'); end
 
+% label for files: geographic region, then data set
 slabel = [rlabel  '_' dlabel];
 
 ifig = 1;

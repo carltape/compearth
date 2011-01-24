@@ -1,11 +1,16 @@
 %
-% moho_model.m
-% Carl Tape, 17-Jan-2011
+% sphereinterp.m
+% Carl Tape and Pablo Muse, 17-Jan-2011
 %
-% Run script for sphereinterp_grid.m and sphereinterp_est.m.
+% This estimates a smooth field on the sphere from discrete points using
+% spherical wavelets. This is the 1D version of surfacevel2strain.m,
+% 1D being the number of components of the discrete observations.
 %
-% calls sphereinterp_grid.m, sphereinterp_est.m, utm2ll.m
-% called by xxx
+% See surfacevel2strain/USER_INFO/surfacevel2strain_notes.pdf for details,
+% including running the example below.
+%
+% calls get_1D_dataset.m, sphereinterp_grid.m, sphereinterp_est.m
+% called by sphereinterp.m
 %
 
 clc
@@ -13,42 +18,44 @@ clear
 close all
 format short, format compact
 
-% TEMP
-path(path,'/home/carltape/matlab/scripts');
-
-earthr = 6371*1e3;      % earth radius (m)
-deg = 180/pi;
-msize = 6^2;
-
-iwrite = 0;
-iwavelet = 1;   % =1 for estimation; =0 to view data only
-idata = 1;      % index for dataset
-
-% 1-1 california moho
-% 2-1 socal moho
-% 1-2 USGS crystaline basement
-% 1-4 SJB base Tertiary
-% 3-3 Maricopa basement
-% 4-5 nenana gravity
-ropt  = input(' Type an index corresponding to a region (1=cal, 2=socal, 3=maricopa, 4=nenana): ');
-dopt  = input(' Type an index corresponding to a dataset (1=moho, 2,3,4, 5=grav): ');
+path(path,[pwd '/util']);
+path(path,[pwd '/func']);
+%path(path,'/home/carltape/matlab/scripts');  % TEMP
 
 %========================================================
-% GET 1D DATA SET
+% USER PARAMETERS
 
-[dlon,dlat,d,dsig,ax0,slabel] = get_1D_dataset_carl(ropt,dopt);
+iwavelet = 1;   % =1 for estimation; =0 to view data only
+iwrite = 0;
+
+ropt  = input(' Type an index corresponding to a region (1=socal): ');
+dopt  = input(' Type an index corresponding to a dataset (1=moho): ');
+[dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt);
+dir_output = '/home/carltape/compearth/surfacevel2strain/matlab_output/';
+
+% % 1-1 california moho
+% % 2-1 socal moho
+% % 1-2 USGS crystaline basement
+% % 1-4 SJB base Tertiary
+% % 3-3 Maricopa basement
+% % 4-5 nenana gravity
+% ropt  = input(' Type an index corresponding to a region (1=cal, 2=socal, 3=maricopa, 4=nenana): ');
+% dopt  = input(' Type an index corresponding to a dataset (1=moho,2,3,4,5=grav): ');
+% [dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset_carl(ropt,dopt);
+% dir_output = '/home/carltape/MOHO/WAVELET/MATLAB_EST/';
 
 %====================================================================
 % ESTIMATE A SMOOTH MOHO MAP USING SPHERICAL WAVELETS
 
 if iwavelet==1
     
+    % NOTE: Only option 1 is available as the example
     switch dopt
         case 1            
             qmin = 2; qmax = 8; % qmax = 8 or 9
             nlam = 40; ilampick = 2;
             ntrsh = 3;
-            nx = 200;
+            nx = 100;
         case 2           
             qmin = 2; qmax = 7;
             nlam = 40; ilampick = -10;  % hand-pick lambda
@@ -61,7 +68,7 @@ if iwavelet==1
             qmin = 5; qmax = 11;   % qmax = 11 or 12
             nlam = 40; ilampick = 1;
             ntrsh = 3;
-            nx = 100;
+            nx = 200;
             file0 = '/home/carltape/MOHO/DATA/SJB_gocad/SouthernBasement_poly.dat';
             [polyx,polyy] = textread(file0,'%f%f');
             [polylon,polylat] = utm2ll(polyx,polyy,szone,1);    
@@ -83,34 +90,44 @@ if iwavelet==1
             nx = 200;
     end
     
-    nx = 50; qmin = 2; qmax = 7;   % testing
+    nx = 50; qmin = 3; qmax = 8;   % testing
+    
     qsec = round(mean([qmin qmax]));
     qparm = {qmin,qsec,qmax,ntrsh};
     rparm = {nlam,ilampick};
-    if exist('polylon','var'), pparm = {nx,polylon,polylat}; else pparm = {nx}; end
+    if exist('polylon','var')
+        pparm = {nx,ulabel,polylon,polylat};
+    else
+        pparm = {nx,ulabel};
+    end
     
     % KEY COMMAND: call sphereinterp.m
     %[dest,dest_plot,lam0,dlon_plot,dlat_plot,na,nb] = ...
     %    sphereinterp(dlon,dlat,d,dsig,ax0,qparm,rparm,pparm);
     
     [spline_tot] = sphereinterp_grid(dlon,dlat,ax0,qparm);
+    ndata = length(dlon);
+    ngrid = length(spline_tot);
     
     [dest,dest_plot,lam0,dlon_plot,dlat_plot,na,nb] = ...
         sphereinterp_est(spline_tot,dlon,dlat,d,dsig,ax0,rparm,pparm);
-
+    
+    disp('  ');
+    disp(sprintf('Number of observations, ndata = %i',ndata));
+    disp(sprintf('Number of basis functions, ngrid = %i',ngrid));
+    disp('For testing purposes, try decreasing one of these:');
+    disp(sprintf('  qmax = %i, the densest grid for basis functions',qmax));
+    disp(sprintf('  nx = %i, the grid density for plotting',nx));
+    disp(sprintf('  ndata = %i, the number of observations (or ax0)',ndata));
 end
 
 %----------------------------------------------------------------
 % WRITE FILES
 
 if and(iwavelet==1,iwrite==1)
-    %idata = 1;   % index for input data set
-    %igrid = 1;   % index for ax0
-    ftag = sprintf('%s_q%2.2i_q%2.2i_id%2.2i_ig%2.2i',slabel,qmin,qmax,idata,igrid);
-    ndata = length(dest);
+    ftag = sprintf('%s_q%2.2i_q%2.2i_ir%2.2i_id%2.2i',slabel,qmin,qmax,ropt,dopt);
     nplot = length(dest_plot);
     
-    dir_output = '/home/carltape/MOHO/WAVELET/MATLAB_EST/';
     %flab = [dir_output slabel '_' stqtag{1} '_' sprintf('ic%2.2i_im%2.2i',idata,sub_opt) ];
     flab = [dir_output ftag];
     
@@ -118,11 +135,20 @@ if and(iwavelet==1,iwrite==1)
     
     % data and estimated field
     fid = fopen([flab '.dat'],'w');
+    %stfmt = '%12.6f%12.6f%10.3f%10.3f%10.3f\n';
     stfmt = '%18.8e%18.8e%18.8e%18.8e%18.8e\n';
     for ii=1:ndata
         fprintf(fid,stfmt,dlon(ii),dlat(ii),d(ii),dest(ii),dsig(ii));
     end
     fclose(fid);
+    
+%     % data
+%     fid = fopen([flab '_data.dat'],'w');
+%     stfmt = '%12.6f%12.6f%10.3f%10.3f\n';
+%     for ii=1:ndata
+%         fprintf(fid,stfmt,dlon(ii),dlat(ii),d(ii),dsig(ii));
+%     end
+%     fclose(fid);
 
     % estimated field for a regular grid
     fid = fopen([flab '_plot.dat'],'w');
