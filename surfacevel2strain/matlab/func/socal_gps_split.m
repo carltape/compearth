@@ -19,12 +19,17 @@ lonmax = ax0(2);
 latmin = ax0(3);
 latmax = ax0(4);
 
-% load the SAF for plotting: latsaf, lonsaf, xsaf, ysaf
+% USER: load the SAF for plotting: latsaf, lonsaf, xsaf, ysaf
 % NOTE: San Andreas fault is indexed from NORTH to SOUTH
-%load('/home/carltape/matlab/scripts/safdata2');
-[lonsaf,latsaf,xsay,ysaf] = textread('../gmt/input/safdata2.dat','%f%f%f%f');
-nsaf = length(lonsaf);
-
+gdir = '/home/carltape/compearth/surfacevel2strain/gmt/input/';
+%gdir = '../gmt/input/';
+if exist(gdir)==7
+    [lonsaf,latsaf,xsay,ysaf] = textread([gdir 'safdata2.dat'],'%f%f%f%f');
+    nsaf = length(lonsaf);
+else
+    error(['gdir does not exist: ' gdir]);
+end
+    
 % segment of the SAF that lies within the box
 %isub0 = find(and( latsaf >= latmin, latsaf <= latmax ));
 [isaf_in, isaf_on] = inpolygon(lonsaf,latsaf,ax0([1 2 2 1 1]),ax0([3 3 4 4 3]));
