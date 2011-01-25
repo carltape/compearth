@@ -32,10 +32,6 @@ format short
 format compact
 warning off
 
-% add path to additional matlab scripts
-path(path,[pwd '/util']);
-path(path,[pwd '/func']);
-
 ireg  = input(' Type 1 for new inversion or 0 otherwise: ');
 
 if ireg == 1
@@ -43,23 +39,16 @@ if ireg == 1
     clear
     
     %========================================================
-
-    deg = 180/pi;
-    earthr = 6371*1e3;      % earth radius (m)
-
-    % plotting parameters
-    colors;
-    stype = 'cubic';
-    npts = 100;              % grid density for regular plotting meshes
-    msize = 6^2;            % marker size for circles in scatter plots
-    lontick = [-180:60:180];
-    lattick = [-90:30:90];
-    stks1 = {'vup','vsouth','veast'};
-    stks2 = {'U','V','W'};
-    stks3 = {'norm-vS','norm-vT'};
-
-    %========================================================
     % USER PARAMETERS
+    
+    % base directory
+    bdir = '/home/carltape/compearth/surfacevel2strain/';
+
+    % add path to additional matlab scripts
+    path(path,[bdir 'matlab/util']);
+    path(path,[bdir 'matlab/func']);
+    %path(path,[pwd '/util']);
+    %path(path,[pwd '/func']);
 
     % ANALYSIS
     istore = 1;         % =1 if using a pre-stored velocity field
@@ -83,12 +72,28 @@ if ireg == 1
     stq = num2str(sprintf('%2.2i', q));
 
     % USER: CHANGE THESE
-    dir_base    = '/home/carltape/compearth/surfacevel2strain/';
-    dir_output  = [dir_base 'matlab_output/'];
-    dir_data     = [dir_base 'data/examples/'];
-    %dir_data     = [dir_base 'data/gps_data/'];  % carl
-    %dir_grids   = [dir_base 'fortran/grids_output/full_grids/'];
+    %bdir    = '/home/carltape/compearth/surfacevel2strain/';
+    dir_output  = [bdir 'matlab_output/'];
+    dir_data    = [bdir 'data/examples/'];
+    %dir_data    = [bdir 'data/gps_data/'];  % carl
+    %dir_grids   = [bdir 'fortran/grids_output/full_grids/'];
     %dir_plates  = '/home/carltape/gmt/plates/';
+    
+    %========================================================
+
+    deg = 180/pi;
+    earthr = 6371*1e3;      % earth radius (m)
+
+    % plotting parameters
+    colors;
+    stype = 'cubic';
+    npts = 100;              % grid density for regular plotting meshes
+    msize = 6^2;            % marker size for circles in scatter plots
+    lontick = [-180:60:180];
+    lattick = [-90:30:90];
+    stks1 = {'vup','vsouth','veast'};
+    stks2 = {'U','V','W'};
+    stks3 = {'norm-vS','norm-vT'};
 
     %========================================================
     % LOAD DATAPOINTS
@@ -912,7 +917,7 @@ end
 iplot_qcen = 0;   % plot gridpoints at centers of basis functions
 iplot_fault = 1;  % plot fault
 
-[lonsaf,latsaf,xsay,ysaf] = textread([dir_base 'gmt/input/safdata.dat'],'%f%f%f%f');
+[lonsaf,latsaf,xsay,ysaf] = textread([bdir 'gmt/input/safdata.dat'],'%f%f%f%f');
 %load('safdata');
 
 % plot either the synthetic fault (great circle) or a different boundary

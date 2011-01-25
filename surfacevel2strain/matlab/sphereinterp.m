@@ -18,9 +18,14 @@ clear
 close all
 format short, format compact
 
-path(path,[pwd '/util']);
-path(path,[pwd '/func']);
-%path(path,'/home/carltape/matlab/scripts');  % TEMP
+% USER change
+bdir = '/home/carltape/compearth/surfacevel2strain/';
+
+% add path to additional matlab scripts
+path(path,[bdir 'matlab/util']);
+path(path,[bdir 'matlab/func']);
+%path(path,[pwd '/util']);
+%path(path,[pwd '/func']);
 
 %========================================================
 % USER PARAMETERS
@@ -31,7 +36,7 @@ iwrite = 0;
 ropt  = input(' Type an index corresponding to a region (1=socal): ');
 dopt  = input(' Type an index corresponding to a dataset (1=moho): ');
 [dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt);
-dir_output = '/home/carltape/compearth/surfacevel2strain/matlab_output/';
+dir_output = [bdir 'matlab_output/'];
 
 % % 1-1 california moho
 % % 2-1 socal moho

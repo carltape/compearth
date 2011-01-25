@@ -2,12 +2,11 @@
 % test_euler_rot_tec.m
 % Carl Tape, 23-April-2007
 %
-% This program shows how euler rotations on a sphere work.  These rotations
-% are described in terms of a rotation matrix that can be thought of as a
-% PSEUDO-vector.
+% This program shows how euler rotations on a sphere work.  Each rotation
+% is described in terms of a rotation matrix that can be thought of as a
+% pseudo-vector.
 %
 % The conventions are suited to plate tectonics.
-%
 % The programs are based primarily on Cox and Hart (1986), p. 227.
 % 
 % calls
@@ -26,12 +25,12 @@ format short
 format compact
 
 % USER change
-bdir = '/home/carltape/compearth/surfacevel2strain/matlab';
+bdir = '/home/carltape/compearth/surfacevel2strain/';
 
 % add path to additional matlab scripts
-path(path,[bdir '/util']);
-path(path,[bdir '/func']);
-path(path,'/home/carltape/matlab/scripts/chtplot');
+path(path,[bdir 'matlab/util']);
+path(path,[bdir 'matlab/func']);
+%path(path,'/home/carltape/matlab/scripts/chtplot');
 
 deg = 180/pi;
 
