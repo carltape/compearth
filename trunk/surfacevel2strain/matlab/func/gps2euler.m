@@ -2,10 +2,18 @@
 % function [evec, ve_est, vn_est, Pxyz] = gps2euler(dlon, dlat, drad, ve, vn, se, sn)
 % Pablo Muse and Carl Tape, 21-July-2008
 %
+% Given a set of surface velocities on the sphere, estimate the euler pole
+% associated with the rotation of the field.
+%
 % This is a non-trivial program, unlike the reverse program euler2gps.m.
 % For V = E x P, given V and P, there is no unique E.
 % Hence we need a least squares solution to determine E, assuming all the V
 % were derived from the same Euler pole (i.e., rotation vector).
+%
+% BETTER APPROACH (FUTURE WORK):
+%   A grid search that would provide a set of samples, from which a
+%   posterior model covariance could be estimated for the three euler
+%   pole parameters.
 %
 % INPUT:
 %    ve, vn: Local velocity field, M/YR

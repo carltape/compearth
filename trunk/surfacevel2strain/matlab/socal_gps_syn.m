@@ -35,6 +35,9 @@
 clear
 close all
 
+% USER change
+bdir = '/home/carltape/compearth/surfacevel2strain/';
+
 % add path to additional matlab scripts
 path(path,[pwd '/util']);
 path(path,[pwd '/func']);
@@ -43,9 +46,7 @@ path(path,[pwd '/misc/okada']);
 deg = 180/pi;
 earthr = 6371*1e3;
 izone = 11;
-szone = '11S';
-
-bdir = '/home/carltape/compearth/surfacevel2strain/';   % USER change
+szone = '11S';      % UTM zone
 
 iwrite = 0;
 
