@@ -3,7 +3,7 @@
 %
 % Script for plotting various figures.
 %
-% calls xxx
+% calls prepare_mask.m
 % called by surfacevel2strain.m
 %
 
@@ -211,6 +211,9 @@ if basistype == 2
     [G_plot, Gdph_plot, Gdth_plot] = spline_vals_mat(spline_tot, dlon_plot, dlat_plot);
 end
 
+% Computing a mask is an ad hoc way to represent the uncertainties in model
+% parameters within the uncertainties in the estimated field --
+% it would be good to improve this.
 if imask == 1
     % KEY COMMAND -- smaller number means larger mask
     switch floor(dopt/10)

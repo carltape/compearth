@@ -435,6 +435,7 @@ if ireg == 1
 
     % plot spline gridpoints by order q
     figure; nc=2; nr=ceil(nump/nc);
+    if numq==1, clims = [0 qmax]; else clims = [qvec(1) qvec(end)]; end
     for ip = 1:nump
         inds = [iqr(ip,1) : iqr(ip,2)];
         subplot(nr,nc,ip); hold on;
@@ -443,7 +444,7 @@ if ireg == 1
             %plot(glon(inds),glat(inds),'.');
             scatter(glon(inds),glat(inds),4^2,gq(inds),'filled');
         end
-        caxis([qvec(1) qvec(end)]); colorbar('ytick',qvec);
+        caxis(clims); colorbar('ytick',qvec);
         axis equal
         axis(ax0);
         %axis(ax1);
