@@ -1,3 +1,4 @@
+%
 % function [ikeep, inum] = wavelet_min_scale(gridpoints, qtrsh_cos_dist, ntrsh, dlon, dlat)
 %
 % INPUT
@@ -20,6 +21,9 @@ ndata = length(dlon);
 ngrid = length(gridpoints);  % spline_tot is ngrid x 3
 rad = pi/180;
 
+% scale for each wavelet
+gq = gridpoints(:,3);
+
 % data points
 th = (90 - dlat).*rad;
 ph = dlon.*rad;
@@ -41,14 +45,18 @@ dataptsxyz = [sin_th.*cos_ph sin_th.*sin_ph cos_th];
 gridptsxyz = [gridpts_sin_th.*gridpts_cos_ph gridpts_sin_th.*gridpts_sin_ph gridpts_cos_th];
 
 % support of each spherical wavelet
-qsupp_cos = qtrsh_cos_dist(gridpoints(:,3)+1);
+qsupp_cos = qtrsh_cos_dist(gq+1);
 
 qmin_scale = NaN*ones(ndata,1);
-for ii=1:ndata   % loop datapoints
+for ii = 1:ndata   % loop datapoints
     is_in_support = zeros(ngrid,1);
     is_in_support = (gridptsxyz*(dataptsxyz(ii,:))' > qsupp_cos);
-    qmax = max( gridpoints(is_in_support,3) );
-    qmin_scale(ii) = qmax;
+    if sum(is_in_support) == 0
+        %disp(sprintf('input point %i/%i is not within any footprint',ii,ndata));
+    else
+        qmax = max( gq(is_in_support) );
+        qmin_scale(ii) = qmax;
+    end
 end
 
 %===================================================

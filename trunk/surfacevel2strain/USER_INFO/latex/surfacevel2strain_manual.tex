@@ -115,36 +115,35 @@ The default example for \verb+sphereinterp.m+ should produce \refFigab{fig:1D_1}
 \section{Example with 2D or 3D data: {\tt surfacevel2strain.m}}
 \label{sec:surfacevel2strain}
 
-The general procedure is this:
+The general procedure for using \verb+surfacevel2strain.m+ is this:
 %
 \begin{enumerate}
-\item Specify a latitude-longitude box for your region of interest. For example, for Japan, we might use:
+\item Obtain a set of 2- or 3-component velocity field data: $\bv(r_i,\,\theta_i,\,\phi_i)$, where $i$ denotes the index of the observation. Save velocity field observations in a ``standard'' format.
+
+\item Specify a latitude-longitude box for your region of interest. For example, for southern California, we use:
 %
-\verb+lonmin0 = 128.0 ; lonmax0 = 147.0 ; latmin0 = 30.0 ; latmax0 = 46.0+
+\verb+lonmin0 = -122.0 ; lonmax0 = -113.0 ; latmin0 = 30.0 ; latmax0 = 38.0+
 %
-This box is used to get the possible wavelet center-points for the estimation, and also to describe the bounds for plotting.
+Observations outside this box will be excluded. Wavelet center-points outside this region may be used, depending on their scale $q$.
 
-\item Obtain a set of 2- or 3-component velocity field data: $\bv(r_i,\,\theta_i,\,\phi_i)$, where $i$ denotes the index of the observation. Observations outside the bounding region above will be excluded.
-
-\item Save velocity field observations in a ``standard'' format.
-
-\item Specify parameters in \verb+surfacevel2strain.m+ and compute the estimated continuous velocity field.
+\item Specify user parameters in \verb+surfacevel2strain.m+ and compute the estimated continuous velocity field.
 
 \item Plot output files in GMT.
 \end{enumerate}
 
 %-----------------------
 
-\subsection{Preparing the velocity field dataset ({\tt get\_gps\_dataset.m})}
+\subsection{Preparing the velocity field data set ({\tt get\_gps\_dataset.m})}
 
-The most general velocity field dataset is one that contains the data covariances and standard errors.  For a three-component field, the data covariance matrix will have six values per observation.  Thus, for each new dataset, I save a version in a ``standard'' format.
+The most general velocity field data set is one that contains the data covariances and standard errors.  For a three-component field, the data covariance matrix will have six values per observation.  Thus, for each new data set, I save a version in a ``standard'' format.
 In \verb+get_gps_dataset.m+, the command
 %
 \begin{verbatim}
 [dlon,dlat,ve,vn,vu,se,sn,su,ren,reu,rnu,start_date,finish_date,name] = read_gps_3D(filename);
 \end{verbatim}
 %
-will load the pre-saved GPS dataset.  For the Japan example, see {\tt read\_gps\_japan.m} and {\tt japan\_gps\_dat.m} as a guide.
+will load the pre-saved GPS data set. Each user may have several different data sets, which in turn may be analyzed in a set of different regions, each described by a latitude-longitude box. The function \verb+get_gps_dataset.m+ is a template that should be changed for each user.
+%For the Japan example, see {\tt read\_gps\_japan.m} and {\tt japan\_gps\_dat.m} as a guide.
 
 The variables \verb+start_date+, \verb+finish_date+, and \verb+name+ are not used in \verb+surfacevel2strain.m+. For now, the program does not use the covariance terms \verb+ren+, \verb+reu+, \verb+rnu+.
 
@@ -152,47 +151,29 @@ The variables \verb+start_date+, \verb+finish_date+, and \verb+name+ are not use
 
 \subsection{Running {\tt surfacevel2strain.m}}
 
-We now have simply a set of files, one for each grid $q$, that contain the center-points of what will be spherical wavelet basis functions.
+The default example for \verb+surfacevel2strain.m+ should produce \refFigab{fig:2D_A5}{fig:2D_B06} (among many others), in addition to the text in \refApp{sec:surfacevel2strain_out}. The user is prompted to enter various parameters in the Matlab command window (\refApp{sec:surfacevel2strain_out}). The first run will threshold the basis functions, compute the design matrix for the inverse problem, and prompt the user for a regularization parameter. The user is prompted for the minimum scale wavelets, $\qmin$, and maximum scale wavelets, $\qmax$, for the estimation problem, in addition to the scale for the ``secular field.'' The secular scale, $\qmin \le q_{\rm secular} \le \qmax$, represents the estimated secular field using scales $q = \qmin, \ldots, q_{\rm secular}$. It corresponds to a smooth ``background'' pattern that can be easily removed to analyze the details of the estimated field. The user can also estimate the velocity field using a single scale by entering $\qmin = q_{\rm secular} = \qmax$ (nor recommended). The user is also prompted to enter a minimum value for rotation magnitudes that will be used to threshold Euler poles for plotting purposes; a histogram is displayed to assist in this choice, but a value of zero can be entered as a default. In practical examples, the higher rotation magnitudes correspond to local apparent rotations from nearby poles, while lower rotation magnitudes may be artifacts associated with distant rotation poles.
 
-I tested a run using the japan velocity field, considering the horizontal components only (ndim = 2), and performing the estimation for scales \q{0} to \q{8}.
-
-Here is the output to the Matlab command window:
+The second run is primarily for plotting purposes and for analyzing different representations of the estimated field, such as 
 %
-%\small
-\begin{spacing}{1.0}
-\begin{verbatim}
-OUTPUT HERE
->>
-\end{verbatim}
-\end{spacing}
-%\normalsize
+\begin{enumerate}
+\item dilatation rate, strain rate, or rotation rate, computed directly from the estimated velocity field;
+\item any quantity at cumulative or individual scales ($q$).
+\end{enumerate}
 %
-The program prompts the user for various input parameters, and more are needed prior to running the program.  The first run will threshold the basis functions and compute the design matrix for the inverse problem.  There are several ways to select the damping parameter. \refFig{fig:gcv} shows the output figure from \verb+ridge_carl.m+ showing three different parameter selection techniques.
-
-At this point, the inverse problem is done.  Now, the rest of the program is for plotting.  Because computing the design matrix and the damping parameter can be computationally intensive, we do not clear these variables on subsequent runs when we are re-plotting different things.  In other words, we now execute the program again:
-%
-%\small
-\begin{spacing}{1.0}
-\begin{verbatim}
->>
-\end{verbatim}
-\end{spacing}
-%\normalsize
-%
-The output is a set of figures showing the estimated velocity fields, as well as scalar fields derived from the spatial velocity gradient tensor field, $\bL(\phi, \theta)$.
+It is also used to adjust the mask for plotting purposes \citep{Tape2009gps}.
 
 %-----------------------
 
-%\pagebreak
 \subsection*{Plotting scalar and vector fields in GMT}
 
-There are several \verb+perl+ scripts for plotting in GMT here:
-%
-\verb+surfacevel2strain/gmt/util/+.
-%
-These will require several modifications for your own purposes. The primary script to run is \verb+plot_strain.pl+.
+There are several \verb+perl+ scripts for plotting using GMT \citep{GMT} here:
 
-Example output figures are shown in \refFigab{fig:japan_vel_no_mask}{fig:japan_strain}.
+\verb+surfacevel2strain/gmt/util/+.
+
+\noindent
+These scripts will require several modifications for your own purposes.
+The primary scripts to run are \verb+plot_strain.pl+ and \verb+foursub.pl+.
+Example output figures are shown in \refFigii{fig:2D_gmt1}{fig:2D_gmt2}.
 
 %=====================================================
 %\pagebreak
@@ -382,7 +363,7 @@ For testing purposes, try decreasing one of these:
 %-------------------------------------------------------
 
 \section{Output from {\tt surfacevel2strain.m}}
-\label{sec:sphereinterp_out}
+\label{sec:surfacevel2strain_out}
 
 Below is the output generated to the Matlab command window in the process of generating \refFigab{fig:2D_A5}{fig:2D_A7}, among many more (\refSec{sec:surfacevel2strain}).
 
@@ -613,7 +594,7 @@ The top plot is for the Moho depth, and the bottom plot is for the estimated unc
 \includegraphics[width=16cm]{fig1D_2.eps}
 \caption[]
 {{
-Full set of center-points for basis functions used in the inversion.
+Full set of center-points for basis functions used in the inversion (\refSec{sec:sphereinterp}).
 Color corresponds to the scale $q$ for each basis function.
 Note that some dots correspond to multiple basis functions with different scales $q$, but only the highest-$q$ is visible.
 See partition by scale in \refFig{fig:1D_3}.
@@ -636,7 +617,7 @@ Observation locations are plotted at `+' markers (\refFig{fig:1D_1}).
 \includegraphics[width=16cm]{fig1D_4.eps}
 \caption[]
 {{
-Selection of regularization parameter, $\lambda$, considering three different approaches: L-curve, ordinary cross-validation, general cross-validation. See \citet{Tape2009gps} for details and references. For this example, all three techniques select a similar regularization paramter.
+Selection of regularization parameter, $\lambda$, considering three different approaches: L-curve, ordinary cross-validation, general cross-validation. See \citet{Tape2009gps} for details and references. For this example, all three techniques select a similar regularization parameter.
 \label{fig:1D_4}
 }}
 \end{figure}
@@ -684,7 +665,9 @@ Each filled circle is an observed values, with the `x' marker proportional to th
 \includegraphics[width=16cm]{fig2D_A5.eps}
 \caption[]
 {{
-Text.
+GPS velocity observations for southern California \citep{REASONI}.
+These observations are used as the example in \refSec{sec:surfacevel2strain}.
+A uniform rotational field has been removed from the original velocity field \citep[\eg][]{Tape2009gps}, though this is not necessary.
 \label{fig:2D_A5}
 }}
 \end{figure}
@@ -693,7 +676,10 @@ Text.
 \includegraphics[width=16cm]{fig2D_A6.eps}
 \caption[]
 {{
-Text.
+Full set of center-points for basis functions used in the inversion (\refSec{sec:surfacevel2strain}).
+Color corresponds to the scale $q$ for each basis function.
+Note that some dots correspond to multiple basis functions with different scales $q$, but only the highest-$q$ is visible.
+See partition by scale in \refFig{fig:2D_B03}.
 \label{fig:2D_A6}
 }}
 \end{figure}
@@ -702,16 +688,18 @@ Text.
 \includegraphics[width=16cm]{fig2D_A7.eps}
 \caption[]
 {{
-Text.
+Basis function gridpoint centers for grids \q{3-7} (\refFig{fig:2D_B03}), \q{3-5}, \q{6}, and \q{7}.
+Color corresponds to the scale $q$ for each basis function.
+Observation locations are plotted at `+' markers (\refFig{fig:2D_A6}).
 \label{fig:2D_A7}
 }}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=12cm]{fig2D_B03.eps}
+\includegraphics[width=11cm]{fig2D_B03.eps}
 \caption[]
 {{
-Text.
+Observed velocity field and estimated velocity fields (top), as well as the residual field (bottom). The two components of the estimated velocity field are obtained from a least-squares inversion for coefficients of spherical wavelet basis functions.
 \label{fig:2D_B03}
 }}
 \end{figure}
@@ -720,8 +708,8 @@ Text.
 \includegraphics[width=16cm]{fig2D_B05.eps}
 \caption[]
 {{
-Text.
-\label{fig:2D_B03}
+Estimated south ($\theta$) component of the velocity field, plotted at multiple scales: \q{3-7}, \q{3-5}, \q{6}, and \q{7}.
+\label{fig:2D_B05}
 }}
 \end{figure}
 
@@ -729,8 +717,8 @@ Text.
 \includegraphics[width=16cm]{fig2D_B06.eps}
 \caption[]
 {{
-Text.
-\label{fig:2D_B03}
+Estimated east ($\phi$) component of the velocity field, plotted at multiple scales: \q{3-7}, \q{3-5}, \q{6}, and \q{7}.
+\label{fig:2D_B06}
 }}
 \end{figure}
 
@@ -738,7 +726,8 @@ Text.
 \includegraphics[width=16cm]{socal_d01_q03_q07_b1_2D_s1_u1_vfield.eps}
 \caption[]
 {{
-Text.
+Observed velocity field (arrows) overlying the magnitude of the estimated velocity field (colors).
+The figure was plotted using the Perl/GMT script {\tt plot$\_$strain.pl}.
 \label{fig:2D_gmt1}
 }}
 \end{figure}
@@ -747,7 +736,8 @@ Text.
 \includegraphics[width=16cm]{foursub_06_m1.eps}
 \caption[]
 {{
-Text.
+Four-subplot representation of the estimated velocity field for the southern California example.
+The figure was plotted using the Perl/GMT script {\tt foursub.pl}.
 \label{fig:2D_gmt2}
 }}
 \end{figure}
