@@ -1,19 +1,25 @@
 surfacevel2strain/README
 
-Code for a a spherical-wavelet-based estimation of velocity fields on the sphere from discrete 3-component (or 2-component) GPS observations.
+Carl Tape, Pablo Muse, Mark Simons
+
+Please contact Carl Tape (carltape@gi.alaska.edu) with suggestions or corrections.
+
+SURFACEVEL2STRAIN: A Matlab code for a a spherical-wavelet-based estimation of velocity fields on the sphere from discrete 3-component (or 2-component) GPS observations.
 
 Step 1:
-link your directory with GPS data files to the base directory:
-  rm data
-  ln -s YOUR_INPUT_DATA_DIR data
+check out the documentation in USER_INFO/:
+  surfacevel2strain_manual.pdf
+  Tape2009gps.pdf
+  Tape2009gps_supplement.pdf
 
 Step 2:
-check out the documentation in USER_INFO
+  cd matlab
+  Start with sphereinterp.m, the 1D example shown in surfacevel2strain_manual.pdf
 
 Directories:
   gmt           -- Perl scripts for plotting in GMT
-  gps_data      -- link to original and modified GPS data files
-  matlab        -- primary matlab codes (surfacevel2strain.m)
+  data          -- input data files
+  matlab        -- matlab codes (surfacevel2strain.m)
   matlab_output -- output files from matlab
   USER_INFO     -- PDF notes and documentation
 
