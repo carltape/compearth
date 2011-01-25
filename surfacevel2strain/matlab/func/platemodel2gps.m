@@ -139,15 +139,19 @@ end
 %   This is not an ideal algorithm, since inpolygon.m assumes edges that are
 %   not arcs, but rather chords in the Cartesian lat-lon domain.  This
 %   problem would be overcome with extremely dense sampling of the plat
-%   boundaries.  Nevertheless, in the plots, it would be extremely
-%   difficult to see this effect.
+%   boundaries.  But for regional plotting purposes, using inpolygon.m is
+%   fine.
 
 ax1 = [min(lon) max(lon) min(lat) max(lat)];
 
 iplate_vec = zeros(num,1);
 
+disp('platemodel2gps.m: find the plate for each target point');
+
+% loop over plates
 pmin = 1; pmax = nump;
-for ii=pmin:pmax   
+for ii = pmin:pmax
+    disp(sprintf('plate is %s, index %i (%i to %i)',names{ii},ii,pmin,pmax));
     
     % load plate boundary file (lat-lon)
     ww = names{ii};
@@ -194,7 +198,7 @@ for ii=pmin:pmax
     
     xv = plon_rot; yv = plat_rot;
     x = lon_rot; y = lat_rot;
-    in = inpolygon(x,y,xv,yv);
+    in = inpolygon(x,y,xv,yv);          % KEY COMMAND
     
     iplate_vec(in) = ii;
     
@@ -221,7 +225,7 @@ if ifig_extra == 1
     colorbar
 
     pmin = 1; pmax = nump;
-    for ii=pmin:pmax   
+    for ii = pmin:pmax   
 
         % CHECK: load data and plot
         ww = names{ii};
@@ -236,6 +240,8 @@ end
 
 %========================================================
 % COMPUTE SURFACE VELOCITY FIELD
+
+disp('platemodel2gps.m: compute surface velocity fields');
 
 vn = zeros(num,1);
 ve = zeros(num,1);
@@ -252,22 +258,28 @@ for ivel = 1:nump
     ve(inds) = Vrtp(3,:)';
 end
 
-% plot vector field (as long as there aren't too many vectors)
-figure; hold on;
+% plot vector field (as long as there are not too many vectors)
 if num <= 5000
+    figure; hold on;
     quiver(lon,lat,ve,vn,1);
-    title([' model ' smod flab '  (' num2str(nump) ' plates, ' num2str(num) ' gridpoints)']);
+    %title(['platemodel2gps.m: model ' smod flab '  (' num2str(nump) ' plates, ' num2str(num) ' gridpoints)']);
+    title(sprintf('platemodel2gps.m: model %s%s (%i plates, %i gridpoints)',...
+        smod,flab,nump,num),'interpreter','none');
     axis equal, axis(ax1);
     
     pmin = 1; pmax = nump;
     
-   for ii=pmin:pmax   
+   for ii = pmin:pmax   
         ww = names{ii}; load([dir_bounds ww ssfx]);
         data_plot = eval(ww);
         plon = data_plot(:,1); plat = data_plot(:,2);
 
         plot(plon, plat,'k.');
    end
+else
+    disp(sprintf('platemodel2gps.m: %i points, so not plotting vector field',num));
 end
+
+disp('returning from platemodel2gps.m');
 
 %========================================================
