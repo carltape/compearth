@@ -41,7 +41,7 @@ bdir = '/home/carltape/compearth/surfacevel2strain/';
 % add path to additional matlab scripts
 path(path,[bdir 'matlab/util']);
 path(path,[bdir 'matlab/func']);
-path(path,[bdir 'misc/okada']);
+path(path,[bdir 'matlab/misc/okada']);
 %path(path,[pwd '/util']);
 %path(path,[pwd '/func']);
 %path(path,[pwd '/misc/okada']);
@@ -56,7 +56,7 @@ iwrite = 0;
 %===========================================
 % USER INPUT
 ropt = input(' Enter an index corresponding to a region (1=us, 2=cal, 3=socal, ..., 9=japan, etc): ');
-dopt = input(' Enter an index that controls the type of synthetic field (1-80): ');
+dopt = input(' Enter an index that controls the type of synthetic field (10-83): ');
 
 dmat = NaN*ones(60,3);
 dmat(10,:) = [1 2 0]; dmat(11,:) = [1 2 1]; dmat(12,:) = [1 1 0]; dmat(13,:) = [1 1 1];
@@ -72,11 +72,9 @@ isyn_field  = dmat(dopt,1);  % see list above
 iobs_points = dmat(dopt,2);  % 1=NASA REASON; 2=uniform
 ierrors     = dmat(dopt,3);  % 1=add errors; 0=no errors
 
-%iobs_points = input(' Enter a set of observations points (1 = NASA REASON; 2 = uniform): ');
-%isyn_field = input(' Enter a type of synthetic velocity field (1 = strike-slip fault; 2 = rotational field): ');
-%ierrors = input(' Enter 1 to include errors (0 otherwise) : ');
-
-if any(isnan([isyn_field iobs_points ierrors])==1), error(' NaN value for booleans'); end
+if any(isnan([isyn_field iobs_points ierrors])==1)
+    error('invalid dopt choice -- NaN value for booleans');
+end
 
 % number of points for plotting synthetic fault (great circle)
 ngc = 1000;
@@ -84,7 +82,7 @@ ngc = 1000;
 %-------------------------------------------
 
 % load the SAF for plotting: isaf, latsaf, lonsaf, xsaf, ysaf
-[lonsaf,latsaf,xsay,ysaf] = textread('../gmt/input/safdata2.dat','%f%f%f%f');
+[lonsaf,latsaf,xsay,ysaf] = textread([bdir 'gmt/input/safdata2.dat'],'%f%f%f%f');
 %load('/home/carltape/matlab/scripts/safdata2');
 nsaf = length(lonsaf);
 
@@ -94,8 +92,9 @@ nsaf = length(lonsaf);
 % NOTE: units in METERS and METERS/YR
 dopt_0 = 1;   % NASA REASON cGPS dataset (408 pts in socal)
 %dopt_0 = 2;   % CCMMv1 (1093 pts in socal)
+dir_data = [bdir 'data/examples/'];
 [lon_gps,lat_gps,vu_gps,vs_gps,ve_gps,su,sn,se,ax0,slabel,stref] ...
-    = get_gps_dataset(ropt,dopt_0,1,0);
+    = get_gps_dataset(dir_data,ropt,dopt_0,1,0);
 
 lonmin = ax0(1); lonmax = ax0(2);
 latmin = ax0(3); latmax = ax0(4);
