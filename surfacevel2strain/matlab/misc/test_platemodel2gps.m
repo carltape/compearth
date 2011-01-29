@@ -29,12 +29,8 @@ format compact
 %========================================================
 % USER PARAMETERS
 
-% base directory
-bdir = '/home/carltape/compearth/surfacevel2strain/matlab';
-
-% add path to additional matlab scripts
-path(path,[bdir '/util']);
-path(path,[bdir '/func']);
+% add path to additional matlab scripts (specify bdir)
+user_path;
 
 % KEY COMMANDS:
 imodel = 7;         % plate model (oneill, nuvel, revel, bird, gripp-HS3, bird-gripp, bird-morgan)
