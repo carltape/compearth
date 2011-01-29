@@ -6,26 +6,20 @@
 % writing data.
 %
 % calls xxx
-% called by platemodel2gps.m, platemodel2conv_vel.m
+% called by platemodel2gps.m, platemodel2conv_vel.m:
 %
 
-% string labels for each plate model
+% labels for file names
 mod_labs    = {'oneill','nuvel1A_nnr','revel','bird','gripp_hs3','bird_gripp','bird_morgan'};
-
-% directories for plate boundaries for each model
-% NOTE: some models use the same plate boundaries
 dir_labs    = {'oneill/data_mike_13/','nuvel1A/','bird/','bird/','nuvel1A/','bird/','bird/'};  % plate outlines
-
-% suffixes for plate boundary files for each model
 suffix_labs = {'.xy','.180to180xy','.xy','.xy','.180to180xy','.xy','.xy'};
 
-% imodel is input variable
 smod = mod_labs{imodel};
 sbnd = dir_labs{imodel};
 ssfx = suffix_labs{imodel};
 
 dir_plates  = '/home/carltape/gmt/plates/';
-dir_models  = [dir_plates 'plate_models/' smod '/'];
+dir_models = [dir_plates 'plate_models/' smod '/'];
 dir_bounds  = [dir_plates 'plate_boundaries/' sbnd];
 
 % load euler vectors and plate names

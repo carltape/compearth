@@ -17,12 +17,8 @@ close all
 format short
 format compact
 
-% USER change
-bdir = '/home/carltape/compearth/surfacevel2strain/matlab';
-
-% add path to additional matlab scripts
-path(path,[bdir '/util']);
-path(path,[bdir '/func']);
+% add path to additional matlab scripts (specify bdir)
+user_path;
 
 idata = 0;      % =1 to run the NASA REASON dataset
                 % =0 to run on a synthetic dataset

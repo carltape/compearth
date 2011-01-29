@@ -41,14 +41,8 @@ if ireg == 1
     %========================================================
     % USER PARAMETERS
     
-    % base directory
-    bdir = '/home/carltape/compearth/surfacevel2strain/';
-
-    % add path to additional matlab scripts
-    path(path,[bdir 'matlab/util']);
-    path(path,[bdir 'matlab/func']);
-    %path(path,[pwd '/util']);
-    %path(path,[pwd '/func']);
+    % add path to additional matlab scripts (specify bdir)
+    user_path;
 
     % ANALYSIS
     istore = 1;         % =1 if using a pre-stored velocity field

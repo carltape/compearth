@@ -35,16 +35,9 @@
 clear
 close all
 
-% USER change
-bdir = '/home/carltape/compearth/surfacevel2strain/';
-
-% add path to additional matlab scripts
-path(path,[bdir 'matlab/util']);
-path(path,[bdir 'matlab/func']);
-path(path,[bdir 'matlab/misc/okada']);
-%path(path,[pwd '/util']);
-%path(path,[pwd '/func']);
-%path(path,[pwd '/misc/okada']);
+% add path to additional matlab scripts (specify bdir)
+user_path;
+%path(path,[bdir 'matlab/misc/okada']);
 
 deg = 180/pi;
 earthr = 6371*1e3;

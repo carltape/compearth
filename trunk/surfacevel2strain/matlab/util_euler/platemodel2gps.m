@@ -33,7 +33,6 @@
 %   (4)         Bird
 %   (5)         Gripp and Gordon (2002) -- HS3-NUVEL1A
 %   (6)         Bird, but in GrippGordon reference frame
-%   (7)         Bird, but in MorganMorgan reference frame
 %
 % Originally, I adapted a pre-computed velocity field from Eh Tan -- those
 % codes are in plate_model.m.  The key problem is to determine whether a
@@ -41,24 +40,24 @@
 % described in terms of a closed-contour spherical polygon cap.
 %
 %==============================
-% See notes in /home/carltape/latex/notes/misc/plate_models.pdf
+% See notes in /home/carltape/gmt/plates/plate_models/latex/models.pdf
 %==============================
 %
 % EXAMPLES:
 %    [lon,lat] = gridvec(-120,-114,50,32,37); platemodel2gps(lon,lat,2,11,{1,1,0});
 %    [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] = platemodel2gps([],[],2,11,{0,1,1});
 %
-% calls:
-%    get_plate_model.m
-%    euler2gps.m
-%    polygon_centroid_3d.m
-%    euler_rot_tec.m
-%    euler_convert.m
+% CALLS:
+% euler2gps.m
+% polygon_centroid_3d.m
+% euler_rot_tec.m
+% euler_convert.m
+% get_plate_model.m
 %
-%    arcdist.m
-%    unit.m
-%    griddataXB.m
-%    xyz2latlon.m, latlon2xyz.m
+% arcdist.m
+% unit.m
+% griddataXB.m
+% xyz2latlon.m, latlon2xyz.m
 %
 % called by test_platemodel2gps.m
 %
@@ -70,9 +69,6 @@ function [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] ...
 deg = 180/pi;
 earthr = 6371*1e3;
 
-% check if input longitudes are [0,360] or [-180,180]
-if any(lon > 180), ilon360 = 1; else ilon360 = 0; end
-
 % might need to make sure that longitude is [-180,180]
 lat = lat(:);
 lon = lon(:);
@@ -83,8 +79,8 @@ ifig_extra  = opts{1};
 idisplay    = opts{2};
 ieuler_only = opts{3};
 
-% KEY: get euler vectors for plate model
-get_plate_model;   % input imodel
+% get euler vectors for plate model
+get_plate_model;
 
 % display info on euler poles
 if and(idisplay == 1, ieuler_only == 1)
@@ -117,8 +113,8 @@ end
 
 disp('  ');
 if ifix==99
-    disp(' will not change reference field for the velocity field');
-    flab = ' in unchanged reference frame';
+    disp(' leave v-field in the original reference frame');
+    flab = ' in original reference frame';
 else
     % fix one of the plates by subtracting its euler vector from all vectors
     disp([' fixed plate is ' name_labs{ifix} ' (' names{ifix} ')']);
@@ -143,19 +139,15 @@ end
 %   This is not an ideal algorithm, since inpolygon.m assumes edges that are
 %   not arcs, but rather chords in the Cartesian lat-lon domain.  This
 %   problem would be overcome with extremely dense sampling of the plat
-%   boundaries.  But for regional plotting purposes, using inpolygon.m is
-%   fine.
+%   boundaries.  Nevertheless, in the plots, it would be extremely
+%   difficult to see this effect.
 
 ax1 = [min(lon) max(lon) min(lat) max(lat)];
 
 iplate_vec = zeros(num,1);
 
-disp('platemodel2gps.m: find the plate for each target point');
-
-% loop over plates
 pmin = 1; pmax = nump;
-for ii = pmin:pmax
-    disp(sprintf('plate is %s, index %i (%i to %i)',names{ii},ii,pmin,pmax));
+for ii=pmin:pmax   
     
     % load plate boundary file (lat-lon)
     ww = names{ii};
@@ -202,7 +194,7 @@ for ii = pmin:pmax
     
     xv = plon_rot; yv = plat_rot;
     x = lon_rot; y = lat_rot;
-    in = inpolygon(x,y,xv,yv);          % KEY COMMAND
+    in = inpolygon(x,y,xv,yv);
     
     iplate_vec(in) = ii;
     
@@ -229,7 +221,7 @@ if ifig_extra == 1
     colorbar
 
     pmin = 1; pmax = nump;
-    for ii = pmin:pmax   
+    for ii=pmin:pmax   
 
         % CHECK: load data and plot
         ww = names{ii};
@@ -244,8 +236,6 @@ end
 
 %========================================================
 % COMPUTE SURFACE VELOCITY FIELD
-
-disp('platemodel2gps.m: compute surface velocity fields');
 
 vn = zeros(num,1);
 ve = zeros(num,1);
@@ -262,32 +252,22 @@ for ivel = 1:nump
     ve(inds) = Vrtp(3,:)';
 end
 
-% plot vector field (as long as there are not too many vectors)
+% plot vector field (as long as there aren't too many vectors)
+figure; hold on;
 if num <= 5000
-    figure; hold on;
     quiver(lon,lat,ve,vn,1);
-    title(sprintf('platemodel2gps.m: model %s %s (%i plates, %i gridpoints)',...
-        smod,flab,nump,num),'interpreter','none');
-    xlabel('Longitude'); ylabel('Latitude');
+    title([' model ' smod flab '  (' num2str(nump) ' plates, ' num2str(num) ' gridpoints)']);
     axis equal, axis(ax1);
     
     pmin = 1; pmax = nump;
-
-    % plot plate boundaries
-    for ii = pmin:pmax   
-        ww = names{ii};
-        load([dir_bounds ww ssfx]);
+    
+   for ii=pmin:pmax   
+        ww = names{ii}; load([dir_bounds ww ssfx]);
         data_plot = eval(ww);
-        plon = data_plot(:,1);
-        if ilon360==1, plon = wrapTo360(plon); end
-        plat = data_plot(:,2);
+        plon = data_plot(:,1); plat = data_plot(:,2);
 
         plot(plon, plat,'k.');
-    end
-else
-    disp(sprintf('platemodel2gps.m: %i points, so not plotting vector field',num));
+   end
 end
-
-disp('returning from platemodel2gps.m');
 
 %========================================================

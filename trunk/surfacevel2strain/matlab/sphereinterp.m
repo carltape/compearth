@@ -18,15 +18,9 @@ clear
 close all
 format short, format compact
 
-% USER change
-bdir = '/home/carltape/compearth/surfacevel2strain/';
-
-% add path to additional matlab scripts
-path(path,[bdir 'matlab/util']);
-path(path,[bdir 'matlab/func']);
-%path(path,[pwd '/util']);
-%path(path,[pwd '/func']);
-
+% add path to additional matlab scripts (specify bdir)
+user_path;
+    
 %========================================================
 % USER PARAMETERS
 
