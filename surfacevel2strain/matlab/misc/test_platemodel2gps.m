@@ -49,15 +49,16 @@ igrid = input(' Type index for grid points (1,2,3), then ENTER: ');
 % parameters controlling the number of gridpoints
 if igrid==1
     q = input(' Type spherical grid index (q=0,1,2,...), then ENTER: ');
-    stq = num2str(sprintf('%2.2i', q));
 elseif igrid==2
+    q = 99;
     numx = input(' Type grid spacing along x (lon) direction, then ENTER: ');
 elseif igrid==3
+    q = 99;
     disp(' load lon-lat points next');
 end
 
 % user-specified regions
-iregion = input(' Type region index, then ENTER: ');
+iregion = input(' Type region index (1=globe, 2=npac, ...), then ENTER: ');
 switch iregion
     case 1, slabel = 'globe'; ax1 = [-180 180 -90 90];
     case 2, slabel = 'npac'; ax1 = [154 250 30 74];
@@ -78,6 +79,7 @@ ifig_extra = 0;     % extra figures
 ipick_figs = 0;     % figures of example plate w.r.t. fixed plate
 ilon360 = 1;        % =1 for longitudes as [0,360], =0 for [-180,180]
 
+stq = sprintf('q%2.2i', q);
 sgrid = sprintf('g%1i',igrid);
 smod = mod_labs{imodel};
 dir_plates  = '/home/carltape/gmt/plates/';
@@ -355,11 +357,14 @@ for irow = 4:4     % KEY: loop over fixed plates
     if ifix==99, stref = '99'; else stref = name_labs{ifix}; end
     nump = length(names);
 
-    % plot magnitudes as colored circles
+    % magnitudes: sort to plot largest magnitudes last (in GMT)
     vmag = sqrt(ve.^2 + vn.^2);
+    [~,isort] = sort(vmag);
+    
+    % plot magnitudes as colored circles
     figure; hold on; grid on;
-    scatter(lon,lat,msize,vmag,'filled');
-    scatter(lon,lat,msize,'ko');
+    scatter(lon(isort),lat(isort),msize,vmag(isort),'filled');
+    %scatter(lon(isort),lat(isort),msize,'ko');
     axis(ax1); colorbar;
     
     %========================================================
@@ -369,9 +374,6 @@ for irow = 4:4     % KEY: loop over fixed plates
         
         % for GMT plotting, set zero values to <0
         veps = 1e-4; vmag(vmag < veps) = -veps;
-
-        % sort to plot largest magnitudes last
-        [~,isort] = sort(vmag);
         
         % output directory
         odir = [dir_plates 'surface_velocities/'];
@@ -379,7 +381,7 @@ for irow = 4:4     % KEY: loop over fixed plates
         disp(odir);
         
         % KEY: tag for all files
-        ftag = [slabel '_fix_' stref '_' smod '_' sgrid];
+        ftag = [slabel '_fix_' stref '_' smod '_' sgrid stq];
         
         % write plate model vector COMPONENTS and MAGNITUDES to file (mm/yr)
         ww = [ftag '_vec.dat'];
