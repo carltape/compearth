@@ -13,11 +13,57 @@
 %   Tape, Muse, Simons, Dong, Webb, "Multiscale Estimation of GPS velocity
 %   fields," Geophysicsl Journal International, 2009.
 %
+% NOTE: The lon-lat box assumes no crossing of lon = 0 or lon = 180. We
+% need to generalize this to allow for corrections.
+%
 % calls xxx
 % called by surfacevel2strain.m
 %
 
 function [glon,glat,gq,nvec,axmat] = getspheregrid(ax0,qmin,qmax)
+
+QMAXMAX = 14;
+if qmax > QMAXMAX
+    error(sprintf('qmax (%i) exceeds QMAXMAX (%i)',qmax,QMAXMAX));
+end
+
+% check if input longitudes are [0,360] or [-180,180]
+if any(ax0(1:2) > 180)
+    ilon360 = 1;
+    axg = [0 360 -90 90];
+else
+    ilon360 = 0;
+    axg = [-180 180 -90 90];
+end
+ax1 = ax0;
+
+% UGLY FIX to split any box crossing lon=180 into two boxes -- this is no
+% longer needed.
+%if or(any(ax0(1:2) > 180),any(ax0(1:2) < -180))
+%     ilon360 = 1;
+%     ax1([1 2]) = wrapTo180(ax0([1 2]));
+%     if diff(ax1([1 2])) ~= diff(ax0([1 2]))
+%         DEPS = 1e-4;  % avoid repeating points on lon = +/- 180
+%         ax0w = [ax1(1) 180 ax0(3:4)];
+%         ax0e = [-180+DEPS ax1(2) ax0(3:4)];
+%         disp('input axes box spans lon = -180 -- divide into two regions:');
+%         disp(sprintf('west region: [%.6f %.6f %.1f %.1f]',ax0w));
+%         disp(sprintf('east region: [%.6f %.6f %.1f %.1f]',ax0e));
+%         
+%         figure; nr=2; nc=1;
+%         subplot(nr,nc,1);
+%         plot(ax0([1 2 2 1 1]),ax0([3 3 4 4 3]),'k');
+%         axis equal; axis([0 360 -90 90]); grid on;
+%         subplot(nr,nc,2); hold on;
+%         plot(ax0w([1 2 2 1 1]),ax0w([3 3 4 4 3]),'r');
+%         plot(ax0e([1 2 2 1 1]),ax0e([3 3 4 4 3]),'b');
+%         axis equal; axis([-180 180 -90 90]); grid on;
+%         
+%         itwobox = 1;
+%     end
+% else
+%     ilon360 = 0;
+% end
 
 % parameters
 rad = pi/180;
@@ -27,17 +73,18 @@ base = acos(c72/(1-c72));
 % determines how many gridpoints to take outside the data region
 dfac = 3;
 
-lonmin0 = ax0(1);
-lonmax0 = ax0(2);
-latmin0 = ax0(3);
-latmax0 = ax0(4);
+lonmin0 = ax1(1);
+lonmax0 = ax1(2);
+latmin0 = ax1(3);
+latmax0 = ax1(4);
 % thmin = (90 - latmax)*rad;
 % thmax = (90 - latmin)*rad;
 % phmin = lonmin*rad;
 % phmax = lonmax*rad;
 
-% if the patch does not cover the sphere, then a subset is desired
-Apatch = areaquad(ax0(3),ax0(1),ax0(4),ax0(2));
+% if the patch does not cover the sphere, this indicates that a subset
+% lon-lat patch of points is requested
+Apatch = areaquad(ax1(3),ax1(1),ax1(4),ax1(2));
 if abs(Apatch - 1) < 1e-4
     disp('getspheregrid.m: full sphere');
     isub = 0;
@@ -65,9 +112,12 @@ for ii = 1:nq
    % scale of a basis function associated with the gridpoint
    dbase_deg = base / 2^q / rad;
     
-   % if a subregion is wanted, then this is a crude way to ensure that some
-   % gridpoints OUTSIDE the target region will be allowed
-   % NOTE: most of these outside gridpoints will be thresholded later
+   % If a subregion is wanted, then this is a crude way to ensure that some
+   % gridpoints OUTSIDE the target region will be allowed, which is
+   % important for capturing long-scalelength effects near the boundary.
+   % NOTE 1: a better way would be to compute the distance from a potential
+   %         gridpoint to the closest point on the lon-lat box boundary
+   % NOTE 2: most of these outside gridpoints will be thresholded later
    if isub==1
         dlon = dfac*dbase_deg;
         dlat = dfac*dbase_deg;
@@ -76,14 +126,19 @@ for ii = 1:nq
         latmin = latmin0 - dlat;
         latmax = latmax0 + dlat;
    else
-       lonmin = -180; lonmax = 180; latmin = -90; latmax = 90;
+       lonmin = axg(1); lonmax = axg(2); latmin = axg(3); latmax = axg(4);
    end
     
-    % ensure that lon = [-180,180] and lat = [-90,90]
-    if (lonmin < -180) lonmin = -180; end
-    if (lonmax >  180) lonmax =  180; end
-    if (latmin <  -90) latmin =  -90; end
-    if (latmax >   90) latmax =   90; end
+    % NOTE: if a target region is CLOSE to lon=180, then these expanded
+    %       boxes may cross lon=180; for now we do not allow the expanded
+    %       axes to cross; note that most of these outside gridpoints
+    %       will be thresholded later
+    %if (lonmin < -180) lonmin = -180; end
+    %if (lonmax >  180) lonmax =  180; end
+    if (lonmin < axg(1)) lonmin = axg(1); end
+    if (lonmax > axg(2)) lonmax = axg(2); end
+    if (latmin < -90) latmin = -90; end
+    if (latmax > 90) latmax = 90; end
     thmin = (90 - latmax)*rad;
     thmax = (90 - latmin)*rad;
     phmin = lonmin*rad;
@@ -132,6 +187,7 @@ glon = gph/rad;
 glat = 90 - gth/rad;
 
 %=========================================================================
+% LOCAL FUNCTIONS
 
 function [gph,gth] = mytessa(q,nf,thmin,thmax,phmin,phmax)
 
@@ -151,6 +207,8 @@ dbase = base/nf;
 
 gph = [];
 gth = [];
+
+if any([phmin phmax] > pi), ilon360 = 1; else ilon360 = 0; end
 
 disp(sprintf('q = %i, nf = %i, dbase = %.3e deg',q,nf,dbase/rad));
 
@@ -182,7 +240,8 @@ for i = 2:nf+1
 
             arco = gth01(i,j);
             arlo = gph01(i,j) + (n-1)*rad*72;
-            if (arlo > pi) arlo = arlo-2*pi; end
+            %if (arlo > pi) arlo = arlo-2*pi; end
+            if ilon360==1, arlo = wrapTo2Pi(arlo); else arlo = wrapToPi(arlo); end
             if and( and( arlo >= phmin , arlo <= phmax), and(arco >= thmin, arco <= thmax))
                 gph = [gph ; arlo];
                 gth = [gth ; arco];
@@ -205,7 +264,8 @@ for i = 2:nf+1
 
             arco = gth67(i,j);     
             arlo = gph67(i,j) + (n-1)*rad*72;
-            if (arlo > pi) arlo = arlo-2*pi; end
+            %if (arlo > pi) arlo = arlo-2*pi; end
+            if ilon360==1, arlo = wrapTo2Pi(arlo); else arlo = wrapToPi(arlo); end
             if and( and( arlo >= phmin, arlo <= phmax), and(arco >= thmin, arco <= thmax))
                 gph = [gph ; arlo];
                 gth = [gth ; arco];
@@ -227,7 +287,8 @@ for i = 2:nf+1
 
             arco = gth16(i,j);
             arlo = gph16(i,j) + (n-1)*rad*72;
-            if (arlo > pi) arlo = arlo-2*pi; end
+            %if (arlo > pi) arlo = arlo-2*pi; end
+            if ilon360==1, arlo = wrapTo2Pi(arlo); else arlo = wrapToPi(arlo); end
             if and( and( arlo >= phmin, arlo <= phmax), and(arco >= thmin, arco <= thmax))
                 gph = [gph ; arlo];
                 gth = [gth ; arco];
