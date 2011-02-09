@@ -1,5 +1,6 @@
 %
 % [dlon,dlat,d,dsig,ax0,slabel,ulabel,iall] = get_1D_dataset_carl(ropt,dopt)
+% Carl Tape, 01-Feb-2011
 %
 % This loads a set of discrete (1D) observations on the sphere
 % that we will use to estimate a smooth continuous field.
@@ -11,16 +12,10 @@
 function [dlon,dlat,d,dsig,ax0,slabel,ulabel,iall] = get_1D_dataset_carl(ropt,dopt)
 
 % GEOGRAPHIC REGION 
-% switch ropt
-%     case 1, ax0 = [-128.05 -112.95 30.95 43.05]; szone = '11S';
-%     case 2, ax0 = [-128.05 -112.95 30.95 43.05]; szone = '11S';
-%     case 3, ax0 = [-119.7 -118.5 34.5 35.5]; szone = '11S';    
-%     case 4, ax0 = [-128.05 -112.95 30.95 43.05]; szone = '11S';
-%     case 5, ax0 = [-151.05 -147.45 63.45 65.55]; szone = '6W';
-% end
 switch ropt
-    case 1, rlabel = 'cal'; ax0 = [-128.05 -112.95 30.95 43.05]; szone = '11S';
-    case 2, rlabel = 'socal'; ax0 = [-122 -113 30 38]; szone = '11S';
+    case 1, rlabel = 'socal'; ax0 = [-122 -113 30 38]; szone = '11S';
+    %case 2, rlabel = 'cal'; ax0 = [-128.05 -112.95 30.95 43.05]; szone = '11S';
+    case 2, rlabel = 'cal'; ax0 = [-128.05 -111.95 29.95 43.05]; szone = '11S';
     case 3, rlabel = 'maricopa'; ax0 = [-119.7 -118.5 34.5 35.5]; szone = '11S';    
     case 4, rlabel = 'nenana'; ax0 = [-151.05 -147.45 63.45 65.55]; szone = '6W';
 end
@@ -41,7 +36,7 @@ if dopt == 1
     % 8: digitized points from SJB gocad project
 
     % USER INPUT: refers to type of combination of data sets (see below)
-    idata = 3;
+    idata = 1;
     
     stmlabs = {'crust2','EARS','salton','bryant-jones','chulick-mooney','yan-clayton','gilbert','gocad'};
     
@@ -253,14 +248,14 @@ if ifig==1
     %scatter(dlon,dlat,msize,'ko');   % black outline
     colorbar; axis(ax0); grid on;
     xlabel('Longitude'); ylabel('Latitude');
-    title(sprintf('%s observations (%i)',slabel,length(d)));
+    title(sprintf('%s observations (%i)',slabel,length(d)),'interpreter','none');
     
     subplot(nr,nc,2); hold on;
     scatter(dlon,dlat,msize,dsig,'filled');
     %scatter(dlon,dlat,msize,'ko');   % black outline
     colorbar; axis(ax0); grid on;
     xlabel('Longitude'); ylabel('Latitude');
-    title(sprintf('%s uncertainties (%i)',slabel,length(d)));
+    title(sprintf('%s uncertainties (%i)',slabel,length(d)),'interpreter','none');
 
 end
 
