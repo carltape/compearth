@@ -27,18 +27,19 @@ user_path;
 iwavelet = 1;   % =1 for estimation; =0 to view data only
 iwrite = 0;
 
-ropt  = input(' Type an index corresponding to a region (1=socal): ');
-dopt  = input(' Type an index corresponding to a dataset (1=moho): ');
-[dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt);
-dir_output = [bdir 'matlab_output/'];
+% ropt  = input(' Type an index corresponding to a region (1=socal): ');
+% dopt  = input(' Type an index corresponding to a dataset (1=moho): ');
+% [dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt);
+% dir_output = [bdir 'matlab_output/'];
 
-% % 1-1 california moho
-% % 2-1 socal moho
+% % CARL's EXAMPLES
+% % 2-1 california moho
+% % 1-1 socal moho
 % % 1-2 USGS crystaline basement
 % % 1-4 SJB base Tertiary
 % % 3-3 Maricopa basement
 % % 4-5 nenana gravity
-% ropt  = input(' Type an index corresponding to a region (1=cal, 2=socal, 3=maricopa, 4=nenana): ');
+% ropt  = input(' Type an index corresponding to a region (1=socal, 2=cal, 3=maricopa, 4=nenana): ');
 % dopt  = input(' Type an index corresponding to a dataset (1=moho,2,3,4,5=grav): ');
 % [dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset_carl(ropt,dopt);
 % dir_output = '/home/carltape/MOHO/WAVELET/MATLAB_EST/';
@@ -55,6 +56,7 @@ if iwavelet==1
             nlam = 40; ilampick = 2;
             ntrsh = 3;
             nx = 100;
+            
         case 2           
             qmin = 2; qmax = 7;
             nlam = 40; ilampick = -10;  % hand-pick lambda
@@ -89,7 +91,7 @@ if iwavelet==1
             nx = 200;
     end
     
-    nx = 50; qmin = 3; qmax = 8;   % testing
+    %nx = 50; qmin = 2; qmax = 7;   % testing
     
     qsec = round(mean([qmin qmax]));
     qparm = {qmin,qsec,qmax,ntrsh};
@@ -124,13 +126,13 @@ end
 % WRITE FILES
 
 if and(iwavelet==1,iwrite==1)
-    ftag = sprintf('%s_q%2.2i_q%2.2i_ir%2.2i_id%2.2i',slabel,qmin,qmax,ropt,dopt);
-    nplot = length(dest_plot);
     
+    ftag = sprintf('%s_q%2.2i_q%2.2i_ir%2.2i_id%2.2i',slabel,qmin,qmax,ropt,dopt);
     %flab = [dir_output slabel '_' stqtag{1} '_' sprintf('ic%2.2i_im%2.2i',idata,sub_opt) ];
     flab = [dir_output ftag];
-    
     disp('writing files with tag:'); disp(flab);
+    
+    nplot = length(dest_plot);
     
     % data and estimated field
     fid = fopen([flab '.dat'],'w');
@@ -140,14 +142,6 @@ if and(iwavelet==1,iwrite==1)
         fprintf(fid,stfmt,dlon(ii),dlat(ii),d(ii),dest(ii),dsig(ii));
     end
     fclose(fid);
-    
-%     % data
-%     fid = fopen([flab '_data.dat'],'w');
-%     stfmt = '%12.6f%12.6f%10.3f%10.3f\n';
-%     for ii=1:ndata
-%         fprintf(fid,stfmt,dlon(ii),dlat(ii),d(ii),dsig(ii));
-%     end
-%     fclose(fid);
 
     % estimated field for a regular grid
     fid = fopen([flab '_plot.dat'],'w');
