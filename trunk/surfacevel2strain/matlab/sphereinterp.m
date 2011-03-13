@@ -27,10 +27,10 @@ user_path;
 iwavelet = 1;   % =1 for estimation; =0 to view data only
 iwrite = 0;
 
-% ropt  = input(' Type an index corresponding to a region (1=socal): ');
-% dopt  = input(' Type an index corresponding to a dataset (1=moho): ');
-% [dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt);
-% dir_output = [bdir 'matlab_output/'];
+ropt  = input(' Type an index corresponding to a region (1=socal): ');
+dopt  = input(' Type an index corresponding to a dataset (1=moho): ');
+[dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt);
+dir_output = [bdir 'matlab_output/'];
 
 % % CARL's EXAMPLES
 % % 2-1 california moho

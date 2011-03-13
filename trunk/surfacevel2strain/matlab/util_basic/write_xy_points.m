@@ -1,5 +1,5 @@
 %
-% function write_xy_points.m
+% function write_xy_points(filetag,x,y)
 %
 % This file writes a simple 2-column file of x-y (or lon-lat) points.
 %
