@@ -45,7 +45,6 @@ if ireg == 1
     user_path;
 
     % ANALYSIS
-    istore = 1;         % =1 if using a pre-stored velocity field
     basistype = input(' Type 1 to use spherical wavelets, 2 for spherical splines: ');
     icov = input(' Type 1 to use the DIAGONAL covariance matrix for weighting (0 otherwise): ');
     ndim = input(' Type the number of components of the v-field for the inversion (2 or 3) : ');
@@ -57,12 +56,12 @@ if ireg == 1
     imask  = input(' Type 1 to plot with the mask (0 otherwise) : ');
     iwrite = input(' Type 1 to write output to files for GMT plotting (0 otherwise) : ');
 
-    iplate_model = 3;   % plate model (oneill, nuvel, revel, bird)
+    %iplate_model = 3;   % plate model (oneill, nuvel, revel, bird)
     q = 99;             % 99 for non-global gridpoints
     %ifig_extra = 0;     % extra figures
 
-    mod_labs    = {'oneill','nuvel1A_nnr','revel','bird'};  % PLATE MODELS
-    smod = mod_labs{iplate_model};
+    %mod_labs    = {'oneill','nuvel1A_nnr','revel','bird'};  % PLATE MODELS
+    %smod = mod_labs{iplate_model};
     stq = num2str(sprintf('%2.2i', q));
 
     % USER: CHANGE THESE
@@ -116,8 +115,7 @@ if ireg == 1
         sdopt = sprintf('d%2.2i', dopt);
         
         % KEY COMMAND: get the velocity field (and error estimates)
-        [dlon,dlat,vu,vs,ve,su,sn,se,ax0,slabel,stref] = ...
-            get_gps_dataset(dir_data,ropt,dopt,istore,iplate_model);
+        [dlon,dlat,vu,vs,ve,su,sn,se,ax0,slabel,stref] = get_gps_dataset(dir_data,ropt,dopt);
         %[dlon,dlat,vu,vs,ve,su,sn,se,ax0,slabel,stref] = ...
         %    get_gps_dataset_carl(dir_data,ropt,dopt,istore,iplate_model);
     end

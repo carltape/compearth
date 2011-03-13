@@ -1,12 +1,16 @@
 %
-% function get_gps_dataset_carl.m
+% function get_gps_dataset.m
 %
 % This function loads a velocity field for certain points on the sphere.
 % The examples in surfacevel2strain are for the socal REASON velocity field
 % and for a full set of synthetic velocity fields.
 %
-% The user can adapt this function such that it returns the following
-% output variables:
+% INPUT
+%   dir_data        directory containing data sets
+%   ropt            index denoting the region (lat-lon box)
+%   dopt            index denoting the data set
+%
+% OUTPUT:
 %   dlon    longitude of observation
 %   dlat    latitude of observation
 %   vu      velocity, vertical component
@@ -18,15 +22,17 @@
 %   ax1     lon-lat bounds for region containing observations
 %   slabel  string label for the region
 %   stref   reference plate (OPTIONAL)
+%
+% The plate models are not currently implemented.
 % 
 % calls platemodel2gps.m, read_gps_3D.m
 % called by surfacevel2strain.m
 %
 
-function [dlon,dlat,vu,vs,ve,su,ss,se,ax1,slabel,stref] ...
-    = get_gps_dataset_carl(dir_data,ropt,dopt,istore,iplate_model)
+function [dlon,dlat,vu,vs,ve,su,ss,se,ax1,slabel,stref] = ...
+    get_gps_dataset_carl(dir_data,ropt,dopt,istore,iplate_model)
 
-% GEOGRAPHIC REGION
+% GEOGRAPHIC REGION -- USER SHOULD MODIFY THESE REGIONS
 % slabel        label for the region
 % ax1           lon-lat box for the region
 % irow          only relevant when dealing with a plate model
@@ -51,7 +57,7 @@ if ~exist('slabel','var')
 end
 
 %------------------------------
-% DATA SET (REAL OR SYNTHETIC)
+% DATA SET (REAL OR SYNTHETIC) -- USER SHOULD MODIFY THESE
 
 if length( find(dopt == [0 1 2 3 4 10:13 20:23 30:33 40:43 50:53 60:63 70:73 80:83]) )==0
     error(' check data options (dopt)');
@@ -125,9 +131,15 @@ if istore == 1   % use specific v-field data (velocities in MM/YR)
     % dummy variable to send back
     stref = 'NA';
 
-else   % not using GPS data, so get plate model velocity field
-
-    % generate uniform mesh for PLATE MODEL fields
+else
+    % not using GPS data; instead use a velocity field derived from a plate model
+    error('plate option is not yet available');
+    
+    % KEY PARAMETERS
+    iplate_model = 4;
+    irow = 11;  % FIXED PLATE (=99 for no fixed plate)
+    
+    % generate uniform mesh for plate-model velocity field
     numx = 60;
     [dlon,dlat] = gridvec(lonmin,lonmax,numx,latmin,latmax);
 
@@ -135,30 +147,33 @@ else   % not using GPS data, so get plate model velocity field
     %dfac = 0.5 * (latmax-latmin);
     %[dlon2,dlat2] = gridvec(lonmin-dfac,lonmax+dfac,numx,latmin-dfac,latmax+dfac);
     
-    %irow = 11;  % FIXED PLATE
-
-    ifix_mat = [ 1 1 1 2        %  1 AFR
-                 2 2 4 6        %  2 ANT
-                 3 3 5 7        %  3 ARA
-                 4 4 6 8        %  4 AUS
-                 5 5 7 13       %  5 CAR
-                 6 6 99 15      %  6 COC
-                 7 7 8 18       %  7 EUR
-                 99 8 9 21      %  8 IND
-                 8 9 99 22      %  9 JDF
-                 9 10 11 32     % 10 NAZ
-                 10 11 11 32    % 11 NAM
-                 11 12 13 37    % 12 PAC
-                 12 13 14 39    % 13 PHI (PS)
-                 13 15 16 46    % 14 SAM
-                 99 14 99 42    % 15 SCO
-                 99 99 17 48    % (16) SU
-                 99 99 18 52    % (17) YA
+    % INDEX OF THE FIXED PLATE IN EACH MODEL
+    % 99 indicates that the plate does not have an euler vector in the model
+    ifix_mat = [ 1 1 1 2 1        %  1 AFR
+                 2 2 4 6 2        %  2 ANT
+                 3 3 5 7 3        %  3 ARA
+                 4 4 6 8 4        %  4 AUS
+                 5 5 7 13 5       %  5 CAR
+                 6 6 99 15 6      %  6 COC
+                 7 7 8 18 7       %  7 EUR
+                 99 8 9 21 8      %  8 IND
+                 8 9 99 22 9      %  9 JDF
+                 9 10 11 32 10    % 10 NAZ
+                 10 11 11 32 11   % 11 NAM
+                 11 12 13 37 12   % 12 PAC
+                 12 13 14 39 13   % 13 PHI (PS)
+                 13 15 16 46 14   % 14 SAM
+                 99 14 99 42 15   % 15 SCO
+                 99 99 17 48 99   % SU
+                 99 99 18 52 99   % YA
                  ];
+    ifix_mat(:,6) = ifix_mat(:,4);      % bird plates
+    ifix_mat(:,7) = ifix_mat(:,4);      % bird plates
+    ifix_mat(:,8) = ifix_mat(:,4);      % bird plates
+    
+    % compute velocity field for VECTORS
     ifix = ifix_mat(irow, iplate_model);
     opts = {0,1,0};
-
-    % compute velocity field for VECTORS
     [dlon, dlat, ve, vn, iplate_vec, exyz, names, name_labs] ...
         = platemodel2gps(dlon,dlat,iplate_model,ifix,opts);
 

@@ -70,7 +70,7 @@ A Matlab program to convert surface velocity fields into strain-rate maps}
 \bigskip
 \noindent Carl Tape, Pablo Mus\'e, Mark Simons
 
-\noindent \today
+\noindent Last compiled: \today
 
 \small
 
@@ -142,10 +142,21 @@ In \verb+get_gps_dataset.m+, the command
 [dlon,dlat,ve,vn,vu,se,sn,su,ren,reu,rnu,start_date,finish_date,name] = read_gps_3D(filename);
 \end{verbatim}
 %
-will load the pre-saved GPS data set. Each user may have several different data sets, which in turn may be analyzed in a set of different regions, each described by a latitude-longitude box. The function \verb+get_gps_dataset.m+ is a template that should be changed for each user.
+will load the pre-saved GPS data set. Each user may have several different data sets, which in turn may be analyzed in a set of different regions, each described by a latitude-longitude box. The function \verb+get_gps_dataset.m+ is a template that should be changed for each user. The input and output variables are given by:
+%
+\begin{verbatim}
+[dlon,dlat,vu,vs,ve,su,ss,se,ax1,slabel,stref] = get_gps_dataset(dir_data,ropt,dopt)
+\end{verbatim}
 %For the Japan example, see {\tt read\_gps\_japan.m} and {\tt japan\_gps\_dat.m} as a guide.
 
-The variables \verb+start_date+, \verb+finish_date+, and \verb+name+ are not used in \verb+surfacevel2strain.m+. For now, the program does not use the covariance terms \verb+ren+, \verb+reu+, \verb+rnu+.
+A few points regarding the input data files:
+%
+\begin{enumerate}
+\item The data files can be synthetic or real (the estimation problem does not distinguish between the two).
+\item The variables \verb+start_date+, \verb+finish_date+, and \verb+name+ are not used in \verb+surfacevel2strain.m+.
+\item For now, the program does not use the covariance terms \verb+ren+, \verb+reu+, \verb+rnu+.
+\item The data files should be as spatially complete as possible, because the user is given the option (\verb+ropt+) to consider a subset region as a latitude-longitude ``rectangular'' patch.
+\end{enumerate}
 
 %-----------------------
 

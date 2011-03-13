@@ -2,20 +2,11 @@
 % test_platemodel2gps.m
 % Carl Tape, 28-Jan-2011
 %
-% This model inputs a set of Euler poles (vectors describing rotation rates
-% on a sphere) and a set of corresponding plate boundaries, and it outputs
-% the surface velocity field.
-%
-% Originally, I adapted a pre-computed velocity field from Eh Tan -- those
-% codes are in plate_model.m.  The key problem is to determine whether a
-% particular point on the sphere is inside or outside of a plate that is
+% This program computes the surface velocity field at a set of points on
+% the sphere. The Euler vectors and plate boundaries are provided from
+% plate models. A key problem is to determine whether a particular point
+% on the sphere is inside or outside of a plate that is
 % described in terms of a closed-contour spherical polygon cap.
-%
-% see notes in /home/carltape/latex/notes/misc/plate_models.pdf
-%
-% FOR FANCY GMT FIGURES:
-%   (1) compute vector field for q=2 and q=4
-%   (2) compute scalar field for q=7
 %
 % calls platemodel2gps.m, getxy.m
 % called by xxx
@@ -33,7 +24,7 @@ user_path;
 % USER PARAMETERS
 
 % plate models
-mod_labs = {'oneill','nuvel1A_nnr','revel','bird','gripp_hs3','bird_gripp','bird_morgan'};
+mod_labs = {'oneill','nuvel1A_nnr','revel','bird','gripp_hs3','bird_gripp','bird_morgan','bird_nnr'};
 nmod = length(mod_labs);
 disp('  '); disp('PLATE MODELS TO CHOOSE FROM:');
 for ii=1:nmod, disp(sprintf('%2i  %s',ii,mod_labs{ii})); end
@@ -71,10 +62,11 @@ switch iregion
     case 9, slabel = 'taiwan'; ax1 = [115 125 18 28];
     case 10, slabel = 'tibet'; ax1 = [52 104 12 44];
     case 11, slabel = 'eurasia'; ax1 = [-10 125 5 50];  
+    case 12, slabel = 'yakutat'; ax1 = [-147 -136 57 63];    
 end
 disp(sprintf('region %i is for %s: [%.1f %.1f %.1f %.1f]',iregion,slabel,ax1));
 
-iwrite = 1;         % write surface v-field to file
+iwrite = 0;         % write surface v-field to file
 ifig_extra = 0;     % extra figures
 ipick_figs = 0;     % figures of example plate w.r.t. fixed plate
 ilon360 = 1;        % =1 for longitudes as [0,360], =0 for [-180,180]
@@ -179,7 +171,6 @@ if imake==1
             %name_labs = {'AFR','ANT','ARA','AUS','CAR','COC','EUR','JDF','NAZ','NAM','PAC','PHI','SAM'}';
             
         case 2,
-            
             % load rotation vectors (units in deg/Myr)
             % (see test_euler_rot_tec.m)
             [name_labs,elon,elat,omeg,wx,wy,wz,names] = textread([dir_models 'nnr_nuvel1a_mod.dat'],'%s%f%f%f%f%f%f%s','headerlines',1);
@@ -198,7 +189,6 @@ if imake==1
             name_labs = {'AFR','ANT','ARA','AUS','CAR','COC','EUR','IND','JDF','NAZ','NAM','PAC','PHI','SCO','SAM'}';
             
         case 3,
-            
             % load rotation vectors (units in deg/Myr)
             % (see test_euler_rot_tec.m)
             % MODIFIED TO MATCH THE BIRD LABELING SCHEME
@@ -224,7 +214,6 @@ if imake==1
             %    'philippine_sea','somalia','south_america','sunda','yangtze'}';
             
          case 4,
-            
             % load rotation vectors (units in deg/Myr)
             % (see test_euler_rot_tec.m)
             [name_labs,elat,elon,omega,names] = textread([dir_models 'PB2002_poles_mod2.dat'],'%s%f%f%f%s','headerlines',1);
@@ -243,7 +232,6 @@ if imake==1
             %name_labs = {'AFR','ANT','ARA','AUS','CAR','COC','EUR','JDF','NAM','NAZ','PAC','PHI','SAM'}';   
             
         case 5,
-            
             % load euler vectors (units in deg/Myr)
             [names,elat,elon,omega,name_labs] = textread([dir_models 'gripp_gordon_mod.dat'],'%s%f%f%f%s','headerlines',1);
             elatlon = [elat elon omega]';
@@ -296,7 +284,29 @@ if imake==1
             inds = 1:length(names);
             exyz = exyz(:,inds);
             names = names(inds);
-
+            
+        case 8,
+            % Bird model in no-net-rotation frame, obtained by using the
+            % Morgan and Morgan (2007) Pacific plate euler vector
+            
+            % load the NNR-NUVAL1A euler vectors
+            imodel0 = 2;
+            [lon0,lat0,ve0,vn0,iplate_vec0,exyz0,names0,name_labs0] = platemodel2gps([],[],imodel0,99,{0,1,1});
+            ipac0 = 12;
+            exyz_pac_nnr = exyz0(:,ipac0);
+            
+            % load the Bird euler vectors
+            [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] = platemodel2gps([],[],4,99,{0,1,1});
+            exyz_pac_bird = exyz(:,37);
+            
+            % Bird euler vectors in NNR reference frame
+            % note: subtract the Bird-Pacific, then add the NNR-Pacific
+            exyz = exyz - repmat(exyz_pac_bird - exyz_pac_nnr, 1, length(names));
+            
+            % indexing into euler poles used in making the plate velocity model
+            inds = 1:length(names);
+            exyz = exyz(:,inds);
+            names = names(inds);   
     end
     
     % check the indexing
@@ -320,7 +330,6 @@ disp('computing the surface velocity field...');
 
 % INDEX OF THE FIXED PLATE IN EACH MODEL
 % 99 indicates that the plate does not have an euler vector in the model
-
 ifix_mat = [ 1 1 1 2 1        %  1 AFR
              2 2 4 6 2        %  2 ANT
              3 3 5 7 3        %  3 ARA
@@ -339,14 +348,22 @@ ifix_mat = [ 1 1 1 2 1        %  1 AFR
              99 99 17 48 99   % SU
              99 99 18 52 99   % YA
              ];
-         
 ifix_mat(:,6) = ifix_mat(:,4);      % bird plates
+ifix_mat(:,7) = ifix_mat(:,4);      % bird plates
+ifix_mat(:,8) = ifix_mat(:,4);      % bird plates
 
-for irow = 4:4     % KEY: loop over fixed plates
+irow1 = 11;
+irow2 = 11;
+ifix0 = input(sprintf(' Type 0 to NOT fix any plate (or 0 to use %i to %i), then ENTER: ',irow1,irow2));
+
+for irow = irow1:irow2     % KEY: loop over fixed plates
     
-    %ifix_vec = ifix_mat(irow,:);
-    %ifix = ifix_vec(imodel);
-    ifix = 99;      % KEY: do not fix any plate
+    if ifix0==0
+        ifix = 99;
+    else
+        ifix_vec = ifix_mat(irow,:);
+        ifix = ifix_vec(imodel);
+    end
     
     opts = {0,1,0};
 
@@ -429,7 +446,7 @@ for irow = 4:4     % KEY: loop over fixed plates
         
     end
 
-    error('testing up to here above');
+    error('test_platemodel2gps.m: untested after this point');
     
     % write to file for GMT plotting -- NON-GLOBAL FIELD (q = 99)
     if and(iwrite == 1, q == 99)
