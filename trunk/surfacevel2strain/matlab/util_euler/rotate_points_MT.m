@@ -1,5 +1,5 @@
 %
-% function [lat_rot2,lon_rot2,R,M] = rotate_points_MT(lat,lon,lat1,lon1,lat2,lon2,espin,M)
+% function [latr,lonr,R,M] = rotate_points_MT(lat,lon,lat1,lon1,lat2,lon2,espin,M)
 % Carl Tape, 07-March-2011
 %
 % This function applies a finite rotation to a set of input points without
@@ -16,21 +16,23 @@
 %   Min         OPTIONAL: 6 x n matrix of moment tensors
 %
 % OUTPUT
-%   lat_rot2,lon_rot2   final points
-%   R                   net rotation matrix
+%   latr,lonr   final points
+%   R           net rotation matrix
 %   Mout        OPTIONAL: 6 x n matrix of moment tensors, after translation/rotation
+%
+% This program can easily be generalized to allow for non-symmetric 3 x 3
+% matrices M (use global2local_mat.m and transform_mat.m).
 %
 % calls
 %   euler_rot_tec.m
 %   latlons2pole.m
-%   global2local_mat
-%   CMTtransform.m
-%   xyz2lonlat.m, latlon2xyz.m
-%   
+%   global2local_MT.m
+%   transform_MT.m
+%   xyz2lonlat.m
 % called by xxx
 %
 
-function [lat_rot2,lon_rot2,R,Mout] = rotate_points_MT(lat,lon,lat1,lon1,lat2,lon2,espin,Min)
+function [latr,lonr,R,Mout] = rotate_points_MT(lat,lon,lat1,lon1,lat2,lon2,espin,Min)
 
 deg = 180/pi;
 
@@ -47,7 +49,7 @@ evec = [Plat Plon Pdist];
 
 % apply rotation about final point
 evec2 = [lat2 lon2 espin];
-[lat_rot2, lon_rot2, R2] = euler_rot_tec(lat_rot,lon_rot,evec2);
+[latr, lonr, R2] = euler_rot_tec(lat_rot,lon_rot,evec2);
 
 % FUTURE: Replace function calls with one analytical expression containing the
 %         input variables (lat1,lon1,lat2,lon2,espin).
@@ -58,7 +60,7 @@ plot(lon,lat,'k.');
 plot(lon1,lat1,'kp','markersize',14);
 plot(lon_rot,lat_rot,'b.');
 plot(lon2,lat2,'bp','markersize',14);
-plot(lon_rot2,lat_rot2,'r.');
+plot(lonr,latr,'r.');
 title('rotate_points.m','interpreter','none')
 
 % check by applying a single rotation to the starting points
@@ -73,15 +75,13 @@ if nargin==8
     disp('rotate_points_MT.m: rotating beach balls along with the points');
     
     % transform moment tensors from local to global basis at START POINTS
-    Pxyz1 = latlon2xyz(lat,lon);
-    Mglobal = global2local_mat(Min,Pxyz1,0);
+    Mglobal = global2local_MT(Min,lat,lon,0);
 
     % transform moment tensors using R, which is defined for x-y-z basis
-    Mglobal_rot = CMTtransform(R,Mglobal);
+    Mglobal_rot = transform_MT(R,Mglobal);
 
     % transform moment tensors global to local basis at FINAL POINTS
-    Pxyz2 = latlon2xyz(lat_rot2,lon_rot2);
-    Mlocal_rot = global2local_mat(Mglobal_rot,Pxyz2,1);
+    Mlocal_rot = global2local_MT(Mglobal_rot,latr,lonr,1);
 
     Mout = Mlocal_rot;
 end
