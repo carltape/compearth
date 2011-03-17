@@ -1,58 +1,49 @@
 %
-% function Mout = global2local_mat(Min,Pxyz,opts)
+% function Mout = global2local_mat(Min,Pxyz,iglob2loc)
 % Carl Tape, 15-March-2011
 %
-% This function converts a set of SYMMETRIC MATRICES between
-% a global basis and a local basis.
-% Pxyz describes points on the sphere (ax,ay,az).
+% This function converts a set of matrices between
+% a global basis (x-y-z) and a local basis (r-theta-phi).
 %
-% Min  describes the matrix in (r,th,ph) or (x,y,z).
-% Mout describes the matrix in (x,y,z) or (r,th,ph).
-%
-% opts:
-%   globe2loc==1 then  global -->  local
-%   globe2loc==0 then  local  -->  global
-%
-% FUTURE WORK: Why not have it work for non-symmetric input matrices (9 x 9)?
+% INPUT
+%   Min         3 x 3 x n set of matrices
+%   lat,lon     input points on the sphere
+%   iglob2loc   =1 for (x,y,z) --> (r,th,ph)
+%               =0 for (r,th,ph) --> (x,y,z)
+% OUTPUT
+%   Mout        3 x 3 x n set of matrices in new basis
 %
 % The vector version of this function is global2local.m.
 %
 % calls global2local_rotmat.m
-% called by rotate_points_MT.m
+% called by global2local_MT.m
 %
 
-function [Mout,Tall] = global2local_mat(Min,Pxyz,opts)
+function Mout = global2local_mat(Min,lat,lon,iglob2loc)
 
-% check that M is 6 x n
-[Min,n1] = Mdim(Min);
+% ensure that Min and Pxyz have the same number of entries
+[a,b,n1] = size(Min);
+if any([a b]~=3), error('M should be 3 x 3 x n'); end
+if n1 ~= length(lat), error('M should have same length as lat, lon'); end
 
-% transform to 3 x 3 x n
-Min = Mvec2Mmat(Min,1);
+% compute theta, phi for each point
+deg = 180/pi;
+thP = (90 - lat)/deg;
+phP = lon/deg;
 
-% ensure that Min and Pxyz are dimension 3 x n
-[m,n2] = size(Pxyz); if m~=3, Pxyz = Pxyz'; end
-if n1~=n2, error('Pxyz and Min must have same lengths'); end
-
-glob2loc = opts(1);
-
-% 'observation' points
-[thP, phP] = xyz2tp(Pxyz);
-
-% loop over cartesian components of vectors
+% loop over input points
 Mout = 0*Min;
-Tall = 0*Min;
 for ii=1:n1
     
     % rotation matrix
     % note 1: this will DIFFER for each input point
-    % note 2: this  will be orthogonal, T = T^t = T^-1
+    % note 2: this  will be orthogonal: T T^t = I and T^t = T^-1
     T = global2local_rotmat(thP(ii),phP(ii));
-    Tall(:,:,ii) = T;
     
     % input matrix
     M0 = Min(:,:,ii);
     
-    if glob2loc == 1
+    if iglob2loc == 1
         % global (x,y,z) to local (r,th,ph)
         %Mout(:,:,ii) = T * M0 * inv(T);
         Mout(:,:,ii) = T * M0 * T';
@@ -62,8 +53,5 @@ for ii=1:n1
         Mout(:,:,ii) = T' * M0 * T;
     end
 end
-
-% transform to 6 x n
-Mout = Mvec2Mmat(Mout,0);
 
 %==============================================================
