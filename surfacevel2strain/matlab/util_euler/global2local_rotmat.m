@@ -2,10 +2,10 @@
 % function T = global2local_rotmat(th,ph)
 % Carl Tape, 03-Sept-2005
 %
-% This function converts from a global basis (x,y,z) to a local basis in
-% (r, th, ph) or, equivalently, (up, south, east).  In other words, the
-% components of the vector R will depend on the choice of basis: this
-% program generates a matrix that converts between two possible bases.
+% This function generates a rotation matrix to that can be used to convert
+% a vector (or matrix) from a global basis (x,y,z) to a local basis in
+% (r, th, ph) or, equivalently, (up, south, east). Therefore, the
+% components of the vector R will depend on the choice of basis.
 %
 % EXAMPLES in test_global2local.m.
 %

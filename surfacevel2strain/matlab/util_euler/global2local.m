@@ -2,7 +2,7 @@
 % function V_out = global2local(V_in, Pxyz, opts)
 % Carl Tape, 03-Sept-2005
 %
-% This function converts between a global basis and a local basis.
+% This function converts VECTORS between a global basis and a local basis.
 % Pxyz describes points on the sphere (ax,ay,az).
 %
 % V_in  describes the vector field in (vr,vth,vph) or (vx,vy,vz).
@@ -33,6 +33,7 @@ V_out = zeros(3,length(thP));
 for ii=1:n1
     
     % rotation matrix
+    % note: this will DIFFER for each input point
     T = global2local_rotmat(thP(ii),phP(ii));
     
     if glob2loc == 1

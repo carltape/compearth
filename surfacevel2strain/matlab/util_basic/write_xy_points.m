@@ -13,6 +13,7 @@ function write_xy_points(filetag,x,y)
 n = length(x);
 
 filename = [filetag '_points.dat'];
+disp(sprintf('writing %i points to file %s',n,filename));
 fid = fopen(filename,'w');
 for ii = 1:n
     fprintf(fid,'%18.10e%18.10e\n',x(ii),y(ii) );   
