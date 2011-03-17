@@ -34,14 +34,19 @@ utmstruct.zone = s_zone;        % e.g., '11S'
 
 % if no ellipsoid is given then use Matlab default for that zone
 if nargin == 4
-    disp('no ellipsoid is provided as input');
-    [ellipsoid,estr] = utmgeoid(utmstruct.zone)
+    disp('no ellipsoid is provided as input -- using first listed one in utmgeoid.m');
+    % NOTE: utmgeoid may return MULTIPLE geoids for a given zone
+    [ellipsoid,estr] = utmgeoid(utmstruct.zone);
     %ellipsoid = almanac('earth','wgs84','meters');
     %ellipsoid = almanac('earth','clarke66','meters');
     %ellipsoid = [6.378206400000000e+06 0.082271854223002];
+
+    ellipsoid = ellipsoid(1,:);
+    estr0 = strtrim(estr(1,:));
+    disp(sprintf('  ellipsoid %s : %.10e  %.10e',estr0,ellipsoid));
 end
         
-utmstruct.geoid = ellipsoid;
+utmstruct.geoid = ellipsoid;        % assigne ellipsoid
 utmstruct = defaultm(utmstruct);
 if i_type == 1
     [y,x] = minvtran(utmstruct,xi,yi);  % utm2ll
@@ -68,6 +73,7 @@ if 0==1
     % EXAMPLE
     format long, clc, clear, close all
     x0 = -118; y0 = 32;
+    %x0 = 93.45; y0 = 7.65;
     p1 = [y0 x0];
     zs = utmzone(p1);
     [x1,y1] = utm2ll(x0,y0,zs,0);
