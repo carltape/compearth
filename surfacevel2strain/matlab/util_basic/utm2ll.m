@@ -23,6 +23,14 @@
 % grs80         1980 Geodetic Reference System ellipsoid
 % wgs84         1984 World Geodetic System ellipsoid
 %
+% Mapping Toolbox ellipsoid representations are two-element vectors,
+% called ellipsoid vectors. The ellipsoid vector has the form
+% [semimajor_axis eccentricity]. The semimajor axis can be in any
+% unit of distance; the choice of units typically drives the units
+% used for distance outputs in the toolbox functions.
+% Meters, kilometers, or Earth radii (i.e., a unit sphere) are most
+% frequently used. See Functions that Define Ellipsoid Vectors for details.
+%
 % calls xxx
 % called by test_utm.m
 %
@@ -32,7 +40,7 @@ function [x,y,estr] = utm2ll(xi,yi,s_zone,i_type,ellipsoid)
 utmstruct = defaultm('utm'); 
 utmstruct.zone = s_zone;        % e.g., '11S'
 
-% if no ellipsoid is given then use Matlab default for that zone
+% if no ellipsoid is given then use Matlab default ellipsoid for that zone
 if nargin == 4
     disp('no ellipsoid is provided as input -- using first listed one in utmgeoid.m');
     % NOTE: utmgeoid may return MULTIPLE geoids for a given zone
@@ -46,7 +54,7 @@ if nargin == 4
     disp(sprintf('  ellipsoid %s : %.10e  %.10e',estr0,ellipsoid));
 end
         
-utmstruct.geoid = ellipsoid;        % assigne ellipsoid
+utmstruct.geoid = ellipsoid;        % assign ellipsoid
 utmstruct = defaultm(utmstruct);
 if i_type == 1
     [y,x] = minvtran(utmstruct,xi,yi);  % utm2ll

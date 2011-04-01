@@ -26,9 +26,9 @@ user_path;
 % plate models
 mod_labs = {'oneill','nuvel1A_nnr','revel','bird','gripp_hs3','bird_gripp','bird_morgan','bird_nnr'};
 nmod = length(mod_labs);
-disp('  '); disp('PLATE MODELS TO CHOOSE FROM:');
-for ii=1:nmod, disp(sprintf('%2i  %s',ii,mod_labs{ii})); end
-imodel  = input(sprintf(' Type index for plate model (1-%i), then ENTER: ',nmod));
+disp(sprintf('\nPLATE MODELS TO CHOOSE FROM:'));
+for ii=1:nmod, disp(sprintf('%3i  %s',ii,mod_labs{ii})); end
+imodel = input(sprintf(' Type index for plate model (1-%i), then ENTER: ',nmod));
 
 % type of grid points
 disp('  '); disp('PLOTTING GRID POINTS TO CHOOSE FROM:');
@@ -49,21 +49,29 @@ elseif igrid==3
 end
 
 % user-specified regions
-iregion = input(' Type region index (1=globe, 2=npac, ...), then ENTER: ');
-switch iregion
-    case 1, slabel = 'globe'; ax1 = [-180 180 -90 90];
-    case 2, slabel = 'npac'; ax1 = [154 250 30 74];
-    case 3, slabel = 'alaska'; ax1 = [154 250 30 74];
-    case 4, slabel = 'socal'; ax1 = [-122 -113 30 38];
-    case 5, slabel = 'japan'; ax1 = [100 160 5 60];
-    case 6, slabel = 'jdf'; ax1 = [-135 -115 35 55];
-    case 7, slabel = 'micros'; ax1 = [115 160 -15 20];
-    case 8, slabel = 'sumatra'; ax1 = [85 110 -10 30];
-    case 9, slabel = 'taiwan'; ax1 = [115 125 18 28];
-    case 10, slabel = 'tibet'; ax1 = [52 104 12 44];
-    case 11, slabel = 'eurasia'; ax1 = [-10 125 5 50];  
-    case 12, slabel = 'yakutat'; ax1 = [-147 -136 57 63];    
+sregions = {'globe','npac','alaska','socal','japan','jdf','micros','sumatra',...
+    'taiwan','tibet','eurasia','yakutat'};
+nregion = length(sregions);
+disp(sprintf('\nGEOGRAPHIC REGIONS TO CHOOSE FROM:'));
+for ii=1:nregion
+    disp(sprintf('%3i  %s',ii,sregions{ii}));
 end
+iregion = input(sprintf(' Type index for region (1-%i), then ENTER: ',nregion));
+switch iregion
+    case 1, ax1 = [-180 180 -90 90];
+    case 2, ax1 = [154 250 30 74];
+    case 3, ax1 = [154 250 30 74];
+    case 4, ax1 = [-122 -113 30 38];
+    case 5, ax1 = [100 160 5 60];
+    case 6, ax1 = [-135 -115 35 55];
+    case 7, ax1 = [115 160 -15 20];
+    case 8, ax1 = [85 110 -10 30];
+    case 9, ax1 = [115 125 18 28];
+    case 10, ax1 = [52 104 12 44];
+    case 11, ax1 = [-10 125 5 50];  
+    case 12, ax1 = [-147 -136 57 63];    
+end
+slabel = sregions{iregion};
 disp(sprintf('region %i is for %s: [%.1f %.1f %.1f %.1f]',iregion,slabel,ax1));
 
 iwrite = 0;         % write surface v-field to file
@@ -125,8 +133,14 @@ elseif igrid == 2
 %     lat_mag = Y(:);
 
 elseif igrid==3
-    [lon,lat] = getxy(ax1);
-
+    if 1==1
+        % click points that you want
+        [lon,lat] = getxy(ax1);
+    else
+        % manually list points (or load from file)
+        lon = [-148.446 -149.59 -150.11 -150.264 -148.511];
+        lat = [70.2036 68.6274 67.3812 66.2066 65.5114];
+    end
 end
 num = length(lat);
 
@@ -354,7 +368,7 @@ ifix_mat(:,8) = ifix_mat(:,4);      % bird plates
 
 irow1 = 11;
 irow2 = 11;
-ifix0 = input(sprintf(' Type 0 to NOT fix any plate (or 0 to use %i to %i), then ENTER: ',irow1,irow2));
+ifix0 = input(sprintf('\n Type 0 to NOT fix any plate (or 0 to loop %i through %i), then ENTER: ',irow1,irow2));
 
 for irow = irow1:irow2     % KEY: loop over fixed plates
     

@@ -14,7 +14,11 @@
 
 function mat = latlon2xyz(lat, lon, r)
 
-if nargin==2, r = ones(length(lat),1); end
+if nargin==2
+    r = ones(length(lat),1);
+else
+    r = r(:);
+end
 
 deg = 180/pi;
 
