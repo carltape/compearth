@@ -38,6 +38,7 @@ deg = 180/pi;
 
 lon = lon(:);
 lat = lat(:);
+n = length(lon);
 
 % compute the pole to translate body
 [Pxyz,Plat,Plon] = latlons2pole(lat1,lon1,lat2,lon2);
@@ -61,7 +62,7 @@ plot(lon1,lat1,'kp','markersize',14);
 plot(lon_rot,lat_rot,'b.');
 plot(lon2,lat2,'bp','markersize',14);
 plot(lonr,latr,'r.');
-title('rotate_points.m','interpreter','none')
+title(sprintf('rotate_points.m (%i points)',n),'interpreter','none');
 
 % check by applying a single rotation to the starting points
 % (red circles should be centered on red dots)
