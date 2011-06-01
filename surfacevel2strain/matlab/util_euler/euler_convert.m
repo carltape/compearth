@@ -3,25 +3,24 @@
 % Carl Tape, 21-Oct-2005
 %
 % This function converts between two types of Euler pole conventions:
-% (1) (wx,wy,wz) --> (lat-deg,lon-deg,omega-deg/Myr)
-% (2) (lat-deg,lon-deg,omega-deg/Myr) --> (wx,wy,wz)
+%   ctype=1: convert (wx,wy,wz) --> (lat-deg,lon-deg,omega-deg/Myr)
+%   ctype=0: convert (lat-deg,lon-deg,omega-deg/Myr) --> (wx,wy,wz)
 %
 % See example below (and test_euler_rot_tec.m, plate_model.m).
 %
 % See eulerREADME for related programs.
 %
-% calls euler_rot_tec.m, xyz2latlon.m
+% calls xyz2latlon.m
 % called by xxx
 %
 
-function outvecs = euler_convert(invecs,opts)
+function outvecs = euler_convert(invecs,ctype)
 
 deg = 180/pi;
 
 % Specify the direction you want to convert.
 % ctype = 1 : (wx,wy,wz) --> (lat-deg,lon-deg,omega-deg)
 % ctype = 0 : (lat-deg,lon-deg,omega-deg) --> (wx,wy,wz)
-ctype = opts(1);
 
 % ensure that invecs is 3 x n
 [n,m] = size(invecs); if n~=3, invecs = invecs'; end
