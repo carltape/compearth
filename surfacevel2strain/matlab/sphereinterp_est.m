@@ -22,7 +22,7 @@
 % called by sphereinterp.m
 %
 
-function [dest,dest_plot,lam0,dlon_plot,dlat_plot,na,nb] ...
+function [dest,dest_plot,destdph_plot,destdth_plot,lam0,dlon_plot,dlat_plot,na,nb] ...
     = sphereinterp_est(spline_tot,dlon,dlat,d,dsig,ax0,rparm,pparm)
 
 disp('------------------------------------------------------------');
@@ -260,16 +260,39 @@ disp('  '); disp(' computing values at the plotting points...');
 %       ngrid) in full, as done in surfacevel2strain.m
 %       A more efficient algorithm is needed.
 dest_plot = zeros(nplot,1);
+destdph_plot = zeros(nplot,1);
+destdth_plot = zeros(nplot,1);
 tic
-for ii=1:nplot          % loop over data points
+for ii=1:nplot          % loop over plotting points
     if mod(ii,100)==0, disp(sprintf('%i out of %i',ii,nplot)); end
-    Grow = zeros(1,ngrid);
+    Grow1 = zeros(1,ngrid);
+    Grow2 = zeros(1,ngrid);
+    Grow3 = zeros(1,ngrid);
     for jj=1:ngrid      % loop over basis functions
-        Grow(jj) = dogsph_vals(spline_tot(jj,1), spline_tot(jj,2), spline_tot(jj,3), dlon_plot(ii), dlat_plot(ii), {1});
+        ff = dogsph_vals(spline_tot(jj,1),spline_tot(jj,2),spline_tot(jj,3),...
+                            dlon_plot(ii), dlat_plot(ii), {3});
+        Grow1(jj) = ff(1);
+        Grow2(jj) = ff(2);
+        Grow3(jj) = ff(3);
     end
-    dest_plot(ii) = Grow * fu;
+    % row x column = scalar
+    dest_plot(ii) = Grow1 * fu;
+    destdph_plot(ii) = Grow2 * fu;
+    destdth_plot(ii) = Grow3 * fu;
 end
 toc
+
+% dest_plot = zeros(nplot,1);
+% tic
+% for ii=1:nplot          % loop over plotting points
+%     if mod(ii,100)==0, disp(sprintf('%i out of %i',ii,nplot)); end
+%     Grow = zeros(1,ngrid);
+%     for jj=1:ngrid      % loop over basis functions
+%         [Grow(jj),Grow(jj),Grow(jj)] = dogsph_vals(spline_tot(jj,1), spline_tot(jj,2), spline_tot(jj,3), dlon_plot(ii), dlat_plot(ii), {1});
+%     end
+%     dest_plot(ii) = Grow * fu;
+% end
+% toc
 
 % estimated field (on plotting grid)
 figure; hold on;
