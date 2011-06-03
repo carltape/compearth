@@ -97,7 +97,7 @@ if dopt == 1
     %---------------------------
 
     % KEY: specify the combination of datasets that you want
-    %  1   Crust2 + Gilbert + YanClayton + ChulickMooney + 22kmSalton + gocad
+    %  1   Crust2 + Gilbert + YanClayton + ChulickMooney + 22kmSalton + gocad_digitized_profiles
     %  2   Crust2 + Gilbert
     % 10   only Crust2
     % 11   all datasets minus Gilbert (CVM6p2)
@@ -105,6 +105,11 @@ if dopt == 1
     % make one big dataset
     switch idata
         case 1
+            % default choice: Crust2 + Gilbert + YanClayton + ChulickMooney
+            %                        + 22kmSalton + gocad_digitized_profiles
+            % This was used for created the surface for the SCEC CVM
+            % (Southern California Earthquake Center Community Velocity
+            % Model), using scales q=2 to q=8.
             xlon_all = [xlon_crust2 ; xlon_salton ; xlon_mooney ; xlon_yan ; xlon_gilbert ; xlon_gocad];
             ylat_all = [ylat_crust2 ; ylat_salton ; ylat_mooney ; ylat_yan ; ylat_gilbert ; ylat_gocad];
             zdep_all = [zdep_crust2 ; zdep_salton ; zdep_mooney ; zdep_yan ; zdep_gilbert ; zdep_gocad];

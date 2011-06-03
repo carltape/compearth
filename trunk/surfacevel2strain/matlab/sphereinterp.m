@@ -49,7 +49,7 @@ dir_output = [bdir 'matlab_output/'];
 
 if iwavelet==1
     
-    % NOTE: Only option 1 is available as the example
+    % NOTE: Only option dopt=1 is available as the example
     switch dopt
         case 1            
             qmin = 2; qmax = 8; % qmax = 8 or 9
@@ -102,15 +102,13 @@ if iwavelet==1
         pparm = {nx,ulabel};
     end
     
-    % KEY COMMAND: call sphereinterp.m
-    %[dest,dest_plot,lam0,dlon_plot,dlat_plot,na,nb] = ...
-    %    sphereinterp(dlon,dlat,d,dsig,ax0,qparm,rparm,pparm);
-    
+    % KEY COMMAND: call sphereinterp_grid.m to get basis functions
     [spline_tot] = sphereinterp_grid(dlon,dlat,ax0,qparm);
     ndata = length(dlon);
     ngrid = length(spline_tot);
     
-    [dest,dest_plot,lam0,dlon_plot,dlat_plot,na,nb] = ...
+    % KEY COMMAND: call sphereinterp_est.m to perform least-squares estimation
+    [dest,dest_plot,destdph_plot,destdth_plot,lam0,dlon_plot,dlat_plot,na,nb] = ...
         sphereinterp_est(spline_tot,dlon,dlat,d,dsig,ax0,rparm,pparm);
     
     disp('  ');
@@ -120,6 +118,15 @@ if iwavelet==1
     disp(sprintf('  qmax = %i, the densest grid for basis functions',qmax));
     disp(sprintf('  nx = %i, the grid density for plotting',nx));
     disp(sprintf('  ndata = %i, the number of observations (or ax0)',ndata));
+    
+    % compute magnitude of surface gradient, then convert to a slope in degrees
+    % note: d is in units of km, so the earth radius must also be in km
+    th_plot = (90 - dlat_plot)*pi/180;
+    destG_plot = sqrt( destdth_plot.^2 + (destdph_plot ./ sin(th_plot)).^2 );
+    destGslope_plot = atan(destG_plot / 6371) * 180/pi;
+    
+    figure; scatter(dlon_plot,dlat_plot,4^2,destGslope_plot,'filled');
+    axis(ax0); title('Slope of Moho, degrees'); colorbar;
 end
 
 %----------------------------------------------------------------
@@ -143,11 +150,12 @@ if and(iwavelet==1,iwrite==1)
     end
     fclose(fid);
 
-    % estimated field for a regular grid
+    % estimated field for a regular grid -- includes derivative fields, too
     fid = fopen([flab '_plot.dat'],'w');
-    stfmt = '%18.8e%18.8e%18.8e\n';
+    stfmt = '%18.8e%18.8e%18.8e%18.8e%18.8e%18.8e%18.8e\n';
     for ii=1:nplot
-        fprintf(fid,stfmt,dlon_plot(ii),dlat_plot(ii),dest_plot(ii));
+        fprintf(fid,stfmt,dlon_plot(ii),dlat_plot(ii),dest_plot(ii),...
+            destdph_plot(ii),destdth_plot(ii),destG_plot(ii),destGslope_plot(ii));
     end
     fclose(fid);
 
