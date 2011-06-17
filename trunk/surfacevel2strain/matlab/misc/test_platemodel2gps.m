@@ -74,7 +74,7 @@ end
 slabel = sregions{iregion};
 disp(sprintf('region %i is for %s: [%.1f %.1f %.1f %.1f]',iregion,slabel,ax1));
 
-iwrite = 0;         % write surface v-field to file
+iwrite = input(' Type 1 to write files (0 otherwise), then ENTER: ');
 ifig_extra = 0;     % extra figures
 ipick_figs = 0;     % figures of example plate w.r.t. fixed plate
 ilon360 = 1;        % =1 for longitudes as [0,360], =0 for [-180,180]
@@ -368,7 +368,7 @@ ifix_mat(:,8) = ifix_mat(:,4);      % bird plates
 
 irow1 = 11;
 irow2 = 11;
-ifix0 = input(sprintf('\n Type 0 to NOT fix any plate (or 0 to loop %i through %i), then ENTER: ',irow1,irow2));
+ifix0 = input(sprintf('\n Type 0 to NOT fix any plate (or 1 to loop %i through %i), then ENTER: ',irow1,irow2));
 
 for irow = irow1:irow2     % KEY: loop over fixed plates
     
