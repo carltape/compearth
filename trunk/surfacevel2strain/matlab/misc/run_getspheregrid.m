@@ -1,5 +1,5 @@
 %
-% test_getspheregrid.m
+% run_getspheregrid.m
 % Carl Tape, 01-Jan-2011
 %
 % Matlab version of Fortran code getsubgrids.f90 associated with the
@@ -23,7 +23,7 @@ axf = [-180 180 -90 90];
 %ax0 = [145 200 40 70]; qmin = 4; qmax = qmin;   % alaska
 %ax0 = [185 240 40 70]; qmin = 4; qmax = qmin;   % alaska
 %ax0 = [-122 -113 30 38]; qmin = 7; qmax = qmin;   % socal
-ax0 = [-122 -113 30 38]; qmin = 0; qmax = 8;   % socal
+ax0 = [-122 -113 30 38]; qmin = 0; qmax = 6;   % socal
 %ax0 = [-128 -100 30 51]; qmin = 0; qmax = 7;   % pacific
 
 if any(ax0(1:2) > 180), ilon360=1; else ilon360=0; end

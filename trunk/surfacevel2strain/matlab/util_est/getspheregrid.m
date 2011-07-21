@@ -13,15 +13,19 @@
 %   Tape, Muse, Simons, Dong, Webb, "Multiscale Estimation of GPS velocity
 %   fields," Geophysicsl Journal International, 2009.
 %
-% NOTE: The lon-lat box assumes no crossing of lon = 0 or lon = 180. We
+% NOTE: The lon-lat box assumes no crossing of lon = 0 OR lon = 180. We
 % need to generalize this to allow for corrections.
 %
-% calls xxx
-% called by surfacevel2strain.m
+% calls areaquad.m
+% called by surfacevel2strain.m, run_getspheregrid.m
 %
 
-function [glon,glat,gq,nvec,axmat] = getspheregrid(ax0,qmin,qmax)
+function [glon,glat,gq,nvec,axmat] = getspheregrid(ax0,qmin,qmax,iin)
 
+% default: assume gridpoints OUTSIDE the box are wanted
+if nargin==3, iin = 0; end
+
+% maximum allowable q (minimum scalelength)
 QMAXMAX = 14;
 if qmax > QMAXMAX
     error(sprintf('qmax (%i) exceeds QMAXMAX (%i)',qmax,QMAXMAX));
@@ -119,8 +123,12 @@ for ii = 1:nq
    %         gridpoint to the closest point on the lon-lat box boundary
    % NOTE 2: most of these outside gridpoints will be thresholded later
    if isub==1
-        dlon = dfac*dbase_deg;
-        dlat = dfac*dbase_deg;
+        if iin==1
+            dlon = 0; dlat = 0;
+        else
+            dlon = dfac*dbase_deg;
+            dlat = dfac*dbase_deg;
+        end
         lonmin = lonmin0 - dlon;
         lonmax = lonmax0 + dlon;
         latmin = latmin0 - dlat;
