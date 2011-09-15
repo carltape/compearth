@@ -1,8 +1,8 @@
 %
-% function R = rotmat(x,ixyz)
+% function R = rotmat(xdeg,ixyz)
 % Carl Tape, 01-April-2011
 %
-% This returns a rotation matrix, given an angle and axis.
+% This returns a rotation matrix, given an angle and an index for the axis.
 %
 % INPUT
 %   x       input angle, degrees
@@ -14,19 +14,40 @@
 % called xxx
 %
 
-function R = rotmat(x,ixyz)
+function R = rotmat(xdeg,ixyz)
 
-cosx = cos(x * pi/180);
-sinx = sin(x * pi/180);
+n = length(xdeg);
+cosx = cos(xdeg * pi/180);
+sinx = sin(xdeg * pi/180);
 
-if ixyz==1
-    R = [1 0 0 ; 0 cosx -sinx ; 0 sinx cosx ];
-elseif ixyz==2
-    R = [cosx 0 sinx ; 0 1 0 ; -sinx 0 cosx];
-elseif ixyz==3
-    R = [cosx -sinx 0 ; sinx cosx 0 ; 0 0 1];
+if n==1
+    if ixyz==1
+        R = [1 0 0 ; 0 cosx -sinx ; 0 sinx cosx ];
+    elseif ixyz==2
+        R = [cosx 0 sinx ; 0 1 0 ; -sinx 0 cosx];
+    elseif ixyz==3
+        R = [cosx -sinx 0 ; sinx cosx 0 ; 0 0 1];
+    else
+       error('ixyz = 1,2,3 only'); 
+    end
+    
 else
-   error('ixyz = 1,2,3 only'); 
+    R = zeros(3,3,n);
+    if ixyz==1
+        R(1,1,:) = 1; R(1,2,:) = 0; R(1,3,:) = 0;
+        R(2,1,:) = 0; R(2,2,:) = cosx(:)'; R(2,3,:) = -sinx(:)';
+        R(3,1,:) = 0; R(3,2,:) = sinx(:)'; R(3,3,:) = cosx(:)';
+    elseif ixyz==2
+        R(1,1,:) = cosx(:)'; R(1,2,:) = 0; R(1,3,:) = sinx(:)';
+        R(2,1,:) = 0; R(2,2,:) = 1; R(2,3,:) = 0;
+        R(3,1,:) = -sinx(:)'; R(3,2,:) = 0; R(3,3,:) = cosx(:)';
+    elseif ixyz==3
+        R(1,1,:) = cosx(:)'; R(1,2,:) = -sinx(:)'; R(1,3,:) = 0;
+        R(2,1,:) = sinx(:)'; R(2,2,:) = cosx(:)'; R(2,3,:) = 0;
+        R(3,1,:) = 0; R(3,2,:) = 0; R(3,3,:) = 1;
+    else
+       error('ixyz = 1,2,3 only'); 
+    end   
 end
 
-%==============================================================
+%==========================================================================
