@@ -42,7 +42,8 @@ n = length(lon);
 
 % compute the pole to translate body
 [Pxyz,Plat,Plon] = latlons2pole(lat1,lon1,lat2,lon2);
-Pdist = distance(lat1,lon1,lat2,lon2);
+Pdist = sdistance(lat1,lon1,lat2,lon2);
+%Pdist = distance(lat1,lon1,lat2,lon2);
 
 % apply translation
 evec = [Plat Plon Pdist];
