@@ -4,8 +4,10 @@
 #  foursub.pl
 #  Carl Tape
 #  
-#  This plots a four-subplot figures such as those presented
-#  in Tape et al. (GJI 2009).
+#  This plots a four-subplot figure like those presented in Tape et al. (GJI 2009).
+#  See /compearth/surfacevel2strain/USER_INFO/surfacevel2strain_manual.pdf
+# 
+#    last tested with GMT v 4.5.3
 #==========================================================
 
 $cshfile = "foursub.csh";
