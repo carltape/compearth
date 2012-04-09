@@ -16,7 +16,8 @@ function Elatlon = poles2euler(Plat1,Plon1,Plat2,Plon2)
 [Exyz,Elat,Elon] = latlons2pole(Plat1,Plon1,Plat2,Plon2);
 
 % Matlab mapping toolbox
-[Pdist, az] = distance(Plat1,Plon1,Plat2,Plon2);
+%[Pdist, az] = distance(Plat1,Plon1,Plat2,Plon2);
+Pdist = sdistance(Plat1,Plon1,Plat2,Plon2);
 
 %    evec(1) = latitude (deg) of euler pole
 %    evec(2) = longitude (deg) of euler pole
