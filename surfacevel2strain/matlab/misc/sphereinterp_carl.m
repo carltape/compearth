@@ -1,13 +1,7 @@
 %
-% sphereinterp.m
-% Carl Tape and Pablo Muse, 17-Jan-2011
-%
-% This estimates a smooth field on the sphere from discrete points using
-% spherical wavelets. This is the 1D version of surfacevel2strain.m,
-% 1D being the number of components of the discrete observations.
-%
-% See surfacevel2strain/USER_INFO/surfacevel2strain_notes.pdf for details,
-% including running the example below.
+% sphereinterp_carl.m
+% 
+% Carl's version of sphereinterp.m -- which has his example.
 %
 % calls get_1D_dataset.m, sphereinterp_grid.m, sphereinterp_est.m
 % called by sphereinterp.m
@@ -27,22 +21,73 @@ user_path;
 iwavelet = 1;   % =1 for estimation; =0 to view data only
 iwrite = 1;
 
-ropt  = input(' Type an index corresponding to a region (1=socal): ');
-dopt  = input(' Type an index corresponding to a dataset (1=moho): ');
-[dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt);
-dir_output = [bdir 'matlab_output/'];
+% CARL's EXAMPLES
+% 2-1 california moho
+% 1-1 socal moho
+% 1-2 USGS crystaline basement
+% 1-4 SJB base Tertiary
+% 3-3 Maricopa basement
+% 4-5 nenana gravity
+% 5-6 alaska moho
+ropt  = input(' Type an index corresponding to a region (1=socal, 2=cal, 3=maricopa, 4=nenana): ');
+dopt  = input(' Type an index corresponding to a dataset (1=moho,2,3,4,5=grav): ');
+[dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset_carl(ropt,dopt);
+dir_output = '/home/carltape/MOHO/WAVELET/MATLAB_EST/';
 
 %====================================================================
 % ESTIMATE A SMOOTH MOHO MAP USING SPHERICAL WAVELETS
 
 if iwavelet==1
+    
+    % NOTE: Only option dopt=1 is available as the example
     switch dopt
         case 1            
             qmin = 2; qmax = 8; % qmax = 8 or 9
             nlam = 40; ilampick = 2;
             ntrsh = 3;
             nx = 100;
+            
+        case 2           
+            qmin = 2; qmax = 7;
+            nlam = 40; ilampick = -10;  % hand-pick lambda
+            ntrsh = 3;
+            nx = 200;
+            file0 = '/home/carltape/GOCAD/surfaces/cal_basement_outline.dat';
+            [polyx,polyy,polylon,polylat] = textread(file0,'%f%f%f%f');
+            
+        case 3
+            qmin = 5; qmax = 11;   % qmax = 11 or 12
+            nlam = 40; ilampick = 1;
+            ntrsh = 3;
+            nx = 200;
+            file0 = '/home/carltape/MOHO/DATA/SJB_gocad/SouthernBasement_poly.dat';
+            [polyx,polyy] = textread(file0,'%f%f');
+            [polylon,polylat] = utm2ll(polyx,polyy,szone,1);    
+            
+        case 4            
+            qmin = 2; qmax = 10;   % qmax = 9 or 10
+            nlam = 40; ilampick = 1;
+            ntrsh = 3;
+            nx = 200;
+            file0 = '/home/carltape/MOHO/DATA/SJB_gocad/bt_poly.dat';
+            [polyx,polyy] = textread(file0,'%f%f');
+            [polylon,polylat] = utm2ll(polyx,polyy,szone,1);
+            
+        case 5
+            % can take up to 30 minutes
+            qmin = 5; qmax = 11;   % may want q=12 near the basin
+            nlam = 40; ilampick = 1;
+            ntrsh = 5;
+            nx = 200;
+            
+        case 6
+            qmin = 4; qmax = 8;   % may want q=12 near the basin
+            nlam = 40; ilampick = 2;
+            ntrsh = 3;
+            nx = 200;
     end
+    
+    %nx = 50; qmin = 2; qmax = 7;   % testing
     
     qsec = round(mean([qmin qmax]));
     qparm = {qmin,qsec,qmax,ntrsh};
@@ -79,6 +124,9 @@ if iwavelet==1
     figure; scatter(dlon_plot,dlat_plot,4^2,destGslope_plot,'filled');
     axis(ax0); title('Slope of Moho, degrees'); colorbar;
 end
+
+% optional: threshold the plotting field to eliminate unphysical values
+%dest_plot(dest_plot <= 11) = 11;
 
 %----------------------------------------------------------------
 % WRITE FILES

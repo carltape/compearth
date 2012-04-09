@@ -1,12 +1,10 @@
 %
 %=====================================================
 %
-%     Carl Tape, 04-Aug-2007
-%     notes.tex
-%     last printed xxx
+%   dvips -t letter surfacevel2strain_manual.dvi -o surfacevel2strain_manual.ps ; ps2pdf surfacevel2strain_manual.ps
 %
-%     Notes on converting discrete GPS velocity fields to
-%     continuous fields, and then strain rates.
+%   Notes on converting discrete GPS velocity fields to
+%   continuous fields, and then strain rates.
 % 
 %=====================================================%
 
@@ -534,7 +532,7 @@ Type an index for lambda (try iOCV = 28): 28
 %\normalsize
 
 \noindent
-At this point, the design matrix has been constructed and the regularization parameter has been selected. To avoid recomputing these quantities, the user is given the option to plot and analyze results while changing additional parameters. Below is the output generated to the Matlab command window in the process of generating \refFigab{fig:2D_B03}{fig:2D_B06}, among many more (\refSec{sec:surfacevel2strain}).
+At this point, the design matrix has been constructed and the regularization parameter has been selected. The next stage is to {\em re-run} \verb+surfacevel2strain.m+. To avoid recomputing these quantities, the user is given the option to plot and analyze results while changing additional parameters (see below). Below is the output generated to the Matlab command window in the process of generating \refFigab{fig:2D_B03}{fig:2D_B06}, among many more (\refSec{sec:surfacevel2strain}).
 
 %\small
 \begin{spacing}{1.0}
@@ -749,6 +747,8 @@ The figure was plotted using the Perl/GMT script {\tt plot$\_$strain.pl}.
 {{
 Four-subplot representation of the estimated velocity field for the southern California example.
 The figure was plotted using the Perl/GMT script {\tt foursub.pl}.
+These should resemble Figure 11a-b-c-e of \citet{Tape2009gps}; the difference is that this example considered only the horizontal components of the velocity ({\tt ndim=2}), whereas in Figure 11 we considered the vertical component as well ({\tt ndim=3}).
+(NOTE: To plot this file you need to have specified {\tt iwrite=1} when running {\tt surfacevel2strain.m}).
 \label{fig:2D_gmt2}
 }}
 \end{figure}

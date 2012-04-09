@@ -12,7 +12,7 @@
 %   lat,lon     points to rotate
 %   lat1,lon1   reference starting point
 %   lat2,lon2   reference starting point, after translation/rotation
-%   espin       spin about the translated reference point
+%   espin       spin about the translated reference point, degrees
 %   Min         OPTIONAL: 6 x n matrix of moment tensors
 %
 % OUTPUT

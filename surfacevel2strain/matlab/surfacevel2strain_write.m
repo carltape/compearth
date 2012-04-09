@@ -25,6 +25,9 @@ nlab = [slabel hlab '_' stqtag{1} '_b' num2str(basistype) '_' num2str(ndim) 'D_s
 %flab = [dir_plates 'surface_velocities/misc/' nlab];
 flab = [dir_output nlab];
 
+disp('entering surfacevel2strain_write.m');
+disp(['--> output tag is ' flab]);
+
 %---------------------------------
 
 % for GMT plotting, set zero values to <0

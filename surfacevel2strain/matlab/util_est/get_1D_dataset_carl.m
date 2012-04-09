@@ -18,6 +18,7 @@ switch ropt
     case 2, rlabel = 'cal'; ax0 = [-128.05 -111.95 29.95 43.05]; szone = '11S';
     case 3, rlabel = 'maricopa'; ax0 = [-119.7 -118.5 34.5 35.5]; szone = '11S';    
     case 4, rlabel = 'nenana'; ax0 = [-151.05 -147.45 63.45 65.55]; szone = '6W';
+    case 5, rlabel = 'alaska'; ax0 = [190 230 54 72]; szone = '5V';        
 end
 
 %========================================================
@@ -213,11 +214,18 @@ elseif dopt==4
     ulabel = 'zdep, km';
     
 elseif dopt==5
+    % isostatic residual gravity anomaly (column 5)
     [dlon,dlat,dg,gsig] = read_grav_akusgs(ax0);
     d = dg(:,5);
     dsig = gsig;
     dlabel = 'USGSgrav';
     ulabel = 'dgrav, mgal';
+    
+elseif dopt==6
+    ifile = '/home/carltape/PROJECTS/alaska/tomo_models/alaska_moho_depth_data.dat';
+    [dlon,dlat,d,dsig] = textread(ifile,'%f%f%f%f');
+    dlabel = 'moho';
+    ulabel = 'zdep, kml';   
 end
 
 % subset

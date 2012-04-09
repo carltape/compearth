@@ -154,8 +154,11 @@ mss = zeros(nlam,1);
 Gvec = zeros(nlam,1);
 rss0 = 0; mss0 = 0; G0 = 0;
 Whalf = diag( sqrt(Wvec) );     % Weisberg, p. 97
+dmod = Whalf*d;
+Gmod = Whalf*G*Dhalfinv;
+%sum(isnan(G(:))), sum(isnan(Whalf(:))), sum(isnan(Dhalfinv(:))), sum(isnan(Gmod(:)))
 [f_h_prime, rss, mss, Gvec, Fvec, dof, kap, iL, iGCV, iOCV] = ...
-    ridge_carl(Whalf*d, Whalf*G*Dhalfinv, lamvec);
+    ridge_carl(dmod,Gmod,lamvec);
 
 % (un-)transform model vector
 f_h = zeros(ngrid,nlam);

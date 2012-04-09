@@ -299,20 +299,31 @@ xlabel(' Latitude'); ylabel(' Longitude');
 orient tall, wysiwyg, fontsize(10)
 
 % plot spline gridpoints by order q
-figure; nc=2; nr=ceil(nump/nc);
-for ip = 1:nump
-    inds = [iqr(ip,1) : iqr(ip,2)];
-    subplot(nr,nc,ip); hold on;
+if nump==2
+    figure; hold on;
+    inds = [iqr(1,1) : iqr(1,2)];
     plot(dlon,dlat,'k+');
-    if sum(inds) > 0
-        %plot(glon(inds),glat(inds),'.');
-        scatter(glon(inds),glat(inds),msize,gq(inds),'filled');
-    end
-    caxis([qvec(1) qvec(end)]); colorbar('ytick',qvec);
-    axis equal
+    scatter(glon(inds),glat(inds),msize,gq(inds),'filled');
     axis(ax0);
-    %axis(ax1);
     title({stqs{ip}, stis{ip}});
+else
+    figure; nc=2; nr=ceil(nump/nc);    
+    for ip = 1:nump
+        inds = [iqr(ip,1) : iqr(ip,2)];
+        subplot(nr,nc,ip); hold on;
+        plot(dlon,dlat,'k+');
+        if sum(inds) > 0
+            %plot(glon(inds),glat(inds),'.');
+            scatter(glon(inds),glat(inds),msize,gq(inds),'filled');
+        end
+        if qvec(end)-qvec(1) > 0
+            caxis([qvec(1) qvec(end)]); colorbar('ytick',qvec);
+        end
+        axis equal
+        axis(ax0);
+        %axis(ax1);
+        title({stqs{ip}, stis{ip}});
+    end
 end
 orient tall, wysiwyg, fontsize(9)
 
