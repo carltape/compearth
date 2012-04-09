@@ -15,8 +15,6 @@ $cshfile = "foursub.csh";
 $icolor = 1;    # ccc
 
 # plates and faults
-#$plate_dir = "/home/carltape/gmt/plates";
-#$plate_file  = "${plate_dir}/plate_boundaries/bird_boundaries";
 $plate_file  = "input/bird_boundaries";
 if (not -f ${plate_file}) { die("Check if ${plate_file} exist or not\n") }
 $fault_file   = "input/jennings_more.xy";
@@ -131,13 +129,14 @@ if ($k == 1) {          # uniform rotation
 $ntag = sprintf("%2.2i_m%1i",$k,$imask);
 
 # VELOCITY FIELD DATASET
-$gps_dir  = "/home/carltape/gmt/gps_data";
+$gps_dir  = "$dir0/data/examples";
+if (not -d $gps_dir) { die("Check if gps_dir $gps_dir exists\n") }
 $dlab = sprintf("d%2.2i",$idata);
 $igc = 0; $ifault = 1; $iplate = 0;
 if ($idata==1) {
   $tag = "NASA REASON data set (cGPS)";
-  $gps_pts = "${gps_dir}/US/reason_subset_points.dat";
-  $gps_vec = "${gps_dir}/US/reason_subset_psvelo.dat";
+  $gps_pts = "${gps_dir}/reason_subset_points.dat";
+  $gps_vec = "${gps_dir}/reason_subset_psvelo.dat";
   #$gps_pts = "${gps_dir}/US/reason_fixed_NAM_subset_points.dat";
   #$gps_vec = "${gps_dir}/US/reason_fixed_NAM_subset_psvelo.dat";
   $igc = 0; $vec_conf = $vec_conf0;
@@ -361,8 +360,8 @@ $name = "${itag}_${dlab}_${qlab}_${blab}_${nlab}_${slab}_${ulab}";
 print "\n $name \n";
 
 if($igc==1){
-  $gc_boundary  = "/home/carltape/gmt/gps_data/synthetic/gps_gc_${dlab}.dat";
-  #$gc_boundary  = "/home/carltape/gmt/gps_data/synthetic/socal_gps_SAFplanar_gc$glab.dat";
+  $gc_boundary  = "${gps_dir}/gps_gc_${dlab}.dat";
+  #$gc_boundary  = "{gps_dir}/socal_gps_SAFplanar_gc$glab.dat";
   if (not -f $gc_boundary) { die("Check if $gc_boundary exist or not\n") }
 }
 
@@ -452,7 +451,7 @@ $cran = $cmax - $cmin; $dc = $cran/100;
 $Tvmag = "-T$cmin/$cmax/$dc";
 
 $colorbar = "seis";
-$colorbar = "/home/carltape/gmt/color_maps/Romanian_flag_smooth.cpt";
+$colorbar = "$dir0/gmt/input/Romanian_flag_smooth.cpt";
 
 $cptvmag = "color1.cpt";
 print CSH "makecpt -Crainbow $Tvmag -D > $cptvmag\n";

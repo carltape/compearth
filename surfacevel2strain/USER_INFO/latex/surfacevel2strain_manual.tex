@@ -374,8 +374,32 @@ For testing purposes, try decreasing one of these:
 \section{Output from {\tt surfacevel2strain.m}}
 \label{sec:surfacevel2strain_out}
 
-Below is the output generated to the Matlab command window in the process of generating \refFigab{fig:2D_A5}{fig:2D_A7}, among many more (\refSec{sec:surfacevel2strain}).
+\subsection*{Part 1: Estimating the model vector of spherical harmonic coefficients}
 
+To generate some of the figures in this document, run \verb+surfacevel2strain.m+ with the following input options (for basic testing, specify 0 for ``write output files for GMT plotting''):
+%
+\begin{spacing}{1.0}
+\begin{verbatim}
+ Type 1 for new inversion or 0 otherwise: 1
+ Type 1 to use spherical wavelets, 2 for spherical splines: 1
+ Type 1 to use the DIAGONAL covariance matrix for weighting (0 otherwise): 1
+ Type the number of components of the v-field for the inversion (2 or 3) : 2
+ Type 1 to plot with the mask (0 otherwise) : 1
+ Type 1 to write output to files for GMT plotting (0 otherwise) : 1
+ Type an index corresponding to a region (1=us, 2=cal, 3=socal, ..., 8=parkfield): 3
+ Type an index corresponding to a v-field dataset (1=REASON): 1
+ Type 1 to remove a uniform rotation, 0 otherwise: 1
+ Type min allowable grid order, qmin >= 0 (try 3): 3
+ Type max allowable grid order, qmax: 7
+ Enter max q grid for secular field (3 <= qsec <= 7): 5
+Type an index for lambda (try iOCV = 28): 28
+Type an index for lambda (try iOCV = 28): 28
+\end{verbatim}
+\end{spacing}
+%
+\noindent
+The full output (and input) is shown below. This will also generate \refFigab{fig:2D_A5}{fig:2D_A7}, among many more (\refSec{sec:surfacevel2strain}).
+%
 %\small
 \begin{spacing}{1.0}
 \begin{verbatim}
@@ -531,8 +555,20 @@ Type an index for lambda (try iOCV = 28): 28
 \end{spacing}
 %\normalsize
 
-\noindent
-At this point, the design matrix has been constructed and the regularization parameter has been selected. The next stage is to {\em re-run} \verb+surfacevel2strain.m+. To avoid recomputing these quantities, the user is given the option to plot and analyze results while changing additional parameters (see below). Below is the output generated to the Matlab command window in the process of generating \refFigab{fig:2D_B03}{fig:2D_B06}, among many more (\refSec{sec:surfacevel2strain}).
+%---------------------
+
+\subsection*{Part 2: Plotting and analyzing results}
+
+At this point, the design matrix has been constructed and the regularization parameter has been selected. To avoid recomputing these quantities, the user is given the option to plot and analyze results while changing additional parameters. So the next stage is to {\em re-run} \verb+surfacevel2strain.m+. The input choices are now
+%
+\begin{spacing}{1.0}
+\begin{verbatim}
+ Type 1 for new inversion or 0 otherwise: 0
+ Enter minimum value of omega for euler vectors (default = 0 rad/yr): 1.5e-7
+\end{verbatim}
+\end{spacing}
+%
+Below is the output generated to the Matlab command window in the process of generating \refFigab{fig:2D_B03}{fig:2D_B06}, among many more (\refSec{sec:surfacevel2strain}).
 
 %\small
 \begin{spacing}{1.0}

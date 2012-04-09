@@ -59,10 +59,10 @@ end
 if isempty(find(dopt == [0 1 10:13 20:23 60:63 70:73 80:83]))
     error('check data options (dopt)');
 end
-if dopt == 0, istore = 0; else istore = 1; end
+%if dopt == 0, istore = 0; else istore = 1; end
 sdopt = sprintf('d%2.2i', dopt);
 
-if istore == 1   % use specific v-field data (velocities in MM/YR)
+if dopt ~= 0   % use specific v-field data (velocities in MM/YR)
 
     % OBSERVED VELOCITY FIELDS
     if dopt == 1        % NASA REASON dataset (modified in REASON_gps_dat.m)
