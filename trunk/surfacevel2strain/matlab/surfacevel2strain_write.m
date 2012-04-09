@@ -20,7 +20,7 @@
 % s1 -- type of approximation used to compute the velocity gradient, given by sopt
 % u1 -- whether the field had rotation removed, given by iunrotate
 
-if istore==1, hlab = ['_' sdopt]; else hlab = ['_fix_' stref '_' smod]; end
+if dopt~=0, hlab = ['_' sdopt]; else hlab = ['_fix_' stref '_' smod]; end
 nlab = [slabel hlab '_' stqtag{1} '_b' num2str(basistype) '_' num2str(ndim) 'D_s' num2str(sopt) '_u' num2str(iunrotate)];
 %flab = [dir_plates 'surface_velocities/misc/' nlab];
 flab = [dir_output nlab];
