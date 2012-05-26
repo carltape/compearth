@@ -1,5 +1,4 @@
-%
-% function dvec = arcdist(slat, slon, rlat, rlon) 
+function dvec = arcdist(slat,slon,rlat,rlon)
 %
 % NOTE: JUST USE 'distance' IF YOU HAVE THE MATLAB MAPPING TOOLBOX.
 %
@@ -18,11 +17,6 @@
 %
 % See Matlab function distance.m for geographic coordinates.
 %
-% calls xxx
-% called by many programs
-%
-
-function dvec = arcdist(slat, slon, rlat, rlon)
 
 deg = 180/pi;
 

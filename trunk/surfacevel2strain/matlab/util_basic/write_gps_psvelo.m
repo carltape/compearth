@@ -1,8 +1,5 @@
-%
-% function write_gps_psvelo(filetag,lon,lat,ve,vn,se,sn,ren,name)
-%
-% This file writes a GPS vector field into a format compatible with the GMT
-% plotting command psvelo.
+function write_gps_psvelo(filetag,lon,lat,ve,vn,se,sn,ren,name)
+%WRITE_GPS_PSVELO writes a GPS vector field into psvelo format for GMT
 %
 % -Sevelscale/confidence/fontsize.
 %       Velocity  ellipses  in  (N,E)  convention.   Vscale sets the scaling of the velocity arrows.  This scaling gives inches
@@ -17,21 +14,39 @@
 % 7      correlation between eastward and northward components
 % 8      name of station (optional).
 %
-% calls xxx
-% called by xxx
-%
-
-function write_gps_psvelo(filetag,lon,lat,ve,vn,se,sn,ren,name)
 
 % number of stations
-nstation = length(name);
+nstation = length(lon);
+
+if nargin==8
+   name = repmat(cellstr(''),nstation,1);
+   for ii=1:nstation, name{ii} = sprintf('%4.4i',ii); end
+end
+
+if length(unique([length(lon) length(lat) length(ve) length(vn) ...
+        length(se) length(sn) length(ren) length(name)]))~=1
+   whos lon lat ve vn se sn ren name
+   error('all input must have the same length');
+end
 
 filename = [filetag '_psvelo.dat'];
+disp(['write_gps_psvelo.m: writing ' filename]);
 fid = fopen(filename,'w');
 for ii = 1:nstation
     fprintf(fid,'%12.4f%12.4f%12.4e%12.4e%12.4e%12.4e%12.4e%12s\n',...
         lon(ii),lat(ii),ve(ii),vn(ii),se(ii),sn(ii),ren(ii),char(name(ii)));   
 end
 fclose(fid);
-    
+
+% also write a file for psxy format (-Sv)
+[th,r] = cart2pol(ve,vn);
+filename = [filetag '_psxy.dat'];
+disp(['write_gps_psvelo.m: writing ' filename]);
+fid = fopen(filename,'w');
+for ii = 1:nstation
+    fprintf(fid,'%12.4f%12.4f%12.4e%12.4e%12s\n',...
+        lon(ii),lat(ii),th(ii),r(ii),char(name(ii)));   
+end
+fclose(fid);    
+
 %=======================================================================

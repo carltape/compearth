@@ -1,9 +1,6 @@
+function Mout = global2local_mat(Min,lat,lon,iglob2loc)
+%GLOBAL2LOCAL_MAT converts a set of matrices between global and local bases
 %
-% function Mout = global2local_mat(Min,Pxyz,iglob2loc)
-% Carl Tape, 15-March-2011
-%
-% This function converts a set of matrices between
-% a global basis (x-y-z) and a local basis (r-theta-phi).
 %
 % INPUT
 %   Min         3 x 3 x n set of matrices
@@ -18,8 +15,6 @@
 % calls global2local_rotmat.m
 % called by global2local_MT.m
 %
-
-function Mout = global2local_mat(Min,lat,lon,iglob2loc)
 
 % ensure that Min and Pxyz have the same number of entries
 [a,b,n1] = size(Min);
