@@ -1,0 +1,558 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 7.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[     19181,        549]
+NotebookOptionsPosition[     17791,        503]
+NotebookOutlinePosition[     18128,        518]
+CellTagsIndexPosition[     18085,        515]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell["\<\
+xyztp[(\[Theta], \[Phi]}] gives (x, y, z) in terms of longitude \[Theta] and \
+colatitude \[Phi]; this is the mathematics convention for \[Theta] and \
+\[Phi], the reverse of the physics convention \
+\>", "Text",
+ CellChangeTimes->{{3.546992795914401*^9, 3.5469927989121065`*^9}},
+ FontColor->RGBColor[1, 0, 0]],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"sind", "[", "t_", "]"}], ":=", 
+   RowBox[{"Sin", "[", 
+    RowBox[{"t", " ", "Degree"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"cosd", "[", "t_", "]"}], ":=", 
+   RowBox[{"Cos", "[", 
+    RowBox[{"t", " ", "Degree"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"xyztp", "[", 
+     RowBox[{"{", 
+      RowBox[{"\[Theta]_", ",", "\[Phi]_"}], "}"}], "]"}], ":=", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"cosd", "[", "\[Theta]", "]"}], " ", 
+       RowBox[{"sind", "[", "\[Phi]", "]"}]}], ",", 
+      RowBox[{
+       RowBox[{"sind", "[", "\[Theta]", "]"}], " ", 
+       RowBox[{"sind", "[", "\[Phi]", "]"}]}], ",", 
+      RowBox[{"cosd", "[", "\[Phi]", "]"}]}], "}"}]}], ";"}], 
+  " "}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"unit", "[", "v_", "]"}], ":=", 
+   FractionBox["v", 
+    SqrtBox[
+     RowBox[{"v", ".", "v"}]]]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.546992459749112*^9, 3.5469926638968697`*^9}, 
+   3.5469927920611944`*^9, {3.546995369913554*^9, 3.546995398476105*^9}}],
+
+Cell["\<\
+TestTriples consists of 5000 normalized triples, each sorted by decreasing \
+size.\
+\>", "Text",
+ CellChangeTimes->{{3.546992726099879*^9, 3.5469927711939573`*^9}},
+ FontColor->RGBColor[1, 0, 0]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"TestTriples", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"Reverse", "[", 
+      RowBox[{"Sort", "[", 
+       RowBox[{"unit", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"RandomReal", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"-", "1"}], ",", "1"}], "}"}], "]"}], ",", 
+          RowBox[{"RandomReal", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"-", "1"}], ",", "1"}], "}"}], "]"}], ",", 
+          RowBox[{"RandomReal", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"-", "1"}], ",", "1"}], "}"}], "]"}]}], "}"}], "]"}], 
+       "]"}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "5000"}], "}"}]}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.546984118233622*^9, 3.5469842956059313`*^9}, {
+  3.546984350065626*^9, 3.5469843792064767`*^9}}],
+
+Cell["The first two items in TestTriples :", "Text",
+ CellChangeTimes->{{3.5469928362979717`*^9, 3.5469928859235587`*^9}},
+ FontColor->RGBColor[1, 0, 0]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Take", "[", 
+  RowBox[{"TestTriples", ",", "2"}], "]"}]], "Input",
+ CellChangeTimes->{{3.546992705317442*^9, 3.5469927169426627`*^9}, {
+  3.546992872957436*^9, 3.5469928891683645`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "0.06799109804961244`"}], ",", 
+     RowBox[{"-", "0.07799118960271162`"}], ",", 
+     RowBox[{"-", "0.9946328895277705`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+    "0.8579885191630664`", ",", "0.4976299000378621`", ",", 
+     "0.12735848449426548`"}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.5469927182998652`*^9, {3.546992873877838*^9, 3.546992890010766*^9}, 
+   3.5469954073887205`*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"TestTriples", " ", "plotted", " ", "in", " ", 
+  RowBox[{
+   SuperscriptBox["R", "3"], ".", "    ", "Moving"}], " ", "the", " ", 
+  "result", " ", "with", " ", "the", " ", "mouse", " ", "makes", " ", "it", 
+  " ", "clear", " ", "that", " ", "this", " ", "is", " ", "a", " ", "lune", 
+  " ", "of", " ", "the", " ", 
+  RowBox[{"sphere", "."}]}]], "Text",
+ CellChangeTimes->{{3.546992905495993*^9, 3.5469930119406796`*^9}, {
+  3.546993073170186*^9, 3.546993073326187*^9}},
+ FontFamily->"Times New Roman",
+ FontColor->RGBColor[1, 0, 0]],
+
+Cell[BoxData[
+ RowBox[{"Graphics3D", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"PointSize", "[", ".004", "]"}], ",", 
+     RowBox[{"Point", "/@", "TestTriples"}]}], "}"}], ",", 
+   RowBox[{"Boxed", "\[Rule]", "False"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.546984299147137*^9, 3.5469843624520473`*^9}, {
+  3.5469844093769293`*^9, 3.5469844839138594`*^9}, {3.546984517485118*^9, 
+  3.546984522165126*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+  "So", " ", "you", " ", "can", " ", "always", " ", "plot", " ", "a", " ", 
+   "sorted", " ", "and", " ", "normalized", " ", "eigenvalue", " ", "triple", 
+   " ", "as", " ", 
+   RowBox[{"is", ".", "  ", "But"}], " ", "the", " ", "result", " ", "is", 
+   " ", "awkward"}], ",", " ", 
+  RowBox[{
+  "since", " ", "the", " ", "isotropic", " ", "axis", " ", "is", " ", "not", 
+   " ", 
+   RowBox[{"vertical", "."}]}]}]], "Text",
+ CellChangeTimes->{{3.546992905495993*^9, 3.5469930119406796`*^9}, {
+  3.546993073170186*^9, 3.546993073326187*^9}, {3.546993118812766*^9, 
+  3.5469932207278447`*^9}, {3.546994489589364*^9, 3.5469944909465666`*^9}},
+ FontFamily->"Times New Roman",
+ FontColor->RGBColor[1, 0, 0]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"uG", "=", 
+   RowBox[{
+    FractionBox["1", 
+     SqrtBox["6"]], 
+    TagBox[
+     RowBox[{"(", "\[NoBreak]", GridBox[{
+        {
+         SqrtBox["3"], "0", 
+         RowBox[{"-", 
+          SqrtBox["3"]}]},
+        {
+         RowBox[{"-", "1"}], "2", 
+         RowBox[{"-", "1"}]},
+        {
+         SqrtBox["2"], 
+         SqrtBox["2"], 
+         SqrtBox["2"]}
+       },
+       GridBoxAlignment->{
+        "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, 
+         "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+       GridBoxSpacings->{"Columns" -> {
+           Offset[0.27999999999999997`], {
+            Offset[0.7]}, 
+           Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+           Offset[0.2], {
+            Offset[0.4]}, 
+           Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+     Function[BoxForm`e$, 
+      MatrixForm[BoxForm`e$]]]}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.5469846593673654`*^9, 3.546984675716194*^9}, 
+   3.546984850873299*^9}],
+
+Cell[BoxData[
+ RowBox[{"The", " ", "rotation", " ", "matrix", " ", "uG", " ", "makes", " ", 
+  "the", " ", "isotropic", " ", "axis", " ", "vertical", " ", "and", " ", 
+  "takes", " ", "the", " ", 
+  RowBox[{"(", 
+   RowBox[{"1", ",", "0", ",", 
+    RowBox[{"-", "1"}]}], ")"}], " ", "direction", " ", "to", " ", "the", " ", 
+  RowBox[{"(", 
+   RowBox[{"1", ",", "0", ",", "0"}], ")"}], " ", 
+  RowBox[{"direction", ":"}]}]], "Text",
+ CellChangeTimes->{{3.546992905495993*^9, 3.5469930119406796`*^9}, {
+  3.546993073170186*^9, 3.546993073326187*^9}, {3.546993118812766*^9, 
+  3.546993304317191*^9}, {3.5469945169487123`*^9, 3.5469945189299154`*^9}},
+ FontFamily->"Times New Roman",
+ FontColor->RGBColor[1, 0, 0]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"uG", ".", 
+  RowBox[{"{", 
+   RowBox[{"1", ",", "1", ",", "1"}], "}"}]}], "\[IndentingNewLine]", 
+ RowBox[{"uG", ".", 
+  RowBox[{"{", 
+   RowBox[{"1", ",", "0", ",", 
+    RowBox[{"-", "1"}]}], "}"}]}]}], "Input",
+ CellChangeTimes->{{3.5469846593673654`*^9, 3.546984675716194*^9}, 
+   3.546984850873299*^9, {3.5469933153489103`*^9, 3.5469933361743464`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"0", ",", "0", ",", 
+   SqrtBox["3"]}], "}"}]], "Output",
+ CellChangeTimes->{3.546993336985548*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   SqrtBox["2"], ",", "0", ",", "0"}], "}"}]], "Output",
+ CellChangeTimes->{3.546993336985548*^9}]
+}, Open  ]],
+
+Cell["\<\
+So if you apply uG to your eigenvalue triples you get a more palatable \
+picture :\
+\>", "Text",
+ CellChangeTimes->{{3.5469933767157173`*^9, 3.546993420104393*^9}},
+ FontColor->RGBColor[1, 0, 0]],
+
+Cell[BoxData[
+ RowBox[{"Graphics3D", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Line", "[", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"0", ",", "0", ",", "1"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"0", ",", "0", ",", 
+          RowBox[{"-", "1"}]}], "}"}]}], "}"}], "]"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"PointSize", "[", ".004", "]"}], ",", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Point", "[", 
+          RowBox[{"uG", ".", "#"}], "]"}], "&"}], "/@", "TestTriples"}]}], 
+      "}"}]}], "}"}], ",", 
+   RowBox[{"Boxed", "\[Rule]", "False"}], ",", 
+   RowBox[{"ViewPoint", "\[Rule]", 
+    RowBox[{"7", 
+     RowBox[{"xyztp", "[", 
+      RowBox[{"{", 
+       RowBox[{"40", ",", "70"}], "}"}], "]"}]}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.546984299147137*^9, 3.5469843624520473`*^9}, {
+   3.5469844093769293`*^9, 3.5469844839138594`*^9}, {3.546984517485118*^9, 
+   3.546984522165126*^9}, {3.546984696776231*^9, 3.54698470814865*^9}, {
+   3.5469847382411027`*^9, 3.5469847638719473`*^9}, 3.546984796210804*^9, 
+   3.5469848729785376`*^9, {3.5469849089054003`*^9, 3.5469849604478903`*^9}, {
+   3.5469850143303843`*^9, 3.5469850253440037`*^9}}],
+
+Cell["\<\
+Once the lune has been rotated, gamma and beta coordinate curves coincide \
+with contours for ordinary longitude \[Theta] and colatitude \[Phi] (again, \
+math convention)\
+\>", "Text",
+ CellChangeTimes->{{3.5469933767157173`*^9, 3.546993420104393*^9}, {
+  3.546993557899534*^9, 3.5469936559620056`*^9}},
+ FontColor->RGBColor[1, 0, 0]],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"LuneColatLineRotated", "[", "\[Phi]_", "]"}], ":=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"xyztp", "[", 
+      RowBox[{"{", 
+       RowBox[{"\[Theta]", ",", "\[Phi]"}], "}"}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Theta]", ",", 
+       RowBox[{"-", "30"}], ",", "30", ",", "5"}], "}"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"LuneLongLineRotated", "[", "\[Theta]_", "]"}], ":=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"xyztp", "[", 
+      RowBox[{"{", 
+       RowBox[{"\[Theta]", ",", "\[Phi]"}], "}"}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Phi]", ",", "0", ",", "180", ",", "5"}], "}"}]}], "]"}]}], 
+  ";"}]}], "Input",
+ CellChangeTimes->{{3.546987287566348*^9, 3.546987385004118*^9}, {
+  3.546987574341648*^9, 3.5469875918760786`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"LuneColatLinesRotated", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"LuneColatLineRotated", "[", "\[Phi]", "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Phi]", ",", "10", ",", "170", ",", "10"}], "}"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"LuneLongLinesRotated", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"LuneLongLineRotated", "[", "\[Theta]", "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Theta]", ",", 
+       RowBox[{"-", "30"}], ",", "30", ",", "10"}], "}"}]}], "]"}]}], 
+  ";"}]}], "Input",
+ CellChangeTimes->{{3.546986151681567*^9, 3.5469862974014215`*^9}, {
+   3.546986370456349*^9, 3.5469864449932785`*^9}, 3.5469864780965366`*^9, {
+   3.5469874128813667`*^9, 3.5469874496818304`*^9}, {3.5469875742948475`*^9, 
+   3.5469875918604784`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{"Graphics3D", "[", 
+  RowBox[{"{", 
+   RowBox[{"Line", "/@", "LuneColatLinesRotated"}], "}"}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Graphics3D", "[", 
+  RowBox[{"{", 
+   RowBox[{"Line", "/@", "LuneLongLinesRotated"}], "}"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.5469863009894276`*^9, 3.546986321456663*^9}, {
+  3.5469864506092887`*^9, 3.546986455492097*^9}, {3.546987574326048*^9, 
+  3.5469875918760786`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{"Graphics3D", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"Line", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "1"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", 
+           RowBox[{"-", "1"}]}], "}"}]}], "}"}], "]"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Line", "/@", "LuneColatLinesRotated"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Line", "/@", "LuneLongLinesRotated"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"Thickness", "[", ".007", "]"}], ",", 
+        RowBox[{"Line", "[", 
+         RowBox[{"LuneColatLineRotated", "[", "90", "]"}], "]"}], ",", 
+        RowBox[{"Line", "[", 
+         RowBox[{"LuneLongLineRotated", "[", "0", "]"}], "]"}]}], "}"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"PointSize", "[", ".004", "]"}], ",", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Point", "[", 
+           RowBox[{"uG", ".", "#"}], "]"}], "&"}], "/@", "TestTriples"}]}], 
+       "}"}]}], "}"}], ",", 
+    RowBox[{"Boxed", "\[Rule]", "False"}], ",", 
+    RowBox[{"ViewPoint", "\[Rule]", 
+     RowBox[{"7", 
+      RowBox[{"xyztp", "[", 
+       RowBox[{"{", 
+        RowBox[{"40", ",", "70"}], "}"}], "]"}]}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.546984299147137*^9, 3.5469843624520473`*^9}, {
+   3.5469844093769293`*^9, 3.5469844839138594`*^9}, {3.546984517485118*^9, 
+   3.546984522165126*^9}, {3.546984696776231*^9, 3.54698470814865*^9}, {
+   3.5469847382411027`*^9, 3.5469847638719473`*^9}, 3.546984796210804*^9, 
+   3.5469848729785376`*^9, {3.5469849089054003`*^9, 3.5469849604478903`*^9}, {
+   3.5469850143303843`*^9, 3.5469850253440037`*^9}, {3.5469865193742085`*^9, 
+   3.546986541229847*^9}, {3.546987520583954*^9, 3.5469875406143894`*^9}, {
+   3.546987574326048*^9, 3.5469876771614275`*^9}}],
+
+Cell["\<\
+Suppose you want to plot the following \[CapitalLambda], which is already \
+sorted and normalized.\
+\>", "Text",
+ CellChangeTimes->{{3.5469937129795055`*^9, 3.546993765319497*^9}, {
+  3.5469938370547223`*^9, 3.5469939132340555`*^9}},
+ FontColor->RGBColor[1, 0, 0]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[CapitalLambda]", "=", 
+  RowBox[{
+   RowBox[{"Transpose", "[", "uG", "]"}], ".", 
+   RowBox[{"xyztp", "[", 
+    RowBox[{"{", 
+     RowBox[{"10.", ",", "70."}], "}"}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.546987735408329*^9, 3.546987797902038*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"0.7852174730466349`", ",", "0.3306979953745913`", ",", 
+   RowBox[{"-", "0.5235192029691783`"}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.5469877883236217`*^9, 3.54698779872884*^9}}]
+}, Open  ]],
+
+Cell["\<\
+If you want the lune to be vertical, then you plot uG\[CenterDot]\
+\[CapitalLambda] instead of \[CapitalLambda]\
+\>", "Text",
+ CellChangeTimes->{{3.5469937129795055`*^9, 3.546993765319497*^9}, {
+  3.5469938370547223`*^9, 3.546993917754964*^9}},
+ FontColor->RGBColor[1, 0, 0]],
+
+Cell[BoxData[
+ RowBox[{"Graphics3D", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Line", "[", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"0", ",", "0", ",", "1"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"0", ",", "0", ",", 
+          RowBox[{"-", "1"}]}], "}"}]}], "}"}], "]"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Line", "/@", "LuneColatLinesRotated"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Line", "/@", "LuneLongLinesRotated"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"Thickness", "[", ".007", "]"}], ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"LuneColatLineRotated", "[", "90", "]"}], "]"}], ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"LuneLongLineRotated", "[", "0", "]"}], "]"}]}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"Hue", "[", ".01", "]"}], ",", 
+       RowBox[{"PointSize", "[", ".04", "]"}], ",", 
+       RowBox[{"Point", "[", 
+        RowBox[{"uG", ".", "\[CapitalLambda]"}], "]"}]}], "}"}]}], "}"}], ",", 
+   RowBox[{"Boxed", "\[Rule]", "False"}], ",", 
+   RowBox[{"ViewPoint", "\[Rule]", 
+    RowBox[{"7", 
+     RowBox[{"xyztp", "[", 
+      RowBox[{"{", 
+       RowBox[{"40", ",", "70"}], "}"}], "]"}]}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.546984299147137*^9, 3.5469843624520473`*^9}, {
+   3.5469844093769293`*^9, 3.5469844839138594`*^9}, {3.546984517485118*^9, 
+   3.546984522165126*^9}, {3.546984696776231*^9, 3.54698470814865*^9}, {
+   3.5469847382411027`*^9, 3.5469847638719473`*^9}, 3.546984796210804*^9, 
+   3.5469848729785376`*^9, {3.5469849089054003`*^9, 3.5469849604478903`*^9}, {
+   3.5469850143303843`*^9, 3.5469850253440037`*^9}, {3.5469865193742085`*^9, 
+   3.546986541229847*^9}, {3.546987520583954*^9, 3.5469875406143894`*^9}, {
+   3.546987574326048*^9, 3.5469876771614275`*^9}, {3.546987844140519*^9, 
+   3.546987882875386*^9}, {3.5469879168366456`*^9, 3.5469879367734804`*^9}}],
+
+Cell["\<\
+From our Eq (20) you can see that \[CapitalLambda] above was chosen so that \
+\[Gamma] = 10 and  \[Beta] =70.  And indeed that is where it plots on the \
+lune.\
+\>", "Text",
+ CellChangeTimes->{{3.5469937129795055`*^9, 3.546993765319497*^9}, {
+  3.5469938370547223`*^9, 3.546993917754964*^9}, {3.546994159527487*^9, 
+  3.5469942173075886`*^9}, {3.546994388840588*^9, 3.5469944433046837`*^9}},
+ FontColor->RGBColor[1, 0, 0]]
+},
+WindowSize->{912, 750},
+WindowMargins->{{200, Automatic}, {86, Automatic}},
+FrontEndVersion->"8.0 for Linux x86 (64-bit) (November 7, 2010)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[545, 20, 321, 6, 29, "Text"],
+Cell[869, 28, 1131, 34, 104, "Input"],
+Cell[2003, 64, 205, 5, 29, "Text"],
+Cell[2211, 71, 912, 26, 48, "Input"],
+Cell[3126, 99, 153, 2, 29, "Text"],
+Cell[CellGroupData[{
+Cell[3304, 105, 209, 4, 29, "Input"],
+Cell[3516, 111, 497, 14, 29, "Output"]
+}, Open  ]],
+Cell[4028, 128, 556, 11, 32, "Text"],
+Cell[4587, 141, 426, 10, 29, "Input"],
+Cell[5016, 153, 737, 16, 29, "Text"],
+Cell[5756, 171, 1033, 33, 71, "Input"],
+Cell[6792, 206, 711, 14, 29, "Text"],
+Cell[CellGroupData[{
+Cell[7528, 224, 381, 9, 48, "Input"],
+Cell[7912, 235, 138, 4, 36, "Output"],
+Cell[8053, 241, 138, 4, 36, "Output"]
+}, Open  ]],
+Cell[8206, 248, 205, 5, 29, "Text"],
+Cell[8414, 255, 1278, 33, 48, "Input"],
+Cell[9695, 290, 344, 7, 29, "Text"],
+Cell[10042, 299, 876, 25, 48, "Input"],
+Cell[10921, 326, 849, 21, 48, "Input"],
+Cell[11773, 349, 443, 10, 48, "Input"],
+Cell[12219, 361, 2005, 48, 120, "Input"],
+Cell[14227, 411, 274, 6, 29, "Text"],
+Cell[CellGroupData[{
+Cell[14526, 421, 279, 7, 29, "Input"],
+Cell[14808, 430, 223, 4, 29, "Output"]
+}, Open  ]],
+Cell[15046, 437, 285, 6, 29, "Text"],
+Cell[15334, 445, 2018, 46, 102, "Input"],
+Cell[17355, 493, 432, 8, 29, "Text"]
+}
+]
+*)
+
+(* End of internal cache information *)
