@@ -1,0 +1,6 @@
+compearth/momenttensor/plot/README
+
+plotting utilities for moment tensor space
+
+mma -- mathematica script for plotting points on the lune in 3D
+gmt -- GMT script for plotting points on the lune in 2D
