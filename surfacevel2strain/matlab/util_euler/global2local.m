@@ -19,9 +19,12 @@
 function V_out = global2local(V_in, Pxyz, opts)
 
 % ensure that V_in and Pxyz are dimension 3 x n
-[m,n1] = size(V_in); if m~=3, V_in = V_in'; end
-[m,n2] = size(Pxyz); if m~=3, Pxyz = Pxyz'; end
-if n1~=n2, error('Pxyz and V_in must have same dimension'); end
+[m,n1] = size(V_in); if m~=3, V_in = V_in'; n1=m; end
+[m,n2] = size(Pxyz); if m~=3, Pxyz = Pxyz'; n2=m; end
+if n1~=n2
+    whos Pxyz V_in
+    error('Pxyz and V_in must have same dimension');
+end
 
 glob2loc = opts(1);
 
