@@ -2,5 +2,8 @@ compearth/momenttensor/plot/README
 
 plotting utilities for moment tensor space
 
-mma -- mathematica script for plotting points on the lune in 3D
+mma -- Mathematica script for plotting points on the lune in 3D
 gmt -- GMT script for plotting points on the lune in 2D
+
+GMT, Generic Mapping Tools, is free software available at
+http://gmt.soest.hawaii.edu/
