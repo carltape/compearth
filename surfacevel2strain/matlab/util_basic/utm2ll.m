@@ -1,7 +1,6 @@
+function [x,y,estr] = utm2ll(xi,yi,s_zone,i_type,ellipsoid) 
+% UTM2LL black-box Matlab code to convert between utm and lon-lat coordinates
 %
-% function [x,y,estr] = utm2ll(xi,yi,s_zone,i_type) 
-%
-% Black-box Matlab code to convert between utm and lon-lat coordinates.
 % NOTE: Requires Matlab Mapping Toolbox.
 %
 % To find a UTM zone for a specific point, use utmzone(lat,lon)
@@ -31,27 +30,37 @@
 % Meters, kilometers, or Earth radii (i.e., a unit sphere) are most
 % frequently used. See Functions that Define Ellipsoid Vectors for details.
 %
-% calls xxx
-% called by test_utm.m
+% Carl Tape, 10/2010
 %
-
-function [x,y,estr] = utm2ll(xi,yi,s_zone,i_type,ellipsoid) 
 
 utmstruct = defaultm('utm'); 
 utmstruct.zone = s_zone;        % e.g., '11S'
 
 % if no ellipsoid is given then use Matlab default ellipsoid for that zone
 if nargin == 4
-    disp('no ellipsoid is provided as input -- using first listed one in utmgeoid.m');
     % NOTE: utmgeoid may return MULTIPLE geoids for a given zone
+    %       [ellipsoid,estr] = utmgeoid('46N');
     [ellipsoid,estr] = utmgeoid(utmstruct.zone);
     %ellipsoid = almanac('earth','wgs84','meters');
     %ellipsoid = almanac('earth','clarke66','meters');
     %ellipsoid = [6.378206400000000e+06 0.082271854223002];
 
+    [ng,~] = size(ellipsoid);
+    disp('no ellipsoid is provided as input');
+    if ng > 1
+        for jj=1:ng, estrc{jj} = strtrim(estr(jj,:)); end
+        disp(sprintf('--> using #1 out of %i listed in utmgeoid.m (%s)',ng,estrc{1}));
+    else
+        estrc = {estr};
+        disp(sprintf('--> using the matlab default from utmgeoid.m (%s)',estrc{1}));
+    end
+    for jj=1:ng
+        disp(sprintf('ellipsoid %2i: %14s : %.10e  %.10e',jj,estrc{jj},ellipsoid(jj,:)));
+    end
     ellipsoid = ellipsoid(1,:);
-    estr0 = strtrim(estr(1,:));
-    disp(sprintf('  ellipsoid %s : %.10e  %.10e',estr0,ellipsoid));
+    %estr0 = strtrim(estr(1,:));
+else
+    disp(sprintf('user-specified ellipsoid: %.10e  %.10e',ellipsoid));
 end
         
 utmstruct.geoid = ellipsoid;        % assign ellipsoid
@@ -80,12 +89,19 @@ if 0==1
     
     % EXAMPLE
     format long, clc, clear, close all
-    x0 = -118; y0 = 32;
-    %x0 = 93.45; y0 = 7.65;
+    x0 = -118; y0 = 32;     % one geoid available
+    %x0 = 93.45; y0 = 7.65;  % multiple geoids available
     p1 = [y0 x0];
     zs = utmzone(p1);
     [x1,y1] = utm2ll(x0,y0,zs,0);
     [x2,y2] = utm2ll(x1,y1,zs,1);
+    disp(sprintf('original lon-lat point: %f, %f',x0,y0));
+    disp(sprintf('recovered lon-lat point: %f, %f',x2,y2));
+    
+    % now specify the ellipsoid
+    ellipsoid = almanac('earth','wgs84','meters');
+    [x1,y1] = utm2ll(x0,y0,zs,0,ellipsoid);
+    [x2,y2] = utm2ll(x1,y1,zs,1,ellipsoid);
     disp(sprintf('original lon-lat point: %f, %f',x0,y0));
     disp(sprintf('recovered lon-lat point: %f, %f',x2,y2));
 end
