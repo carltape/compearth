@@ -21,7 +21,7 @@ user_path;
 iwavelet = 1;   % =1 for estimation; =0 to view data only
 iwrite = 1;
 
-% CARL's EXAMPLES
+% CARL EXAMPLES (ropt-dopt)
 % 2-1 california moho
 % 1-1 socal moho
 % 1-2 USGS crystaline basement
@@ -126,6 +126,7 @@ if iwavelet==1
 end
 
 % optional: threshold the plotting field to eliminate unphysical values
+% (Alaska offshore moho)
 %dest_plot(dest_plot <= 11) = 11;
 
 %----------------------------------------------------------------
