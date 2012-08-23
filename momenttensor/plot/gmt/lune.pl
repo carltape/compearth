@@ -56,8 +56,9 @@ $lgray = 200;
 $dgray = 120;
 
 # KEY COMMAND
-$idata = 1;
-$psfile = "lune_${ftag}_idata${idata}.ps";
+$iplot = 1;  # =0 (reference lune), =1 (dots from punlished studies), =2 (reference beachballs)
+$kplot = 1;  # orientation of MT at center of lune (iplot=2 only)
+$psfile = "lune_${ftag}_iplot${iplot}_kplot${kplot}.ps";
 
 print CSH "psbasemap $J $R $B -G$lgray -K -V -P $origin > $psfile\n"; # START
 
@@ -79,53 +80,60 @@ $fname2 = "$pdir/beach_arc_02.lonlat";
 $fname3 = "$pdir/beach_arc_03.lonlat";
 $fname4 = "$pdir/beach_arc_04.lonlat";
 $fname5 = "$pdir/beach_arc_05.lonlat";
-if ($idata==0) {
-  print CSH "psxy $fname1 -W${lwid}p,$magenta -J -R -K -O -V >>$psfile\n";
-  print CSH "psxy $fname2 -W${lwid}p,$red -J -R -K -O -V >>$psfile\n";
-  print CSH "psxy $fname3 -W${lwid}p,$blue -J -R -K -O -V >>$psfile\n";
-  print CSH "psxy $fname4 -W${lwid}p,$blue -J -R -K -O -V >>$psfile\n";
-  print CSH "psxy $fname5 -W${lwid}p,0/0/0 -J -R -K -O -V >>$psfile\n";
-} else {
+if ($iplot==1) {
   $W = "-W2p,0,--";
   print CSH "psxy $fname1 $W -J -R -K -O -V >>$psfile\n";
   print CSH "psxy $fname2 $W -J -R -K -O -V >>$psfile\n";
   print CSH "psxy $fname3 $W -J -R -K -O -V >>$psfile\n";
   print CSH "psxy $fname4 $W -J -R -K -O -V >>$psfile\n";
   print CSH "psxy $fname5 $W -J -R -K -O -V >>$psfile\n";
+} else {
+  print CSH "psxy $fname1 -W${lwid}p,$magenta -J -R -K -O -V >>$psfile\n";
+  print CSH "psxy $fname2 -W${lwid}p,$red -J -R -K -O -V >>$psfile\n";
+  print CSH "psxy $fname3 -W${lwid}p,$blue -J -R -K -O -V >>$psfile\n";
+  print CSH "psxy $fname4 -W${lwid}p,$blue -J -R -K -O -V >>$psfile\n";
+  print CSH "psxy $fname5 -W${lwid}p,0/0/0 -J -R -K -O -V >>$psfile\n";
 }
 
-# plot points
-$csize = 12;
-$fname = "$pdir/beach_points.lonlat";
-print CSH "psxy $fname -N -Sc${csize}p -W1p,0/0/0 -G255 -J -R -K -O -V >>$psfile\n";
+if ($iplot != 2) {
+  # plot points
+  $csize = 12;
+  $fname = "$pdir/beach_points.lonlat";
+  print CSH "psxy $fname -N -Sc${csize}p -W1p,0/0/0 -G255 -J -R -K -O -V >>$psfile\n";
 
-# plot labels
-$fsize = 14;
-$fontno = 1;
-print "$fname\n";
-open(IN,$fname); @plines = <IN>; close(IN);
-for ($i = 1; $i <= @plines; $i++) {
-   ($plon,$plat,$plab,$Dx,$Dy) = split(" ",$plines[$i-1]);
-   #print "\n--$plon -- $plat-- $plab --";
-   $D = "-D${Dx}p/${Dy}p";
-   print CSH "pstext -N -J -R -K -O -V $D >>$psfile<<EOF\n$plon $plat $fsize 0 $fontno CM $plab\nEOF\n";
+  # plot labels
+  $fsize = 14;
+  $fontno = 1;
+  print "$fname\n";
+  open(IN,$fname); @plines = <IN>; close(IN);
+  for ($i = 1; $i <= @plines; $i++) {
+    ($plon,$plat,$plab,$Dx,$Dy) = split(" ",$plines[$i-1]);
+    #print "\n--$plon -- $plat-- $plab --";
+    $D = "-D${Dx}p/${Dy}p";
+    print CSH "pstext -N -J -R -K -O -V $D >>$psfile<<EOF\n$plon $plat $fsize 0 $fontno CM $plab\nEOF\n";
+  }
+  #print CSH "awk '{print \$1,\$2,$fsize,0,0,\"CM\",\$3}' $fname | pstext -N -J -R -K -O -V >> $psfile\n";
 }
-#print CSH "awk '{print \$1,\$2,$fsize,0,0,\"CM\",\$3}' $fname | pstext -N -J -R -K -O -V >> $psfile\n";
 
+if ($iplot==1) {
+  # moment tensors from various studies
+  $csize = 8;
+  $fname = "$pdir/beachpts_Ford2009_points.dat";
+  print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$red -J -R -K -O -V >>$psfile\n";
+  $fname = "$pdir/beachpts_Foulger2004_points.dat";
+  print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$orange -J -R -K -O -V >>$psfile\n";
+  $fname = "$pdir/beachpts_Minson2007_points.dat";
+  print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$green -J -R -K -O -V >>$psfile\n";
+  $fname = "$pdir/beachpts_Walter2009_points.dat";
+  print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$cyan -J -R -K -O -V >>$psfile\n";
+  $fname = "$pdir/beachpts_Walter2010_points.dat";
+  print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$magenta -J -R -K -O -V >>$psfile\n";
 
-# pot moment tensor from various studies
-if($idata==1) {
-$csize = 8;
-$fname = "$pdir/beachpts_Ford2009_points.dat";
-print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$red -J -R -K -O -V >>$psfile\n";
-$fname = "$pdir/beachpts_Foulger2004_points.dat";
-print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$orange -J -R -K -O -V >>$psfile\n";
-$fname = "$pdir/beachpts_Minson2007_points.dat";
-print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$green -J -R -K -O -V >>$psfile\n";
-$fname = "$pdir/beachpts_Walter2009_points.dat";
-print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$cyan -J -R -K -O -V >>$psfile\n";
-$fname = "$pdir/beachpts_Walter2010_points.dat";
-print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$magenta -J -R -K -O -V >>$psfile\n";
+} elsif ($iplot==2) {
+  # reference beachballs on the lune
+  $cmtinfo = "-Sm0.5 -L0.5p/0/0/0 -G255/0/0 -N";
+  $cmtfile = sprintf("$pdir/beachballs_%i_psmeca",$kplot);
+  print CSH "psmeca $cmtfile $J $R $cmtinfo -K -O -V >> $psfile\n";
 } 
 
 #-----------------------------
@@ -134,8 +142,8 @@ $J_title = "-JX1i";  # -JM7i
 $R_title = "-R0/1/0/1";
 $otitle1 = "-Xa3.5 -Ya6";
 
-# legend
-if($idata==1) {
+# legend for plotting published studies
+if($iplot==1) {
 print CSH "psxy -N -Sc${csize}p -W1p,0/0/0 -G$magenta $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n0 1.2\nEOF\n";
 print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0.2 1.2 12 0 $fontno LM Walter 2010 (n=14)\nEOF\n";
 
@@ -167,7 +175,7 @@ system("csh -f $cshfile");
 
 system("ps2pdf $psfile");
 
-# 
+# you may need to install gv to view (or use something else)
 system("gv $psfile &");
 
 #==================================================
