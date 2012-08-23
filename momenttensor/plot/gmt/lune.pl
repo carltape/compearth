@@ -6,9 +6,11 @@
 #  Carl Tape, carltape@gi.alaska.edu, May 2012
 #
 #  Example plot of representing moment tensors on the funamental lune.
-#  Reference: W. Tape and C. Tape, GJI, 2012
+#  The basic concepts behind this representation of moment tensors can be found in
+#  W. Tape and C. Tape, "A geometric setting for moment tensors," Geophysical J. International, 2012
 #
-#  Last tested 5-25-2012 with GMT 4.5.3
+#  Last tested 8-22-2012 with GMT 4.5.8
+#  note that psmeca incorporated a key bug fix in GMT 4.5.6
 #  
 #==========================================================
 
