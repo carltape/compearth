@@ -9,8 +9,7 @@
 #  The basic concepts behind this representation of moment tensors can be found in
 #  W. Tape and C. Tape, "A geometric setting for moment tensors," Geophysical J. International, 2012
 #
-#  Last tested 8-22-2012 with GMT 4.5.8
-#  note that psmeca incorporated a key bug fix in GMT 4.5.6
+#  Last tested 8-22-2012 with GMT 4.5.8, but with a custom psmeca by Doug Dreger
 #  
 #==========================================================
 
@@ -42,9 +41,6 @@ $wid = "3i";
 #$J = "-JW0/$wid";  $title1 = "Mollweide equal-area ($J)"; $ftag = "mollewide";
 $J = "-JH0/$wid";   $title1 = "Hammer equal-area ($J)"; $ftag = "hammer";
 
-$title1 = "Representation of source types on the fundamental lune";
-$title2 = "(W. Tape and C. Tape, 2012, GJI, \"A geometric setting for moment tensors\")";
-
 # colors
 #$magenta = "148/0/211";
 $magenta = "160/32/240";
@@ -58,8 +54,8 @@ $lgray = 200;
 $dgray = 120;
 
 # KEY COMMAND
-$iplot = 1;  # =0 (reference lune), =1 (dots from punlished studies), =2 (reference beachballs)
-$kplot = 1;  # orientation of MT at center of lune (iplot=2 only)
+$iplot = 2;  # =0 (reference lune), =1 (dots from published studies), =2 (reference beachballs)
+$kplot = 4;  # orientation of MT at center of lune (iplot=2 only)
 $psfile = "lune_${ftag}_iplot${iplot}_kplot${kplot}.ps";
 
 print CSH "psbasemap $J $R $B -G$lgray -K -V -P $origin > $psfile\n"; # START
@@ -167,6 +163,13 @@ print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0.2 0 
 
 #-----------------------------
 
+if($iplot != 2) {
+$title1 = "Representation of source types on the fundamental lune";
+$title2 = "(W. Tape and C. Tape, 2012, GJI, \"A geometric setting for moment tensors\")";
+} else {
+$title1 = "";
+$title2 = "";
+}
 $otitle1 = "-Xa-1 -Ya9.0";
 $otitle2 = "-Xa-1 -Ya8.7";
 print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0 0 14 0 $fontno LM $title1\nEOF\n";
@@ -179,5 +182,9 @@ system("ps2pdf $psfile");
 
 # you may need to install gv to view (or use something else)
 system("gv $psfile &");
+
+# to make composite pdf file:
+# for file in `ls lune_hammer_iplot2_*.ps` ; do ps2pdf $file ; done ; pdcat -r lune_hammer_iplot2*pdf all_lune_hammer_iplot2.pdf
+# pdcat -r lune_hammer_iplot0_kplot1.pdf lune_hammer_iplot1_kplot1.pdf all_lune_hammer_iplot2.pdf all_lune.pdf
 
 #==================================================
