@@ -55,8 +55,13 @@ $dgray = 120;
 
 # KEY COMMAND
 $iplot = 2;  # =0 (reference lune), =1 (dots from published studies), =2 (reference beachballs)
-$kplot = 4;  # orientation of MT at center of lune (iplot=2 only)
-$psfile = "lune_${ftag}_iplot${iplot}_kplot${kplot}.ps";
+$lplot = 1;  # =1-2: reference MTs on the lune (iplot=2 only)
+$kplot = 2;  # =1-4: orientation of MT at center of lune (iplot=2 only)
+if($iplot==2) {
+  $psfile = "lune_${ftag}_iplot${iplot}_lplot${lplot}_kplot${kplot}.ps";
+} else {
+  $psfile = "lune_${ftag}_iplot${iplot}.ps";
+}
 
 print CSH "psbasemap $J $R $B -G$lgray -K -V -P $origin > $psfile\n"; # START
 
@@ -71,13 +76,14 @@ print CSH "psxy $fname -G255 -J -R -K -O -V >>$psfile\n";
 print CSH "psbasemap $J $R $B -K -O -V >> $psfile\n";
 
 # plot arcs
-# dev, iso+DC, iso, iso, CDC
+# dev, iso+DC, iso, iso, CDC nu=0.25, CDC nu=0
 $lwid = 3;
 $fname1 = "$pdir/beach_arc_01.lonlat";
 $fname2 = "$pdir/beach_arc_02.lonlat";
 $fname3 = "$pdir/beach_arc_03.lonlat";
 $fname4 = "$pdir/beach_arc_04.lonlat";
 $fname5 = "$pdir/beach_arc_05.lonlat";
+$fname6 = "$pdir/beach_arc_06.lonlat";
 if ($iplot==1) {
   $W = "-W2p,0,--";
   print CSH "psxy $fname1 $W -J -R -K -O -V >>$psfile\n";
@@ -85,12 +91,14 @@ if ($iplot==1) {
   print CSH "psxy $fname3 $W -J -R -K -O -V >>$psfile\n";
   print CSH "psxy $fname4 $W -J -R -K -O -V >>$psfile\n";
   print CSH "psxy $fname5 $W -J -R -K -O -V >>$psfile\n";
+  print CSH "psxy $fname6 $W -J -R -K -O -V >>$psfile\n";
 } else {
   print CSH "psxy $fname1 -W${lwid}p,$magenta -J -R -K -O -V >>$psfile\n";
   print CSH "psxy $fname2 -W${lwid}p,$red -J -R -K -O -V >>$psfile\n";
   print CSH "psxy $fname3 -W${lwid}p,$blue -J -R -K -O -V >>$psfile\n";
   print CSH "psxy $fname4 -W${lwid}p,$blue -J -R -K -O -V >>$psfile\n";
   print CSH "psxy $fname5 -W${lwid}p,0/0/0 -J -R -K -O -V >>$psfile\n";
+  print CSH "psxy $fname6 -W${lwid}p,$blue -J -R -K -O -V >>$psfile\n";
 }
 
 if ($iplot != 2) {
@@ -130,7 +138,7 @@ if ($iplot==1) {
 } elsif ($iplot==2) {
   # reference beachballs on the lune
   $cmtinfo = "-Sm0.5 -L0.5p/0/0/0 -G255/0/0 -N";
-  $cmtfile = sprintf("$pdir/beachballs_%i_psmeca",$kplot);
+  $cmtfile = sprintf("$pdir/beachballs_ilune%i_iref%i_psmeca",$lplot,$kplot);
   print CSH "psmeca $cmtfile $J $R $cmtinfo -K -O -V >> $psfile\n";
 } 
 
@@ -163,12 +171,13 @@ print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0.2 0 
 
 #-----------------------------
 
-if($iplot != 2) {
-$title1 = "Representation of source types on the fundamental lune";
-$title2 = "(W. Tape and C. Tape, 2012, GJI, \"A geometric setting for moment tensors\")";
+# optional: plot a title
+if (0==1) {
+  $title1 = "Representation of source types on the fundamental lune";
+  $title2 = "(W. Tape and C. Tape, 2012, GJI, \"A geometric setting for moment tensors\")";
 } else {
-$title1 = "";
-$title2 = "";
+  $title1 = "";
+  $title2 = "";
 }
 $otitle1 = "-Xa-1 -Ya9.0";
 $otitle2 = "-Xa-1 -Ya8.7";
