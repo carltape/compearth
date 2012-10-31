@@ -1,3 +1,5 @@
+function [xmat, ymat] = horzlines(yvec,xmin,xmax)
+%HORZLINES create matrices for easy plotting of horizontal lines
 %
 % function [xmat, ymat] = horzlines(yvec,xmin,xmax)
 %
@@ -7,12 +9,7 @@
 %
 % EXAMPLE:
 %   [xmat,ymat] = horzlines(linspace(0,10,6),-1,4); figure; plot(xmat,ymat,'r');
-%
-% calls xxx
-% called by LOTS OF FILES (test_coswin.m)
 % 
-
-function [xmat, ymat] = horzlines(yvec,xmin,xmax)
 
 n = length(yvec);
 yvec = yvec(:)';        % must be a row
@@ -33,4 +30,4 @@ if nflip > 0, disp('  '); disp([ num2str(nflip) ' horzlines entered in reverse o
 xmat = [xmin; xmax];
 ymat = [yvec; yvec];
 
-%=====================================================
+%==========================================================================

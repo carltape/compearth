@@ -3,8 +3,7 @@
 %
 %   dvips -t letter surfacevel2strain_manual.dvi -o surfacevel2strain_manual.ps ; ps2pdf surfacevel2strain_manual.ps
 %
-%   Notes on converting discrete GPS velocity fields to
-%   continuous fields, and then strain rates.
+%   Notes on converting discrete GPS velocity fields to continuous fields, and then strain rates.
 % 
 %=====================================================%
 
@@ -74,7 +73,7 @@ A Matlab program to convert surface velocity fields into strain-rate maps}
 
 \begin{verbatim}
 surfacevel2strain/USER_INFO/surfacevel2strain_manual.pdf -- this document
-surfacevel2strain/USER_INFO/Tape2009gps.pdf              -- GJI2009 
+surfacevel2strain/USER_INFO/Tape2009gps.pdf              -- GJI2009 paper
 surfacevel2strain/USER_INFO/Tape2009gps_supplement.pdf   -- supplemental notes
 surfacevel2strain/matlab/                                -- matlab scripts
 \end{verbatim}
@@ -89,10 +88,13 @@ Please email Carl Tape ({\tt carltape@gi.alaska.edu}) with suggestions or correc
 
 \section{Introduction}
 
-The purpose of this program is to take an input set of discrete velocity vectors on the surface of a sphere, and then {\em estimate} a continuous velocity vector field on the surface. The estimated field is based on weighted and damped least squares, where the weights are determined from the errors associated with the measurements, but it does not yet use off-axis covariance values.  The program considers 2- or 3-component velocity fields. Several real and synthetic examples were demonstrated in \citet{Tape2009gps}. We suggest testing and understanding \verb+sphereinterp.m+ (\refSec{sec:sphereinterp}), a simpler version for 1D data, prior to using \verb+surfacevel2strain.m+ (\refSec{sec:surfacevel2strain}).
+The purpose of this program is to take an input set of discrete velocity vectors on the surface of a sphere, and then {\em estimate} a continuous velocity vector field on the surface. The estimated field is based on weighted and damped least squares, where the weights are determined from the errors associated with the measurements, but it does not yet use off-axis covariance values.  The program considers 2- or 3-component velocity fields. Several real and synthetic examples were demonstrated in \citet{Tape2009gps}.
+
+We suggest testing and understanding \verb+sphereinterp.m+ (\refSec{sec:sphereinterp}), a simpler version for 1D data, prior to using \verb+surfacevel2strain.m+ (\refSec{sec:surfacevel2strain}). This version was used to make the estimated Moho map published in \citet{Tape2012moho}.
 
 %=====================================================
 
+\pagebreak
 \section{Example with 1D data: {\tt sphereinterp.m}}
 \label{sec:sphereinterp}
 
@@ -185,7 +187,7 @@ The primary scripts to run are \verb+plot_strain.pl+ and \verb+foursub.pl+.
 Example output figures are shown in \refFigii{fig:2D_gmt1}{fig:2D_gmt2}.
 
 %=====================================================
-%\pagebreak
+\pagebreak
 %\small
 \addcontentsline{toc}{section}{References}
 \bibliographystyle{agu08}

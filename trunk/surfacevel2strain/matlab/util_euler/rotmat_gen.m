@@ -1,24 +1,23 @@
-function U = rotmat_gen(u,alpha)
-% This returns a rotation matrix, given an angle and an index for the axis.
+function U = rotmat_gen(v,xi)
+%ROTMAT_GEN compute a rotation matrix, given an axis and an angle
 %
 % INPUT
-%   u       rotation axis
-%   alpha   rotation angle, degrees
+%   v    rotation axis
+%   xi   rotation angle, degrees
 % OUTPUT
-%   U       rotation matrix
+%   U    rotation matrix
 %
 % calls rotmat.m
 %
 % Carl Tape 5/2012
-%
 
 deg = 180/pi;
 
 % get (phi,theta) for rotation axis
-[uph,ele,rho] = cart2sph(u(1),u(2),u(3));
-uth = pi/2 - ele;
+[vph,ele,rho] = cart2sph(v(1),v(2),v(3));
+vth = pi/2 - ele;
 
 % note: operations from right to left
-U = rotmat(uph*deg,3)*rotmat(uth*deg,2)*rotmat(alpha,3)*rotmat(-uth*deg,2)*rotmat(-uph*deg,3);
+U = rotmat(vph*deg,3)*rotmat(vth*deg,2)*rotmat(xi,3)*rotmat(-vth*deg,2)*rotmat(-vph*deg,3);
 
 %==========================================================================
