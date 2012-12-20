@@ -54,9 +54,9 @@ $lgray = 200;
 $dgray = 120;
 
 # KEY COMMAND
-$iplot = 2;  # =0 (reference lune), =1 (dots from published studies), =2 (reference beachballs)
+$iplot = 1;  # =0 (reference lune), =1 (dots from published studies), =2 (reference beachballs)
 $lplot = 1;  # =1-2: reference MTs on the lune (iplot=2 only)
-$kplot = 2;  # =1-4: orientation of MT at center of lune (iplot=2 only)
+$kplot = 3;  # =1-4: orientation of MT at center of lune (iplot=2 only)
 if($iplot==2) {
   $psfile = "lune_${ftag}_iplot${iplot}_lplot${lplot}_kplot${kplot}.ps";
 } else {
@@ -172,17 +172,17 @@ print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0.2 0 
 #-----------------------------
 
 # optional: plot a title
+$otitle1 = "-Xa-1 -Ya9.0";
+$otitle2 = "-Xa-1 -Ya8.7";
 if (0==1) {
   $title1 = "Representation of source types on the fundamental lune";
   $title2 = "(W. Tape and C. Tape, 2012, GJI, \"A geometric setting for moment tensors\")";
+  print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0 0 14 0 $fontno LM $title1\nEOF\n";
+  print CSH "pstext -N $R_title $J_title $otitle2 -O -V >>$psfile<<EOF\n 0 0 11 0 $fontno LM $title2\nEOF\n";
 } else {
-  $title1 = "";
-  $title2 = "";
+  # any command with no -K should work (this one will not plot anything)
+  print CSH "pstext $R_title $J_title $otitle2 -O -V >>$psfile<<EOF\n -1 -1 11 0 $fontno LM TEST\nEOF\n"; 
 }
-$otitle1 = "-Xa-1 -Ya9.0";
-$otitle2 = "-Xa-1 -Ya8.7";
-print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0 0 14 0 $fontno LM $title1\nEOF\n";
-print CSH "pstext -N $R_title $J_title $otitle2 -O -V >>$psfile<<EOF\n 0 0 11 0 $fontno LM $title2\nEOF\n";
 
 close (CSH);
 system("csh -f $cshfile");
