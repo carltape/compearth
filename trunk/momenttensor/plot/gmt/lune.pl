@@ -49,6 +49,10 @@ $red = "255/0/0";
 $blue = "30/144/255";
 $cyan = "0/255/255";
 $green = "50/205/50";
+$sienna = "160/82/45";
+$brown = "139/69/16";
+$black = "0/0/0";
+$white = "255/255/255";
 
 $lgray = 200;
 $dgray = 120;
@@ -62,18 +66,27 @@ if($iplot==2) {
 } else {
   $psfile = "lune_${ftag}_iplot${iplot}.ps";
 }
+$ipatch = 1;  # three shaded patches on the lune
+$icrack = 1;  # nu=0.25 arc between crack points
+if ($iplot==0) {$plot_ref_points = 1; $plot_ref_labels = 1;}
+if ($iplot==1) {$plot_ref_points = 0; $plot_ref_labels = 1;}
+if ($iplot==2) {$plot_ref_points = 0; $plot_ref_labels = 0;}
 
-print CSH "psbasemap $J $R $B -G$lgray -K -V -P $origin > $psfile\n"; # START
+$clune = $lgray;
+if($ipatch==0) {$clune = $sienna;}
+
+print CSH "psbasemap $J $R $B -G$clune -K -V -P $origin > $psfile\n"; # START
 
 $pdir = "./dfiles/";
 
 # plot patches
-$fname = "$pdir/beach_patch_01.lonlat";
-print CSH "psxy $fname -G$dgray -J -R -K -O -V >>$psfile\n";
-$fname = "$pdir/beach_patch_02.lonlat";
-print CSH "psxy $fname -G255 -J -R -K -O -V >>$psfile\n";
-
-print CSH "psbasemap $J $R $B -K -O -V >> $psfile\n";
+if ($ipatch==1) {
+  $fname = "$pdir/beach_patch_01.lonlat";
+  print CSH "psxy $fname -G$dgray -J -R -K -O -V >>$psfile\n";
+  $fname = "$pdir/beach_patch_02.lonlat";
+  print CSH "psxy $fname -G255 -J -R -K -O -V >>$psfile\n";
+  print CSH "psbasemap $J $R $B -K -O -V >> $psfile\n";
+}
 
 # plot arcs
 # dev, iso+DC, iso, iso, CDC nu=0.25, CDC nu=0
@@ -90,50 +103,52 @@ if ($iplot==1) {
   print CSH "psxy $fname2 $W -J -R -K -O -V >>$psfile\n";
   print CSH "psxy $fname3 $W -J -R -K -O -V >>$psfile\n";
   print CSH "psxy $fname4 $W -J -R -K -O -V >>$psfile\n";
-  print CSH "psxy $fname5 $W -J -R -K -O -V >>$psfile\n";
+  if($icrack==1) {print CSH "psxy $fname5 $W -J -R -K -O -V >>$psfile\n";}
   print CSH "psxy $fname6 $W -J -R -K -O -V >>$psfile\n";
 } else {
-  print CSH "psxy $fname1 -W${lwid}p,$magenta -J -R -K -O -V >>$psfile\n";
-  print CSH "psxy $fname2 -W${lwid}p,$red -J -R -K -O -V >>$psfile\n";
-  print CSH "psxy $fname3 -W${lwid}p,$blue -J -R -K -O -V >>$psfile\n";
-  print CSH "psxy $fname4 -W${lwid}p,$blue -J -R -K -O -V >>$psfile\n";
-  print CSH "psxy $fname5 -W${lwid}p,0/0/0 -J -R -K -O -V >>$psfile\n";
-  print CSH "psxy $fname6 -W${lwid}p,$blue -J -R -K -O -V >>$psfile\n";
+  if($ipatch==1) {@cols = ($magenta,$red,$blue,$blue,$black,$blue);}
+  else           {@cols = ($magenta,$orange,$red,$white,$black,$blue);}
+  if($ipatch==1) {print CSH "psxy $fname1 -W${lwid}p,$cols[0] -J -R -K -O -V >>$psfile\n";}
+  if($ipatch==1) {print CSH "psxy $fname2 -W${lwid}p,$cols[1] -J -R -K -O -V >>$psfile\n";}
+  print CSH "psxy $fname3 -W${lwid}p,$cols[2] -J -R -K -O -V >>$psfile\n";
+  print CSH "psxy $fname4 -W${lwid}p,$cols[3] -J -R -K -O -V >>$psfile\n";
+  if($icrack==1) {print CSH "psxy $fname5 -W${lwid}p,$cols[4] -J -R -K -O -V >>$psfile\n";}
+  print CSH "psxy $fname6 -W${lwid}p,$cols[5] -J -R -K -O -V >>$psfile\n";
 }
 
-if ($iplot != 2) {
-  # plot points
-  $csize = 12;
+# plot lune reference points and labels
+if ($plot_ref_points || $plot_ref_labels) {
   $fname = "$pdir/beach_points.lonlat";
-  print CSH "psxy $fname -N -Sc${csize}p -W1p,0/0/0 -G255 -J -R -K -O -V >>$psfile\n";
-
-  # plot labels
-  $fsize = 14;
-  $fontno = 1;
-  print "$fname\n";
-  open(IN,$fname); @plines = <IN>; close(IN);
-  for ($i = 1; $i <= @plines; $i++) {
-    ($plon,$plat,$plab,$Dx,$Dy) = split(" ",$plines[$i-1]);
-    #print "\n--$plon -- $plat-- $plab --";
-    $D = "-D${Dx}p/${Dy}p";
-    print CSH "pstext -N -J -R -K -O -V $D >>$psfile<<EOF\n$plon $plat $fsize 0 $fontno CM $plab\nEOF\n";
+  if ($plot_ref_points) {
+    $csize = 12;
+    print CSH "psxy $fname -N -Sc${csize}p -W1p,0/0/0 -G255 -J -R -K -O -V >>$psfile\n";
   }
-  #print CSH "awk '{print \$1,\$2,$fsize,0,0,\"CM\",\$3}' $fname | pstext -N -J -R -K -O -V >> $psfile\n";
+  if ($plot_ref_labels) {
+    $fsize = 14;
+    $fontno = 1;
+    print "$fname\n";
+    open(IN,$fname); @plines = <IN>; close(IN);
+    for ($i = 1; $i <= @plines; $i++) {
+      ($plon,$plat,$plab,$Dx,$Dy) = split(" ",$plines[$i-1]);
+      #print "\n--$plon -- $plat-- $plab --";
+      $D = "-D${Dx}p/${Dy}p";
+      print CSH "pstext -N -J -R -K -O -V $D >>$psfile<<EOF\n$plon $plat $fsize 0 $fontno CM $plab\nEOF\n";
+    }
+    #print CSH "awk '{print \$1,\$2,$fsize,0,0,\"CM\",\$3}' $fname | pstext -N -J -R -K -O -V >> $psfile\n";
+  }
 }
 
 if ($iplot==1) {
   # moment tensors from various studies
   $csize = 8;
-  $fname = "$pdir/beachpts_Ford2009_points.dat";
-  print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$red -J -R -K -O -V >>$psfile\n";
-  $fname = "$pdir/beachpts_Foulger2004_points.dat";
-  print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$orange -J -R -K -O -V >>$psfile\n";
-  $fname = "$pdir/beachpts_Minson2007_points.dat";
-  print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$green -J -R -K -O -V >>$psfile\n";
-  $fname = "$pdir/beachpts_Walter2009_points.dat";
-  print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$cyan -J -R -K -O -V >>$psfile\n";
-  $fname = "$pdir/beachpts_Walter2010_points.dat";
-  print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$magenta -J -R -K -O -V >>$psfile\n";
+  @cols = ($red,$orange,$green,$white,$cyan,$magenta,$black);
+  @ftags = ("Ford2009","Foulger2004","Minson2007","Minson2008","Walter2009","Walter2010","Pesicek2012");
+  @ftits = ("Ford 2009 (n=32)","Foulger 2004 (n=26)","Minson 2007 (n=18)","Minson 2008 (n=7)","Walter 2009 (n=13)","Walter 2010 (n=14)","Pesicek 2012 (n=7)");
+
+  for ($i = 1; $i <= @cols; $i++) {
+    $fname = sprintf("$pdir/beachpts_%s_points.dat",$ftags[$i-1]);
+    print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$cols[$i-1] -J -R -K -O -V >>$psfile\n";
+  }
 
 } elsif ($iplot==2) {
   # reference beachballs on the lune
@@ -150,20 +165,13 @@ $otitle1 = "-Xa3.5 -Ya6";
 
 # legend for plotting published studies
 if($iplot==1) {
-print CSH "psxy -N -Sc${csize}p -W1p,0/0/0 -G$magenta $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n0 1.2\nEOF\n";
-print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0.2 1.2 12 0 $fontno LM Walter 2010 (n=14)\nEOF\n";
-
-print CSH "psxy -N -Sc${csize}p -W1p,0/0/0 -G$cyan $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n0 0.9\nEOF\n";
-print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0.2 0.9 12 0 $fontno LM Walter 2009 (n=13)\nEOF\n";
-
-print CSH "psxy -N -Sc${csize}p -W1p,0/0/0 -G$green $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n0 0.6\nEOF\n";
-print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0.2 0.6 12 0 $fontno LM Minson 2007 (n=18)\nEOF\n";
-
-print CSH "psxy -N -Sc${csize}p -W1p,0/0/0 -G$orange $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n0 0.3\nEOF\n";
-print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0.2 0.3 12 0 $fontno LM Foulger 2004 (n=26)\nEOF\n";
-
-print CSH "psxy -N -Sc${csize}p -W1p,0/0/0 -G$red $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n0 0\nEOF\n";
-print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0.2 0 12 0 $fontno LM Ford 2009 (n=32)\nEOF\n";
+  $x0 = 0; $y0 = 1.2; $dy = 0.3;
+  for ($i = 1; $i <= @cols; $i++) {
+    $x = $x0 + 0.2;
+    $y = $y0 - ($i-1)*$dy;
+    print CSH "psxy -N -Sc${csize}p -W1p,0/0/0 -G$cols[$i-1] $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n$x0 $y\nEOF\n";
+    print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n $x $y 12 0 $fontno LM $ftits[$i-1]\nEOF\n";
+  }
 
 #$x = -30; $y = rad2deg(asin(1/sqrt(3)));
 #print CSH "psxy -N -Sc${csize}p -W1p,0/0/0 -G255/165/0 -J -R -K -O -V >>$psfile<<EOF\n$x $y\nEOF\n";

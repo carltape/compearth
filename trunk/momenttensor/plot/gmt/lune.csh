@@ -9,7 +9,6 @@ psxy ./dfiles//beach_arc_03.lonlat -W2p,0,-- -J -R -K -O -V >>lune_hammer_iplot1
 psxy ./dfiles//beach_arc_04.lonlat -W2p,0,-- -J -R -K -O -V >>lune_hammer_iplot1.ps
 psxy ./dfiles//beach_arc_05.lonlat -W2p,0,-- -J -R -K -O -V >>lune_hammer_iplot1.ps
 psxy ./dfiles//beach_arc_06.lonlat -W2p,0,-- -J -R -K -O -V >>lune_hammer_iplot1.ps
-psxy ./dfiles//beach_points.lonlat -N -Sc12p -W1p,0/0/0 -G255 -J -R -K -O -V >>lune_hammer_iplot1.ps
 pstext -N -J -R -K -O -V -D0.00p/-15.00p >>lune_hammer_iplot1.ps<<EOF
 0.0000 -90.0000 14 0 1 CM ISO
 EOF
@@ -46,19 +45,21 @@ EOF
 psxy ./dfiles//beachpts_Ford2009_points.dat -N -Sc8p -W0.5p,0/0/0 -G255/0/0 -J -R -K -O -V >>lune_hammer_iplot1.ps
 psxy ./dfiles//beachpts_Foulger2004_points.dat -N -Sc8p -W0.5p,0/0/0 -G255/165/0 -J -R -K -O -V >>lune_hammer_iplot1.ps
 psxy ./dfiles//beachpts_Minson2007_points.dat -N -Sc8p -W0.5p,0/0/0 -G50/205/50 -J -R -K -O -V >>lune_hammer_iplot1.ps
+psxy ./dfiles//beachpts_Minson2008_points.dat -N -Sc8p -W0.5p,0/0/0 -G255/255/255 -J -R -K -O -V >>lune_hammer_iplot1.ps
 psxy ./dfiles//beachpts_Walter2009_points.dat -N -Sc8p -W0.5p,0/0/0 -G0/255/255 -J -R -K -O -V >>lune_hammer_iplot1.ps
 psxy ./dfiles//beachpts_Walter2010_points.dat -N -Sc8p -W0.5p,0/0/0 -G160/32/240 -J -R -K -O -V >>lune_hammer_iplot1.ps
-psxy -N -Sc8p -W1p,0/0/0 -G160/32/240 -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
+psxy ./dfiles//beachpts_Pesicek2012_points.dat -N -Sc8p -W0.5p,0/0/0 -G0/0/0 -J -R -K -O -V >>lune_hammer_iplot1.ps
+psxy -N -Sc8p -W1p,0/0/0 -G255/0/0 -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
 0 1.2
 EOF
 pstext -N -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
- 0.2 1.2 12 0 1 LM Walter 2010 (n=14)
+ 0.2 1.2 12 0 1 LM Ford 2009 (n=32)
 EOF
-psxy -N -Sc8p -W1p,0/0/0 -G0/255/255 -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
+psxy -N -Sc8p -W1p,0/0/0 -G255/165/0 -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
 0 0.9
 EOF
 pstext -N -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
- 0.2 0.9 12 0 1 LM Walter 2009 (n=13)
+ 0.2 0.9 12 0 1 LM Foulger 2004 (n=26)
 EOF
 psxy -N -Sc8p -W1p,0/0/0 -G50/205/50 -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
 0 0.6
@@ -66,17 +67,29 @@ EOF
 pstext -N -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
  0.2 0.6 12 0 1 LM Minson 2007 (n=18)
 EOF
-psxy -N -Sc8p -W1p,0/0/0 -G255/165/0 -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
+psxy -N -Sc8p -W1p,0/0/0 -G255/255/255 -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
 0 0.3
 EOF
 pstext -N -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
- 0.2 0.3 12 0 1 LM Foulger 2004 (n=26)
+ 0.2 0.3 12 0 1 LM Minson 2008 (n=7)
 EOF
-psxy -N -Sc8p -W1p,0/0/0 -G255/0/0 -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
+psxy -N -Sc8p -W1p,0/0/0 -G0/255/255 -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
 0 0
 EOF
 pstext -N -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
- 0.2 0 12 0 1 LM Ford 2009 (n=32)
+ 0.2 0 12 0 1 LM Walter 2009 (n=13)
+EOF
+psxy -N -Sc8p -W1p,0/0/0 -G160/32/240 -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
+0 -0.3
+EOF
+pstext -N -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
+ 0.2 -0.3 12 0 1 LM Walter 2010 (n=14)
+EOF
+psxy -N -Sc8p -W1p,0/0/0 -G0/0/0 -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
+0 -0.6
+EOF
+pstext -N -R0/1/0/1 -JX1i -Xa3.5 -Ya6 -K -O -V >>lune_hammer_iplot1.ps<<EOF
+ 0.2 -0.6 12 0 1 LM Pesicek 2012 (n=7)
 EOF
 pstext -R0/1/0/1 -JX1i -Xa-1 -Ya8.7 -O -V >>lune_hammer_iplot1.ps<<EOF
  -1 -1 11 0 1 LM TEST
