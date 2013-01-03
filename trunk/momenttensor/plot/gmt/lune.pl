@@ -140,14 +140,20 @@ if ($plot_ref_points || $plot_ref_labels) {
 
 if ($iplot==1) {
   # moment tensors from various studies
-  $csize = 8;
-  @cols = ($red,$orange,$green,$white,$cyan,$magenta,$black);
-  @ftags = ("Ford2009","Foulger2004","Minson2007","Minson2008","Walter2009","Walter2010","Pesicek2012");
-  @ftits = ("Ford 2009 (n=32)","Foulger 2004 (n=26)","Minson 2007 (n=18)","Minson 2008 (n=7)","Walter 2009 (n=13)","Walter 2010 (n=14)","Pesicek 2012 (n=7)");
+  $csize = 8;  # size of dots
+  @csizes = ($csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize/2);
+  @cols = ($red,$orange,$green,$white,$cyan,$magenta,$black,$green);
+  @ftags = ("Ford2009","Foulger2004","Minson2007","Minson2008","Walter2009","Walter2010","Pesicek2012","Baig2010");
+  @ftits = ("Ford 2009 (n=32)","Foulger 2004 (n=26)","Minson 2007 (n=18)","Minson 2008 (n=7)","Walter 2009 (n=13)","Walter 2010 (n=14)","Pesicek 2012 (n=7)","Baig 2010 (n=577)");
+  @inds = (1..7);
+  #@inds = (8,1..7);
+  #@inds = 8;
 
-  for ($i = 1; $i <= @cols; $i++) {
-    $fname = sprintf("$pdir/beachpts_%s_points.dat",$ftags[$i-1]);
-    print CSH "psxy $fname -N -Sc${csize}p -W0.5p,0/0/0 -G$cols[$i-1] -J -R -K -O -V >>$psfile\n";
+  for ($i = 1; $i <= @inds; $i++) {
+    $j = $inds[$i-1];
+    $cz = $csizes[$j-1];
+    $fname = sprintf("$pdir/beachpts_%s_points.dat",$ftags[$j-1]);
+    print CSH "psxy $fname -N -Sc${cz}p -W0.5p,0/0/0 -G$cols[$j-1] -J -R -K -O -V >>$psfile\n";
   }
 
 } elsif ($iplot==2) {
@@ -166,11 +172,13 @@ $otitle1 = "-Xa3.5 -Ya6";
 # legend for plotting published studies
 if($iplot==1) {
   $x0 = 0; $y0 = 1.2; $dy = 0.3;
-  for ($i = 1; $i <= @cols; $i++) {
+  for ($i = 1; $i <= @inds; $i++) {
+    $j = $inds[$i-1];
+    $cz = $csizes[$j-1];
     $x = $x0 + 0.2;
     $y = $y0 - ($i-1)*$dy;
-    print CSH "psxy -N -Sc${csize}p -W1p,0/0/0 -G$cols[$i-1] $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n$x0 $y\nEOF\n";
-    print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n $x $y 12 0 $fontno LM $ftits[$i-1]\nEOF\n";
+    print CSH "psxy -N -Sc${cz}p -W0.5p,0/0/0 -G$cols[$j-1] $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n$x0 $y\nEOF\n";
+    print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n $x $y 12 0 $fontno LM $ftits[$j-1]\nEOF\n";
   }
 
 #$x = -30; $y = rad2deg(asin(1/sqrt(3)));
