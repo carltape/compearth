@@ -67,10 +67,13 @@ if($iplot==2) {
   $psfile = "lune_${ftag}_iplot${iplot}.ps";
 }
 $ipatch = 1;  # three shaded patches on the lune
-$icrack = 1;  # nu=0.25 arc between crack points
+$icrack = 0;  # nu=0.25 arc between crack points
+$ilam2 = 1;   # lam2 = 0 arc between dipoles
+$ilegend = 0; # legend for data points
 if ($iplot==0) {$plot_ref_points = 1; $plot_ref_labels = 1;}
 if ($iplot==1) {$plot_ref_points = 0; $plot_ref_labels = 1;}
 if ($iplot==2) {$plot_ref_points = 0; $plot_ref_labels = 0;}
+if ($iplot==1) {$ilegend = 1;}
 
 $clune = $lgray;
 if($ipatch==0) {$clune = $sienna;}
@@ -91,12 +94,12 @@ if ($ipatch==1) {
 # plot arcs
 # dev, iso+DC, iso, iso, CDC nu=0.25, CDC nu=0
 $lwid = 3;
-$fname1 = "$pdir/beach_arc_01.lonlat";
-$fname2 = "$pdir/beach_arc_02.lonlat";
-$fname3 = "$pdir/beach_arc_03.lonlat";
-$fname4 = "$pdir/beach_arc_04.lonlat";
-$fname5 = "$pdir/beach_arc_05.lonlat";
-$fname6 = "$pdir/beach_arc_06.lonlat";
+$fname1 = "$pdir/beach_arc_01.lonlat";  # deviatoric (equator)
+$fname2 = "$pdir/beach_arc_02.lonlat";  # iso+DC (center longitude)
+$fname3 = "$pdir/beach_arc_03.lonlat";  # bottom of +ISO patch
+$fname4 = "$pdir/beach_arc_04.lonlat";  # top of -ISO patch
+$fname5 = "$pdir/beach_arc_05.lonlat";  # CDC nu=0.25
+$fname6 = "$pdir/beach_arc_06.lonlat";  # CDC nu=0 (between dipoles)
 if ($iplot==1) {
   $W = "-W2p,0,--";
   print CSH "psxy $fname1 $W -J -R -K -O -V >>$psfile\n";
@@ -104,7 +107,7 @@ if ($iplot==1) {
   print CSH "psxy $fname3 $W -J -R -K -O -V >>$psfile\n";
   print CSH "psxy $fname4 $W -J -R -K -O -V >>$psfile\n";
   if($icrack==1) {print CSH "psxy $fname5 $W -J -R -K -O -V >>$psfile\n";}
-  print CSH "psxy $fname6 $W -J -R -K -O -V >>$psfile\n";
+  if($ilam2==1) {print CSH "psxy $fname6 $W -J -R -K -O -V >>$psfile\n";}
 } else {
   if($ipatch==1) {@cols = ($magenta,$red,$blue,$blue,$black,$blue);}
   else           {@cols = ($magenta,$orange,$red,$white,$black,$blue);}
@@ -113,7 +116,7 @@ if ($iplot==1) {
   print CSH "psxy $fname3 -W${lwid}p,$cols[2] -J -R -K -O -V >>$psfile\n";
   print CSH "psxy $fname4 -W${lwid}p,$cols[3] -J -R -K -O -V >>$psfile\n";
   if($icrack==1) {print CSH "psxy $fname5 -W${lwid}p,$cols[4] -J -R -K -O -V >>$psfile\n";}
-  print CSH "psxy $fname6 -W${lwid}p,$cols[5] -J -R -K -O -V >>$psfile\n";
+  if($ilam2==1) {print CSH "psxy $fname6 -W${lwid}p,$cols[5] -J -R -K -O -V >>$psfile\n";}
 }
 
 # plot lune reference points and labels
@@ -126,7 +129,6 @@ if ($plot_ref_points || $plot_ref_labels) {
   if ($plot_ref_labels) {
     $fsize = 14;
     $fontno = 1;
-    print "$fname\n";
     open(IN,$fname); @plines = <IN>; close(IN);
     for ($i = 1; $i <= @plines; $i++) {
       ($plon,$plat,$plab,$Dx,$Dy) = split(" ",$plines[$i-1]);
@@ -146,15 +148,40 @@ if ($iplot==1) {
   @ftags = ("Ford2009","Foulger2004","Minson2007","Minson2008","Walter2009","Walter2010","Pesicek2012","Baig2010");
   @ftits = ("Ford 2009 (n=32)","Foulger 2004 (n=26)","Minson 2007 (n=18)","Minson 2008 (n=7)","Walter 2009 (n=13)","Walter 2010 (n=14)","Pesicek 2012 (n=7)","Baig 2010 (n=577)");
   @inds = (1..7);
+  #@inds = (8,2,3,4,7);
   #@inds = (8,1..7);
   #@inds = 8;
 
-  for ($i = 1; $i <= @inds; $i++) {
-    $j = $inds[$i-1];
-    $cz = $csizes[$j-1];
-    $fname = sprintf("$pdir/beachpts_%s_points.dat",$ftags[$j-1]);
-    print CSH "psxy $fname -N -Sc${cz}p -W0.5p,0/0/0 -G$cols[$j-1] -J -R -K -O -V >>$psfile\n";
-  }
+    for ($i = 1; $i <= @inds; $i++) {
+      $j = $inds[$i-1];
+      $cz = $csizes[$j-1];
+      $fname = sprintf("$pdir/beachpts_%s_points.dat",$ftags[$j-1]);
+      print CSH "psxy $fname -N -Sc${cz}p -W0.5p,0/0/0 -G$cols[$j-1] -J -R -K -O -V >>$psfile\n";
+    }
+
+#   # Minson vs GCMT
+#   @ftits = ("Minson2007 (n=14)","GCMT (n=14)");
+#   @cols = ($red,$cyan);
+#   @inds = (1,2);
+#   $fname1 = "/home/carltape/papers/SOURCE_INVERSION/DATA/MinsonGCMT_Minson.dat";
+#   $fname2 = "/home/carltape/papers/SOURCE_INVERSION/DATA/MinsonGCMT_GCMT.dat";
+#   print CSH "awk '{print \$8,\$9}' $fname1 | psxy -N -Sc${csize}p -W0.5p,0/0/0 -G$cols[0] -J -R -K -O -V >> $psfile\n";
+#   print CSH "awk '{print \$8,\$9}' $fname2 | psxy -N -Sc${csize}p -W0.5p,0/0/0 -G$cols[1] -J -R -K -O -V >> $psfile\n";
+
+#    # Dreger et al. 2012
+#    $cptfile = "color.cpt";
+#    #print CSH "makecpt -Crainbow -T50/100/5 -D > $cptfile\n";
+#    print CSH "makecpt -Cseis -T50/100/5 -D -I > $cptfile\n";
+#    $ilegend = 0;
+#    $fname = "/home/carltape/papers/SOURCE_INVERSION/DATA/bsldreger_fmt_lune.dat";
+#    $Fmin = 40;  # try 40,70,90
+#    `awk '\$3 > $Fmin' $fname > dtemp`;
+#    $nplot = `wc dtemp | awk '{print \$1}'`; chomp($nplot);
+#    print "\n$nplot FMTs with F > $Fmin\n";
+#    print CSH "awk '{print \$1,\$2,\$3}' dtemp | psxy -N -Sc${csize}p -W0.5p,0/0/0 -C$cptfile -J -R -K -O -V >> $psfile\n";
+#    $Dscale = "-D0/1/2/0.2";
+#    $Bscale = "-B10f5:\"F-test significance\": -Eb10p";
+#    print CSH "psscale -C$cptfile $Dscale $Bscale -Xa3.5 -Ya6 -V -K -O >> $psfile\n";
 
 } elsif ($iplot==2) {
   # reference beachballs on the lune
@@ -170,7 +197,7 @@ $R_title = "-R0/1/0/1";
 $otitle1 = "-Xa3.5 -Ya6";
 
 # legend for plotting published studies
-if($iplot==1) {
+if($iplot==1 && $ilegend==1) {
   $x0 = 0; $y0 = 1.2; $dy = 0.3;
   for ($i = 1; $i <= @inds; $i++) {
     $j = $inds[$i-1];
@@ -193,6 +220,8 @@ $otitle2 = "-Xa-1 -Ya8.7";
 if (0==1) {
   $title1 = "Representation of source types on the fundamental lune";
   $title2 = "(W. Tape and C. Tape, 2012, GJI, \"A geometric setting for moment tensors\")";
+  #$title1 = "Berkeley Seismological Laboratory full moment tensor catalog (n = $nplot, Fsig > $Fmin)";
+  #$title2 = "Dreger, Chiang, Ford, Walter, 2012, Monitoring Research Review";
   print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0 0 14 0 $fontno LM $title1\nEOF\n";
   print CSH "pstext -N $R_title $J_title $otitle2 -O -V >>$psfile<<EOF\n 0 0 11 0 $fontno LM $title2\nEOF\n";
 } else {
