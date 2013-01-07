@@ -2,18 +2,20 @@
 
 #==========================================================
 #
-#  Perl script to write a shell script for GMT plotting.
+#  lune.pl
+#  Perl script to write a shell script for GMT plotting of moment tensor source types.
 #  Carl Tape, carltape@gi.alaska.edu, May 2012
 #
-#  Example plot of representing moment tensors on the funamental lune.
-#  The basic concepts behind this representation of moment tensors can be found in
+#  Reference:
 #  W. Tape and C. Tape, "A geometric setting for moment tensors," Geophysical J. International, 2012
 #
-#  Last tested 8-22-2012 with GMT 4.5.8, but with a custom psmeca by Doug Dreger
+#  Last tested 8-22-2012 with GMT 4.5.8
+#  note: GMT's psmeca does not currently handle full moment tensor beachballs properly;
+#        a custom version is needed to use this option
 #  
 #==========================================================
 
-use Math::Trig;
+#use Math::Trig;
 
 $cshfile = "lune.csh";
 
