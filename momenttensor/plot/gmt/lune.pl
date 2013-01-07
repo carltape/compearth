@@ -67,7 +67,7 @@ if($iplot==2) {
   $psfile = "lune_${ftag}_iplot${iplot}.ps";
 }
 $ipatch = 1;  # three shaded patches on the lune
-$icrack = 0;  # nu=0.25 arc between crack points
+$icrack = 1;  # nu=0.25 arc between crack points
 $ilam2 = 1;   # lam2 = 0 arc between dipoles
 $ilegend = 0; # legend for data points
 if ($iplot==0) {$plot_ref_points = 1; $plot_ref_labels = 1;}
@@ -143,14 +143,14 @@ if ($plot_ref_points || $plot_ref_labels) {
 if ($iplot==1) {
   # moment tensors from various studies
   $csize = 8;  # size of dots
-  @csizes = ($csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize/2);
-  @cols = ($red,$orange,$green,$white,$cyan,$magenta,$black,$green);
-  @ftags = ("Ford2009","Foulger2004","Minson2007","Minson2008","Walter2009","Walter2010","Pesicek2012","Baig2010");
-  @ftits = ("Ford 2009 (n=32)","Foulger 2004 (n=26)","Minson 2007 (n=18)","Minson 2008 (n=7)","Walter 2009 (n=13)","Walter 2010 (n=14)","Pesicek 2012 (n=7)","Baig 2010 (n=577)");
-  @inds = (1..7);
-  #@inds = (8,2,3,4,7);
-  #@inds = (8,1..7);
-  #@inds = 8;
+  @csizes = ($csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize/2,$csize,$csize,$csize,$csize/2);
+  @cols = ($black,$orange,$red,$white,$green,$magenta,$black,$green,$red,$orange,$green,$cyan);
+  @ftags = ("Ford2009","Foulger2004","Minson2007","Minson2008","Walter2009","Walter2010","Pesicek2012","Baig2010","Sileny2006","Sileny2008","Sileny2009","Dreger2012");
+  #@inds = (8,2,3,4,7);     # volcanic/geothermal + Baig
+  #@inds = (8,9,10,11);    # induced
+  @inds = (1,2,3,5,6);    # TapeTape2012 figure
+  #@inds = (9..11);       
+  #@inds = 12;
 
     for ($i = 1; $i <= @inds; $i++) {
       $j = $inds[$i-1];
@@ -204,8 +204,12 @@ if($iplot==1 && $ilegend==1) {
     $cz = $csizes[$j-1];
     $x = $x0 + 0.2;
     $y = $y0 - ($i-1)*$dy;
+    # number of points (for legend)
+    $fname = sprintf("$pdir/beachpts_%s_points.dat",$ftags[$j-1]);
+    $nplot = `wc $fname | awk '{print \$1}'`; chomp($nplot);
+    $lab = sprintf("%s (n=%i)",$ftags[$j-1],$nplot);
     print CSH "psxy -N -Sc${cz}p -W0.5p,0/0/0 -G$cols[$j-1] $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n$x0 $y\nEOF\n";
-    print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n $x $y 12 0 $fontno LM $ftits[$j-1]\nEOF\n";
+    print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n $x $y 12 0 $fontno LM $lab\nEOF\n";
   }
 
 #$x = -30; $y = rad2deg(asin(1/sqrt(3)));
