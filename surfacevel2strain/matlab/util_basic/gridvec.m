@@ -4,7 +4,6 @@ function [xvec,yvec,numy,a,b,dx] = gridvec(xmin,xmax,numx,ymin,ymax)
 % This function inputs specifications for creating a grid
 % of uniformly spaced points, reshaped into column vectors
 % of the x- and y-coordinates.  Note that dx = dy.
-%
 
 xvec0 = linspace(xmin,xmax,numx);
 dx = xvec0(2) - xvec0(1);
@@ -15,5 +14,3 @@ yvec0 = [ymin : dx : ymax];
 xvec = reshape(X,a*b,1);
 yvec = reshape(Y,a*b,1);
 numy = length(yvec0);
-
-%====================================================
