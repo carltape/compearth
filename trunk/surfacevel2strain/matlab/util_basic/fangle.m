@@ -1,6 +1,5 @@
-%
-% function theta = fangle(va,vb)
-% Carl Tape, 12-April-2011
+function theta = fangle(va,vb)
+%FANGLE returns the angle between two vectors, in degrees
 %
 % INPUT
 %   va      3 x n set of initial vectors
@@ -8,13 +7,7 @@
 %
 % OUTPUT
 %   theta   n x 1 set of rotation angles
-% 
 %
-% calls flength.m
-% called by xxx
-%
-
-function theta = fangle(va,vb)
 
 % check dimensions
 [n1a,n2a] = size(va);
@@ -44,4 +37,4 @@ if 0==1
     va = [1 0 0 0 0 0]'; vb = [0 0 0 0 0 3]'; theta = fangle(va,vb)
 end
 
-%===========================================================
+%==========================================================================

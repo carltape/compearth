@@ -1,8 +1,5 @@
-%
-% function stheta = fangle_signed(va,vb,vnor)
-% Carl Tape, 12-April-2011
-%
-% This function returns the signed angle of rotation between two vectors.
+function stheta = fangle_signed(va,vb,vnor)
+%FANGLE_SINGED returns the signed angle (of rotation) between two vectors
 %
 % INPUT
 %   va      3 x n set of initial vectors
@@ -10,14 +7,10 @@
 %   vnor    3 x n set of "normal of rotation" vectors
 %
 % OUTPUT
-%   theta   n x 1 set of rotation angles
+%   theta   n x 1 set of rotation angles, degrees
 % 
+% Carl Tape 4/2011
 %
-% calls fangle.m
-% called by xxx
-%
-
-function stheta = fangle_signed(va,vb,vnor)
 
 % get rotation angle (always positive)
 theta = fangle(va,vb);
@@ -40,8 +33,8 @@ end
 % EXAMPLES
 
 if 0==1
-    va = [1 0 0]'; vb = [0 0 3]'; vnor = -[0 2 0]'; stheta = signedfangle(va,vb,vnor)
-    va = [1 0 0]'; vb = [0 0 3]'; vnor = [0 2 0]'; stheta = signedfangle(va,vb,vnor)
+    va = [1 0 0]'; vb = [0 0 3]'; vnor = -[0 2 0]'; stheta = fangle_signed(va,vb,vnor)
+    va = [1 0 0]'; vb = [0 0 3]'; vnor =  [0 2 0]'; stheta = fangle_signed(va,vb,vnor)
 end
 
-%===========================================================
+%==========================================================================
