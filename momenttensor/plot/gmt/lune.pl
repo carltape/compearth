@@ -180,14 +180,16 @@ if ($plot_ref_points || $plot_ref_labels) {
   $fsize = 14;
   $fontno = 1;
   open(IN,$fname); @plines = <IN>; close(IN);
+  $nplot0 = @plines;
   if($ipatchgcdc==1 || $iarcgcdc==1 || $inup36==1) {
-      $nplot = @plines;
+      $nplot = $nplot0;
   } else {
      $nplot=9;
      $nplot=8;  # no DC point
      if($inup25==1) {$nplot=11}
   };
-  print "plotting $nplot reference points/labels\n";
+  print "plotting $nplot (out of $nplot0) reference points/labels\n";
+  #print "\n @plines \n";
   for ($i = 1; $i <= $nplot; $i++) {
     ($plon,$plat,$plab,$plab2,$align,$Dx,$Dy) = split(" ",$plines[$i-1]);
     #print "\n--$plon -- $plat-- $plab -- $plab2";
