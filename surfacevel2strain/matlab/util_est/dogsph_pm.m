@@ -1,11 +1,8 @@
+function ff = dogsph_pm(a,theta,phi)
+%DOPGSPH_PM computes a difference-of-Gaussian spherical wavelet
 %
-% function ff = dogsph(a,theta,phi)
 % Pablo Muse, April 3, 2007
 %
-% computes and plots a dogsh wavelet on a longitude-colatitude grid
-%
-
-function ff = dogsph(a,theta,phi)
 
 alpha = 1.25;
 a_alpha = a*alpha;

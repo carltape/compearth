@@ -1,5 +1,5 @@
+function [G, Gdph, Gdth, Gdphdph, Gdthdth, Gdthdph] = dogsph_vals_mat(spline_tot, dlon, dlat, opts)
 %
-% function [G, Gdph, Gdth] = dogsph_vals_mat(spline_tot, dlon, dlat)
 % Pablo Muse, 04-April-2007
 %
 % Given a set of spherical splines and datapoints, this function returns
@@ -17,9 +17,6 @@
 % calls dogsph_vals.m
 % called by surfacevel2strain.m
 %
-
-%function [G, Gdph, Gdth] = spline_vals_mat(spline_tot, dlon, dlat, ndim)
-function [G, Gdph, Gdth, Gdphdph, Gdthdth, Gdthdph] = dogsph_vals_mat(spline_tot, dlon, dlat, opts)
 
 ndata = length(dlon);
 ngrid = length(spline_tot);
