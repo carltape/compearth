@@ -4,7 +4,9 @@
 % 
 % This outputs a set of figures for our 2009 GPS paper.
 %
-% 
+% Some of these commands require the YAWTB matlab toolbox
+%   cd /home/carltape/matlab/TOOLBOXES_OLD/yawtb
+%   yaload.m
 %
 
 close all, clear
@@ -12,14 +14,14 @@ clc, format short, format compact
 
 %------------
 
-%scales = [2 3 4 5 6 7]; %scale
 scales = [0:8]; %scale
 N = length(scales);
 
-if 0==1
+if 1==1
+    scales = [2 3 4 5 6 7]; %scale
     figure;
     [phi,theta] = sphgrid(512);
-    for i = 1:N
+    for i = 1:length(scales)
 
         j = scales(i);
 
@@ -27,7 +29,7 @@ if 0==1
         aj = 1/2^j;
         maxffj = (1-1/(1.25)^2)/aj;
         
-        ff_j = dogsph(aj,theta,phi);  %./ maxffj;
+        ff_j = dogsph_pm(aj,theta,phi);  %./ maxffj;
         
         yashow(ff_j,'spheric','relief');
         %yashow(ff_j,'spheric');
@@ -46,7 +48,6 @@ if 0==1
     break
 end
 
-
 %-----------------------------------------------------------
 
 icompute = 1;
@@ -64,7 +65,7 @@ if icompute == 1
     for i = 1:N
         i
         j = scales(i);
-        ff = dogsph(1/2^j,theta,phi);
+        ff = dogsph_pm(1/2^j,theta,phi);
         vecff = ff(:,1);
         vecff_all(:,i) = vecff;
         A1{i} = ['a = 2^{-',num2str(j),'}'];
@@ -77,7 +78,7 @@ if icompute == 1
     for i = 1:N
         i
         j = scales(i);
-        ff = dogsph(1/2^j,theta,phi);
+        ff = dogsph_pm(1/2^j,theta,phi);
         fmat = fst(ff);
         fmat_plot(:,i) = abs(fmat(1,:)).^2;   % NOTE: squared value
         A2{i} = ['a = 2^{-',num2str(j),'}'];
