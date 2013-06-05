@@ -1,5 +1,5 @@
-function writeCMT_psmeca(filename,otime,lat,lon,dep,M,eid,slabel)
-% WRITECMT_PSMECA write psmeca file for GMT plotting
+function write_psmeca(filename,otime,lat,lon,dep,M,eid,slabel)
+% WRITE_PSMECA write psmeca file for GMT plotting
 %
 % INPUT
 %   filename    (files will be appended with _year, _Mw, _date, etc)
@@ -76,7 +76,7 @@ for ilab = imin:imax
     if ilab==5, ext = ''; end 
     if ilab==6, ext = '_custom'; end 
     
-    disp(['writeCMT_psmeca.m : extension is ' ext]);
+    disp(['write_psmeca.m : extension is ' ext]);
 
     % write to file for GMT plotting
     file1 = [filename '_psmeca' ext];

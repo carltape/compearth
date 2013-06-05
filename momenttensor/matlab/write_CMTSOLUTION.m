@@ -1,5 +1,5 @@
-function writeCMT(dir0,ione_file,otime,tshift,hdur,lat,lon,dep,M,  eid,elabel,ftag,nspace_between_entries)
-% WRITECMT outputs files in CMTSOLUTION format
+function write_CMTSOLUTION(dir0,ione_file,otime,tshift,hdur,lat,lon,dep,M,  eid,elabel,ftag,nspace_between_entries)
+% WRITE_CMTSOLUTION outputs files in CMTSOLUTION format
 %
 % NOTE: In readCMT.m we apply the time shift from CMT into the (absolute)
 % origin time; thus for most purposes, tshift should be set to zero.
@@ -38,7 +38,7 @@ function writeCMT(dir0,ione_file,otime,tshift,hdur,lat,lon,dep,M,  eid,elabel,ft
 % called by test_CMT.m
 %
 
-disp('entering writeCMT.m');
+disp('entering write_CMTSOLUTION.m');
 enum = length(otime);
 
 % check for empty input arguments
@@ -85,7 +85,7 @@ end
 if ione_file == 1       % write to a single file
     
     ofile = [dir0 'CMTSOLUTION_' ftag];
-    disp(sprintf('writeCMT.m: writing %s',ofile));
+    disp(sprintf('write_CMTSOLUTION.m: writing %s',ofile));
     fid = fopen(ofile,'w');
     for kk = 1:enum
         if mod(kk,100)==0, disp(sprintf('%i/%i',kk,enum)); end
@@ -123,7 +123,7 @@ if ione_file == 1       % write to a single file
     fclose(fid);
     
 else            % write to individual files
-    disp(sprintf('writeCMT.m: writing %i CMTSOLUTION files',enum));
+    disp(sprintf('write_CMTSOLUTION.m: writing %i CMTSOLUTION files',enum));
     disp(sprintf('  output directory: %s',dir0));
     for kk = 1:enum
         fid = fopen([dir0 'CMTSOLUTION_' eid{kk}],'w');
@@ -163,7 +163,7 @@ else            % write to individual files
     end
     
     % write list of event IDs
-    disp(sprintf('writeCMT.m: writing %i event IDs to file',enum));
+    disp(sprintf('write_CMTSOLUTION.m: writing %i event IDs to file',enum));
     disp(sprintf('  output directory: %s',dir0));
     fid = fopen(sprintf('%s/eids_%s',dir0,ftag),'w');
     for kk = 1:enum
@@ -178,7 +178,7 @@ if 0==1
     % basic example
     M = 3e16*[1 1 1 0 0 0]';
     otime = datenum(3000,1,1);
-	writeCMT('./',0,otime,0,0,34.1081,-118.9683,90,M);
+	write_CMTSOLUTION('./',0,otime,0,0,34.1081,-118.9683,90,M);
     
     % I discovered that the command minute (and perhaps the others)
     % will round up instead of using floor.
@@ -196,7 +196,6 @@ if 0==1
         fprintf('%i %i %i %i %i %.4f\n',year(n),month(n),day(n),hour(n),minute(n),second(n));
     end
     
-
 end
 
-%======================================================
+%==========================================================================
