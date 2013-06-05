@@ -1,7 +1,7 @@
 function write_CMTSOLUTION(dir0,ione_file,otime,tshift,hdur,lat,lon,dep,M,  eid,elabel,ftag,nspace_between_entries)
 % WRITE_CMTSOLUTION outputs files in CMTSOLUTION format
 %
-% NOTE: In readCMT.m we apply the time shift from CMT into the (absolute)
+% NOTE: In read_CMTSOLUTION.m we apply the time shift from CMT into the (absolute)
 % origin time; thus for most purposes, tshift should be set to zero.
 %
 % In a typical CMTSOLUTION file, the only important values entered on the
@@ -30,7 +30,7 @@ function write_CMTSOLUTION(dir0,ione_file,otime,tshift,hdur,lat,lon,dep,M,  eid,
 % Only 9 or 13 arguments are permissible. If 13 arguments are entered, then
 % any of the optional arguments can be set to [].
 %
-% See also readCMT.m
+% See also read_CMTSOLUTION.m
 %
 % Carl Tape, 10/2008
 %

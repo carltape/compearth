@@ -1,5 +1,5 @@
-function [otime,tshift,hdur,lat,lon,dep,M,eid,elabel] = readCMT(filename,nlines_cmt,nspace_between_entries)
-%READCMT read a CMTSOLUTION format file (or a concatenated version)
+function [otime,tshift,hdur,lat,lon,dep,M,eid,elabel] = read_CMTSOLUTION(filename,nlines_cmt,nspace_between_entries)
+%READ_CMTSOLUTION read a CMTSOLUTION format file (or a concatenated version)
 %
 % This file reads a concatenated CMTSOLUTION file and outputs the data.
 % The CMT tshift parameter is added to the origin time, which is the
@@ -24,7 +24,7 @@ function [otime,tshift,hdur,lat,lon,dep,M,eid,elabel] = readCMT(filename,nlines_
 %
 % EXAMPLE:
 %   filename = '/home/carltape/PROJECTS/SPECFEM/CMTSOLUTION_finite_test';
-%   [otime,tshift,hdur,lat,lon,dep,M,eid,elabel] = readCMT(filename,13,0);
+%   [otime,tshift,hdur,lat,lon,dep,M,eid,elabel] = read_CMTSOLUTION(filename,13,0);
 %
 % Carl Tape, 06/26/2007
 %
@@ -42,7 +42,7 @@ nlines = length(lines);
 % number of events
 enum = (nlines + nspace_between_entries) / (nlines_cmt + nspace_between_entries);
 if mod(enum,1) ~= 0
-    disp('readCMT.m: mismatch of expected number of lines');
+    disp('read_CMTSOLUTION.m: mismatch of expected number of lines');
     nlines, nspace_between_entries, nlines_cmt, nspace_between_entries
     error('enum = %.2f should be an integer',enum);
 end
