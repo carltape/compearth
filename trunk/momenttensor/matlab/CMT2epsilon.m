@@ -168,7 +168,7 @@ if 0==1
 
 %     dir1 = '/net/sierra/raid1/carltape/results/SOURCES/socal_4/CMT_files_post_inverted/';
 %     filename = [dir1 'CMTSOLUTION_9818433'];
-%     [date,tshift,hdur,lat,lon,dep,M,eid,elabel] = readCMT(filename,13,0);
+%     [date,tshift,hdur,lat,lon,dep,M,eid,elabel] = read_CMTSOLUTION(filename,13,0);
 %     [epsilon, eCLVD, eDC, trM] = CMT2epsilon(M)
 end
 
