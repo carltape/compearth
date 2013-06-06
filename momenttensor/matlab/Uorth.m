@@ -92,7 +92,6 @@ if 0==1
     Uorth(U1,2,1);
     Uorth(U1,3,1);
     
-    %%
     % EXAMPLE: compare different orthogonalization methods by applying them
     % to GCMT catalog bases constructed from integer rounded trend-azimuth
     % angles of the basis vectors
@@ -100,7 +99,7 @@ if 0==1
     % azimuth: 0 to 360
     clear, clc, close all
     [otime,tshift,hdur,lat,lon,dep,M,M0,Mw,eid,elabel,...
-       str1,dip1,rk1,str2,dip2,rk2,lams,pl1,az1,pl2,az2,pl3,az3] = readCMT_all;
+       str1,dip1,rk1,str2,dip2,rk2,lams,pl1,az1,pl2,az2,pl3,az3] = readCMT;
     n = length(otime);
     % U in south-east-up convention
     Uazpl = U2pa([pl1 az1 pl2 az2 pl3 az3],0);
