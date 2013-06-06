@@ -147,8 +147,7 @@ end
 if 0==1
     clear, clc, close all
     % get some test moment tensors from CMT catalog
-    [otime,tshift,hdur,lat,lon,dep,M,~,~,eid,elabel,...
-        str1,dip1,rk1,str2,dip2,rk2,lams,icmt,dataused,itri] = readCMT_all;
+    [otime,~,~,~,~,~,M] = readCMT;
     n = length(otime);
     
     [gamma, epsilon, eCLVD, eDC, trM, eISO, eDEV] = CMT2epsilon(M,1,1);

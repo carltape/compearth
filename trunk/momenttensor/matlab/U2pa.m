@@ -104,7 +104,7 @@ if 0==1
     clear, clc, close all
     isub = 1;   % pick the first moment tensor in the catalog
     [otime,tshift,hdur,lat,lon,dep,M,~,~,eid,elabel,str1,dip1,rk1,str2,dip2,rk2,...
-        lams,pl1,az1,pl2,az2,pl3,az3,icmt,dataused,itri] = readCMT_all(isub);
+        lams,pl1,az1,pl2,az2,pl3,az3,icmt,dataused,itri] = readCMT(isub);
     [MDC,kap1,del1,lam1,kap2,del2,lam2,k1,d1,n1,k2,d2,n2,U0,lamsx] = CMT2faultpar(M,0);
     n = length(isub);
     
@@ -138,7 +138,7 @@ if 0==1
     %isub = [1:1000]';
     %isub = [1:33507]';
     [otime,tshift,hdur,lat,lon,dep,M,~,~,eid,elabel,str1,dip1,rk1,str2,dip2,rk2,...
-        lams,pl1,az1,pl2,az2,pl3,az3,icmt,dataused,itri] = readCMT_all(isub);
+        lams,pl1,az1,pl2,az2,pl3,az3,icmt,dataused,itri] = readCMT(isub);
     [MDC,kap1,del1,lam1,kap2,del2,lam2,k1,d1,n1,k2,d2,n2,U,lamsx] = CMT2faultpar(M,0);
     n = length(isub);
     

@@ -182,7 +182,7 @@ if 0==1
     % try several sets
     % here we use each GCMT basis to represent U = U1'*U2
     isub = 1:10000;
-    [otime,tshift,hdur,lat,lon,dep,M] = readCMT_all(isub);
+    [otime,tshift,hdur,lat,lon,dep,M] = readCMT(isub);
     n = length(otime);
     [~,U] = CMTdecom(M);
     U = Udetcheck(U);   % ensure that U are rotation matrices

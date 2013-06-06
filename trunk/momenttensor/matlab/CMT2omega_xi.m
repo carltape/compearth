@@ -137,7 +137,7 @@ if 0==1
     fac1 = 1e19; fac2 = 1e18;
     if 0==1     % if you have access to the full GCMT catalog
         [otime,tshift,hdur,lat,lon,dep,M,M0,Mw,eid,elabel,...
-            str1,dip1,rk1,str2,dip2,rk2,lams,pl1,az1,pl2,az2,pl3,az3] = readCMT_all;
+            str1,dip1,rk1,str2,dip2,rk2,lams,pl1,az1,pl2,az2,pl3,az3] = readCMT;
         %eid1 = 'B060586B'; eid2 = 'B062486F';  % south Pacific
         ieid1 = find(strcmp(eid1,eid)==1);
         ieid2 = find(strcmp(eid2,eid)==1);
