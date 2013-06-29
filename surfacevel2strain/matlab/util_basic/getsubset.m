@@ -1,14 +1,5 @@
-%
-% function [inds,xval,yval] = getsubset(x,y,ax0)
-%
-% This gets a subset of x-y points that are within the box defined by
-% ax0 = [xmin xmax ymin ymax].
-%
-% calls xxx
-% called by test_getsubset.m
-% 
-
 function [inds,xval,yval] = getsubset(x,y,ax0)
+%GETSUBSET get a subset of x-y points within ax0 = [xmin xmax ymin ymax]
 
 inds = find( and( and( x >= ax0(1), x <= ax0(2)), and(y >= ax0(3), y <= ax0(4))) );
 xval = x(inds);

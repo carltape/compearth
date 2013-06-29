@@ -4,6 +4,8 @@ function [Aunit, Alen] = unit(A)
 % EXAMPLE:
 %   A = rand(3,6); [Aunit, Alen] = unit(A); repmat(Alen,3,1).*Aunit - A
 %
+% JUST USE normc OR normr INSTEAD OF THIS FUNCTION
+%
 
 % ensure that A is 3 x n
 [m,~] = size(A);

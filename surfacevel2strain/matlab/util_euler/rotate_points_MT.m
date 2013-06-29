@@ -1,6 +1,5 @@
-%
-% function [latr,lonr,R,M] = rotate_points_MT(lat,lon,lat1,lon1,lat2,lon2,espin,M)
-% Carl Tape, 07-March-2011
+function [latr,lonr,R,Mout] = rotate_points_MT(lat,lon,lat1,lon1,lat2,lon2,espin,arg8)
+%ROTATE_POINTS_MT apply finite rotation to a set of points AND moment tensors
 %
 % This function applies a finite rotation to a set of input points without
 % directly specifying an euler vector. For example, if we want to
@@ -13,7 +12,10 @@
 %   lat1,lon1   reference starting point
 %   lat2,lon2   reference starting point, after translation/rotation
 %   espin       spin about the translated reference point, degrees
-%   Min         OPTIONAL: 6 x n matrix of moment tensors
+%   arg8        OPTIONAL 8th argument
+%                 OPTION 1: Min, 6 x n matrix of moment tensors
+%                 OPTION 2: otag, string for writing output file
+%                 note: at present you can't rotate MTs AND write output files
 %
 % OUTPUT
 %   latr,lonr   final points
@@ -29,12 +31,21 @@
 %   global2local_MT.m
 %   transform_MT.m
 %   xyz2lonlat.m
-% called by xxx
+%
+% Carl Tape, 07-March-2011
 %
 
-function [latr,lonr,R,Mout] = rotate_points_MT(lat,lon,lat1,lon1,lat2,lon2,espin,Min)
+ilon360 = 1;
 
-deg = 180/pi;
+if ilon360==1
+    lon = wrapTo360(lon);
+    lon1 = wrapTo360(lon1);
+    lon2 = wrapTo360(lon2);
+else
+    lon = wrapTo180(lon);
+    lon1 = wrapTo180(lon1);
+    lon2 = wrapTo180(lon2);
+end
 
 lon = lon(:);
 lat = lat(:);
@@ -53,8 +64,17 @@ evec = [Plat Plon Pdist];
 evec2 = [lat2 lon2 espin];
 [latr, lonr, R2] = euler_rot_tec(lat_rot,lon_rot,evec2);
 
+if ilon360==1
+   lon_rot = wrapTo360(lon_rot);
+   lonr = wrapTo360(lonr);
+else
+   lon_rot = wrapTo180(lon_rot);
+   lonr = wrapTo180(lonr);
+end
+
 % FUTURE: Replace function calls with one analytical expression containing the
-%         input variables (lat1,lon1,lat2,lon2,espin).
+%         input variables (lat1,lon1,lat2,lon2,espin). This will reduce the
+%         possibility of numerical round-off errors.
 
 % note these will look distorted on a Cartesian grid
 figure; hold on;
@@ -71,21 +91,30 @@ Bxyz = latlon2xyz(lat,lon);
 R = R2*R1;
 Rxyz = R*Bxyz;
 [latc,lonc] = xyz2latlon(Rxyz);
+if ilon360==1, lonc=wrapTo360(lonc); else lonc=wrapTo180(lonc); end
 plot(lonc,latc,'ro');
 
 if nargin==8
-    disp('rotate_points_MT.m: rotating beach balls along with the points');
-    
-    % transform moment tensors from local to global basis at START POINTS
-    Mglobal = global2local_MT(Min,lat,lon,0);
+    if ischar(arg8)
+        otag = arg8;
+        disp('rotate_points_MT.m: write rotated points to file');
+        write_xy_points(otag,lonr,latr);
+        
+    else
+        Min = arg8;
+        disp('rotate_points_MT.m: rotating beach balls along with the points');
 
-    % transform moment tensors using R, which is defined for x-y-z basis
-    Mglobal_rot = transform_MT(R,Mglobal);
+        % transform moment tensors from local to global basis at START POINTS
+        Mglobal = global2local_MT(Min,lat,lon,0);
 
-    % transform moment tensors global to local basis at FINAL POINTS
-    Mlocal_rot = global2local_MT(Mglobal_rot,latr,lonr,1);
+        % transform moment tensors using R, which is defined for x-y-z basis
+        Mglobal_rot = transform_MT(R,Mglobal);
 
-    Mout = Mlocal_rot;
+        % transform moment tensors global to local basis at FINAL POINTS
+        Mlocal_rot = global2local_MT(Mglobal_rot,latr,lonr,1);
+
+        Mout = Mlocal_rot;
+    end
 end
 
-%==============================================================
+%==========================================================================
