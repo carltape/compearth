@@ -1,11 +1,7 @@
+function [Xout1,Xout2,Xout3,Xout4,Xout5] = CMT2faultvec(Xin,itype,idisplay)
+%CMT2FAULTVEC converts between fault vectors and double couple moment tensors
 %
-% function [Xout1,Xout2,Xout3] = CMT2faultvec(Xin,itype,idisplay)
-% Carl Tape, 31-Mar-2011
-%
-% This converts between fault vectors and double couple moment tensors.
-% A general moment tensor (non-double couple, isotropic) can be used as
-% input.
-%
+% A general moment tensor (non-double couple, isotropic) can be used as input.
 % For moment tensors with strong CLVD component, the double-couple
 % representation of fault planes has little physical meaning.
 %
@@ -36,8 +32,8 @@
 %   fvec2fmat.m, fmat2fvec.m
 % called by CMT2faultpar.m, faultpar2CMT.m
 %
-
-function [Xout1,Xout2,Xout3,Xout4,Xout5] = CMT2faultvec(Xin,itype,idisplay)
+% Carl Tape, 31-Mar-2011
+%
 
 deg = 180/pi;
 if nargin==2, idisplay=0; end
@@ -323,8 +319,8 @@ if itype==1
             UUt = U*U'
             detU = det(U)
             %disp('index, strike, dip, rake:');
-            %disp(sprintf('%6i(1)%6.1f%6.1f%6.1f',ii,kap1(ii),del1(ii),lam1(ii)));
-            %disp(sprintf('%6i(2)%6.1f%6.1f%6.1f',ii,kap2(ii),del2(ii),lam2(ii)));
+            %disp(sprintf('%6i(1)%6.1f%6.1f%6.1f',ii,kap1(ii),theta1(ii),sig1(ii)));
+            %disp(sprintf('%6i(2)%6.1f%6.1f%6.1f',ii,kap2(ii),theta2(ii),sig2(ii)));
             disp('fault vectors (and magnitudes):');
             disp(sprintf('   n1: %8.4f%8.4f%8.4f : %8.4e',n1(:,ii),sqrt(n1(1,ii)^2+n1(2,ii)^2+n1(3,ii)^2)));
             disp(sprintf('   k1: %8.4f%8.4f%8.4f : %8.4e',k1(:,ii),sqrt(k1(1,ii)^2+k1(2,ii)^2+k1(3,ii)^2) ));
@@ -404,7 +400,7 @@ else
     
 end
 
-%=======================================================================
+%==========================================================================
 
 function n = pickvertfault(nvec,evec)
 
@@ -419,4 +415,4 @@ else
     error('very special case');
 end
 
-%=======================================================================
+%==========================================================================

@@ -1,4 +1,4 @@
-function [MDC,kap1,del1,lam1,kap2,del2,lam2,k1,d1,n1,k2,d2,n2,U,lams] = CMT2faultpar(M,idisplay)
+function [MDC,kap1,theta1,sig1,kap2,theta2,sig2,k1,d1,n1,k2,d2,n2,U,lams] = CMT2faultpar(M,idisplay)
 %
 % This converts a seismic moment tensor into two sets of fault parameters
 % for its double couple.
@@ -6,18 +6,17 @@ function [MDC,kap1,del1,lam1,kap2,del2,lam2,k1,d1,n1,k2,d2,n2,U,lams] = CMT2faul
 % For moment tensors with strong CLVD component, the double-couple
 % representaion of fault parameters has little physical meaning.
 %
-% INPUT:
-%   M:          6 x n moment tensors in CMT convention
-%               M = [Mrr Mtt Mpp Mrt Mrp Mtp]; r=up, theta=south, phi=east
-% OUTPUT:
-%   MDC         6 x n "best" double couple moment tensor
-%   p1,p2,p3    eigenvectors
-%   kap1,kap2:  strike (0 to 360)
-%   del1,del2:  dip (0 to 90)
-%   lam1,lam2:  rake (-180 to 180)
-%   k1,k2:      strike vector (3 x n) in south-east-up convention
-%   d1,d2:        slip vector (3 x n) in south-east-up convention
-%   n1,n2:      normal vector (3 x n) in south-east-up convention
+% INPUT
+%   M       6 x n moment tensors in up-south-east (CMT) convention
+%           M = [Mrr Mtt Mpp Mrt Mrp Mtp]; r=up, theta=south, phi=east
+% OUTPUT
+%   MDC             6 x n closest double couple moment tensor
+%   kap1,kap2       strike (0 to 360)
+%   theta1,theta2   dip (0 to 90)
+%   sig1,sig2       rake (-180 to 180)
+%   k1,k2           strike vector (3 x n) in south-east-up convention
+%   d1,d2           slip vector (3 x n) in south-east-up convention
+%   n1,n2           normal vector (3 x n) in south-east-up convention
 %
 % See inverse program faultpar2CMT.m.
 %
@@ -41,26 +40,26 @@ k1 = V1(1:3,:); d1 = V1(4:6,:); n1 = V1(7:9,:);
 k2 = V2(1:3,:); d2 = V2(4:6,:); n2 = V2(7:9,:);
 
 % fault parameters (strike, dip, rake)
-kap1 = F1(:,1); del1 = F1(:,2); lam1 = F1(:,3);
-kap2 = F2(:,1); del2 = F2(:,2); lam2 = F2(:,3);
+kap1 = F1(:,1); theta1 = F1(:,2); sig1 = F1(:,3);
+kap2 = F2(:,1); theta2 = F2(:,2); sig2 = F2(:,3);
 
 %-----------------------
 % to match CMT output, the first plane is taken to be the SHALLOW dip
 % note: is there a better way to swap elements of vectors in matlab?
 
 % % find dips of plane 1 that are greater than dips of plane 2
-% iswap = find(del1 > del2);
+% iswap = find(theta1 > theta2);
 % 
-% D1 = [kap1 del1 lam1 k1' d1' n1'];
-% D2 = [kap2 del2 lam2 k2' d2' n2'];
+% D1 = [kap1 theta1 sig1 k1' d1' n1'];
+% D2 = [kap2 theta2 sig2 k2' d2' n2'];
 % [D1,D2] = swap(D1,D2,iswap);
 % 
-% kap1 = D1(:,1); del1 = D1(:,2); lam1 = D1(:,3);
+% kap1 = D1(:,1); theta1 = D1(:,2); sig1 = D1(:,3);
 % k1 = D1(:,4:6)';
 % d1 = D1(:,7:9)';
 % n1 = D1(:,10:12)';
 % 
-% kap2 = D2(:,1); del2 = D2(:,2); lam2 = D2(:,3);
+% kap2 = D2(:,1); theta2 = D2(:,2); sig2 = D2(:,3);
 % k2 = D2(:,4:6)';
 % d2 = D2(:,7:9)';
 % n2 = D2(:,10:12)';
@@ -82,8 +81,8 @@ if idisplay==1
         %UUt = U*U'
         %detU = det(U)
         disp('index, strike, dip, rake:');
-        disp(sprintf('%6i(1)%6.1f%6.1f%6.1f',ii,kap1(ii),del1(ii),lam1(ii)));
-        disp(sprintf('%6i(2)%6.1f%6.1f%6.1f',ii,kap2(ii),del2(ii),lam2(ii)));
+        disp(sprintf('%6i(1)%6.1f%6.1f%6.1f',ii,kap1(ii),theta1(ii),sig1(ii)));
+        disp(sprintf('%6i(2)%6.1f%6.1f%6.1f',ii,kap2(ii),theta2(ii),sig2(ii)));
         disp('fault vectors (and magnitudes):');
         disp(sprintf('   n1: %8.4f%8.4f%8.4f : %8.4e',n1(:,ii),sqrt(n1(1,ii)^2+n1(2,ii)^2+n1(3,ii)^2)));
         disp(sprintf('   k1: %8.4f%8.4f%8.4f : %8.4e',k1(:,ii),sqrt(k1(1,ii)^2+k1(2,ii)^2+k1(3,ii)^2) ));
@@ -94,4 +93,4 @@ if idisplay==1
     end
 end
 
-%=======================================================================
+%==========================================================================
