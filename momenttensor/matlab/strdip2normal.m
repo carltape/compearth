@@ -3,13 +3,13 @@ function Xout = strdip2normal(Xin,itype,idisplay)
 %
 % The basis for all vectors is SOUTH-EAST-UP.
 %
-% itype = 1     convert fault vectors to fault parameters
+% itype = 0     convert fault vectors to fault parameters
 %  INPUT:
 %    Xin        3 x n fault normal vectors
 %  OUTPUT:
 %    Xout       n x 2 strikes and dips
 %
-% itype = 0     convert fault parameters to fault vectors
+% itype = 1     convert fault parameters to fault vectors
 %  INPUT:
 %    Xin        n x 2 strikes and dips
 %  OUTPUT:
@@ -24,7 +24,7 @@ deg = 180/pi;
 if nargin==2, idisplay=0; end
 
 % OPTION 1: fault normal vector to strike and dip
-if itype==1
+if itype==0
     
     % get input fault vectors
     [a,n] = size(Xin);
@@ -49,7 +49,7 @@ if itype==1
 %-------------------------------------------------------
 % OPTION 2: strike and dip to fault normal vector
 
-elseif itype==0
+elseif itype==1
     % NOTE: xyz-coordinates are such that the coordinate vectors i,j,k point
     %       SOUTH, EAST, UP (see CMT2faultpar.m)
     upvec = [0 0 1]';
@@ -100,8 +100,8 @@ if 0==1
     kap1 = 350;
     theta1 = 80;
     Xin = [kap1 theta1]
-    Xout = strdip2normal(Xin,0,1);
-    Xcheck = strdip2normal(Xout,1,1);
+    Xout = strdip2normal(Xin,1,1);
+    Xcheck = strdip2normal(Xout,0,1);
 end
 
 %==========================================================================
