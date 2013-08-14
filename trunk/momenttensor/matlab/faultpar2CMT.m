@@ -1,10 +1,10 @@
-function [MDC,k1,d1,n1,p1,p2,p3] = faultpar2CMT(kap1,del1,lam1,idisplay)
+function [MDC,k1,d1,n1,p1,p2,p3] = faultpar2CMT(kap1,theta1,sig1,idisplay)
 %FAULTPAR2CMT converts fault parameters (strike, dip, rake) to moment tensor
 %
 % INPUT:
 %   kap1        strike (0 to 360)
-%   del1        dip (0 to 90)
-%   lam1        rake (-180 to 180)
+%   theta1      dip (0 to 90)
+%   sig1        rake (-180 to 180)
 %
 % OUTPUT:
 %   MDC         6 x n "best" double couple moment tensor in CMT convention
@@ -27,7 +27,7 @@ if nargin==3, idisplay=0; end
 n = length(kap1);
 
 % convert fault parameters to fault vectors
-F1 = [kap1(:) del1(:) lam1(:)];
+F1 = [kap1(:) theta1(:) sig1(:)];
 V1 = faultvec2faultpar(F1,0,idisplay);
 
 % convert fault vectors to moment tensor
@@ -59,7 +59,7 @@ if idisplay==1
         UUt = U*U'
         detU = det(U)
         disp('index, strike, dip, rake:');
-        disp(sprintf('%6i(1)%6.1f%6.1f%6.1f',ii,kap1(ii),del1(ii),lam1(ii)));
+        disp(sprintf('%6i(1)%6.1f%6.1f%6.1f',ii,kap1(ii),theta1(ii),sig1(ii)));
         %disp(sprintf('%6i(2)%6.1f%6.1f%6.1f',ii,kap2(ii),del2(ii),lam2(ii)));
         disp('fault vectors (and magnitudes):');
         disp(sprintf('   n1: %8.4f%8.4f%8.4f : %8.4e',n1(:,ii),sqrt(n1(1,ii)^2+n1(2,ii)^2+n1(3,ii)^2)));

@@ -1,9 +1,6 @@
+function U = pa2U(pl1,az1,pl2,az2,pl3,az3,EPSVAL)
+%PA2U compute the basis from a set of (plunge, azimuth) angles describing three eigenvectors
 %
-% function U = pa2U(pl1,az1,pl2,az2,pl3,az3)
-% Carl Tape, 12-August-2011
-%
-% This function computes the eigenbasis rotation matrix from a set of
-% (plunge, azimuth) angles describing three eigenvectors.
 % This is the reverse program to U2pa.m.
 %
 % INPUT
@@ -15,10 +12,9 @@
 %   U       eigenbasis in SOUTH-EAST-UP convention and in the green zone
 % 
 % calls Ueigvec.m, latlon2xyz.m
-% called by xxx
 %
-
-function U = pa2U(pl1,az1,pl2,az2,pl3,az3,EPSVAL)
+% Carl Tape, 12-August-2011
+%
 
 n = length(pl1);
 
@@ -48,7 +44,7 @@ if 0==1
     n = length(isub);
     [otime,tshift,hdur,lat,lon,dep,M,~,~,eid,elabel,str1,dip1,rk1,str2,dip2,rk2,...
         lams,pl1,az1,pl2,az2,pl3,az3,icmt,dataused,itri] = readCMT(isub);
-    [MDC,kap1,del1,lam1,kap2,del2,lam2,k1,d1,n1,k2,d2,n2,U0,lamsx] = CMT2faultpar(M,0);
+    [MDC,kap1,theta1,sig1,kap2,theta2,sig2,k1,d1,n1,k2,d2,n2,U0,lamsx] = CMT2faultpar(M,0);
     
     % take GCMT eigvec angles to compute U
     EPSVAL = 2e-2;

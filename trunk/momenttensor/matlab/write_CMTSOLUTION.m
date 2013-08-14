@@ -122,6 +122,11 @@ if ione_file == 1       % write to a single file
     end
     fclose(fid);
     
+    % see read_CMTSOLUTION_finite.m
+    % some finite source models are huge, so here we also save a matlab
+    % file for quick loading
+    %save(ofile,'otime','tshift','hdur','lat','lon','dep','M','eid','elabel');
+    
 else            % write to individual files
     disp(sprintf('write_CMTSOLUTION.m: writing %i CMTSOLUTION files',enum));
     disp(sprintf('  output directory: %s',dir0));

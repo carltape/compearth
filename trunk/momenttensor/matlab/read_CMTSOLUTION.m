@@ -26,6 +26,8 @@ function [otime,tshift,hdur,lat,lon,dep,M,eid,elabel] = read_CMTSOLUTION(filenam
 %   filename = '/home/carltape/PROJECTS/SPECFEM/CMTSOLUTION_finite_test';
 %   [otime,tshift,hdur,lat,lon,dep,M,eid,elabel] = read_CMTSOLUTION(filename,13,0);
 %
+% See the wrapper function read_CMTSOLUTION_finite.m
+%
 % Carl Tape, 06/26/2007
 %
 
