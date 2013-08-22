@@ -13,11 +13,11 @@ function [gamma,delta,M0,kappa,theta,sigma,K,N,S,mu,lam] = CMT2TT(M,idisplay)
 %   kappa       strike angle, degrees: [0,360]
 %   theta       dip angle, degrees: [0,90]
 %   sigma       slip (or rake) angle, degrees: [-90,90]
-%
-%   mu
-%   U
-%   lamdev      eigenvalues of deviatoric component
-%   lamiso      eigenvalues of isotropic component
+%   K           strike vector
+%   N           normal vector 
+%   S           slip vector
+%   mu          angle to DC
+%   lam         eigenvalues
 %
 % Reverse program for TT2CMT.m
 % See WTape and CTape (2012) "A geometric setting for moment tensors" (TT2012).
