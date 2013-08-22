@@ -27,7 +27,7 @@ end
 ma = flength(va);
 mb = flength(vb);
 vadvb = va(1,:).*vb(1,:) + va(2,:).*vb(2,:) + va(3,:).*vb(3,:);
-theta = 180/pi * acos( vadvb ./ (ma .* mb ) );
+theta = 180/pi * acos( vadvb ./ (ma' .* mb' ) );
 
 %--------------
 % EXAMPLES
