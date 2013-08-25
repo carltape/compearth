@@ -1,6 +1,7 @@
 %  dvips -t letter specfem.dvi -o specfem.ps ; ps2pdf specfem.ps
+%  pdflatex specfem.tex
 
-\documentclass[10pt,titlepage,fleqn]{article}
+\documentclass[10pt,titlepage,fleqn,letterpaper]{article}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -19,20 +20,7 @@
 
 \usepackage{setspace}
 
-\renewcommand{\baselinestretch}{1.0}
-
-\textwidth 460pt
-\textheight 700pt
-\oddsidemargin 0pt
-\evensidemargin 0pt
-
-% see Latex Companion, p. 85
-\voffset     -50pt
-\topmargin     0pt
-\headsep      20pt
-\headheight    0pt
-\footskip     30pt
-\hoffset       0pt
+\usepackage[margin=1in]{geometry}
 
 %\include{NEWCOMMANDS}
 
