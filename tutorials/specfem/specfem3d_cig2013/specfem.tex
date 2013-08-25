@@ -1,7 +1,7 @@
 %  dvips -t letter specfem.dvi -o specfem.ps ; ps2pdf specfem.ps
 %  pdflatex specfem.tex
 
-\documentclass[10pt,titlepage,fleqn,letterpaper]{article}
+\documentclass[10pt,fleqn,letterpaper]{article}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -9,7 +9,6 @@
 \usepackage[round]{natbib}
 \usepackage{xspace}
 \usepackage{graphicx}
-%\usepackage{epsfig}
 
 %\usepackage{fancyhdr}
 %\pagestyle{fancy}
@@ -28,14 +27,22 @@
   {figures/}
 }
 
+\newcommand{\thetitle}{SPECFEM3D Tutorial for 2013 CIG-QUEST-IRIS Workshop}
+\newcommand{\theauthor}{Carl, Qinya, Elliott, Emanuele}
+\title{\thetitle}
+\author{\theauthor}
+\date{Last compiled: \today}
+
+\usepackage[bookmarks=true,colorlinks=true,%
+            pdftitle={\thetitle},%
+            pdfauthor={\theauthor}%
+           ]{hyperref}
+
 %=====================================================
 \begin{document}
 %=====================================================
 
-\noindent
-{\bf SPECFEM3D tutorial for 2013 CIG-QUEST-IRIS Workshop} \\
-\noindent Carl, Qinya, Elliott, Emanuele  \\
-\noindent Last compiled: \today \\
+\maketitle
 
 %=====================================================
 
@@ -71,7 +78,7 @@ Currently Loaded Modulefiles:
   1) pgi/13.4   2) openmpi-pgi-13.4/1.4.3   3) netcdf/4.3.0.pgi-13.4   4) PrgEnv-pgi/13.4
 \end{verbatim}
 
-\item Check out two copies\footnote{There's no need for two copies, but this will make it a bit easier to keep track of the different exampled.} of SPECFEM3D version 22719 from the code repository at CIG (www.geodynamics.org)
+\item Check out two copies\footnote{There's no need for two copies, but this will make it a bit easier to keep track of the different exampled.} of SPECFEM3D version 22719 from the code repository at CIG (\url{http://www.geodynamics.org/})
 %
 \begin{verbatim}
 svn co -r 22719 http://geodynamics.org/svn/cig/seismo/3D/SPECFEM3D/trunk SPECFEM3D_22719_default
