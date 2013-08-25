@@ -40,8 +40,6 @@
   {figures/}
 }
 
-
-
 %=====================================================
 \begin{document}
 %=====================================================
@@ -254,7 +252,7 @@ Then \verb+File --> Open+, and select all four \verb+vs*vtk+ files. When you are
 > qsub go_solver_pbs.bash
 \end{verbatim}
 
-The simulation runs on 4 cores and should take about 30 minutes, and you can track the progress with the timestamp files generated in \verb+OUTPUT_FILES/+ (type \verb+ls -ltr+ to see the most recent files). When the job is complete, you should have 3 sets (semd,semv,sema) of 18 (\verb+ls -1 *semd | wc+) seismogram files in the directory \verb+OUTPUT_FILES+, as well as 3 \verb+timestamp******+ files.
+The simulation runs on 4 cores and should take about 30 minutes. You can track the progress with the timestamp files generated in \verb+OUTPUT_FILES/+ (type \verb+ls -ltr+ to see the most recent files). When the job is complete, you should have 3 sets (semd,semv,sema) of 12 (\verb+ls -1 *semd | wc+) seismogram files in the directory \verb+OUTPUT_FILES+, as well as 51 \verb+timestamp******+ files.
 
 \item Compare your computed seismograms with the reference seismograms.
 
@@ -279,8 +277,10 @@ A quick visual comparison can be done from \verb+SPECFEM3D/+ using \verb+xmgrace
 
 \subsection*{Step-by-step instructions, example 3: southern California}
 
+This example is at a scale that will likely not run on a single laptop or desktop computer. In other words, the required memory must be distributed over a number of different machines in order to run the simulation. Here we use 96 cores of the cluster.
+
 \begin{enumerate}
-\item copy bash scripts into root directory
+\item Copy bash scripts into the base directory:
 
 \begin{verbatim}
    > cd SPECFEM3D_22719_socal
@@ -297,22 +297,22 @@ A quick visual comparison can be done from \verb+SPECFEM3D/+ using \verb+xmgrace
 > make all
 \end{verbatim}
 
-\item link the mesh directory as an example
+\item Link the mesh directory as an example
 \begin{verbatim}
-   > cd examples
-   > ln -s /import/c/d/ERTHQUAK/GEOCUBIT_MESH/socal_med400km .
+> cd examples
+> ln -s /import/c/d/ERTHQUAK/GEOCUBIT_MESH/socal_med400km .
 \end{verbatim}
 
-\item modify \verb+go_decomposer_pbs.bash+
+\item Modify \verb+go_decomposer_pbs.bash+ to point to the new directory:
 \begin{verbatim}
-   MESHDIR=examples/socal_med400km/MESH/
+MESHDIR=examples/socal_med400km/MESH/
 \end{verbatim}
 
-\item link tomography file and copy input files
+\item Link the tomography file and copy input files
 \begin{verbatim}
-   > cd DATA
-   > ln -s /import/c/d/ERTHQUAK/MODEL/cvm119_1000_1000_0250_741_549.xyz tomography_model.xyz
-   > cp ../examples/socal_med400km/in_data_files/* .
+> cd DATA
+> ln -s /import/c/d/ERTHQUAK/MODEL/cvm119_1000_1000_0250_741_549.xyz tomography_model.xyz
+> cp ../examples/socal_med400km/in_data_files/* .
 \end{verbatim}
 
 \item modify \verb+go_generate_databases_pbs.bash+ and \verb+go_solver_pbs.bash+ to have the proper time limits and number of cores
@@ -321,16 +321,34 @@ A quick visual comparison can be done from \verb+SPECFEM3D/+ using \verb+xmgrace
 #PBS -q standard
 \end{verbatim}
 
-\item rename \verb+OUTPUT_FILES+
+\item delete the empty directory
+%
 \begin{verbatim}
-   > mv OUTPUT_FILES/ OUTPUT_FILES_default ; mkdir OUTPUT_FILES
-   > mkdir DATABASES_MPI
+rm -rf OUTPUT_FILES/DATABASES_MPI
 \end{verbatim}
+%
+This simulation will create a directory \verb+DATABASES_socal_med400km+ that is outside of \verb+OUTPUT_FILES+. This is useful since we may have many simulations associated with the same mesh.
 
-note: By default we place \verb+DATABASES_MPI+ outside of \verb+OUTPUT_FILES+, since we may have many simulations associated with the same mesh.
+\item Follow the same steps as in Example 1: decompose, generate databases, solver. Here the programs have all been compiled, so only submitting the run scripts is needed. (But wait for each one to finish, and check the output before proceeding to the next step.)
+%
+\begin{itemize}
+\item The decomposer takes about 3 minutes.
+\item The generate databases takes about xx minutes.
+\item The solver takes about xx minutes.
+\end{itemize}
+%
+[ADD SOMETHING ABOUT SEISMOGRAMS LOOKING BAD, SINCE THE HALF DURATION IS ZERO SECONDS.]
 
-\item Follow the same steps as in Example 1: decompose, generate databases, solver
+\end{enumerate}
 
+%===============================================================================
+
+\subsection*{Step-by-step instructions, example 4: GPU}
+
+In this example, we show how \verb+SPECFEM3D+ can be used on a GPU cluster.
+
+\begin{enumerate}
+\item ELLIOTT'S INSTRUCTIONS HERE (start with login to fish)
 \end{enumerate}
 
 %=====================================================
