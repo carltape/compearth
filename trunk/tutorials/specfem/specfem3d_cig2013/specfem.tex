@@ -111,6 +111,12 @@ Last Changed Date: 2013-08-20 06:16:30 -0800 (Tue, 20 Aug 2013)
 
 The {\em base directory} for the code is \verb+SPECFEM3D_22719_default+, which we will call \verb+SPECFEM3D+ in the instructions.
 
+\item Take a quick look at the user manual, mainly as a reminder to come back to it for details.
+%
+\begin{verbatim}
+evince doc/USER_MANUAL/manual_SPECFEM3D_Cartesian.pdf &
+\end{verbatim}
+
 \item Check that all software is available (or that modules are loaded):
 \begin{verbatim}
 openmpi: > which mpirun
@@ -316,23 +322,27 @@ MESHDIR=examples/socal_med400km/MESH/
 #PBS -q standard
 \end{verbatim}
 
-\item delete the empty directory
+%\item delete the empty directory
 %
-\begin{verbatim}
-rm -rf OUTPUT_FILES/DATABASES_MPI
-\end{verbatim}
+%\begin{verbatim}
+%rm -rf OUTPUT_FILES/DATABASES_MPI
+%\end{verbatim}
 %
-This simulation will create a directory \verb+DATABASES_socal_med400km+ that is outside of \verb+OUTPUT_FILES+. This is useful since we may have many simulations associated with the same mesh.
+%This simulation will create a directory \verb+DATABASES_socal_med400km+ that is outside of \verb+OUTPUT_FILES+. This is useful% since we may have many simulations associated with the same mesh.
 
 \item Follow the same steps as in Example 1: decompose, generate databases, solver. Here the programs have all been compiled, so only submitting the run scripts is needed. (But wait for each one to finish, and check the output before proceeding to the next step.)
 %
 \begin{itemize}
 \item The decomposer takes about 3 minutes.
-\item The generate databases takes about xx minutes.
-\item The solver takes about xx minutes.
+\item The generate databases takes about 15 minutes.
+\item The solver takes about 25 minutes.
 \end{itemize}
 %
-[ADD SOMETHING ABOUT SEISMOGRAMS LOOKING BAD, SINCE THE HALF DURATION IS ZERO SECONDS.]
+The simulation runs on 96 cores and should take about 25 minutes. You can track the progress with the timestamp files generated in \verb+OUTPUT_FILES/+ (type \verb+ls -ltr+ to see the most recent files). When the job is complete, you should have 3 sets (semd,semv,sema) of 1107 (\verb+ls -1 *semd | wc+) seismogram files in the directory \verb+OUTPUT_FILES+, as well as 4 \verb+timestamp******+ files.
+
+As expected, the seismograms contain numerical noise, since the source half duration in \verb+CMTSOLUTION+ was set to 0~s. This allows for maximal flexibility in post-processing, since the seismograms can be convolved with any source time function (see manual). However, it is important to know what the minimum resolving period of a particular mesh and model is, since this provides a guide for how to filter the seismograms in post-processing.
+
+\item Now make a change to one of the input files in \verb+SPECFEM3D/DATA/+, either \verb+Par_file+, \verb+CMTSOLUTION+, or \verb+STATIONS+. Rename the \verb+OUTPUT_FILES+ directory if you do not want to over-write your previous output. Then submit the new job. (Note that no recompilation is needed.)
 
 \end{enumerate}
 
