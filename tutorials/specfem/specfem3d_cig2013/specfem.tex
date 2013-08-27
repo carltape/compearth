@@ -120,7 +120,7 @@ Currently Loaded Modulefiles:
   3) netcdf/4.3.0.pgi-13.4   4) PrgEnv-pgi/13.4
 \end{lstlisting}
 
-\item Check out two copies\footnote{There's no need for two copies, but this will make it a bit easier to keep track of the different exampled.} of \specfem\ version 22719 from the code repository at CIG (\url{http://www.geodynamics.org/})
+\item Check out two copies\footnote{There's no need for two copies, but they will make it a bit easier to keep track of the different exampled.} of \specfem\ version 22719 from the code repository at CIG (\url{http://www.geodynamics.org/})
 %
 \begin{lstlisting}
 $ svn co -r 22719 http://geodynamics.org/svn/cig/seismo/3D/SPECFEM3D/trunk SPECFEM3D_22719_default
@@ -166,7 +166,8 @@ $ which python # Python
 $ ./configure F90=pgf90 MPIFC=mpif90
 \end{lstlisting}
 
-If successful, this will generate several \verb+Makefile+s in \verb+src/+, as well as \verb+shared/constants.h+ and \verb+shared/precision.h+, among others.
+If successful, this command will generate several \verb+Makefile+s in \verb+src/+,
+as well as \verb+shared/constants.h+ and \verb+shared/precision.h+, among others.
 
 \item Adapt the run scripts for your cluster and your example run.
 
@@ -208,7 +209,7 @@ To ensure that the path is local, \verb+File --> Set Directory+, then click \ver
 
 Run the meshing script: from the Menu bar, select \verb+Tools -> Play Journal File+, set \verb+Files of Type+ to \verb+All Files+, then select \verb+block_mesh.py+.
 
-If everything goes fine, this creates the ten mesh files in subdirectory \verb+MESH/+:
+If everything goes fine, this script creates the ten mesh files in subdirectory \verb+MESH/+:
 \begin{lstlisting}
 $ ls MESH
 MESH/absorbing_surface_file_bottom
@@ -378,7 +379,7 @@ $ cp ../examples/socal_med400km/in_data_files/* .
 %
 The simulation runs on 96 cores and should take about 25 minutes. You can track the progress with the timestamp files generated in \verb+OUTPUT_FILES/+ (type \verb+ls -ltr+ to see the most recent files). When the job is complete, you should have 3 sets (semd,semv,sema) of 1107 (\verb+ls -1 *semd | wc+) seismogram files in the directory \verb+OUTPUT_FILES+, as well as 4 \verb+timestamp******+ files.
 
-As expected, the seismograms contain numerical noise, since the source half duration in \verb+CMTSOLUTION+ was set to 0~s. This allows for maximal flexibility in post-processing, since the seismograms can be convolved with any source time function (see manual). However, it is important to know what the minimum resolving period of a particular mesh and model is, since this provides a guide for how to filter the seismograms in post-processing.
+As expected, the seismograms contain numerical noise, since the source half duration in \verb+CMTSOLUTION+ was set to 0~s. This allows for maximal flexibility in post-processing, since the seismograms can be convolved with any source time function (see manual). However, it is important to know what the minimum resolving period of a particular mesh and model is, since these periods provide a guide for how to filter the seismograms in post-processing.
 
 \item Now make a change to one of the input files in \verb+SPECFEM3D/DATA/+, either \verb+Par_file+, \verb+CMTSOLUTION+, or \verb+STATIONS+. Rename the \verb+OUTPUT_FILES+ directory if you do not want to over-write your previous output. Then submit the new job. (Note that no recompilation is needed.)
 
