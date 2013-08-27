@@ -9,6 +9,7 @@
 \usepackage[round]{natbib}
 \usepackage{xspace}
 \usepackage{graphicx}
+\usepackage{xcolor,listings}
 
 %\usepackage{fancyhdr}
 %\pagestyle{fancy}
@@ -37,6 +38,24 @@
             pdftitle={\thetitle},%
             pdfauthor={\theauthor}%
            ]{hyperref}
+
+\definecolor{codebg}{RGB}{238,238,238}
+\definecolor{codeframe}{RGB}{204,204,204}
+\lstset{
+  language=bash,
+  basicstyle=\small\ttfamily,
+  breakatwhitespace=true,
+  breaklines=true,
+  prebreak=\raisebox{0ex}[0ex][0ex]{%
+    \ensuremath{\rightharpoondown}},
+  postbreak=\raisebox{0ex}[0ex][0ex]{%
+    \ensuremath{\hookrightarrow\space}},
+  escapechar=\@,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  framesep=10pt,
+  rulecolor=\color{codeframe}
+}
 
 %=====================================================
 \begin{document}
@@ -68,37 +87,29 @@ The purpose of this example is to step through all the key steps of \verb+SPECFE
 
 \begin{enumerate}
 \item check what modules are loaded by default
-\begin{verbatim}
-> module list
-\end{verbatim}
-
-You should see
-\begin{verbatim}
+\begin{lstlisting}
+$ module list
 Currently Loaded Modulefiles:
-  1) pgi/13.4   2) openmpi-pgi-13.4/1.4.3   3) netcdf/4.3.0.pgi-13.4   4) PrgEnv-pgi/13.4
-\end{verbatim}
+  1) pgi/13.4                2) openmpi-pgi-13.4/1.4.3
+  3) netcdf/4.3.0.pgi-13.4   4) PrgEnv-pgi/13.4
+\end{lstlisting}
 
 \item Check out two copies\footnote{There's no need for two copies, but this will make it a bit easier to keep track of the different exampled.} of SPECFEM3D version 22719 from the code repository at CIG (\url{http://www.geodynamics.org/})
 %
-\begin{verbatim}
-svn co -r 22719 http://geodynamics.org/svn/cig/seismo/3D/SPECFEM3D/trunk SPECFEM3D_22719_default
-svn co -r 22719 http://geodynamics.org/svn/cig/seismo/3D/SPECFEM3D/trunk SPECFEM3D_22719_socal
-\end{verbatim}
+\begin{lstlisting}
+$ svn co -r 22719 http://geodynamics.org/svn/cig/seismo/3D/SPECFEM3D/trunk SPECFEM3D_22719_default
+$ svn co -r 22719 http://geodynamics.org/svn/cig/seismo/3D/SPECFEM3D/trunk SPECFEM3D_22719_socal
+\end{lstlisting}
 %
 (This may take a few minutes.)
 
 \item check version info
 %
-\begin{verbatim}
-> cd SPECFEM3D_22719_default
-> svn info
-\end{verbatim}
-
-You should see this:
-\begin{verbatim}
-pacman1 % svn info
+\begin{lstlisting}
+$ cd SPECFEM3D_22719_default
+$ svn info
 Path: .
-URL: http://geodynamics.org/svn/cig/seismo/3D/SPECFEM3D/trunk/examples/homogeneous_halfspace_HEX8_elastic_absorbing_Stacey_5sides
+URL: http://geodynamics.org/svn/cig/seismo/3D/SPECFEM3D/trunk
 Repository Root: http://geodynamics.org/svn/cig
 Repository UUID: 42e91aa9-f6fe-0310-9bd8-dd834c9eb30a
 Revision: 22728
@@ -107,64 +118,64 @@ Schedule: normal
 Last Changed Author: danielpeter
 Last Changed Rev: 22719
 Last Changed Date: 2013-08-20 06:16:30 -0800 (Tue, 20 Aug 2013)
-\end{verbatim}
+\end{lstlisting}
 
 The {\em base directory} for the code is \verb+SPECFEM3D_22719_default+, which we will call \verb+SPECFEM3D+ in the instructions.
 
 \item Take a quick look at the user manual, mainly as a reminder to come back to it for details.
 %
-\begin{verbatim}
-evince doc/USER_MANUAL/manual_SPECFEM3D_Cartesian.pdf &
-\end{verbatim}
+\begin{lstlisting}
+$ evince doc/USER_MANUAL/manual_SPECFEM3D_Cartesian.pdf &
+\end{lstlisting}
 
 \item Check that all software is available (or that modules are loaded):
-\begin{verbatim}
-openmpi: > which mpirun
-cubit:   > which cubit
-python:  > which python
-\end{verbatim}
+\begin{lstlisting}
+$ which mpirun # OpenMPI
+$ which cubit  # Cubit
+$ which python # Python
+\end{lstlisting}
 
 \item Configure package, e.g. using the portland compiler:
-\begin{verbatim}
-> ./configure F90=pgf90 MPIFC=mpif90
-\end{verbatim}
+\begin{lstlisting}
+$ ./configure F90=pgf90 MPIFC=mpif90
+\end{lstlisting}
 
-If successful, this will generate several files in \verb+src/+, including \verb+shared/constants.h+ and \verb+shared/precision.h+, among others.
+If successful, this will generate several \verb+Makefile+s in \verb+src/+, as well as \verb+shared/constants.h+ and \verb+shared/precision.h+, among others.
 
 \item Adapt the run scripts for your cluster and your example run.
 
 - copy run scripts from \verb+utils/Cluster/+ into \verb+SPECFEM3D/+, e.g.,
-\begin{verbatim}
-> cd utils/Cluster/pbs/
-> cp go_decomposer_pbs.bash go_generate_databases_pbs.bash go_solver_pbs.bash ../../../
-> cd ../../../
-\end{verbatim}
+\begin{lstlisting}
+$ cd utils/Cluster/pbs/
+$ cp go_decomposer_pbs.bash go_generate_databases_pbs.bash go_solver_pbs.bash ../../../
+$ cd ../../../
+\end{lstlisting}
 
 Set all bash scripts to run in the \verb+standard+ queue (in general, the queue will depend on your specific cluster) by editing the line
-\begin{verbatim}
+\begin{lstlisting}
 #PBS -q standard
-\end{verbatim}
+\end{lstlisting}
 (The default simulation time and number of cores is okay for this example.)
  
 \item The rest of the instructions follow from the homogeneous halfspace example here
-\begin{verbatim}
+\begin{lstlisting}
 SPECFEM3D/examples/homogeneous_halfspace/README
-\end{verbatim}
+\end{lstlisting}
 
 Copy the input files from examples directory into \verb+SPECFEM3D/DATA/+
-\begin{verbatim}
-> cd examples/homogeneous_halfspace/DATA/
-> cp * ../../../DATA/
-\end{verbatim}
+\begin{lstlisting}
+$ cd examples/homogeneous_halfspace/DATA/
+$ cp * ../../../DATA/
+\end{lstlisting}
 %
 Note that only three input files are required: for the source (\verb+CMTSOLUTION+), for the stations (\verb+STATIONS+), and for the simulation parameters (\verb+Par_file+).
 
 \item create mesh:
 
 From the directory \verb+SPECFEM3D/examples/homogeneous_halfspace+, open the cubit GUI, \verb+claro+:
-\begin{verbatim}
-> claro
-\end{verbatim}
+\begin{lstlisting}
+$ claro
+\end{lstlisting}
 %
 (Close the ``Tip of the Day''.)
 To ensure that the path is local, \verb+File --> Set Directory+, then click \verb+Choose+.
@@ -172,7 +183,8 @@ To ensure that the path is local, \verb+File --> Set Directory+, then click \ver
 Run the meshing script: from the Menu bar, select \verb+Tools -> Play Journal File+, set \verb+Files of Type+ to \verb+All Files+, then select \verb+block_mesh.py+.
 
 If everything goes fine, this creates the ten mesh files in subdirectory \verb+MESH/+:
-\begin{verbatim}
+\begin{lstlisting}
+$ ls MESH
 MESH/absorbing_surface_file_bottom
 MESH/absorbing_surface_file_xmax
 MESH/absorbing_surface_file_xmin
@@ -183,7 +195,7 @@ MESH/materials_file
 MESH/mesh_file
 MESH/nodes_coords_file
 MESH/nummaterial_velocity_file
-\end{verbatim}
+\end{lstlisting}
 
 You should be able to translate, rotate, and zoom on the mesh using a three-button mouse. (This can be emulated if you set X11 preferences, then (on a Mac) hold the \verb+control+, \verb+alt+, or \verb+command+ buttons while clicking and moving the mouse.)
 
@@ -195,74 +207,74 @@ picture_of_this_homogeneous_regular_mesh.png
 \item decompose mesh files:
 
 Compile the decomposer in directory \verb+SPECFEM3D/+:
-\begin{verbatim}
-> make xdecompose_mesh
-\end{verbatim}
+\begin{lstlisting}
+$ make xdecompose_mesh
+\end{lstlisting}
 %
 This will compile the partitioner \verb+SCOTCH+.
 
 Then run the decomposer:
-\begin{verbatim}
-> qsub go_decomposer_pbs.bash
-\end{verbatim}
+\begin{lstlisting}
+$ qsub go_decomposer_pbs.bash
+\end{lstlisting}
 %
 You can check the status of the job with the command
 %
-\begin{verbatim}
-qmap | grep USERNAME
-\end{verbatim}
+\begin{lstlisting}
+$ qmap | grep USERNAME
+\end{lstlisting}
 %
 The job should take 20 seconds or so. It creates the four mesh partitions \verb+proc000***_Database+ in the directory \verb+OUTPUT_FILES/DATABASES_MPI/+. The output file \verb+OUTPUT_FILES/*.o+ contains information on the partitioning.
 
 \item generate databases:
 
 Compile \verb+generate_databases+ in the directory \verb+SPECFEM3D/+:
-\begin{verbatim}
-> make xgenerate_databases
-\end{verbatim}
+\begin{lstlisting}
+$ make xgenerate_databases
+\end{lstlisting}
 Submit the job:
-\begin{verbatim}
-> qsub go_generate_databases_pbs.bash
-\end{verbatim}
+\begin{lstlisting}
+$ qsub go_generate_databases_pbs.bash
+\end{lstlisting}
 
 The job should take about a minute.
 It creates binary mesh files, e.g. \verb+proc000***_external_mesh.bin+ in the directory \verb+OUTPUT_FILES/DATABASES_MPI/+.
 
 It is a good idea to look at the partitions of the mesh files. Load some vtk files (e.g., vs) into paraview:
-\begin{verbatim}
-> cd OUTPUT_FILES/DATABASES_MPI/
-> module load paraview
-> paraview
-\end{verbatim}
+\begin{lstlisting}
+$ cd OUTPUT_FILES/DATABASES_MPI/
+$ module load paraview
+$ paraview
+\end{lstlisting}
 %
 Then \verb+File --> Open+, and select all four \verb+vs*vtk+ files. When you are done, be sure to unload the \verb+paraview+ module, since here it was compiled with \verb+gnu+, which conflicts with the \verb+portland+ we are using.
 %
-\begin{verbatim}
-> module unload paraview
-> cd ../../
-\end{verbatim}
+\begin{lstlisting}
+$ module unload paraview
+$ cd ../../
+\end{lstlisting}
 
 \item run simulation:
 
    - compile specfem3D (from \verb+SPECFEM3D/+:
-\begin{verbatim}
-> make xspecfem3D
-\end{verbatim}
+\begin{lstlisting}
+$ make xspecfem3D
+\end{lstlisting}
    - submit script to run solver:
-\begin{verbatim}
-> qsub go_solver_pbs.bash
-\end{verbatim}
+\begin{lstlisting}
+$ qsub go_solver_pbs.bash
+\end{lstlisting}
 
 The simulation runs on 4 cores and should take about 30 minutes. You can track the progress with the timestamp files generated in \verb+OUTPUT_FILES/+ (type \verb+ls -ltr+ to see the most recent files). When the job is complete, you should have 3 sets (semd,semv,sema) of 12 (\verb+ls -1 *semd | wc+) seismogram files in the directory \verb+OUTPUT_FILES+, as well as 51 \verb+timestamp******+ files.
 
 \item Compare your computed seismograms with the reference seismograms.
 
 A quick visual comparison can be done from \verb+SPECFEM3D/+ using \verb+xmgrace+:
-\begin{verbatim}
-> module load grace
-> xmgrace examples/homogeneous_halfspace/REF_SEIS/*Z.semd &
-> xmgrace OUTPUT_FILES/*Z.semd &
-\end{verbatim}
+\begin{lstlisting}
+$ module load grace
+$ xmgrace examples/homogeneous_halfspace/REF_SEIS/*Z.semd &
+$ xmgrace OUTPUT_FILES/*Z.semd &
+\end{lstlisting}
 
 \end{enumerate}
 
@@ -283,50 +295,50 @@ This example is at a scale that will likely not run on a single laptop or deskto
 \begin{enumerate}
 \item Copy bash scripts into the base directory:
 
-\begin{verbatim}
-   > cd SPECFEM3D_22719_socal
-   > cp ../SPECFEM3D_22719_default/*bash .
-\end{verbatim}
+\begin{lstlisting}
+$ cd SPECFEM3D_22719_socal
+$ cp ../SPECFEM3D_22719_default/*bash .
+\end{lstlisting}
 
 \item configure
-\begin{verbatim}
-   > ./configure F90=pgf90 MPIFC=mpif90
-\end{verbatim}
+\begin{lstlisting}
+$ ./configure F90=pgf90 MPIFC=mpif90
+\end{lstlisting}
 
 \item compile all
-\begin{verbatim}
-> make all
-\end{verbatim}
+\begin{lstlisting}
+$ make all
+\end{lstlisting}
 
 \item Link the mesh directory as an example
-\begin{verbatim}
-> cd examples
-> ln -s /import/c/d/ERTHQUAK/GEOCUBIT_MESH/socal_med400km .
-\end{verbatim}
+\begin{lstlisting}
+$ cd examples
+$ ln -s /import/c/d/ERTHQUAK/GEOCUBIT_MESH/socal_med400km .
+\end{lstlisting}
 
 \item Modify \verb+go_decomposer_pbs.bash+ to point to the new directory:
-\begin{verbatim}
+\begin{lstlisting}
 MESHDIR=examples/socal_med400km/MESH/
-\end{verbatim}
+\end{lstlisting}
 
 \item Link the tomography file and copy input files
-\begin{verbatim}
-> cd DATA
-> ln -s /import/c/d/ERTHQUAK/MODEL/cvm119_1000_1000_0250_741_549.xyz tomography_model.xyz
-> cp ../examples/socal_med400km/in_data_files/* .
-\end{verbatim}
+\begin{lstlisting}
+$ cd DATA
+$ ln -s /import/c/d/ERTHQUAK/MODEL/cvm119_1000_1000_0250_741_549.xyz tomography_model.xyz
+$ cp ../examples/socal_med400km/in_data_files/* .
+\end{lstlisting}
 
 \item modify \verb+go_generate_databases_pbs.bash+ and \verb+go_solver_pbs.bash+ to have the proper time limits and number of cores
-\begin{verbatim}
+\begin{lstlisting}
 #PBS -l nodes=6:ppn=16,walltime=1:00:00
 #PBS -q standard
-\end{verbatim}
+\end{lstlisting}
 
 %\item delete the empty directory
 %
-%\begin{verbatim}
+%\begin{lstlisting}
 %rm -rf OUTPUT_FILES/DATABASES_MPI
-%\end{verbatim}
+%\end{lstlisting}
 %
 %This simulation will create a directory \verb+DATABASES_socal_med400km+ that is outside of \verb+OUTPUT_FILES+. This is useful% since we may have many simulations associated with the same mesh.
 
