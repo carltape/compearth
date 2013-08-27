@@ -389,7 +389,26 @@ As expected, the seismograms contain numerical noise, since the source half dura
 
 \subsection*{Step-by-step instructions, example 4: GPU}
 
-In this example, we show how \specfem\ can be used on a GPU cluster.
+In this example, we show how \specfem\ can be used on a GPU cluster. In general,
+there are only two {\em required} steps to use GPU computing:
+
+\begin{enumerate}
+\item Enable CUDA during configuration:
+\begin{lstlisting}
+$ ./configure --enable-cuda MPI_INC=$MPI_DIR/include
+\end{lstlisting}
+
+\item Enable CUDA at runtime in \verb|DATA/Par_file|:
+\begin{lstlisting}
+GPU_MODE    =   .true.
+\end{lstlisting}
+\end{enumerate}
+
+In practice, you may need to do several other steps depending on how your
+cluster has been set up. The following example shows the extra steps that
+are required on the FISH cluster at ARSC. When running on your own cluster,
+you should consult their documentation in case there are additional steps that
+must be taken.
 
 \begin{enumerate}
 \item ELLIOTT'S INSTRUCTIONS HERE (start with login to fish)
