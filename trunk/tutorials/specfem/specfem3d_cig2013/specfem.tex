@@ -23,12 +23,15 @@
 \usepackage[margin=1in]{geometry}
 
 %\include{NEWCOMMANDS}
+\newcommand{\specfem}{\textsc{Specfem3D}}
+\newcommand{\cubit}{\textsc{Cubit}}
+\newcommand{\geocubit}{\textsc{GeoCubit}}
 
 \graphicspath{
   {figures/}
 }
 
-\title{SPECFEM3D Tutorial for 2013 CIG-QUEST-IRIS Workshop}
+\title{\specfem\ Tutorial for 2013 CIG-QUEST-IRIS Workshop}
 \author{Carl, Qinya, Elliott, Emanuele}
 \date{Last compiled: \today}
 
@@ -80,7 +83,7 @@
 
 \subsection*{Step-by-step instructions, example 1: homogeneous halfspace synthetic seismograms}
 
-The purpose of this example is to step through all the key steps of \verb+SPECFEM3D+: get the code, configure the code for your cluster, generate a mesh using (GEO)CUBIT, partition the mesh, generate databases, run the solver, and check the output. The example is trivial, but it is important to remember that 
+The purpose of this example is to step through all the key steps of \specfem: get the code, configure the code for your cluster, generate a mesh using (\textsc{Geo})\cubit, partition the mesh, generate databases, run the solver, and check the output. The example is trivial, but it is important to remember that 
 
 \begin{enumerate}
 \item check what modules are loaded by default
@@ -91,7 +94,7 @@ Currently Loaded Modulefiles:
   3) netcdf/4.3.0.pgi-13.4   4) PrgEnv-pgi/13.4
 \end{lstlisting}
 
-\item Check out two copies\footnote{There's no need for two copies, but this will make it a bit easier to keep track of the different exampled.} of SPECFEM3D version 22719 from the code repository at CIG (\url{http://www.geodynamics.org/})
+\item Check out two copies\footnote{There's no need for two copies, but this will make it a bit easier to keep track of the different exampled.} of \specfem\ version 22719 from the code repository at CIG (\url{http://www.geodynamics.org/})
 %
 \begin{lstlisting}
 $ svn co -r 22719 http://geodynamics.org/svn/cig/seismo/3D/SPECFEM3D/trunk SPECFEM3D_22719_default
@@ -169,7 +172,7 @@ Note that only three input files are required: for the source (\verb+CMTSOLUTION
 
 \item create mesh:
 
-From the directory \verb+SPECFEM3D/examples/homogeneous_halfspace+, open the cubit GUI, \verb+claro+:
+From the directory \verb+SPECFEM3D/examples/homogeneous_halfspace+, open the \cubit\ GUI, \verb+claro+:
 \begin{lstlisting}
 $ claro
 \end{lstlisting}
@@ -196,7 +199,7 @@ MESH/nummaterial_velocity_file
 
 You should be able to translate, rotate, and zoom on the mesh using a three-button mouse. (This can be emulated if you set X11 preferences, then (on a Mac) hold the \verb+control+, \verb+alt+, or \verb+command+ buttons while clicking and moving the mouse.)
 
-The cubit graphics window should show a mesh similar to the file
+The \cubit\ graphics window should show a mesh similar to the file
 \begin{verbatim}
 picture_of_this_homogeneous_regular_mesh.png
 \end{verbatim}
@@ -208,7 +211,7 @@ Compile the decomposer in directory \verb+SPECFEM3D/+:
 $ make xdecompose_mesh
 \end{lstlisting}
 %
-This will compile the partitioner \verb+SCOTCH+.
+This will compile the partitioner \textsc{Scotch}.
 
 Then run the decomposer:
 \begin{lstlisting}
@@ -253,7 +256,7 @@ $ cd ../../
 
 \item run simulation:
 
-   - compile specfem3D (from \verb+SPECFEM3D/+:
+   - compile specfem3D (from \verb+SPECFEM3D/+):
 \begin{lstlisting}
 $ make xspecfem3D
 \end{lstlisting}
@@ -359,7 +362,7 @@ As expected, the seismograms contain numerical noise, since the source half dura
 
 \subsection*{Step-by-step instructions, example 4: GPU}
 
-In this example, we show how \verb+SPECFEM3D+ can be used on a GPU cluster.
+In this example, we show how \specfem\ can be used on a GPU cluster.
 
 \begin{enumerate}
 \item ELLIOTT'S INSTRUCTIONS HERE (start with login to fish)
