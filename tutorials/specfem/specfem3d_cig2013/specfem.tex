@@ -395,7 +395,7 @@ there are only two {\em required} steps to use GPU computing:
 \begin{enumerate}
 \item Enable CUDA during configuration:
 \begin{lstlisting}
-$ ./configure --enable-cuda MPI_INC=$MPI_DIR/include
+$ ./configure --enable-cuda MPI_INC=-I$MPI_DIR/include
 \end{lstlisting}
 
 \item Enable CUDA at runtime in \verb|DATA/Par_file|:
@@ -405,13 +405,102 @@ GPU_MODE    =   .true.
 \end{enumerate}
 
 In practice, you may need to do several other steps depending on how your
-cluster has been set up. The following example shows the extra steps that
-are required on the FISH cluster at ARSC. When running on your own cluster,
-you should consult their documentation in case there are additional steps that
-must be taken.
+cluster has been set up. When running on your own cluster, you should consult
+their documentation in case there are additional steps that must be taken. The
+following example shows the extra steps that are required on the FISH cluster
+at ARSC.
 
 \begin{enumerate}
-\item ELLIOTT'S INSTRUCTIONS HERE (start with login to fish)
+\item *TODO*: start with login to fish
+
+\item Check out version 22719 from SVN again:
+\begin{lstlisting}
+$ svn co -r 22719 http://geodynamics.org/svn/cig/seismo/3D/SPECFEM3D/trunk SPECFEM3D_22719_GPU
+$ cd SPECFEM3D_22719_GPU
+\end{lstlisting}
+
+\item Load the CUDA toolkit:
+\begin{lstlisting}
+$ module load cudatoolkit
+\end{lstlisting}
+
+\item The compilers on fish work a little differently than on pacman. There are
+      wrappers that automatically run the real compilers and apply MPI or CUDA
+      options once the modules are loaded.
+
+      When compiling for CUDA, the CUDA compiler (which is separate from the C
+      or Fortran compilers) needs to know where the MPI headers are installed.
+      This information must be set using the \verb|MPI_INC| variable when
+      running \verb|./configure|. On fish, loading the MPI module sets the
+      \verb|MPICH_DIR| environment variable, which is used in the instructions
+      below.
+
+\begin{lstlisting}
+$ ./configure MPIFC=ftn CC=cc FC=ftn --with-cuda MPI_INC=-I$MPICH_DIR/include
+\end{lstlisting}
+
+\item *TODO*: Copy example config stuff...
+
+\item The GPU mode only affects the solver (\verb|xspecfem3D|), but it is a good
+      idea to remember to enable it now. Edit \verb|DATA/Par_file| and set this
+      option:
+\begin{lstlisting}
+GPU_MODE    =   .true.
+\end{lstlisting}
+
+\item Now, you can compile things as usual:
+\begin{lstlisting}
+$ make xdecompose_mesh
+$ make xgenerate_databases
+$ make xspecfem3D
+\end{lstlisting}
+
+\item The scripts to run jobs on fish are similar to the ones on pacman. Fish
+      uses a slightly different method to run MPI programs compared to pacman.
+      Instead of using \verb|mpirun -np <#procs>|, you use
+      \verb|aprun -n <#procs>|, and to use GPUs, you must use the \verb|gpu|
+      queue.
+\begin{lstlisting}
+$ cd utils/Cluster/pbs/
+$ cp go_decomposer_pbs.bash go_generate_databases_pbs.bash go_solver_pbs.bash ../../../
+$ cd ../../../
+$ vim *.bash
+  # Change 'mpirun -np' to 'aprun -n'
+  # Add '#PBS -q gpu'
+\end{lstlisting}
+*TODO*: Add note about one process per node for GPU runs. This probably depends
+on which example we're using.
+
+\item Now, you can submit your jobs as usual:
+\begin{lstlisting}
+$ qsub go_decomposer_pbs.bash
+# Wait for it to finish
+
+$ qsub go_generate_databases_pbs.bash
+# Wait for it to finish
+
+$ qsub go_solver_pbs.bash
+# Wait for it to finish
+\end{lstlisting}
+
+\item Depending on how many GPUs you use, you may see up to 20 or 30 times
+      faster execution. If everything ran correctly on the GPU, you should see
+      some additional files in \verb|OUTPUT_FILES|:
+\begin{lstlisting}
+$ ls OUTPUT_FILES/gpu*.txt
+gpu_device_info_proc_000000.txt
+gpu_device_mem_usage_proc_000000.txt
+gpu_device_info_proc_000001.txt
+gpu_device_mem_usage_proc_000001.txt
+gpu_device_info_proc_000002.txt
+gpu_device_mem_usage_proc_000002.txt
+gpu_device_info_proc_000003.txt
+gpu_device_mem_usage_proc_000003.txt
+\end{lstlisting}
+
+      These files contain statistics of the run on the GPU devices. If the jobs
+      crash, you should check these files to ensure that you did not use too
+      much memory per GPU.
 \end{enumerate}
 
 %=====================================================
