@@ -49,9 +49,9 @@
   breakatwhitespace=true,
   breaklines=true,
   prebreak=\raisebox{0ex}[0ex][0ex]{%
-    \ensuremath{\rightharpoondown}},
+    \ensuremath{\backslash}},
   postbreak=\raisebox{0ex}[0ex][0ex]{%
-    \ensuremath{\hookrightarrow\space}},
+    \color{red}\rotatebox[origin=c]{180}{\ensuremath{\Lsh}}\space},
   escapechar=\@,
   backgroundcolor=\color{codebg},
   frame=single,
@@ -89,10 +89,13 @@ $ echo "A command you can run" | sed 's/can/have/g' # This is a comment.
 A command you have run
 \end{lstlisting}
 
-\item Lines that have been wrapped are indicated by $\rightharpoondown$ at the
-      end of the line and $\hookrightarrow$ at the beginning of the continued
-      line. Line breaks do not occur in the middle of words, so remember to
-      include a space between each wrapped line if you are typing it out yourself.
+\item Lines that have been wrapped are indicated by the backslash~$\backslash$ at the
+      end of the line and the symbol~{\color{red}\rotatebox[origin=c]{180}{$\Lsh$}}
+      at the beginning of the continued line. Most shells will understand the trailing
+      backslash to indicate a continued command, so you should be able to copy all
+      wrapped lines directly without any issues. Line breaks do not occur in the
+      middle of words, so remember to include a space between each wrapped line if
+      you are typing it out yourself.
 \begin{lstlisting}
 This is a very long line that will wrap because it goes on and on and on and also could be considered a run-on sentence, too.
 \end{lstlisting}
