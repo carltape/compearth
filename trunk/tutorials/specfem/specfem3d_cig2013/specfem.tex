@@ -26,6 +26,8 @@
 \newcommand{\specfem}{\textsc{Specfem3D}}
 \newcommand{\cubit}{\textsc{Cubit}}
 \newcommand{\geocubit}{\textsc{GeoCubit}}
+\newcommand{\paraview}{\textsc{Paraview}}
+\newcommand{\grace}{\textsc{Grace}}
 \newcommand{\blue}[1]{\textcolor{blue}{#1}}
 
 
@@ -285,14 +287,14 @@ $ qsub go_generate_databases_pbs.bash
 The job should take about a minute.
 It creates binary mesh files, e.g. \path{proc000***_external_mesh.bin} in the directory \path{OUTPUT_FILES/DATABASES_MPI/}.
 
-It is a good idea to look at the partitions of the mesh files. Load some vtk files (e.g., vs) into paraview:
+It is a good idea to look at the partitions of the mesh files. Load some vtk files (e.g., vs) into \paraview:
 \begin{lstlisting}
 $ cd OUTPUT_FILES/DATABASES_MPI/
 $ module load paraview
 $ paraview
 \end{lstlisting}
 %
-Then \verb+File --> Open+, and select all four \path{vs*vtk} files. When you are done, be sure to unload the \verb+paraview+ module, since here it was compiled with \verb+gnu+, which conflicts with the \verb+portland+ we are using.
+Then \verb+File --> Open+, and select all four \path{vs*vtk} files. When you are done, be sure to unload the \paraview\ module, since here it was compiled with \verb+gnu+, which conflicts with the \verb+portland+ we are using.
 %
 \begin{lstlisting}
 $ module unload paraview
@@ -314,7 +316,7 @@ The simulation runs on 4 cores and should take about 30 minutes. You can track t
 
 \item Compare your computed seismograms with the reference seismograms.
 
-A quick visual comparison can be done from \path{SPECFEM3D/} using \verb+xmgrace+:
+A quick visual comparison can be done from \path{SPECFEM3D/} using \grace:
 \begin{lstlisting}
 $ module load grace
 $ xmgrace examples/homogeneous_halfspace/REF_SEIS/*Z.semd &
@@ -368,7 +370,7 @@ $ mv OUTPUT_FILES/*.adj SEM/
 $ cd SEM/
 $ rename .semd.adj .adj *.adj
 \end{lstlisting}
-(on some linux machines, the last line may be \verb+rename 's/.semd.adj/.adj/' *.adj+), which  should create the adjoint source files \path{SEM/X20.DB.BX[XYZ].adj}. You can plot them with the \verb+xmgrace+ tool, and you will probably notice that only the Z-component source is non-zero as designed.
+(on some linux machines, the last line may be \verb+rename 's/.semd.adj/.adj/' *.adj+), which  should create the adjoint source files \path{SEM/X20.DB.BX[XYZ].adj}. You can plot them with the \grace\ tool, and you will probably notice that only the Z-component source is non-zero as designed.
 
 \item setup corresponding adjoint stations file \path{STATIONS_ADJOINT} containing the information on the receivers with adjoint source files already setup in \path{SEM/}:
 \begin{lstlisting}
@@ -393,15 +395,15 @@ $ qsub go_solver_pbs.bash
 
 If successful after ~ 1 hour runtime, it will create adjoint kernel files in directory \path{OUTPUT_FILES/DATABASES_MPI/} for the travel-time kernels as defined in eqn (17-20) of Tromp et al. (2005): \path{OUTPUT_FILES/DATABASES_MPI/proc000***_[alpha,beta,kappa,mu,rho,rhop]_kernel.bin}.
 
-\item The kernel files can be combined and visualized with \verb+Paraview+. First compile the program that can combine selected slices of kernels and produce vtk files for \verb+Parview+. In the \specfem\ directory, \blue{is cd bin really necessary?}
+\item The kernel files can be combined and visualized with \paraview. First compile the program that can combine selected slices of kernels and produce vtk files for \paraview. In the \specfem\ directory, \blue{is cd bin really necessary?}
 \begin{lstlisting}
 $ make xcombine_vol_data
 $ cd bin/ 
 $ ./xcombine_vol_data 0 3 alpha_kernel ../OUTPUT_FILES/DATABASES_MPI/ ../OUTPUT_FILES/ 1
 \end{lstlisting}
-where id 0 to 3 indicates that we use all 4 partitions of the processors. By default, it produces the vtk file \path{OUTPUT_FILES/alpha_kernel.vtk}, which can be imported into Paraview 
+where id 0 to 3 indicates that we use all 4 partitions of the processors. By default, it produces the vtk file \path{OUTPUT_FILES/alpha_kernel.vtk}, which can be imported into \paraview
 
-\item You can then visualize the vtk kernel file in \verb+Paraview+. After open up paraview gui, on the top menu, click \verb+File -> Open+, navigate to the \path{OUTPUT_FILES/} directory, choose the \path{alpha_kernel.vtk} file and click \verb+Apply+. Go to \verb+Display+ tab, and in the \verb+Style+ section, choose \verb+Representation -> Surface+, and then in the \verb+Color+ section, choose \verb+Color by -> alpha_kernel+. Now the model block can be rotated by the left button of the mouse, translated by the middle button and zoomed in/out by the right button (the binding of the keys may be different on Mac).
+\item You can then visualize the vtk kernel file in \paraview. After open up \paraview\ GUI, on the top menu, click \verb+File -> Open+, navigate to the \path{OUTPUT_FILES/} directory, choose the \path{alpha_kernel.vtk} file and click \verb+Apply+. Go to \verb+Display+ tab, and in the \verb+Style+ section, choose \verb+Representation -> Surface+, and then in the \verb+Color+ section, choose \verb+Color by -> alpha_kernel+. Now the model block can be rotated by the left button of the mouse, translated by the middle button and zoomed in/out by the right button (the binding of the keys may be different on Mac).
 
    Similarly import \path{sr.vtk} \blue{where} file to visualize the source/receiver positions. Click \verb+File -> Open+, choose \path{sr.vtk} and click \verb+Apply+. While it is highlighted in the \verb+Pipeline Browser+, select menu \verb+Filters -> Alphabetical -> Glyph+, and click \verb+Apply+. In the \verb+Properties+ tab, select \verb+Glyph Type -> Sphere+, and hit \verb+Apply+ again. The little sphere representing the receiver will appear on the free surface. To see both the source and receiver, click on the eye-like icon in front of \path{alpha_kernel.vtk} in the \verb+Pipeline Browser+ to hide the view of \verb+alpha_kernel+. You will find the source sphere at the center of the block.
 
