@@ -2,21 +2,26 @@ function Uout = U2pa(Uin,itype)
 %U2PA convert between basis U and plunge/azimuth of three basis vectors
 %
 % INPUT
-%   Uin     eigenbasis in SOUTH-EAST-UP convention
-%           (but U does NOT have to be in the green zone)
-%   itype   =1 for U to pa; =0 for pa to U
+%   Uin     either 3 x 3 x n array U OR n x 6 set of plunge/azimuth angles
+%   itype   =1 for U to plunge/azimuth; =0 for plunge/azimuth to U
 %   
 % OUTPUT
-%   pl1,az1 plunge and trend for 1st eigenvector
-%   pl2,az2 plunge and trend for 2nd eigenvector
-%   pl3,az3 plunge and trend for 3rd eigenvector
+%   Uout    either 3 x 3 x n array U OR n x 6 set of plunge/azimuth angles
+%
+%   U       eigenbasis in SOUTH-EAST-UP convention
+%           (but U does NOT have to be in the green zone)
+%
+%   pl1,az1 plunge and azimuth for 1st eigenvector
+%   pl2,az2 plunge and azimuth for 2nd eigenvector
+%   pl3,az3 plunge and azimuth for 3rd eigenvector
+%   eigenvectors ordered as lam1 >= lam2 >= lam3
 % 
 % Carl Tape, 12-August-2011
 %
 
 if itype==1
-    % QUESTION: SHOULD WE ENSURE THAT U IS A ROTATION MATRIX AT THIS POINT?
-    %           THIS COULD BE ACHIEVED WITH A CALL TO Udetcheck.m
+    % WE COULD ENSURE THAT U IS A ROTATION MATRIX AT THIS POINT
+    % BY CALLING Udetcheck.m
     [~,~,n] = size(Uin);
 
     p1 = squeeze(Uin(:,1,:));
@@ -102,11 +107,10 @@ end
 
 if 0==1
     clear, clc, close all
-    isub = 1;   % pick the first moment tensor in the catalog
+    teid = 'M010176A';  % first event in GCMT catalog
     [otime,tshift,hdur,lat,lon,dep,M,~,~,eid,elabel,str1,dip1,rk1,str2,dip2,rk2,...
-        lams,pl1,az1,pl2,az2,pl3,az3,icmt,dataused,itri] = readCMT(isub);
+        lams,pl1,az1,pl2,az2,pl3,az3,icmt,dataused,itri] = readCMT(teid);
     [MDC,kap1,theta1,sig1,kap2,theta2,sig2,k1,d1,n1,k2,d2,n2,U0,lamsx] = CMT2faultpar(M,0);
-    n = length(isub);
     
     % check
     Mt = U0 * diag(lamsx) * U0';
@@ -120,6 +124,7 @@ if 0==1
 %     U * diag(lamsx) * U'
     
     Uout = U2pa(U,1);
+    % compare with angles listed in GCMT catalog
     [Uout ; pl1 az1 pl2 az2 pl3 az3]
     
     %----------------------------
