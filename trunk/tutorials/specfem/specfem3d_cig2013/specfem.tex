@@ -10,12 +10,17 @@
 \usepackage{graphicx}
 \usepackage{xcolor,listings}
 %\usepackage[space]{accsupp}
-%\usepackage[mackeys=text]{menukeys}
-\newcommand{\keys}[1]{\texttt{#1}}
-\newcommand{\menu}[1]{\texttt{#1}}
+
+% For nice menu descriptions
+\IfFileExists{menukeys.sty}{
+\usepackage[mackeys=text]{menukeys}
+}{
+\newcommand{\keys}[1]{\texttt{##1}}
+\newcommand{\menu}[1]{\texttt{##1}}
 \newcommand{\cmd}{command}
 \newcommand{\ctrl}{control}
 \newcommand{\Alt}{alt}
+}
 
 %\usepackage{fancyhdr}
 %\pagestyle{fancy}
