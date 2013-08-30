@@ -157,7 +157,7 @@ Last Changed Rev: 22719
 Last Changed Date: 2013-08-20 06:16:30 -0800 (Tue, 20 Aug 2013)
 \end{lstlisting}
 
-The {\em base directory} for the code is \verb+SPECFEM3D_22719_default+, which we will call \verb+SPECFEM3D+ in the instructions.
+The {\em base directory} for the code is \path{SPECFEM3D_22719_default}, which we will call \path{SPECFEM3D} in the instructions.
 
 \item Take a quick look at the user manual, mainly as a reminder to come back to it for details. 
 %
@@ -177,18 +177,18 @@ $ which python # Python
 $ ./configure F90=pgf90 MPIFC=mpif90
 \end{lstlisting}
 
-If successful, this command will generate several \verb+Makefile+s in the \verb+SPECFEM3D+ main directory,  subdirectories of \verb+src/+, as well as \verb+shared/constants.h+ and \verb+shared/precision.h+, among others.
+If successful, this command will generate several \path{Makefile}s in the \path{SPECFEM3D} main directory, subdirectories of \path{src/}, as well as \path{shared/constants.h} and \path{shared/precision.h}, among others.
 
 \item Adapt the run scripts for your cluster and your example run.
 
-- copy run scripts from \verb+utils/Cluster/+ into \verb+SPECFEM3D/+, e.g.,
+- copy run scripts from \path{utils/Cluster/} into \path{SPECFEM3D/}, e.g.,
 \begin{lstlisting}
 $ cd utils/Cluster/pbs/
 $ cp go_decomposer_pbs.bash go_generate_databases_pbs.bash go_solver_pbs.bash ../../../
 $ cd ../../../
 \end{lstlisting}
 
-Set all bash scripts to run in the \verb+standard+ queue (in general, the queue will depend on your specific cluster) by editing the line
+Set all bash scripts to run in the \texttt{standard} queue (in general, the queue will depend on your specific cluster) by editing the line
 \blue{(do we need to warn people to also delete one \# from the line of \#\#PBS -q debug?)}
 \begin{lstlisting}
 #PBS -q standard
@@ -200,17 +200,17 @@ Set all bash scripts to run in the \verb+standard+ queue (in general, the queue 
 SPECFEM3D/examples/homogeneous_halfspace/README
 \end{lstlisting}
 
-Copy the input files from examples directory into \verb+SPECFEM3D/DATA/+
+Copy the input files from examples directory into \path{SPECFEM3D/DATA/}
 \begin{lstlisting}
 $ cd examples/homogeneous_halfspace/DATA/
 $ cp * ../../../DATA/
 \end{lstlisting}
 %
-Note that only three input files are required: for the source (\verb+CMTSOLUTION+), for the stations (\verb+STATIONS+), and for the simulation parameters (\verb+Par_file+).
+Note that only three input files are required: for the source (\path{CMTSOLUTION}), for the stations (\path{STATIONS}), and for the simulation parameters (\path{Par_file}).
 
 \item create mesh:
 
-From the directory \verb+SPECFEM3D/examples/homogeneous_halfspace+, open the \cubit\ GUI, \verb+claro+:
+From the directory \path{SPECFEM3D/examples/homogeneous_halfspace}, open the \cubit\ GUI, \path{claro}:
 \begin{lstlisting}
 $ claro
 \end{lstlisting}
@@ -219,10 +219,10 @@ $ claro
 (Close the ``Tip of the Day''.)
 To ensure that the path is local and the needed python modules and scripts are accessible, \verb+File --> Set Directory+, then click \verb+Choose+  \blue{(Choose what? examples/homogenous\_halfspace/?)}, which is equivalent to typing in the \cubit\ command window \verb+cd 'examples/homogeneous_halfspace/'+ (note the single quotes are required).
 
-Run the meshing script: from the Menu bar, select \verb+Tools -> Play Journal File+, set \verb+Files of Type+ to \verb+All Files+, then select \verb+block_mesh.py+. 
+Run the meshing script: from the Menu bar, select \verb+Tools -> Play Journal File+, set \verb+Files of Type+ to \verb+All Files+, then select \path{block_mesh.py}.
 \blue{block\_mesh.py to be fixed}
 
-If everything goes fine, this script creates the ten mesh files in subdirectory \verb+MESH/+:
+If everything goes fine, this script creates the ten mesh files in subdirectory \path{MESH/}:
 \begin{lstlisting}
 $ ls MESH
 MESH/absorbing_surface_file_bottom
@@ -243,11 +243,11 @@ The \cubit\ graphics window should show a mesh similar to the file
 \begin{verbatim}
 picture_of_this_homogeneous_regular_mesh.png
 \end{verbatim}
-\blue{Don't we need to also copy the MESH/ dir to the specfem3d root directory?}\verb+cp examples/homogeneous_halfspace/MESH/* MESH/+
+\blue{Don't we need to also copy the \path{MESH/} dir to the specfem3d root directory? \texttt{cp examples/homogeneous\_halfspace/MESH/* MESH/}}
 
 \item decompose mesh files:
 
-Compile the decomposer in directory \verb+SPECFEM3D/+:
+Compile the decomposer in directory \path{SPECFEM3D/}:
 \begin{lstlisting}
 $ make xdecompose_mesh
 \end{lstlisting}
@@ -269,11 +269,11 @@ which should display something like
 \begin{lstlisting}
 9   690722  username     standard_16   1     Q 00:00:41     01:00:00 go_decomposer
 \end{lstlisting}
-\blue{How do we tell the jobs are running and finished?} The job should take 20 seconds or so. The process of the parallel job is sumarized in \verb+OUTPUT_FILES/jobid.scyld.o+. If successful, it creates the four mesh partitions \verb+proc000***_Database+ in the directory \verb+OUTPUT_FILES/DATABASES_MPI/+. The output file \verb+OUTPUT_FILES/*.o+ contains information on the partitioning.
+\blue{How do we tell the jobs are running and finished?} The job should take 20 seconds or so. The process of the parallel job is sumarized in \path{OUTPUT_FILES/jobid.scyld.o}. If successful, it creates the four mesh partitions \path{proc000***_Database} in the directory \path{OUTPUT_FILES/DATABASES_MPI/}. The output file \path{OUTPUT_FILES/*.o} contains information on the partitioning.
 
 \item generate databases:
 
-Compile \verb+generate_databases+ in the directory \verb+SPECFEM3D/+:
+Compile \path{generate_databases} in the directory \path{SPECFEM3D/}:
 \begin{lstlisting}
 $ make xgenerate_databases
 \end{lstlisting}
@@ -283,7 +283,7 @@ $ qsub go_generate_databases_pbs.bash
 \end{lstlisting}
 
 The job should take about a minute.
-It creates binary mesh files, e.g. \verb+proc000***_external_mesh.bin+ in the directory \verb+OUTPUT_FILES/DATABASES_MPI/+.
+It creates binary mesh files, e.g. \path{proc000***_external_mesh.bin} in the directory \path{OUTPUT_FILES/DATABASES_MPI/}.
 
 It is a good idea to look at the partitions of the mesh files. Load some vtk files (e.g., vs) into paraview:
 \begin{lstlisting}
@@ -292,7 +292,7 @@ $ module load paraview
 $ paraview
 \end{lstlisting}
 %
-Then \verb+File --> Open+, and select all four \verb+vs*vtk+ files. When you are done, be sure to unload the \verb+paraview+ module, since here it was compiled with \verb+gnu+, which conflicts with the \verb+portland+ we are using.
+Then \verb+File --> Open+, and select all four \path{vs*vtk} files. When you are done, be sure to unload the \verb+paraview+ module, since here it was compiled with \verb+gnu+, which conflicts with the \verb+portland+ we are using.
 %
 \begin{lstlisting}
 $ module unload paraview
@@ -301,7 +301,7 @@ $ cd ../../
 
 \item run simulation:
 
-   - compile specfem3D (from \verb+SPECFEM3D/+):
+   - compile specfem3D (from \path{SPECFEM3D/}):
 \begin{lstlisting}
 $ make xspecfem3D
 \end{lstlisting}
@@ -310,11 +310,11 @@ $ make xspecfem3D
 $ qsub go_solver_pbs.bash
 \end{lstlisting}
 
-The simulation runs on 4 cores and should take about 30 minutes. You can track the progress with the timestamp files generated in \verb+OUTPUT_FILES/+ (type \verb+ls -ltr+ to see the most recent files). When the job is complete, you should have 3 sets (semd,semv,sema) of 12 (\verb+ls -1 *semd | wc+) seismogram files in the directory \verb+OUTPUT_FILES+, as well as 51 \verb+timestamp******+ files.
+The simulation runs on 4 cores and should take about 30 minutes. You can track the progress with the timestamp files generated in \path{OUTPUT_FILES/} (type \texttt{ls -ltr} to see the most recent files). When the job is complete, you should have 3 sets (semd,semv,sema) of 12 (\texttt{ls -1 *semd | wc}) seismogram files in the directory \path{OUTPUT_FILES}, as well as 51 \path{timestamp******} files.
 
 \item Compare your computed seismograms with the reference seismograms.
 
-A quick visual comparison can be done from \verb+SPECFEM3D/+ using \verb+xmgrace+:
+A quick visual comparison can be done from \path{SPECFEM3D/} using \verb+xmgrace+:
 \begin{lstlisting}
 $ module load grace
 $ xmgrace examples/homogeneous_halfspace/REF_SEIS/*Z.semd &
@@ -329,29 +329,29 @@ $ xmgrace OUTPUT_FILES/*Z.semd &
 Following is an example of generating sensitivity kernels for travel-time adjoint source at a single receiver station. Please first go through the procedures of a regular forward parallel simulation based on the instructions given in the last section. Change your directory to \specfem\ before proceeding further.
 \begin{enumerate}
 
-\item  First, set up the \verb+DATA/Par_file+ for a forward simulation with wavefields saved
+\item  First, set up the \path{DATA/Par_file} for a forward simulation with wavefields saved
 
 \begin{lstlisting}
 $cd /SPECFEM3D
 $utils/change_simulation_type.pl -F
 \end{lstlisting}
-and check that the setting in \verb+DATA/Par_file+ has been modified to
+and check that the setting in \path{DATA/Par_file} has been modified to
 \begin{lstlisting}
      # forward or adjoint simulation
      SIMULATION_TYPE                 = 1
      SAVE_FORWARD                    = .true.
 \end{lstlisting}
 
-\item Provided that you have already compiled \verb+xspecfem3D+ and various database files are already in \verb+OUTPUT_FILES/DATABASES_MPI+, 
+\item Provided that you have already compiled \path{xspecfem3D} and various database files are already in \path{OUTPUT_FILES/DATABASES_MPI},
   run the forward simulation by submitting the job script:
 \begin{lstlisting}
 $qsub go_solver_pbs.bash
 \end{lstlisting}
 
-After its completion in about $30$ minutes,  you should have now the synthetic seismograms \verb+X?0.BX[XYZ].semd[dva]+ in directory \verb+OUTPUT_FILES/+:
+After its completion in about $30$ minutes,  you should have now the synthetic seismograms \texttt{X?0.BX[XYZ].semd[dva]} in directory \path{OUTPUT_FILES/}:
 
 
-\item Now you can create the cross-correlation traveltime adjoint sources from the forward synthetic seismograms for station $X20$. First compile the utility \verb+xcreate_adjsrc_traveltime+:
+\item Now you can create the cross-correlation traveltime adjoint sources from the forward synthetic seismograms for station $X20$. First compile the utility \path{xcreate_adjsrc_traveltime}:
 \begin{lstlisting}
 $ cd SPECFEM3D/utils/adjoint_sources/traveltime
 $ make
@@ -368,19 +368,19 @@ $ mv OUTPUT_FILES/*.adj SEM/
 $ cd SEM/
 $ rename .semd.adj .adj *.adj
 \end{lstlisting}
-(on some linux machines, the last line may be \verb+rename 's/.semd.adj/.adj/' *.adj+), which  should create the adjoint source files \verb+SEM/X20.DB.BX[XYZ].adj+. You can plot them with the \verb+xmgrace+ tool, and you will probably notice that only the Z-component source is non-zero as designed.
+(on some linux machines, the last line may be \verb+rename 's/.semd.adj/.adj/' *.adj+), which  should create the adjoint source files \path{SEM/X20.DB.BX[XYZ].adj}. You can plot them with the \verb+xmgrace+ tool, and you will probably notice that only the Z-component source is non-zero as designed.
 
-\item setup corresponding adjoint stations file \verb+STATIONS_ADJOINT+ containing the information on the receivers with adjoint source files already setup in \verb+SEM/+:
+\item setup corresponding adjoint stations file \path{STATIONS_ADJOINT} containing the information on the receivers with adjoint source files already setup in \path{SEM/}:
 \begin{lstlisting}
 $ cp examples/homogeneous_halfspace/DATA/STATIONS_ADJOINT DATA/
 \end{lstlisting}
 
-\item Now you can finally run the kernel simulation that interacts adjoint wavefields with the restored forward wavefields. First change the simulation setup of \verb+DATA/Par_file+ again:
+\item Now you can finally run the kernel simulation that interacts adjoint wavefields with the restored forward wavefields. First change the simulation setup of \path{DATA/Par_file} again:
 \begin{lstlisting}
 $ cd /SPECFEM3D
 $ utils/change_simulation_type.pl -b
 \end{lstlisting}
-which modifies a section of \verb+DATA/Par_file+:
+which modifies a section of \path{DATA/Par_file}:
 \begin{lstlisting}
      # forward or adjoint simulation
      SIMULATION_TYPE                 = 3
@@ -391,7 +391,7 @@ Then run the kernel simulation by submitting the job script:
 $ qsub go_solver_pbs.bash
 \end{lstlisting}
 
-If successful after ~ 1 hour runtime, it will create adjoint kernel files in directory \verb+OUTPUT_FILES/DATABASES_MPI/+ for the travel-time kernels as defined in eqn (17-20) of Tromp et al. (2005): \verb+  OUTPUT_FILES/DATABASES_MPI/proc000***_[alpha,beta,kappa,mu,rho,rhop]_kernel.bin+.
+If successful after ~ 1 hour runtime, it will create adjoint kernel files in directory \path{OUTPUT_FILES/DATABASES_MPI/} for the travel-time kernels as defined in eqn (17-20) of Tromp et al. (2005): \path{OUTPUT_FILES/DATABASES_MPI/proc000***_[alpha,beta,kappa,mu,rho,rhop]_kernel.bin}.
 
 \item The kernel files can be combined and visualized with \verb+Paraview+. First compile the program that can combine selected slices of kernels and produce vtk files for \verb+Parview+. In the \specfem\ directory, \blue{is cd bin really necessary?}
 \begin{lstlisting}
@@ -399,13 +399,13 @@ $ make xcombine_vol_data
 $ cd bin/ 
 $ ./xcombine_vol_data 0 3 alpha_kernel ../OUTPUT_FILES/DATABASES_MPI/ ../OUTPUT_FILES/ 1
 \end{lstlisting}
-where id 0 to 3 indicates that we use all 4 partitions of the processors. By default, it produces the vtk file \verb+OUTPUT_FILES/alpha_kernel.vt+, which can be imported into Paraview 
+where id 0 to 3 indicates that we use all 4 partitions of the processors. By default, it produces the vtk file \path{OUTPUT_FILES/alpha_kernel.vtk}, which can be imported into Paraview 
 
-\item You can then visualize the vtk kernel file in \verb+Paraview+. After open up paraview gui, on the top menu, click \verb+File -> Open+, navigate to the \verb+OUTPUT_FILES/+ directory, choose the \verb+alpha_kernel.vtk+ file and click \verb+Apply+. Go to \verb+Display+ tab, and in the \verb+Style+ section, choose \verb+Representation -> Surface+, and then in the \verb+Color+ section, choose \verb+Color by -> alpha_kernel+. Now the model block can be rotated by the left button of the mouse, translated by the middle button and zoomed in/out by the right button (the binding of the keys may be different on Mac).
+\item You can then visualize the vtk kernel file in \verb+Paraview+. After open up paraview gui, on the top menu, click \verb+File -> Open+, navigate to the \path{OUTPUT_FILES/} directory, choose the \path{alpha_kernel.vtk} file and click \verb+Apply+. Go to \verb+Display+ tab, and in the \verb+Style+ section, choose \verb+Representation -> Surface+, and then in the \verb+Color+ section, choose \verb+Color by -> alpha_kernel+. Now the model block can be rotated by the left button of the mouse, translated by the middle button and zoomed in/out by the right button (the binding of the keys may be different on Mac).
 
-   Similarly import \verb+sr.vtk+ \blue{where} file to visualize the source/receiver positions. Click \verb+File -> Open+, choose \verb+sr.vtk+ and click \verb+Apply+. While it is highlighted in the \verb+Pipeline Browser+, select menu \verb+Filters -> Alphabetical -> Glyph+, and click \verb+Apply+. In the \verb+Properties+ tab, select \verb+Glyph Type -> Sphere+, and hit \verb+Apply+ again. The little sphere representing the receiver will appear on the free surface. To see both the source and receiver, click on the eye-like icon in front of \verb+alpha_kernel.vtk+ in the \verb+Pipeline Browser+ to hide the view of \verb+alpha_kernel+. You will find the source sphere at the center of the block.
+   Similarly import \path{sr.vtk} \blue{where} file to visualize the source/receiver positions. Click \verb+File -> Open+, choose \path{sr.vtk} and click \verb+Apply+. While it is highlighted in the \verb+Pipeline Browser+, select menu \verb+Filters -> Alphabetical -> Glyph+, and click \verb+Apply+. In the \verb+Properties+ tab, select \verb+Glyph Type -> Sphere+, and hit \verb+Apply+ again. The little sphere representing the receiver will appear on the free surface. To see both the source and receiver, click on the eye-like icon in front of \path{alpha_kernel.vtk} in the \verb+Pipeline Browser+ to hide the view of \verb+alpha_kernel+. You will find the source sphere at the center of the block.
 
-  Now reactivate \verb+alpha_kernel.vtk+, and while it is highlighted, choose menu \verb+Filters -> Alphebetical -> Clip+, and in the \verb+Properties+ tab, type in the \verb+Normal+ of a y-plane $[0,1,0]$ (the default origin is fine), click \verb+Apply+ to accept, and choose in the \verb+Display+ tab, \verb+Representation -> Surface+, \verb+Color by -> alpha_kernel+. Then click on \verb+Edit color map+ button to work with the \verb+Color Scale Editor+ pop-up menu. In this window, \verb+Choose Preset -> Red to blue HSV -> OK+ (note it is possible to import your own favourite color scales). Unclick \verb+Automatically Rescale to Fit Data Range+, then click \verb+Rescale Range+ to choose minimum of $-1e-12$ and maximum $1e-12$, and click \verb+Rescale+. You may then click the \verb+Color Legend+ tab and choose to \verb+Show Color Legend+. Close the popup window, and now the P sensitivity kernel linking the source and receiver can be nicely seen. The visualization results can be saved by menu \verb+File -> Save screenshot+, which produces an png file that is similar to the following \verb+homogeneous_halfspace_P_kernel.png+.
+  Now reactivate \path{alpha_kernel.vtk}, and while it is highlighted, choose menu \verb+Filters -> Alphebetical -> Clip+, and in the \verb+Properties+ tab, type in the \verb+Normal+ of a y-plane $[0,1,0]$ (the default origin is fine), click \verb+Apply+ to accept, and choose in the \verb+Display+ tab, \verb+Representation -> Surface+, \verb+Color by -> alpha_kernel+. Then click on \verb+Edit color map+ button to work with the \verb+Color Scale Editor+ pop-up menu. In this window, \verb+Choose Preset -> Red to blue HSV -> OK+ (note it is possible to import your own favourite color scales). Unclick \verb+Automatically Rescale to Fit Data Range+, then click \verb+Rescale Range+ to choose minimum of $-1e-12$ and maximum $1e-12$, and click \verb+Rescale+. You may then click the \verb+Color Legend+ tab and choose to \verb+Show Color Legend+. Close the popup window, and now the P sensitivity kernel linking the source and receiver can be nicely seen. The visualization results can be saved by menu \verb+File -> Save screenshot+, which produces an png file that is similar to the following \path{homogeneous_halfspace_P_kernel.png}.
 \blue{add image alpha\_kernel.png for reference}
  
   Note The rescaling of colorbar is necessary because the values of the kernel is very large at the source and receiver locations due to unrealistic assumption of point sources. To be able to see better the kernel itself, it is sometimes necessary to reduce the maximum value for color scales by four orders of magitude. This is also why it is necessary to smooth these kernels and get rid of the spuriously large values at the sources and receivers before using them in tomographic inversions.
@@ -446,7 +446,7 @@ $ cd examples
 $ ln -s /import/c/d/ERTHQUAK/GEOCUBIT_MESH/socal_med400km .
 \end{lstlisting}
 
-\item Modify \verb+go_decomposer_pbs.bash+ to point to the new directory:
+\item Modify \path{go_decomposer_pbs.bash} to point to the new directory:
 \begin{lstlisting}
 MESHDIR=examples/socal_med400km/MESH/
 \end{lstlisting}
@@ -458,7 +458,7 @@ $ ln -s /import/c/d/ERTHQUAK/MODEL/cvm119_1000_1000_0250_741_549.xyz tomography_
 $ cp ../examples/socal_med400km/in_data_files/* .
 \end{lstlisting}
 
-\item modify \verb+go_generate_databases_pbs.bash+ and \verb+go_solver_pbs.bash+ to have the proper time limits and number of cores
+\item modify \path{go_generate_databases_pbs.bash} and \path{go_solver_pbs.bash} to have the proper time limits and number of cores
 \begin{lstlisting}
 #PBS -l nodes=6:ppn=16,walltime=1:00:00
 #PBS -q standard
@@ -470,7 +470,7 @@ $ cp ../examples/socal_med400km/in_data_files/* .
 %rm -rf OUTPUT_FILES/DATABASES_MPI
 %\end{lstlisting}
 %
-%This simulation will create a directory \verb+DATABASES_socal_med400km+ that is outside of \verb+OUTPUT_FILES+. This is useful% since we may have many simulations associated with the same mesh.
+%This simulation will create a directory \path{DATABASES_socal_med400km} that is outside of \path{OUTPUT_FILES}. This is useful% since we may have many simulations associated with the same mesh.
 
 \item Follow the same steps as in Example 1: decompose, generate databases, solver. Here the programs have all been compiled, so only submitting the run scripts is needed. (But wait for each one to finish, and check the output before proceeding to the next step.)
 %
@@ -480,11 +480,11 @@ $ cp ../examples/socal_med400km/in_data_files/* .
 \item The solver takes about 25 minutes.
 \end{itemize}
 %
-The simulation runs on 96 cores and should take about 25 minutes. You can track the progress with the timestamp files generated in \verb+OUTPUT_FILES/+ (type \verb+ls -ltr+ to see the most recent files). When the job is complete, you should have 3 sets (semd,semv,sema) of 1107 (\verb+ls -1 *semd | wc+) seismogram files in the directory \verb+OUTPUT_FILES+, as well as 4 \verb+timestamp******+ files.
+The simulation runs on 96 cores and should take about 25 minutes. You can track the progress with the timestamp files generated in \path{OUTPUT_FILES/} (type \texttt{ls -ltr} to see the most recent files). When the job is complete, you should have 3 sets (semd,semv,sema) of 1107 (\texttt{ls -1 *semd | wc}) seismogram files in the directory \path{OUTPUT_FILES}, as well as 4 \path{timestamp******} files.
 
-As expected, the seismograms contain numerical noise, since the source half duration in \verb+CMTSOLUTION+ was set to 0~s. This allows for maximal flexibility in post-processing, since the seismograms can be convolved with any source time function (see manual). However, it is important to know what the minimum resolving period of a particular mesh and model is, since these periods provide a guide for how to filter the seismograms in post-processing.
+As expected, the seismograms contain numerical noise, since the source half duration in \path{CMTSOLUTION} was set to 0~s. This allows for maximal flexibility in post-processing, since the seismograms can be convolved with any source time function (see manual). However, it is important to know what the minimum resolving period of a particular mesh and model is, since these periods provide a guide for how to filter the seismograms in post-processing.
 
-\item Now make a change to one of the input files in \verb+SPECFEM3D/DATA/+, either \verb+Par_file+, \verb+CMTSOLUTION+, or \verb+STATIONS+. Rename the \verb+OUTPUT_FILES+ directory if you do not want to over-write your previous output. Then submit the new job. (Note that no recompilation is needed.)
+\item Now make a change to one of the input files in \path{SPECFEM3D/DATA/}, either \path{Par_file}, \path{CMTSOLUTION}, or \path{STATIONS}. Rename the \path{OUTPUT_FILES} directory if you do not want to over-write your previous output. Then submit the new job. (Note that no recompilation is needed.)
 
 \end{enumerate}
 
@@ -501,7 +501,7 @@ there are only two {\em required} steps to use GPU computing:
 $ ./configure --enable-cuda MPI_INC=-I$MPI_DIR/include
 \end{lstlisting}
 
-\item Enable CUDA at runtime in \verb|DATA/Par_file|:
+\item Enable CUDA at runtime in \path{DATA/Par_file}:
 \begin{lstlisting}
 GPU_MODE    =   .true.
 \end{lstlisting}
@@ -533,9 +533,9 @@ $ module load cudatoolkit
 
       When compiling for CUDA, the CUDA compiler (which is separate from the C
       or Fortran compilers) needs to know where the MPI headers are installed.
-      This information must be set using the \verb|MPI_INC| variable when
-      running \verb|./configure|. On fish, loading the MPI module sets the
-      \verb|MPICH_DIR| environment variable, which is used in the instructions
+      This information must be set using the \texttt{MPI\_INC} variable when
+      running \path{./configure}. On fish, loading the MPI module sets the
+      \texttt{MPICH\_DIR} environment variable, which is used in the instructions
       below.
 
 \begin{lstlisting}
@@ -544,8 +544,8 @@ $ ./configure MPIFC=ftn CC=cc FC=ftn --with-cuda MPI_INC=-I$MPICH_DIR/include
 
 \item *TODO*: Copy example config stuff...
 
-\item The GPU mode only affects the solver (\verb|xspecfem3D|), but it is a good
-      idea to remember to enable it now. Edit \verb|DATA/Par_file| and set this
+\item The GPU mode only affects the solver (\path{xspecfem3D}), but it is a good
+      idea to remember to enable it now. Edit \path{DATA/Par_file} and set this
       option:
 \begin{lstlisting}
 GPU_MODE    =   .true.
@@ -560,8 +560,8 @@ $ make xspecfem3D
 
 \item The scripts to run jobs on fish are similar to the ones on pacman. Fish
       uses a slightly different method to run MPI programs compared to pacman.
-      Instead of using \verb|mpirun -np <#procs>|, you use
-      \verb|aprun -n <#procs>|, and to use GPUs, you must use the \verb|gpu|
+      Instead of using \texttt{mpirun -np <\#procs>}, you use
+      \texttt{aprun -n <\#procs>}, and to use GPUs, you must use the \texttt{gpu}
       queue.
 \begin{lstlisting}
 $ cd utils/Cluster/pbs/
@@ -588,7 +588,7 @@ $ qsub go_solver_pbs.bash
 
 \item Depending on how many GPUs you use, you may see up to 20 or 30 times
       faster execution. If everything ran correctly on the GPU, you should see
-      some additional files in \verb|OUTPUT_FILES|:
+      some additional files in \path{OUTPUT_FILES}:
 \begin{lstlisting}
 $ ls OUTPUT_FILES/gpu*.txt
 gpu_device_info_proc_000000.txt
