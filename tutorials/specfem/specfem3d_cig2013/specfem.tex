@@ -10,6 +10,12 @@
 \usepackage{graphicx}
 \usepackage{xcolor,listings}
 %\usepackage[space]{accsupp}
+%\usepackage[mackeys=text]{menukeys}
+\newcommand{\keys}[1]{\texttt{#1}}
+\newcommand{\menu}[1]{\texttt{#1}}
+\newcommand{\cmd}{command}
+\newcommand{\ctrl}{control}
+\newcommand{\Alt}{alt}
 
 %\usepackage{fancyhdr}
 %\pagestyle{fancy}
@@ -219,9 +225,9 @@ $ claro
 \blue{maybe warn people that the X11 forwarding can be slow?}
 %
 (Close the ``Tip of the Day''.)
-To ensure that the path is local and the needed python modules and scripts are accessible, \verb+File --> Set Directory+, then click \verb+Choose+  \blue{(Choose what? examples/homogenous\_halfspace/?)}, which is equivalent to typing in the \cubit\ command window \verb+cd 'examples/homogeneous_halfspace/'+ (note the single quotes are required).
+To ensure that the path is local and the needed python modules and scripts are accessible, \menu{File > Set Directory}, then click \menu{Choose} \blue{(Choose what? examples/homogenous\_halfspace/?)}, which is equivalent to typing in the \cubit\ command window \verb+cd 'examples/homogeneous_halfspace/'+ (note the single quotes are required).
 
-Run the meshing script: from the Menu bar, select \verb+Tools -> Play Journal File+, set \verb+Files of Type+ to \verb+All Files+, then select \path{block_mesh.py}.
+Run the meshing script: from the Menu bar, select \menu{Tools > Play Journal File}, set \menu{Files of Type} to \menu{All Files}, then select \path{block_mesh.py}.
 \blue{block\_mesh.py to be fixed}
 
 If everything goes fine, this script creates the ten mesh files in subdirectory \path{MESH/}:
@@ -239,7 +245,7 @@ MESH/nodes_coords_file
 MESH/nummaterial_velocity_file
 \end{lstlisting}
 
-You should be able to translate, rotate, and zoom on the mesh using a three-button mouse. (This can be emulated if you set X11 preferences, then (on a Mac) hold the \verb+control+, \verb+alt+, or \verb+command+ buttons while clicking and moving the mouse.)
+You should be able to translate, rotate, and zoom on the mesh using a three-button mouse. (This can be emulated if you set X11 preferences, then (on a Mac) hold the \keys{\ctrl}, \keys{\Alt}, or \keys{\cmd} buttons while clicking and moving the mouse.)
 
 The \cubit\ graphics window should show a mesh similar to the file
 \begin{verbatim}
@@ -294,7 +300,7 @@ $ module load paraview
 $ paraview
 \end{lstlisting}
 %
-Then \verb+File --> Open+, and select all four \path{vs*vtk} files. When you are done, be sure to unload the \paraview\ module, since here it was compiled with \verb+gnu+, which conflicts with the \verb+portland+ we are using.
+Then \menu{File > Open}, and select all four \path{vs*vtk} files. When you are done, be sure to unload the \paraview\ module, since here it was compiled with \verb+gnu+, which conflicts with the \verb+portland+ we are using.
 %
 \begin{lstlisting}
 $ module unload paraview
@@ -403,11 +409,11 @@ $ ./xcombine_vol_data 0 3 alpha_kernel ../OUTPUT_FILES/DATABASES_MPI/ ../OUTPUT_
 \end{lstlisting}
 where id 0 to 3 indicates that we use all 4 partitions of the processors. By default, it produces the vtk file \path{OUTPUT_FILES/alpha_kernel.vtk}, which can be imported into \paraview
 
-\item You can then visualize the vtk kernel file in \paraview. After open up \paraview\ GUI, on the top menu, click \verb+File -> Open+, navigate to the \path{OUTPUT_FILES/} directory, choose the \path{alpha_kernel.vtk} file and click \verb+Apply+. Go to \verb+Display+ tab, and in the \verb+Style+ section, choose \verb+Representation -> Surface+, and then in the \verb+Color+ section, choose \verb+Color by -> alpha_kernel+. Now the model block can be rotated by the left button of the mouse, translated by the middle button and zoomed in/out by the right button (the binding of the keys may be different on Mac).
+\item You can then visualize the vtk kernel file in \paraview. After open up \paraview\ GUI, on the top menu, click \menu{File > Open}, navigate to the \path{OUTPUT_FILES/} directory, choose the \path{alpha_kernel.vtk} file and click \menu{Apply}. Go to \menu{Display} tab, and in the \menu{Style} section, choose \menu{Representation > Surface}, and then in the \menu{Color} section, choose \menu{Color by > alpha\_kernel}. Now the model block can be rotated by the left button of the mouse, translated by the middle button and zoomed in/out by the right button (the binding of the keys may be different on Mac).
 
-   Similarly import \path{sr.vtk} \blue{where} file to visualize the source/receiver positions. Click \verb+File -> Open+, choose \path{sr.vtk} and click \verb+Apply+. While it is highlighted in the \verb+Pipeline Browser+, select menu \verb+Filters -> Alphabetical -> Glyph+, and click \verb+Apply+. In the \verb+Properties+ tab, select \verb+Glyph Type -> Sphere+, and hit \verb+Apply+ again. The little sphere representing the receiver will appear on the free surface. To see both the source and receiver, click on the eye-like icon in front of \path{alpha_kernel.vtk} in the \verb+Pipeline Browser+ to hide the view of \verb+alpha_kernel+. You will find the source sphere at the center of the block.
+   Similarly import \path{sr.vtk} \blue{where} file to visualize the source/receiver positions. Click \menu{File > Open}, choose \path{sr.vtk} and click \menu{Apply}. While it is highlighted in the \menu{Pipeline Browser}, select menu \menu{Filters > Alphabetical > Glyph}, and click \menu{Apply}. In the \menu{Properties} tab, select \menu{Glyph Type > Sphere}, and hit \menu{Apply} again. The little sphere representing the receiver will appear on the free surface. To see both the source and receiver, click on the eye-like icon in front of \path{alpha_kernel.vtk} in the \menu{Pipeline Browser} to hide the view of \verb+alpha_kernel+. You will find the source sphere at the center of the block.
 
-  Now reactivate \path{alpha_kernel.vtk}, and while it is highlighted, choose menu \verb+Filters -> Alphebetical -> Clip+, and in the \verb+Properties+ tab, type in the \verb+Normal+ of a y-plane $[0,1,0]$ (the default origin is fine), click \verb+Apply+ to accept, and choose in the \verb+Display+ tab, \verb+Representation -> Surface+, \verb+Color by -> alpha_kernel+. Then click on \verb+Edit color map+ button to work with the \verb+Color Scale Editor+ pop-up menu. In this window, \verb+Choose Preset -> Red to blue HSV -> OK+ (note it is possible to import your own favourite color scales). Unclick \verb+Automatically Rescale to Fit Data Range+, then click \verb+Rescale Range+ to choose minimum of $-1e-12$ and maximum $1e-12$, and click \verb+Rescale+. You may then click the \verb+Color Legend+ tab and choose to \verb+Show Color Legend+. Close the popup window, and now the P sensitivity kernel linking the source and receiver can be nicely seen. The visualization results can be saved by menu \verb+File -> Save screenshot+, which produces an png file that is similar to the following \path{homogeneous_halfspace_P_kernel.png}.
+  Now reactivate \path{alpha_kernel.vtk}, and while it is highlighted, choose menu \menu{Filters > Alphabetical > Clip}, and in the \menu{Properties} tab, type in the \menu{Normal} of a y-plane $[0,1,0]$ (the default origin is fine), click \menu{Apply} to accept, and choose in the \menu{Display} tab, \menu{Representation > Surface}, \menu{Color by > alpha\_kernel}. Then click on \menu{Edit color map} button to work with the \menu{Color Scale Editor} pop-up menu. In this window, \menu{Choose Preset > Red to blue HSV > OK} (note it is possible to import your own favourite color scales). Unclick \menu{Automatically Rescale to Fit Data Range}, then click \menu{Rescale Range} to choose minimum of $-1e-12$ and maximum $1e-12$, and click \menu{Rescale}. You may then click the \menu{Color Legend} tab and choose to \menu{Show Color Legend}. Close the popup window, and now the P sensitivity kernel linking the source and receiver can be nicely seen. The visualization results can be saved by menu \menu{File > Save screenshot}, which produces an png file that is similar to the following \path{homogeneous_halfspace_P_kernel.png}.
 \blue{add image alpha\_kernel.png for reference}
  
   Note The rescaling of colorbar is necessary because the values of the kernel is very large at the source and receiver locations due to unrealistic assumption of point sources. To be able to see better the kernel itself, it is sometimes necessary to reduce the maximum value for color scales by four orders of magitude. This is also why it is necessary to smooth these kernels and get rid of the spuriously large values at the sources and receivers before using them in tomographic inversions.
