@@ -9,6 +9,7 @@
 \usepackage{xspace}
 \usepackage{graphicx}
 \usepackage{xcolor,listings}
+\usepackage[space]{accsupp}
 
 %\usepackage{fancyhdr}
 %\pagestyle{fancy}
@@ -52,7 +53,10 @@
   prebreak=\raisebox{0ex}[0ex][0ex]{%
     \ensuremath{\backslash}},
   postbreak=\raisebox{0ex}[0ex][0ex]{%
-    \color{red}\rotatebox[origin=c]{180}{\ensuremath{\Lsh}}\space},
+    \BeginAccSupp{method=plain,ActualText={}}%
+      \textcolor{red}{\rotatebox[origin=c]{180}{$\Lsh$}}%
+    \EndAccSupp{}\space%
+  },
   escapechar=\@,
   backgroundcolor=\color{codebg},
   frame=single,
@@ -91,7 +95,7 @@ A command you have run
 \end{lstlisting}
 
 \item Lines that have been wrapped are indicated by the backslash~$\backslash$ at the
-      end of the line and the symbol~{\color{red}\rotatebox[origin=c]{180}{$\Lsh$}}
+      end of the line and the symbol~\textcolor{red}{\rotatebox[origin=c]{180}{$\Lsh$}}
       at the beginning of the continued line. Most shells will understand the trailing
       backslash to indicate a continued command, so you should be able to copy all
       wrapped lines directly without any issues. Line breaks do not occur in the
