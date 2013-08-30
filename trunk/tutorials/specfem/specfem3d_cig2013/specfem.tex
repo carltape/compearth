@@ -182,7 +182,7 @@ $ which python # Python
 
 \item Configure package, e.g. using the portland compiler:
 \begin{lstlisting}
-$ ./configure F90=pgf90 MPIFC=mpif90
+$ ./configure FC=pgf90 MPIFC=mpif90
 \end{lstlisting}
 
 If successful, this command will generate several \path{Makefile}s in the \path{SPECFEM3D} main directory, subdirectories of \path{src/}, as well as \path{shared/constants.h} and \path{shared/precision.h}, among others.
@@ -440,7 +440,7 @@ $ cp ../SPECFEM3D_22719_default/*bash .
 
 \item configure
 \begin{lstlisting}
-$ ./configure F90=pgf90 MPIFC=mpif90
+$ ./configure FC=pgf90 MPIFC=mpif90
 \end{lstlisting}
 
 \item compile all
