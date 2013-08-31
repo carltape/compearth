@@ -1,10 +1,12 @@
 function [Uout,dtUin,dtUout] = Uorth(Uin,itype,idisplay)
-%UORTH turn a nearly orthogonal rotation matrix into a rotation matrix
+%UORTH turn a nearly orthogonal matrix into a (numerically) orthogonal matrix
 % 
 % INPUT
 %   Uin       3 x 3 x n set of bases
 %   dtUin     determinant of input matrix
 %   dtUout    determinant of output matrix
+%
+% Consider using Udetcheck.m to ensure that U is a rotation matrix (det U = 1)
 %
 % Carl Tape, 08/10/2012
 %
@@ -28,11 +30,11 @@ for ii=1:n
    U0 = Uin(:,:,ii); 
    switch itype
        case 1
-           % svd
+           % svd (optimal choice)
            [U,S,V] = svd(U0);
            Uout(:,:,ii) = U*V';
        case 2
-           % TapeTape2013 suggestion
+           % suggestion in TapeTape2012c Appendix E
            t = Uout(:,1,ii);
            b = Uout(:,2,ii);
            p = cross(t,b);
@@ -82,7 +84,7 @@ if 0==1
     T,Tout
     norm(T-Tout)
     
-    % example in TapeTape2013, Appendix E
+    % example in TapeTape2012c, Appendix E
     % transform from south-east-up to north-west-up
     clc, clear
     P = [-1 0 0 ; 0 -1 0 ; 0 0 1];
@@ -93,7 +95,7 @@ if 0==1
     Uorth(U1,3,1);
     
     % EXAMPLE: compare different orthogonalization methods by applying them
-    % to GCMT catalog bases constructed from integer rounded trend-azimuth
+    % to GCMT catalog bases constructed from integer-rounded trend and azimuth
     % angles of the basis vectors
     % plunge: 0 to 90
     % azimuth: 0 to 360
@@ -116,7 +118,7 @@ if 0==1
     Uazplo1 = Ueigvec(Uazplo1,EPSVAL);
     Uazplo2 = Ueigvec(Uazplo2,EPSVAL);
     Uazplo3 = Ueigvec(Uazplo3,EPSVAL);
-    %% pick a subset
+    % pick a subset
     npair = 10000;
     ivec1 = randi(n,npair,1);
     U1    = Uazpl(:,:,ivec1); 

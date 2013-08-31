@@ -20,8 +20,8 @@ function Uout = U2pa(Uin,itype)
 %
 
 if itype==1
-    % WE COULD ENSURE THAT U IS A ROTATION MATRIX AT THIS POINT
-    % BY CALLING Udetcheck.m
+    % TO BE SAFE, WE COULD CALL Uorth.m TO ENSURE THAT U IS ORTHOGONAL,
+    % THEN CALL Udetcheck.m TO ENSURE THAT U IS A ROTATION MATRIX.
     [~,~,n] = size(Uin);
 
     p1 = squeeze(Uin(:,1,:));
@@ -58,6 +58,7 @@ else
     deg = 180/pi;
     [n,m] = size(Uin);
     if m==6
+        % all three eigenvectors provided
         pl1 = Uin(:,1);
         az1 = Uin(:,2);
         pl2 = Uin(:,3);
@@ -65,6 +66,7 @@ else
         pl3 = Uin(:,5);
         az3 = Uin(:,6);
     else
+        % neutral axis not provided
         pl1 = Uin(:,1);
         az1 = Uin(:,2);
         pl3 = Uin(:,3);
@@ -79,12 +81,12 @@ else
     u1 = tp2xyz(th1/deg,ph1/deg,1);
     u3 = tp2xyz(th3/deg,ph3/deg,1);
     
-    if m==6
+    if m==4
+        u2 = cross(u3,u1);
+    else
         ph2 = ph2az(az2);
         th2 = 90 + pl2;
         u2 = tp2xyz(th2/deg,ph2/deg,1);
-    else
-        u2 = cross(u3,u1);
     end
     
     Uout = zeros(3,3,n);
@@ -97,6 +99,9 @@ else
     for ii=1:n
         Uout(:,:,ii) = P'*squeeze(Uout(:,:,ii));
     end
+    
+    % ensure orthogonal U by using SVD
+    Uout = Uorth(Uout,1,0);
     
     % ensure that these are rotation matrices
     Uout = Udetcheck(Uout);
