@@ -5,7 +5,9 @@ matlab scripts for manipulating seismic moment tensors
 Instructions:
 - some of these scripts require rotation-related scripts;
   the path to these scripts can be added by running load_mt.m,
-  which can be called from a startup file such as ~/.matlab/mystartup.m
+  which can be called from a startup file such as ~/.matlab/startup.m
+- you can check if the paths have been set by typing 'path'
+  in the matlab command window
 
 Background:
 - W. Tape and C. Tape
@@ -14,4 +16,4 @@ Background:
   Angle between principal axis triples, GJI 2012
 
 Questions, suggestions, or corrections:
-  Please email Carl Tape (carltape@gi.alaska.edu)!
+  Please email Carl Tape (carltape@gi.alaska.edu)
