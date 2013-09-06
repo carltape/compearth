@@ -111,7 +111,6 @@ end
 % EXAMPLE
 
 if 0==1
-    clear, clc, close all
     teid = 'M010176A';  % first event in GCMT catalog
     [otime,tshift,hdur,lat,lon,dep,M,~,~,eid,elabel,str1,dip1,rk1,str2,dip2,rk2,...
         lams,pl1,az1,pl2,az2,pl3,az3,icmt,dataused,itri] = readCMT(teid);
@@ -129,7 +128,7 @@ if 0==1
 %     U * diag(lamsx) * U'
     
     Uout = U2pa(U,1);
-    % compare with angles listed in GCMT catalog
+    % compare Uout (top row) with angles listed in GCMT catalog (bottom row)
     [Uout ; pl1 az1 pl2 az2 pl3 az3]
     
     %----------------------------
@@ -138,74 +137,6 @@ if 0==1
     Ucheck = U2pa(Uout,0);
     Ucheck, U                       % note: no problem that the U do not match
     Mt, Ucheck*diag(lamsx)*Ucheck'  %       because the moment tensors do!
-    
-    %----------------------------
-    % GCMT catalog
-    
-    clear, clc, close all
-    % load CMT catalog
-    isub = [1:10]';
-    %isub = [1:1000]';
-    %isub = [1:33507]';
-    [otime,tshift,hdur,lat,lon,dep,M,~,~,eid,elabel,str1,dip1,rk1,str2,dip2,rk2,...
-        lams,pl1,az1,pl2,az2,pl3,az3,icmt,dataused,itri] = readCMT(isub);
-    [MDC,kap1,theta1,sig1,kap2,theta2,sig2,k1,d1,n1,k2,d2,n2,U,lamsx] = CMT2faultpar(M,0);
-    n = length(isub);
-    
-    Uout = U2pa(U,1);
-    if 0==1
-        Ucheck = U2pa(Uout,0);
-        Min    = CMTrecom(lamsx,U)              % south-east-up
-        Mcheck = CMTrecom(lamsx,Ucheck)         % south-east-up
-        (CMTconvert(Mcheck,5,1) - M) ./ M       % up-south-east check
-    end
-    pl1x = Uout(:,1);
-    az1x = Uout(:,2);
-    pl2x = Uout(:,3);
-    az2x = Uout(:,4);
-    pl3x = Uout(:,5);
-    az3x = Uout(:,6);
-
-    % compare eig angles from GCMT with eig angles computed by me from
-    % GCMT M to U to eig angles
-    % NOTE 1: There are 24 plunge angle discrepancies and 1051 azimuth
-    % angle discrepancies.
-    % NOTE 2: There is definitely a time dependence associated with the
-    % discrepancies; they drop off after 2003.
-    ATRSH = 2.0;
-    ipbad1 = find(abs(pl1x-pl1) >= ATRSH);
-    ipbad2 = find(abs(pl2x-pl2) >= ATRSH);
-    ipbad3 = find(abs(pl3x-pl3) >= ATRSH);
-    iabad1 = find(abs(az1x-az1) >= ATRSH);
-    iabad2 = find(abs(az2x-az2) >= ATRSH);
-    iabad3 = find(abs(az3x-az3) >= ATRSH);
-    ipbad = unique([ipbad1 ; ipbad2 ; ipbad3]);
-    iabad = unique([iabad1 ; iabad2 ; iabad3]);
-    length(ipbad), length(iabad)
-    
-    figure; nr=3; nc=2;
-    subplot(nr,nc,1); hold on; plot(isub,pl1x-pl1,'.'); xlim([0 n]);
-    if ~isempty(ipbad1), plot(ipbad1,pl1x(ipbad1)-pl1(ipbad1),'ro'); end
-    title(sprintf('U2pa.m, eig1 plunge: %i / %i with diff >= %.1f',length(ipbad1),n,ATRSH));
-    subplot(nr,nc,3); hold on; plot(isub,pl2x-pl2,'.'); xlim([0 n]);
-    if ~isempty(ipbad2), plot(ipbad2,pl2x(ipbad2)-pl2(ipbad2),'ro'); end
-    title(sprintf('U2pa.m, eig2 plunge: %i / %i with diff >= %.1f',length(ipbad2),n,ATRSH));
-    subplot(nr,nc,5); hold on; plot(isub,pl3x-pl3,'.'); xlim([0 n]);
-    if ~isempty(ipbad3), plot(ipbad3,pl3x(ipbad3)-pl3(ipbad3),'ro'); end
-    title(sprintf('U2pa.m, eig3 plunge: %i / %i with diff >= %.1f',length(ipbad3),n,ATRSH));
-    
-    subplot(nr,nc,2); hold on; plot(isub,az1x-az1,'.'); xlim([0 n]);
-    if ~isempty(iabad1), plot(iabad1,az1x(iabad1)-az1(iabad1),'ro'); end
-    title(sprintf('U2pa.m, eig1 azimuth: %i / %i with diff >= %.1f',length(iabad1),n,ATRSH));
-    subplot(nr,nc,4); hold on; plot(isub,az2x-az2,'.'); xlim([0 n]);
-    if ~isempty(iabad2), plot(iabad2,az2x(iabad2)-az2(iabad2),'ro'); end
-    title(sprintf('U2pa.m, eig2 azimuth: %i / %i with diff >= %.1f',length(iabad2),n,ATRSH));
-    subplot(nr,nc,6); hold on; plot(isub,az3x-az3,'.'); xlim([0 n]);
-    if ~isempty(iabad3), plot(iabad3,az3x(iabad3)-az3(iabad3),'ro'); end
-    title(sprintf('U2pa.m, eig3 azimuth: %i / %i with diff >= %.1f',length(iabad3),n,ATRSH));
-    orient tall, wysiwyg
-    
-    figure; plot_histo(year(otime(iabad)),[1976:2011]);
 end
 
 %==========================================================================
