@@ -234,7 +234,7 @@ $ claro
 \blue{maybe warn people that the X11 forwarding can be slow?}
 %
 (Close the ``Tip of the Day''.)
-To ensure that the path is local and the needed python modules and scripts are accessible, \menu{File > Set Directory}, then click \menu{Choose} \blue{(Choose what? examples/homogenous\_halfspace/?)}, which is equivalent to typing in the \cubit\ command window \verb+cd 'examples/homogeneous_halfspace/'+ (note the single quotes are required).
+To ensure that the path is local and the needed python modules and scripts are accessible, \menu{File > Set Directory}, then click \menu{Choose} \blue{(Choose what? examples/homogenous\_halfspace/?)}, which is equivalent to typing in the \cubit\ command window \lstinline{cd 'examples/homogeneous_halfspace/'} (note the single quotes are required).
 
 Run the meshing script: from the Menu bar, select \menu{Tools > Play Journal File}, set \menu{Files of Type} to \menu{All Files}, then select \path{block_mesh.py}.
 \blue{cubit2specfem3D.py needs to be fixed!}
@@ -334,7 +334,7 @@ $ make xspecfem3D
 $ qsub go_solver_pbs.bash
 \end{lstlisting}
 
-The simulation runs on 4 cores and should take about 30 minutes. You can track the progress with the timestamp files generated in \path{OUTPUT_FILES/} (type \texttt{ls -ltr} to see the most recent files). When the job is complete, you should have 3 sets (semd,semv,sema) of 12 (\texttt{ls -1 *semd | wc}) seismogram files in the directory \path{OUTPUT_FILES}, as well as 51 \path{timestamp******} files.
+The simulation runs on 4 cores and should take about 30 minutes. You can track the progress with the timestamp files generated in \path{OUTPUT_FILES/} (type \lstinline{ls -ltr} to see the most recent files). When the job is complete, you should have 3 sets (semd,semv,sema) of 12 (\lstinline{ls -1 *semd | wc}) seismogram files in the directory \path{OUTPUT_FILES}, as well as 51 \path{timestamp******} files.
 
 \item Compare your computed seismograms with the reference seismograms.
 
@@ -396,7 +396,7 @@ $ mv OUTPUT_FILES/X20*.adj SEM/
 $ cd SEM/
 $ rename .semd.adj .adj *.adj
 \end{lstlisting}
-(on some linux machines, the last line may be \verb+rename 's/.semd.adj/.adj/' *.adj+), which  should create the adjoint source files \path{SEM/X20.DB.BX[XYZ].adj}. You can plot them with the \grace\ tool, and you will probably notice that only the Z-component source is non-zero as designed.
+(on some linux machines, the last line may be \lstinline{rename 's/.semd.adj/.adj/' *.adj}), which  should create the adjoint source files \path{SEM/X20.DB.BX[XYZ].adj}. You can plot them with the \grace\ tool, and you will probably notice that only the Z-component source is non-zero as designed.
 
 
 \item Setup corresponding adjoint stations file \path{STATIONS_ADJOINT} for those receivers (e.g., \verb+X20+) with adjoint source files already setup in \path{SEM/}:
@@ -457,7 +457,7 @@ where id 0 to 3 indicates that we use all 4 partitions of the processors. By def
 
  Note: The rescaling of colorbar is necessary because the values of the kernel is very large at the source and receiver locations due to unrealistic assumption of point sources. To be able to see better the kernel itself, it is sometimes necessary to reduce the maximum values of color scales by four orders of magitude. This is also why smoothing these kernels to get rid of the spuriously large values at the sources and receivers is required before using them in tomographic inversions.
    
-Again be sure to run \verb+module unload paraview+ before proceeding to other examples.
+Again be sure to run \lstinline{module unload paraview} before proceeding to other examples.
 
 \end{enumerate}
 
@@ -528,7 +528,7 @@ $ cp ../examples/socal_med400km/in_data_files/* .
 \item The solver takes about 25 minutes.
 \end{itemize}
 %
-The simulation runs on 96 cores and should take about 25 minutes. You can track the progress with the timestamp files generated in \path{OUTPUT_FILES/} (type \texttt{ls -ltr} to see the most recent files). When the job is complete, you should have 3 sets (semd,semv,sema) of 1107 (\texttt{ls -1 *semd | wc}) seismogram files in the directory \path{OUTPUT_FILES}, as well as 4 \path{timestamp******} files.
+The simulation runs on 96 cores and should take about 25 minutes. You can track the progress with the timestamp files generated in \path{OUTPUT_FILES/} (type \lstinline{ls -ltr} to see the most recent files). When the job is complete, you should have 3 sets (semd,semv,sema) of 1107 (\lstinline{ls -1 *semd | wc}) seismogram files in the directory \path{OUTPUT_FILES}, as well as 4 \path{timestamp******} files.
 
 As expected, the seismograms contain numerical noise, since the source half duration in \path{CMTSOLUTION} was set to 0~s. This allows for maximal flexibility in post-processing, since the seismograms can be convolved with any source time function (see manual). However, it is important to know what the minimum resolving period of a particular mesh and model is, since these periods provide a guide for how to filter the seismograms in post-processing.
 
@@ -608,8 +608,8 @@ $ make xspecfem3D
 
 \item The scripts to run jobs on fish are similar to the ones on pacman. Fish
       uses a slightly different method to run MPI programs compared to pacman.
-      Instead of using \texttt{mpirun -np <\#procs>}, you use
-      \texttt{aprun -n <\#procs>}, and to use GPUs, you must use the \texttt{gpu}
+      Instead of using \lstinline{mpirun -np <#procs>}, you use
+      \lstinline{aprun -n <#procs>}, and to use GPUs, you must use the \texttt{gpu}
       queue.
 \begin{lstlisting}
 $ cd utils/Cluster/pbs/
