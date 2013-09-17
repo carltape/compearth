@@ -6,7 +6,7 @@ function theta = fangle(va,vb)
 %   vb      3 x n set of rotated vectors
 %
 % OUTPUT
-%   theta   n x 1 set of rotation angles
+%   theta   1 x n set of rotation angles
 %
 
 % check dimensions
