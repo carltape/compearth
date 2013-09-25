@@ -1,9 +1,11 @@
-function Uout = U2pa(Uin,itype)
+function Uout = U2pa(Uin,itype,iorthoU)
 %U2PA convert between basis U and plunge/azimuth of three basis vectors
 %
 % INPUT
 %   Uin     either 3 x 3 x n array U OR n x 6 set of plunge/azimuth angles
-%   itype   =1 for U to plunge/azimuth; =0 for plunge/azimuth to U
+%   itype   =1 for U to plunge/azimuth
+%           =0 for plunge/azimuth to U
+%   iorthoU OPTIONAL: type of orthogonalization to apply to U (see Uorth.m)
 %   
 % OUTPUT
 %   Uout    either 3 x 3 x n array U OR n x 6 set of plunge/azimuth angles
@@ -19,10 +21,14 @@ function Uout = U2pa(Uin,itype)
 % Carl Tape, 12-August-2011
 %
 
+% by default we will orthogonalize the input U and the output U
+if nargin==2
+   iorthoU = 1; 
+end
+
 if itype==1
-    % TO BE SAFE, WE COULD CALL Uorth.m TO ENSURE THAT U IS ORTHOGONAL,
-    % THEN CALL Udetcheck.m TO ENSURE THAT U IS A ROTATION MATRIX.
-    [~,~,n] = size(Uin);
+    Uin = Uorth(Uin,iorthoU,0);
+    Uin = Udetcheck(Uin);
 
     p1 = squeeze(Uin(:,1,:));
     p2 = squeeze(Uin(:,2,:));
@@ -36,6 +42,7 @@ if itype==1
     ipos1 = find(p1(3,:) < 0);
     ipos2 = find(p2(3,:) < 0);
     ipos3 = find(p3(3,:) < 0);
+    [~,~,n] = size(Uin);
     disp(sprintf('%i/%i p1 vectors need to be flipped',length(ipos1),n));
     disp(sprintf('%i/%i p2 vectors need to be flipped',length(ipos2),n));
     disp(sprintf('%i/%i p3 vectors need to be flipped',length(ipos3),n));
@@ -101,7 +108,7 @@ else
     end
     
     % ensure orthogonal U by using SVD
-    Uout = Uorth(Uout,1,0);
+    Uout = Uorth(Uout,iorthoU,0);
     
     % ensure that these are rotation matrices
     Uout = Udetcheck(Uout);
