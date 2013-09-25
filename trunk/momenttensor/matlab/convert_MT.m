@@ -1,5 +1,5 @@
-function [Mout,T] = CMTconvert(M,i1,i2)
-%CMTCONVERT convert moment tensor matrices among different bases
+function [Mout,T] = convert_MT(i1,i2,M)
+%CONVERT_MT convert moment tensor matrices among different bases
 %
 % This program converts between different moment tensor conventions.
 % All conventions are associated with a local coordinate system.
@@ -7,13 +7,13 @@ function [Mout,T] = CMTconvert(M,i1,i2)
 % M = [M11 M22 M33 M12 M13 M23]
 %
 % INPUT
-%   M       6 x n set of moment tensors, M = [M11 M22 M33 M12 M13 M23]
 %   i1      index of input moment tensor basis
 %   i2      index of output moment tensor basis
+%   M       6 x n set of moment tensors, M = [M11 M22 M33 M12 M13 M23]
 %
 % OUTPUT
 %   Mout    6 x n set of moment tensors in basis of i2
-%   P       transformation matrix to change basis of M from i1 to i2: Mout = T*M*T'
+%   T       transformation matrix to change basis of M from i1 to i2: Mout = T*M*T'
 %
 %
 % Convention 1: Harvard CMT
@@ -68,6 +68,22 @@ Tall{5,4} = Tall{4,5}';
 % transformation matrix
 T = Tall{i1,i2};
 
+stlabs = {'GCMT (up-south-east)',...
+    'Aki (north-east-down)',...
+    'Kanamori (north-west-up)',...
+    'C4 (east-north-up)',...
+    'C5 (south-east-up)'};
+disp(sprintf('convert_MT.n: %s to %s',stlabs{i1},stlabs{i2}));
+
+if nargin==2
+   disp('returning transformation matrix only, as requested');
+   Mout = T;
+   return
+end
+
+% make sure M is 6 x n
+[M,n] = Mdim(M);
+
 if i1==i2
     %error('i1 must differ from i2');
     disp('warning: i1 = i2, so no change');
@@ -75,19 +91,7 @@ if i1==i2
     return
 end
 
-% make sure M is 6 x n
-[M,n] = Mdim(M);
-
-Mout = zeros(6,n);
-
-stlabs = {'GCMT (up-south-east)',...
-    'Aki (north-east-down)',...
-    'Kanamori (north-west-up)',...
-    'C4 (east-north-up)',...
-    'C5 (south-east-up)'};
-disp(sprintf('CMTconvert.n: %s to %s',stlabs{i1},stlabs{i2}));
-
-Mout = [];
+Mout = [];  % initialize
 
 if i1==1
     if i2==2        % Harvard to Aki (AR, 1980, p. 118)
@@ -250,31 +254,38 @@ end
 % EXAMPLES
 
 if 0==1
-    A = [1:6]'
-    M1 = CMTconvert(A,1,5)
-    M2 = CMTconvert(M1,5,1)
+    % transformation matrix only
+    i1 = 1; i2 = 2;
+    T = convert_MT(i1,i2)
     
-    %% checking the transformation matrix
+    % simple example
+    i1 = 1; i2 = 2;
+    A = [1:6]'
+    M1 = convert_MT(i1,i2,A)
+    M2 = convert_MT(i2,i1,M1)
+    
+    % checking the transformation matrix
     i1 = 1; i2 = 5;
     M1 = rand(6,1);
-    [M2,T] = CMTconvert(M1,i1,i2);
+    [M2,T] = convert_MT(i1,i2,M1);
     Mvec2Mmat(M1,1)                 % up-south-east
     Mcheck = T*Mvec2Mmat(M1,1)*T'   % south-east-up
     Mvec2Mmat(M2,1)                 % (check)
     v1 = rand(3,1)                  % up-south-east
     v2 = T*v1                       % south-east-up
-    X1 = randi(10,3); X1=X1'*X1,  X2=T*X*T'
+    X1 = randi(10,3); X1=X1'*X1,  X2=T*X1*T'
     
-    %% check all possible transofrmations
+    % check all possible transofrmations
     M1 = rand(6,1);
     NTYPE = 5;
     for i1=1:NTYPE
         for i2=2:NTYPE
             if i2==i1, continue; end
-            [M2,T] = CMTconvert(M1,i1,i2);
+            [M2,T] = convert_MT(i1,i2,M1);
             if and(~isempty(T),~isempty(M2))
                 Mcheck = T*Mvec2Mmat(M1,1)*T';
-                % display info if the check fails
+                ncheck = norm(Mvec2Mmat(M2,1)-Mcheck);
+                % display info if the numerical check fails
                 if ncheck > 1e-6
                    disp(sprintf('from %i to %i',i1,i2));
                    Mvec2Mmat(M2,1),Mcheck
