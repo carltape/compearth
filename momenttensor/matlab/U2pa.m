@@ -125,7 +125,7 @@ if 0==1
     
     % check
     Mt = U0 * diag(lamsx) * U0';
-    disp([M CMTconvert(Mvec2Mmat(Mt,0),5,1)])
+    disp([M convert_MT(5,1,Mvec2Mmat(Mt,0))])
     
     U = U0;
 % check conversion to GCMT convention

@@ -69,8 +69,8 @@ for ii=1:n
 end
 M = Mvec2Mmat(M,2);
 
-% convert from north-west-up to up-south-east (GCMT)
-M = CMTconvert(M,3,1);
+% convert from north-west-up to up-south-east
+M = convert_MT(3,1,M);
     
 %==========================================================================
 % EXAMPLES
@@ -92,7 +92,7 @@ if 0==1
     M0 = rho/sqrt(2);
     delta = 90-beta;
     M = TT2CMT(gamma,delta,M0,kappa,theta,sigma);
-    Maki = Mvec2Mmat(CMTconvert(M,1,2),1)
+    Maki = Mvec2Mmat(convert_MT(1,2,M),1)
 end
 
 %==========================================================================

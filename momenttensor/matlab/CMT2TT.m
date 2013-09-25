@@ -32,7 +32,7 @@ disp(sprintf('CMT2sph.m: %i moment tensors to convert into spherical coordinates
 
 % KEY: convert from up-south-east (GCMT) to north-west-up (Kanamori)
 % U will be with respect to this basis
-M = CMTconvert(M,1,3);
+M = convert_MT(1,3,M);
 
 %---------------------
 % PART 1: moment tensor source type (or pattern)

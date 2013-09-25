@@ -39,7 +39,7 @@ deg = 180/pi;
 if nargin==2, idisplay=0; end
 
 % convert M from up-south-east to south-east-up
-% OBSOLETE: use CMTconvert.m instead
+% OBSOLETE: use convert_MT.m instead
 %Bconvert = [0 0 1 ; 1 0 0 ; 0 1 0];
 
 % DC in eigenbasis (see isort)
@@ -71,7 +71,7 @@ if itype==1
 
     % KEY: convert M from up-south-east to south-east-up
     %Mdev = transform_MT(Bconvert',Mdev);
-    Mdev = CMTconvert(Mdev,1,5);
+    Mdev = convert_MT(1,5,Mdev);
 
     % compute eigenbasis for the DC
     % check 1: is the eigenbasis orthogonal (U*U^t = I)?
@@ -298,7 +298,7 @@ if itype==1
     % convert M from south-east-up to up-south-east
     MDC0 = MDC;                        % only used for output below
     %MDC = transform_MT(Bconvert,MDC);  % note Bconvert, not Bconvert' (as above)
-    MDC = CMTconvert(MDC,5,1);
+    MDC = convert_MT(5,1,MDC);
     Xout3 = MDC;
     Xout4 = U;
     Xout5 = eigvals;
@@ -381,7 +381,7 @@ elseif itype==0
 % 	Xout1(6,:) = d2.*n3 + d3.*n2;   % M_23 = M_32
     
     % convert M from south-east-up to up-south-east
-    MDC = CMTconvert(MDC,5,1);
+    MDC = convert_MT(5,1,MDC);
     % note Bconvert, not Bconvert' as above
     %MDC = transform_MT(Bconvert,MDC);  % double couple
     %Mdev = transform_MT(Bconvert,Mdev);  % deviatoric

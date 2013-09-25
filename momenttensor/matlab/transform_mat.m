@@ -1,9 +1,5 @@
-%
-% function Mout = transform_mat(T,Min)
-% Carl Tape, 17-Mar-2011
-%
-% This program will transform a set of 3 x 3 tensors using the
-% transformation matrix T.
+function Mout = transform_mat(T,Min)
+%TRANSFORM_MT transform a set of 3 x 3 tensors using transformation matrix T
 %
 % INPUT
 %   T       3 x 3 transformation matrix
@@ -13,12 +9,9 @@
 %   Mout    3 x 3 x n output matrices
 %
 % The version associated with symmetric M is transform_MT.m
-% 
-% calls xxx
-% called by transform_MT.m
 %
-
-function Mout = transform_mat(T,Min)
+% Carl Tape, 17-Mar-2011
+%
 
 % check that M is 3 x 3 x n
 [a,b,n] = size(Min);
@@ -29,5 +22,3 @@ for ii = 1:n
     M0 = Min(:,:,ii);
     Mout(:,:,ii) = T * M0 * T';
 end
-
-%=====================================================
