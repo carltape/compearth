@@ -11,6 +11,14 @@ function [Uout,dtUin,dtUout] = Uorth(Uin,itype,idisplay)
 % Carl Tape, 08/10/2012
 %
 
+if itype==0
+   Uout = Uin;
+   dtUin = [];
+   dtUout = [];
+   disp('Uorth.m: not applying any orthongonalization to U');
+   return
+end
+
 if ~exist('idisplay','var'), idisplay = 0; end 
 if ~any(itype==[1 2 3]), error('itype = 1, 2, 3'); end
 stypes = {'svd','tape','quaternion'};
@@ -41,7 +49,7 @@ for ii=1:n
            Uout(:,:,ii) = [t b/norm(b) p/norm(p)];
        case 3
            % quaternions
-           [~,~,q,~,imaxtr] = U2q(U0,1,idisplay);
+           [~,~,q,~,~,imaxtr] = U2xi0(U0,1,idisplay);
            qpick = q{imaxtr};   % q is a cell array
            Uout(:,:,ii) = q2U(qpick);
            %Uout(:,:,ii) = Ueigvec(Uout(:,:,ii));

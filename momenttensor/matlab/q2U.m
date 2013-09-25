@@ -41,13 +41,13 @@ if 0==1
     % testing orthogonalization
     clear, close all, clc, format long
     P = [-1 0 0 ; 0 -1 0 ; 0 0 1];
-    U1 = P * U2pa([24 120 41 232],0);
+    iorthoU = 0;
+    U1 = P * U2pa([24 120 41 232],0,iorthoU);
     disp('INPUT U1:');
-    [xi,ixi,q,trALL,imaxtr] = U2q(U1,1,1);
-    qpick = q{imaxtr};
+    [xi0,xi,q,ixi0,trALL,imaxtr] = U2xi0(U1,1,1);
     U1
     disp('U1o3 (quaternions):');
-    U1o3 = q2U(qpick)
+    U1o3 = q2U(q)
     U1o3'*U1o3
 end
 

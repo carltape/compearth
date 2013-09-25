@@ -1,5 +1,5 @@
-function [omega,xi,U] = CMT2omega_xi(X1,X2,iorthoU,idisplay)
-%CMT2OMEGA_XI compute the omega and xi angles between two moment tensors
+function [omega,xi0,U] = CMT2omega_xi0(X1,X2,iorthoU,idisplay)
+%CMT2OMEGA_XI0 compute the omega and xi0 angles between two moment tensors
 %
 % INPUT
 %   X1,X2     can be either U1,U2 or M1,M2 (see below)
@@ -12,10 +12,10 @@ function [omega,xi,U] = CMT2omega_xi(X1,X2,iorthoU,idisplay)
 %
 % OUTPUT
 %   omega     9-angle between closest double couples
-%   xi        minimum rotation angle between principal axes
+%   xi0       minimum rotation angle between principal axes
 %   U         3 x 3 x n rotation matrix U = U1' * U2
 %
-% For details, see Tape and Tape (GJI 2012) "Angle between principal axis triples"
+% For details, see TapeTape2012 "Angle between principal axis triples".
 %
 % EXAMPLES: see below.
 % Set ifigure=1 to plot histograms of the distributions.
@@ -62,17 +62,16 @@ if iorthoU > 0
     U1 = Uorth(U1,iorthoU);
     U2 = Uorth(U2,iorthoU);
 end
-    
+  
+% OMEGA
 % find angle between closest double couples
 lam0 = repmat([1 0 -1]',1,n);
 MDC1 = CMTrecom(lam0,U1);
 MDC2 = CMTrecom(lam0,U2);
-
 % convert to matrix
 M1mat = Mvec2Mmat(MDC1,1);
 M2mat = Mvec2Mmat(MDC2,1);
-
-% OMEGA
+% calculate omega
 cosom = zeros(n,1);
 for ii=1:n
    M1x =  M1mat(:,:,ii);
@@ -86,25 +85,22 @@ ineg = cosom < -1;
 disp(sprintf('%i/%i dot products > 1',sum(ipos),n));
 disp(sprintf('%i/%i dot products < 1',sum(ineg),n));
 % this correction is needed for comparing U's that are very close to each other
-cosom(cosom > 1) = 1;
-cosom(cosom < -1) = -1;
+cosom(ipos) = 1;
+cosom(ineg) = -1;
 omega = acos(cosom) * 180/pi;
 
 % XI
 % compute U = U1' * U2
-U = 0*U1;
-for ii=1:n
-    U(:,:,ii) = U1(:,:,ii)' * U2(:,:,ii);
-end
-xi = U2q(U,0,idisplay);
+U = UiU(U1,U2);
+xi0 = U2xi0(U,0,idisplay);
 
-disp(sprintf('%i/%i xi values are imaginary',n-sum(~imag(xi)),n));
+disp(sprintf('%i/%i xi0 values are imaginary',n-sum(~imag(xi0)),n));
 disp(sprintf('%i/%i omega values are imaginary',n-sum(~imag(omega)),n));
 
 if idisplay==1
-    disp('CMT2omega_xi.m all omega and xi:');
+    disp('CMT2omega_xi0.m all omega and xi0:');
    for ii=1:n
-      disp(sprintf('%12i/%6i: omega = %8.4f, xi = %8.4f',ii,n,omega(ii),xi(ii))); 
+      disp(sprintf('%12i/%6i: omega = %8.4f, xi0 = %8.4f',ii,n,omega(ii),xi0(ii))); 
    end
 end
 
@@ -119,11 +115,11 @@ if and(ifigure==1, n>1)
    title(sprintf('OMEGA: min = %.2f, max = %.2f',min(omega),max(omega)));
    
    PMAX = 0.12;  % will depend on bin size
-   subplot(nr,nc,2); hold on; plot_histo(xi,[0:5:120]);
+   subplot(nr,nc,2); hold on; plot_histo(xi0,[0:5:120]);
    plot([90 90],[0 PMAX],'r','linewidth',2);
    set(gca,'xtick',0:10:120); %axis([0 120 0 PMAX]);
-   xlabel('xi angle describing difference in orientation');
-   title(sprintf('XI: min = %.2f, max = %.2f',min(xi),max(xi)));
+   xlabel('xi0 angle describing difference in orientation');
+   title(sprintf('XI: min = %.2f, max = %.2f',min(xi0),max(xi0)));
 end
 
 %==========================================================================
@@ -184,8 +180,8 @@ if 0==1
     
     % now consider the 'difference' matrix U = U1^-1 U2
     U12 = U14(:,:,4)'*U24(:,:,4)   % to match results in paper
-    [xi,ixi,q] = U2q(U12,0,1);     % q1 matches the results in paper
-    [omega,xi] = CMT2omega_xi(M1,M2,0,1); omega, xi
+    [xi0,ixi0,q] = U2xi0(U12,0,1);     % q1 matches the results in paper
+    [omega,xi0] = CMT2omega_xi0(M1,M2,0,1); omega, xi0
 end
 
 %==========================================================================
