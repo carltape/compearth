@@ -12,11 +12,19 @@ function U = UiU(U1,U2)
 % check dimensions
 [~,~,n1] = size(U1);
 [~,~,n2] = size(U2);
-if n1~=n2, error('U1 and U2 must be equal in dimension'); end
-n = n1;
+if and(n1~=n2,n1~=1)
+    error('U1 and U2 must be equal in dimension (or U1 is 3 x 3)');
+end
+n = n2;
 
 % compute U = U1' * U2
-U = NaN(size(U1));
-for ii=1:n
-    U(:,:,ii) = U1(:,:,ii)' * U2(:,:,ii);
+U = NaN(size(U2));
+if n1==n2
+    for ii=1:n
+        U(:,:,ii) = U1(:,:,ii)' * U2(:,:,ii);
+    end
+else
+     for ii=1:n
+        U(:,:,ii) = U1' * U2(:,:,ii);
+    end   
 end

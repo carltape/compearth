@@ -1,11 +1,12 @@
-function [xi0,xi,q,ixi0,trALL,imaxtr] = U2xi0(U,iorthoU,idisplay)
+function [xi0,xi,q,ixi0,trALL,imaxtr] = U2xi0(U,iqtype,idisplay)
 %U2XI0 convert rotation matrix to rotation angle
 %
 % INPUT
 %   U         3 x 3 x n set of rotation matrices
-%   iorthoU   =1 to use quaternions for orthogonalization
-%                (this is a technicality that is generally not necessary)
-%                (THIS PART NEEDS ADDITIONAL CHECKING)
+%   iqtype    =0 to use default quaternion
+%             =1 for quaternion in Bw subset (assumes U are rotation matrices)
+%             =2 to choose quaternion based that provides numerical
+%                stability when dealine with not-exact rotation matrices
 %   idisplay  optional: display details (=1)
 %
 % OUTPUT   
@@ -22,6 +23,7 @@ function [xi0,xi,q,ixi0,trALL,imaxtr] = U2xi0(U,iorthoU,idisplay)
 %
 
 if ~exist('idisplay','var'), idisplay = 0; end 
+if ~any(iqtype==[0 1 2]), error('iqtype must =0,1,2'); end
 
 [~,~,n] = size(U);
 
@@ -69,57 +71,88 @@ qw = [ qww ;  qwx ;  qwy ;  qwz];
 
 q = qw;
 
-if iorthoU==1
+if iqtype~=0
+    % TT2012 Eq 11
+    qi = [-qwx ;  qww ; -qwz ; -qwy];   % U*Xpi
+    qj = [-qwy ; -qwz ;  qww ;  qwx];   % U*Ypi
+    qk = [-qwz ;  qwy ; -qwx ;  qww];   % U*Zpi
+    
+    % max trace(U) equivalent to minimum rotation angle
     % TT2012, before Eq F9a:
-    % "For a given U the best choice q0 among qw, qx, qy, qz is therefor
+    % "For a given U the best choice q0 among qw, qx, qy, qz is therefore
     % determined by which if U, UXpi, UYpi, UZpi has the largest trace or,
     % equivalently, by which has the smallest rotation angle."
-    Xpi = diag([ 1 -1 -1]);
-    Ypi = diag([-1  1 -1]);
-    Zpi = diag([-1 -1  1]);
-    trALL = NaN(4,n);
-    for kk=1:n
-       U0 = U(:,:,kk);
-       trALL(:,kk) = [sum(diag(U0))     ; sum(diag(U0*Xpi)) ;
-                      sum(diag(U0*Ypi)) ; sum(diag(U0*Zpi)) ];
-    end
-    [~,imaxtr] = max(trALL);
+    trU  = q2Utrace(q);
+    trUi = q2Utrace(qi);
+    trUj = q2Utrace(qj);
+    trUk = q2Utrace(qk);
+    trALL = [trU ; trUi ; trUj ; trUk];
     
-    % REPLACE q with the q based on max trace (case 1: do nothing)
-    for ii=1:n
-        switch imaxtr(ii)
-            case 2
-                x = 0.5 * sqrt(1 + u11(ii) - u22(ii) - u33(ii));
-                q(1,ii) = (u32(ii)-u23(ii))/(4*x);
-                q(2,ii) = x;
-                q(3,ii) = (u12(ii)+u21(ii))/(4*x);
-                q(4,ii) = (u13(ii)+u31(ii))/(4*x);
-            case 3
-                y = 0.5 * sqrt(1 - u11(ii) + u22(ii) - u33(ii));
-                q(1,ii) = (u13(ii)-u31(ii))/(4*y);
-                q(2,ii) = (u12(ii)+u21(ii))/(4*y);
-                q(3,ii) = y;
-                q(4,ii) = (u23(ii)+u32(ii))/(4*y);
-            case 4
-                z = 0.5 * sqrt(1 - u11(ii) - u22(ii) + u33(ii));
-                q(1,ii) = (u21(ii)-u12(ii))/(4*z);
-                q(2,ii) = (u13(ii)+u31(ii))/(4*z);
-                q(3,ii) = (u23(ii)+u32(ii))/(4*z);
-                q(4,ii) = z;
+%     % alternative (more transparent) computation of trace
+%     Xpi = diag([ 1 -1 -1]);
+%     Ypi = diag([-1  1 -1]);
+%     Zpi = diag([-1 -1  1]);
+%     trALL = NaN(4,n);
+%     for kk=1:n
+%        U0 = U(:,:,kk);
+%        trALL(:,kk) = [sum(diag(U0))     ; sum(diag(U0*Xpi)) ;
+%                       sum(diag(U0*Ypi)) ; sum(diag(U0*Zpi)) ];
+%     end
+    
+    % index into the minimum rotation angle
+    [~,imaxtr] = max(trALL);
+
+    if iqtype==1
+        % pick the quaternion associated with the minimum rotation angle
+        % note: q is initialized to qw
+        for ii=1:n
+            switch imaxtr(ii)
+                case 2, q(:,ii) = qi(:,ii);
+                case 3, q(:,ii) = qj(:,ii);
+                case 4, q(:,ii) = qk(:,ii);
+            end
         end
-    end 
+
+    elseif iqtype==2
+        % REPLACE q with the q based on max trace (case 1: do nothing)
+        for ii=1:n
+            switch imaxtr(ii)
+                case 2
+                    x = 0.5 * sqrt(1 + u11(ii) - u22(ii) - u33(ii));
+                    q(1,ii) = (u32(ii)-u23(ii))/(4*x);
+                    q(2,ii) = x;
+                    q(3,ii) = (u12(ii)+u21(ii))/(4*x);
+                    q(4,ii) = (u13(ii)+u31(ii))/(4*x);
+                case 3
+                    y = 0.5 * sqrt(1 - u11(ii) + u22(ii) - u33(ii));
+                    q(1,ii) = (u13(ii)-u31(ii))/(4*y);
+                    q(2,ii) = (u12(ii)+u21(ii))/(4*y);
+                    q(3,ii) = y;
+                    q(4,ii) = (u23(ii)+u32(ii))/(4*y);
+                case 4
+                    z = 0.5 * sqrt(1 - u11(ii) - u22(ii) + u33(ii));
+                    q(1,ii) = (u21(ii)-u12(ii))/(4*z);
+                    q(2,ii) = (u13(ii)+u31(ii))/(4*z);
+                    q(3,ii) = (u23(ii)+u32(ii))/(4*z);
+                    q(4,ii) = z;
+            end
+        end 
+        
+        q  = convertq(q);
+        
+        % TT2012 Eq 11: U*Xpi, U*Ypi, U*Zpi
+        w1 = q(1,:);
+        x1 = q(2,:);
+        y1 = q(3,:);
+        z1 = q(4,:);
+        qi = [-x1 ;  w1 ; -z1 ; -y1];
+        qj = [-y1 ; -z1 ;  w1 ;  x1];
+        qk = [-z1 ;  y1 ; -x1 ;  w1];
+    end
+
     % ensure that first entry of quaternion is positive (convention)
     % warning: this will turn an imaginary-valued q to real-valued
-    q = convertq(q);
-    
-    % TT2012 Eq 11: U*Xpi, U*Ypi, U*Zpi
-    w1 = q(1,:);
-    x1 = q(2,:);
-    y1 = q(3,:);
-    z1 = q(4,:);
-    qi = [-x1 ;  w1 ; -z1 ; -y1];
-    qj = [-y1 ; -z1 ;  w1 ;  x1];
-    qk = [-z1 ;  y1 ; -x1 ;  w1];
+    q  = convertq(q);
     qi = convertq(qi);
     qj = convertq(qj);
     qk = convertq(qk);
@@ -127,14 +160,14 @@ end
 
 % compute the kagan angle: Eq 34 of TapeTape2012
 [val,ixi0] = max(abs(q));
-%[val,ixi0] = max([w ; x ; y; z]);
 xi0 = 2*acos(val)*180/pi;
 xi0 = xi0(:);
 
 % rotation angle: Eq 34 of TapeTape2012
+% note: by convention, the first entry of q will be >0
 xi = 2*acos(q(1,:))*180/pi;
 
-if and(any(~isreal(q(1,:))),iorthoU==0)
+if and(any(~isreal(q(1,:))),iqtype==0)
     disp('WARNING (U2xi0.m): imaginary entry in w, x, y, z');
     %error('imaginary entry in w, x, y, z');
 end
@@ -155,7 +188,7 @@ if idisplay==1
             disp('WARNING: imaginary entry in q');
             disp('q = '); q(kk)
         else
-            if iorthoU==1
+            if iqtype==2
                 disp('computing trace to pick the best choice for orthogonalization:');    
                 disp('quaternions:');
                 %whos qw qi qj qk trALL
@@ -206,14 +239,13 @@ if 0==1
     
     %---------------------------------------
     % test for non-orthogonal matrices
-    [xi0,xi,q,ixi0,trALL,imaxtr]= U2xi0(U1,1,1);
+    [xi0,xi,q]= U2xi0(U1,0,1);
+    [xi0,xi,q,ixi0,trALL,imaxtr]= U2xi0(U1,2,1);
     xi_check = U2xi(U1)
-    [xi0,xi,q,ixi0,trALL,imaxtr]= U2xi0(U2,1,1);
-    xi_check = U2xi(U2)
     
     % try two at once (input U are orthogonal)
     U(:,:,1) = U1o1; U(:,:,2) = U2o1;
-    [xi0,xi,q,ixi0,trALL,imaxtr] = U2xi0(U,1,1);
+    [xi0,xi,q,ixi0,trALL,imaxtr] = U2xi0(U,2,1);
     
     % check rotation angles with simpler operation
     xi_check = U2xi(U)

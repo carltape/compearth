@@ -26,7 +26,7 @@ function [omega,xi0,U] = CMT2omega_xi0(X1,X2,iorthoU,idisplay)
 if ~exist('idisplay','var'), idisplay = 0; end 
 
 if and(length(size(X1))==2,numel(X1)~=9)
-    disp('input arrays are moment tensors');
+    disp('CMT2omega_xi0.m: input arrays are moment tensors');
     M1 = X1; M2 = X2;
     
     % check that M is 6 x n
@@ -44,7 +44,7 @@ if and(length(size(X1))==2,numel(X1)~=9)
     [~,U2] = CMTdecom(M2);
 
 else
-    disp('input arrays are bases');
+    disp('CMT2omega_xi0.m: input arrays are bases');
     U1 = X1; U2 = X2;
     % check dimensions
     [~,~,n1] = size(U1);
@@ -74,8 +74,8 @@ M2mat = Mvec2Mmat(MDC2,1);
 % calculate omega
 cosom = zeros(n,1);
 for ii=1:n
-   M1x =  M1mat(:,:,ii);
-   M2x =  M2mat(:,:,ii);
+   M1x = M1mat(:,:,ii);
+   M2x = M2mat(:,:,ii);
    cosom(ii) = dot(M1x(:),M2x(:));
 end
 cosom = cosom / 2;  % since |Lam0| = sqrt(2)
@@ -90,7 +90,7 @@ cosom(ineg) = -1;
 omega = acos(cosom) * 180/pi;
 
 % XI
-% compute U = U1' * U2
+% compute U = U1'*U2
 U = UiU(U1,U2);
 xi0 = U2xi0(U,0,idisplay);
 
@@ -126,7 +126,7 @@ end
 % EXAMPLES
 
 if 0==1
-    clear, close all, clc
+    clear, close all, clc, format short
     % Appendix E of TapeTape2012 "Angle betweeen principal axis triples"
     % Kagan (1991) comparison events from GCMT catalog
     eid1 = 'C010677A'; eid2 = 'C092680B';   % New Guinea
@@ -158,7 +158,7 @@ if 0==1
     end
     % event 1
     disp('///////////////// EVENT 1 /////////////////');
-    displayCMTshort(M1/fac1,'%16.3f');
+    Mvec2Mmat(M1/fac1,1)
     disp(sprintf('multiplication factor is %.0e N-m',fac1));
     [lam,U] = CMTdecom(M1); U = Udetcheck(U); U14 = Ufour(U);
     % note that FRAME 4 will match the U1 listed in TapeTape Appendix E
@@ -169,7 +169,7 @@ if 0==1
     end
     % event 2
     disp('///////////////// EVENT 2 /////////////////');
-    displayCMTshort(M2/fac2,'%16.3f');
+    Mvec2Mmat(M2/fac2,1)
     disp(sprintf('multiplication factor is %.0e N-m',fac2));
     [lam,U] = CMTdecom(M2); U = Udetcheck(U); U24 = Ufour(U);
     for kk=1:4
@@ -179,9 +179,10 @@ if 0==1
     end
     
     % now consider the 'difference' matrix U = U1^-1 U2
-    U12 = U14(:,:,4)'*U24(:,:,4)   % to match results in paper
-    [xi0,ixi0,q] = U2xi0(U12,0,1);     % q1 matches the results in paper
+    % the values for U and q should match the results in TapeTape2012, App. E
+    U12 = U14(:,:,4)'*U24(:,:,4)
     [omega,xi0] = CMT2omega_xi0(M1,M2,0,1); omega, xi0
+    %[xi0,ixi0,q] = U2xi0(U12,1,1);     % more info
 end
 
 %==========================================================================
