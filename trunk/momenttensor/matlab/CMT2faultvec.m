@@ -49,6 +49,9 @@ IDC = [1 0 -1 0 0 0]';
 if itype==1
     M = Xin;
 
+    % make sure M is 6 x n
+    M = Mdim(M);
+    
     % cartesian basis -- same as DT, p. 832
     ivec = [1 0 0]';    % south: x = r sin(th) cos(ph)
     jvec = [0 1 0]';    % east:  y = r sin(th) sin(ph)
