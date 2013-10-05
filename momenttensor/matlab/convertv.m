@@ -9,7 +9,9 @@ function [vout,T] = convertv(i1,i2,v)
 % OUTPUT
 %   vout    6 x n set of moment tensors in basis of i2
 %   T       transformation matrix to change basis of v from i1 to i2:
-%              vout = 
+%              vout = T*v
+%
+% See also convert_MT.m
 %
 % Carl Tape, 10/2013
 %
