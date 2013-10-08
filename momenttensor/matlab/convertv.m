@@ -4,10 +4,10 @@ function [vout,T] = convertv(i1,i2,v)
 % INPUT
 %   i1      index of input moment tensor basis (see convert_MT.m)
 %   i2      index of output moment tensor basis (see convert_MT.m)
-%   V       3 x n set of vectors
+%   V       3 x n set of vectors (or 3 x 3 x n set of bases)
 %
 % OUTPUT
-%   vout    6 x n set of moment tensors in basis of i2
+%   vout    3 x n set of vectors in basis of i2 (or 3 x 3 x n set of bases in i2)
 %   T       transformation matrix to change basis of v from i1 to i2:
 %              vout = T*v
 %
@@ -19,11 +19,22 @@ function [vout,T] = convertv(i1,i2,v)
 % get transformation matrix
 T = convert_MT(i1,i2);
 
-[a,b] = size(v);
-if a~=3, v = v'; n = b; disp('convertv.m: taking transpose of input v'); else n = a; end
-
-vout = T*v;
-
+[a,b,c] = size(v);
+if c==1
+    if a~=3, v = v'; n = b; disp('convertv.m: taking transpose of input v'); else n = a; end
+    vout = T*v;
+else
+    if and(a==3,b==3)
+        vout = NaN(a,b,c); 
+        for ii=1:c
+           vout(:,:,ii) = T*v(:,:,ii);
+        end
+    else
+        whos v
+        disp('check dimensions of input v'); 
+    end
+end
+    
 %==========================================================================
 % EXAMPLES
 
