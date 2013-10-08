@@ -8,7 +8,7 @@ function [lam,U] = CMTdecom(M,isort)
 %
 % OUTPUT
 %   lam     3 x n set of eigenvalues
-%   U       3 x 3 x n set of bases
+%   U       3 x 3 x n set of bases (SAME BASIS AS ABOVE: UP-SOUTH-EAST)
 %
 % Inverse program to CMTrecom.m
 %
