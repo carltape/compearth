@@ -1,5 +1,5 @@
 function q = convertq(q)
-%CONVERTQ ensure that quaternion has the convention q = (w,x,y,z) with w > 0
+%CONVERTQ ensure that quaternion has the convention q = (w,x,y,z) with w >= 0
 %   See TapeTape2012 "Angle between principal axis triples"
 
 [a,n] = size(q);
@@ -9,4 +9,7 @@ if ~isreal(q)
     disp('WARNING: q must be real-valued');
 end
 
-q = repmat(sign(q(1,:)),4,1) .* q;
+% if w=0, do not multiply by 0; otherwise you zero-out the rotation axis (x,y,z)
+qfac = sign(q(1,:));
+qfac(qfac==0) = 1;
+q = repmat(qfac,4,1) .* q;
