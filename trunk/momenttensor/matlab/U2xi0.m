@@ -7,6 +7,7 @@ function [xi0,xi,q,ixi0,trALL,imaxtr] = U2xi0(U,iqtype,idisplay)
 %             =1 for quaternion in Bw subset (assumes U are rotation matrices)
 %             =2 to choose quaternion based that provides numerical
 %                stability when dealine with not-exact rotation matrices
+%                THIS IS CURRENTLY DONE BY DEFAULT
 %   idisplay  optional: display details (=1)
 %
 % OUTPUT   
@@ -42,40 +43,61 @@ u11 = u11(:)'; u12 = u12(:)'; u13 = u13(:)';
 u21 = u21(:)'; u22 = u22(:)'; u23 = u23(:)';
 u31 = u31(:)'; u32 = u32(:)'; u33 = u33(:)';
 
-% unit quaternion (Eq F1a)
-% w > 0 since trU > -1 for rotation matrices
+% instability factors
 qww = 0.5 * sqrt(1 + u11 + u22 + u33);
-qwx = (u32-u23)./(4*qww);
-qwy = (u13-u31)./(4*qww);
-qwz = (u21-u12)./(4*qww);
+qxx = 0.5 * sqrt(1 + u11 - u22 - u33);
+qyy = 0.5 * sqrt(1 - u11 + u22 - u33);
+qzz = 0.5 * sqrt(1 - u11 - u22 + u33);
 
-% qxx = 0.5 * sqrt(1 + u11 - u22 - u33);
-% qxw = (u32-u23)./(4*qxx);
-% qxy = (u12+u21)./(4*qxx);
-% qxz = (u13+u31)./(4*qxx);
-% 
-% qyy = 0.5 * sqrt(1 - u11 + u22 - u33);
-% qyw = (u13-u31)./(4*qyy);
-% qyx = (u12+u21)./(4*qyy);
-% qyz = (u23+u32)./(4*qyy);
-% 
-% qzz = 0.5 * sqrt(1 - u11 - u22 + u33);
-% qzw = (u21-u12)./(4*qzz);
-% qzx = (u13+u31)./(4*qzz);
-% qzy = (u23+u32)./(4*qzz);
+% pick the quaternary with the least instability
+% this is critical for U that are either
+%  (1) close to having trace = -1 (180 deg rotation)
+%  (2) not quite orthogonal
+[~,ipick] = max([qww ; qxx ; qyy ; qzz]);
+%ipick = ones(1,n);     % testing only (pick 
 
-qw = [ qww ;  qwx ;  qwy ;  qwz];
-%qx = [ qxw ;  qxx ;  qxy ;  qxz];
-%qy = [ qyw ;  qyx ;  qyy ;  qyz];
-%qz = [ qzw ;  qzx ;  qzy ;  qzz];
+q = NaN(4,n);
+for ii=1:n
+    switch ipick(ii)
+        case 1      % Eq F1a
+            w = 0.5 * sqrt(1 + u11(ii) + u22(ii) + u33(ii));
+            q(1,ii) = w;
+            q(2,ii) = (u32(ii)-u23(ii))/(4*w);
+            q(3,ii) = (u13(ii)-u31(ii))/(4*w);
+            q(4,ii) = (u21(ii)-u12(ii))/(4*w);
+        case 2      % Eq F1b
+            x = 0.5 * sqrt(1 + u11(ii) - u22(ii) - u33(ii));
+            q(1,ii) = (u32(ii)-u23(ii))/(4*x);
+            q(2,ii) = x;
+            q(3,ii) = (u12(ii)+u21(ii))/(4*x);
+            q(4,ii) = (u13(ii)+u31(ii))/(4*x);
+        case 3      % Eq F1c
+            y = 0.5 * sqrt(1 - u11(ii) + u22(ii) - u33(ii));
+            q(1,ii) = (u13(ii)-u31(ii))/(4*y);
+            q(2,ii) = (u12(ii)+u21(ii))/(4*y);
+            q(3,ii) = y;
+            q(4,ii) = (u23(ii)+u32(ii))/(4*y);
+        case 4      % Eq F1d
+            z = 0.5 * sqrt(1 - u11(ii) - u22(ii) + u33(ii));
+            q(1,ii) = (u21(ii)-u12(ii))/(4*z);
+            q(2,ii) = (u13(ii)+u31(ii))/(4*z);
+            q(3,ii) = (u23(ii)+u32(ii))/(4*z);
+            q(4,ii) = z;
+    end
+end
 
-q = qw;
+q = convertq(q);
+
+qw = q(1,:);
+qx = q(2,:);
+qy = q(3,:);
+qz = q(4,:);
 
 if iqtype~=0
     % TT2012 Eq 11
-    qi = [-qwx ;  qww ; -qwz ; -qwy];   % U*Xpi
-    qj = [-qwy ; -qwz ;  qww ;  qwx];   % U*Ypi
-    qk = [-qwz ;  qwy ; -qwx ;  qww];   % U*Zpi
+    qi = [-qx ;  qw ; -qz ; -qy];   % U*Xpi
+    qj = [-qy ; -qz ;  qw ;  qx];   % U*Ypi
+    qk = [-qz ;  qy ; -qx ;  qw];   % U*Zpi
     
     % max trace(U) equivalent to minimum rotation angle
     % TT2012, before Eq F9a:
@@ -113,46 +135,45 @@ if iqtype~=0
             end
         end
 
-    elseif iqtype==2
-        % REPLACE q with the q based on max trace (case 1: do nothing)
-        for ii=1:n
-            switch imaxtr(ii)
-                case 2
-                    x = 0.5 * sqrt(1 + u11(ii) - u22(ii) - u33(ii));
-                    q(1,ii) = (u32(ii)-u23(ii))/(4*x);
-                    q(2,ii) = x;
-                    q(3,ii) = (u12(ii)+u21(ii))/(4*x);
-                    q(4,ii) = (u13(ii)+u31(ii))/(4*x);
-                case 3
-                    y = 0.5 * sqrt(1 - u11(ii) + u22(ii) - u33(ii));
-                    q(1,ii) = (u13(ii)-u31(ii))/(4*y);
-                    q(2,ii) = (u12(ii)+u21(ii))/(4*y);
-                    q(3,ii) = y;
-                    q(4,ii) = (u23(ii)+u32(ii))/(4*y);
-                case 4
-                    z = 0.5 * sqrt(1 - u11(ii) - u22(ii) + u33(ii));
-                    q(1,ii) = (u21(ii)-u12(ii))/(4*z);
-                    q(2,ii) = (u13(ii)+u31(ii))/(4*z);
-                    q(3,ii) = (u23(ii)+u32(ii))/(4*z);
-                    q(4,ii) = z;
-            end
-        end 
-        
-        q  = convertq(q);
-        
-        % TT2012 Eq 11: U*Xpi, U*Ypi, U*Zpi
-        w1 = q(1,:);
-        x1 = q(2,:);
-        y1 = q(3,:);
-        z1 = q(4,:);
-        qi = [-x1 ;  w1 ; -z1 ; -y1];
-        qj = [-y1 ; -z1 ;  w1 ;  x1];
-        qk = [-z1 ;  y1 ; -x1 ;  w1];
+%    elseif iqtype==2
+%         % REPLACE q with the q based on max trace (case 1: do nothing)
+%         for ii=1:n
+%             switch imaxtr(ii)
+%                 case 2
+%                     x = 0.5 * sqrt(1 + u11(ii) - u22(ii) - u33(ii));
+%                     q(1,ii) = (u32(ii)-u23(ii))/(4*x);
+%                     q(2,ii) = x;
+%                     q(3,ii) = (u12(ii)+u21(ii))/(4*x);
+%                     q(4,ii) = (u13(ii)+u31(ii))/(4*x);
+%                 case 3
+%                     y = 0.5 * sqrt(1 - u11(ii) + u22(ii) - u33(ii));
+%                     q(1,ii) = (u13(ii)-u31(ii))/(4*y);
+%                     q(2,ii) = (u12(ii)+u21(ii))/(4*y);
+%                     q(3,ii) = y;
+%                     q(4,ii) = (u23(ii)+u32(ii))/(4*y);
+%                 case 4
+%                     z = 0.5 * sqrt(1 - u11(ii) - u22(ii) + u33(ii));
+%                     q(1,ii) = (u21(ii)-u12(ii))/(4*z);
+%                     q(2,ii) = (u13(ii)+u31(ii))/(4*z);
+%                     q(3,ii) = (u23(ii)+u32(ii))/(4*z);
+%                     q(4,ii) = z;
+%             end
+%         end 
+%         
+%         q  = convertq(q);
+%         
+%         % TT2012 Eq 11: U*Xpi, U*Ypi, U*Zpi
+%         w1 = q(1,:);
+%         x1 = q(2,:);
+%         y1 = q(3,:);
+%         z1 = q(4,:);
+%         qi = [-x1 ;  w1 ; -z1 ; -y1];
+%         qj = [-y1 ; -z1 ;  w1 ;  x1];
+%         qk = [-z1 ;  y1 ; -x1 ;  w1];
     end
 
     % ensure that first entry of quaternion is positive (convention)
     % warning: this will turn an imaginary-valued q to real-valued
-    q  = convertq(q);
     qi = convertq(qi);
     qj = convertq(qj);
     qk = convertq(qk);
@@ -191,8 +212,8 @@ if idisplay==1
             if iqtype==2
                 disp('computing trace to pick the best choice for orthogonalization:');    
                 disp('quaternions:');
-                %whos qw qi qj qk trALL
-                qdisp = [qw(:,kk) qi(:,kk) qj(:,kk) qk(:,kk) q(:,kk)];
+                %whos q qi qj qk
+                qdisp = [q(:,kk) qi(:,kk) qj(:,kk) qk(:,kk)];
                 disp(sprintf('%20s%9s%9s%9s',stlab2{:}));
                 for ii=1:4
                     disp(sprintf('%11s%9.4f%9.4f%9.4f%9.4f%9.4f',stlab1{ii},qdisp(ii,:)));
@@ -215,7 +236,31 @@ end
 % EXAMPLES
 
 if 0==1
-    clear, close all, clc
+    % random rotation matrices
+    n = 1e5;
+    U = randomU(n);
+    [xi0,ixi0,q] = U2xi0(U,0,0); figure; plot_histo(xi0,[0:5:120]);
+    xlabel('xi0, principal axis angle'); title('random rotation matrices');
+    
+    % try several sets
+    % here we use each GCMT basis to represent U = U1'*U2
+    isub = 1:10000;
+    [otime,tshift,hdur,lat,lon,dep,M] = readCMT(isub);
+    n = length(otime);
+    [~,U] = CMTdecom(M);
+    U = Udetcheck(U);   % ensure that U are rotation matrices
+    xi0 = U2xi0(U,0); figure; plot_histo(xi0,[0:5:120]);
+    xlabel('xi0, principal axis angle');
+
+    % exact rotation matrix with trace=-180
+    U = [
+       0.998440764181981                   0  -0.055821504993164
+                       0  -1.000000000000000                   0
+      -0.055821504993164                   0  -0.998440764181981];
+    U'*U, det(U), trace(U)
+    U2xi0(U,0,1);
+    
+    %---------------------------------------
     % example bases from Kagan (1991)
     % U1 and U2 are NOT quite orthogonal
     % optional: transform from south-east-up to north-west-up
@@ -236,10 +281,11 @@ if 0==1
     U = U1o2'*U2o2;         % since these are orthogonal, transpose = inverse
     xi0 = U2xi0(U,0,1);
     xi0 = U2xi0(U,1,1);     % display more (check with TapeTape2012, Eq E1)
+    % this xi0 will differ from the 102.5 in TapeTape2012, Eq E1, because
+    % here we started with integer-rounded plunge-azimuth angles (see also TT2012AppE.m)
     
-    %---------------------------------------
     % test for non-orthogonal matrices
-    [xi0,xi,q]= U2xi0(U1,0,1);
+    [xi0,xi,q] = U2xi0(U1,0,1);
     [xi0,xi,q,ixi0,trALL,imaxtr]= U2xi0(U1,2,1);
     xi_check = U2xi(U1)
     
@@ -249,24 +295,6 @@ if 0==1
     
     % check rotation angles with simpler operation
     xi_check = U2xi(U)
-    
-    %---------------------------------------
-    % random rotation matrices
-    n = 1e5;
-    U = randomU(n);
-    [xi0,ixi0,q] = U2xi0(U,0,0); figure; plot_histo(xi0,[0:5:120]);
-    xlabel('xi0, principal axis angle'); title('random rotation matrices');
-    
-    %---------------------------------------
-    % try several sets
-    % here we use each GCMT basis to represent U = U1'*U2
-    isub = 1:10000;
-    [otime,tshift,hdur,lat,lon,dep,M] = readCMT(isub);
-    n = length(otime);
-    [~,U] = CMTdecom(M);
-    U = Udetcheck(U);   % ensure that U are rotation matrices
-    xi0 = U2xi0(U,0); figure; plot_histo(xi0,[0:5:120]);
-    xlabel('xi0, principal axis angle');
 end
 
 %==========================================================================
