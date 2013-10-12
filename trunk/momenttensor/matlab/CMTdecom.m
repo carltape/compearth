@@ -2,13 +2,13 @@ function [lam,U] = CMTdecom(M,isort)
 %CMTDECOM decompose a set of moment tensors into eigenvalues + basis
 %
 % INPUT
-%   M       6 x n moment tensors in CMT convention
-%           M = [Mrr Mtt Mpp Mrt Mrp Mtp]; r=up, theta=south, phi=east
+%   M       6 x n moment tensors with some unspecified basis (e.g., up-south-east)
+%           M = [M11 M22 M33 M12 M13 M23]
 %   isort   optional: sorting of eigenvalues (default=1)
 %
 % OUTPUT
 %   lam     3 x n set of eigenvalues
-%   U       3 x 3 x n set of bases (SAME BASIS AS ABOVE: UP-SOUTH-EAST)
+%   U       3 x 3 x n set of bases (SAME BASIS AS THE INPUT M)
 %
 % Inverse program to CMTrecom.m
 %
@@ -22,8 +22,8 @@ function [lam,U] = CMTdecom(M,isort)
 % make sure M is 6 x n
 [M,n] = Mdim(M);
 
-Mrr = M(1,:); Mtt = M(2,:); Mpp = M(3,:);
-Mrt = M(4,:); Mrp = M(5,:); Mtp = M(6,:);
+M11 = M(1,:); M22 = M(2,:); M33 = M(3,:);
+M12 = M(4,:); M13 = M(5,:); M23 = M(6,:);
 
 % compute eigenvalues and orthonormal eigenvectors
 % NOTE: lams(M) = lams(Mdev) + lams(Miso)
@@ -46,14 +46,13 @@ slabs = {'lam1 >= lam2 >= lam3','lam1 <= lam2 <= lam3',...
 disp(sprintf('isort = %i: eigenvalues/eigenvectors sorted by %s',isort,slabs{isort}));
 
 for ii = 1:n
-    % convention: r (up), theta (south), phi (east)
-    Mcmt = zeros(3,3);
-    Mcmt = [ Mrr(ii) Mrt(ii) Mrp(ii) ;
-             Mrt(ii) Mtt(ii) Mtp(ii) ;
-             Mrp(ii) Mtp(ii) Mpp(ii) ];
+    % moment tensor
+    Mx = [ M11(ii) M12(ii) M13(ii) ;
+             M12(ii) M22(ii) M23(ii) ;
+             M13(ii) M23(ii) M33(ii) ];
 
     % default eigenvalue ordering is lowest to highest in ALGEBRAIC sense
-    [V, D] = eig(Mcmt);
+    [V,D] = eig(Mx);
     lams = diag(D);
     %(inv(V)*Mcmt*V - D) / norm(Mcmt)
 
@@ -77,7 +76,6 @@ for ii = 1:n
 
     lam(:,ii) = lsort;
     U(:,:,ii) = Vsort;
-    
 end
 
 %==========================================================================

@@ -21,10 +21,16 @@ T = convert_MT(i1,i2);
 
 [a,b,c] = size(v);
 if c==1
-    if a~=3, v = v'; n = b; disp('convertv.m: taking transpose of input v'); else n = a; end
+    if a~=3
+        v = v'; n = b; disp('convertv.m: taking transpose of input v');
+    else
+        n = a;
+        disp(sprintf('convertv.m: transforming a set of %i vectors by T',n));
+    end
     vout = T*v;
 else
     if and(a==3,b==3)
+        disp(sprintf('convertv.m: transforming a set of %i 3 x 3 bases by T',c));
         vout = NaN(a,b,c); 
         for ii=1:c
            vout(:,:,ii) = T*v(:,:,ii);
