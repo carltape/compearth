@@ -1,4 +1,4 @@
-function M = TT2CMT(gamma,delta,M0,kappa,theta,sigma)
+function [M,lam,U] = TT2CMT(gamma,delta,M0,kappa,theta,sigma)
 %TT2CMT convert geometrical parameters into moment tensors
 %
 % INPUT
@@ -6,6 +6,7 @@ function M = TT2CMT(gamma,delta,M0,kappa,theta,sigma)
 %   delta       angle from deviatoric plane to MT point (-90 <= delta <= 90)
 %                  note: delta = 0 is deviatoric
 %   M0          seismic moment
+%                  note: rho = sqrt(2)*M0, so set M0=1/sqrt(2) for rho=1
 %   kappa       strike angle, degrees
 %   theta       dip angle, degrees
 %   sigma       slip (or rake) angle, degrees
@@ -13,6 +14,8 @@ function M = TT2CMT(gamma,delta,M0,kappa,theta,sigma)
 % OUTPUT
 %   M           6 x n set of moment tensors in CMT convention
 %               M = [Mrr Mtt Mpp Mrt Mrp Mtp]; r=up, theta=south, phi=east
+%   lam         3 x n set of eigenvalues
+%   U           3 x 3 x n set of bases in up-south-east convention
 %
 % Reverse program for CMT2TT.m
 % See WTape and CTape (2012) "A geometric setting for moment tensors" (TT2012).
@@ -33,7 +36,7 @@ end
 %---------------------
 % PART 1: moment tensor source type (or pattern)
 
-D = lune2lam(gamma,delta,M0);
+lam = lune2lam(gamma,delta,M0);
 
 %---------------------
 % PART 2: moment tensor orientation
@@ -61,16 +64,21 @@ end
 
 % TT2012, Eq 28 (or Proposition 2)
 M = NaN(3,3,n);
+U = NaN(3,3,n);
 Yrot = rotmat(-45,2);
 for ii=1:n
     V = [S(:,ii) cross(N(:,ii),S(:,ii)) N(:,ii)];
-    U = V*Yrot;
-    M(:,:,ii) = U*diag(D(:,ii))*U';
+    Ux = V*Yrot;
+    M(:,:,ii) = Ux*diag(lam(:,ii))*Ux';
+    U(:,:,ii) = Ux;
 end
 M = Mvec2Mmat(M,2);
 
 % convert from north-west-up to up-south-east
-M = convert_MT(3,1,M);
+i1 = 3;
+i2 = 1;
+M = convert_MT(i1,i2,M);
+U = convertv(i1,i2,U);
     
 %==========================================================================
 % EXAMPLES
