@@ -1,4 +1,4 @@
-function [N,Nplot] = plot_histo(hdat,edges,itype)
+function [N,Nplot,centers] = plot_histo(hdat,edges,itype)
 %PLOT_HISTO plot a histogram with cyan bars and black boundaries
 
 if nargin==2, itype=2; end
@@ -17,3 +17,15 @@ ylabel(sprintf('%s (N=%i)',xlab,Ntotal));
 
 h = findobj(gca,'Type','patch');
 set(h,'FaceColor',[0 1 1],'EdgeColor','k');
+
+if length(hdat) ~= sum(N)
+   disp(sprintf('WARNING: check edges -- the number of input (%i)',length(hdat)));
+   disp(sprintf('         does not equal the sum of bin counts (%i)',sum(N)));
+end
+
+centers = edges + dbin/2;
+centers(end) = [];
+% the last bin of N (and Nplot) will count any values that match EDGES(end)
+% (see histc), so we cut them
+N(end) = [];
+Nplot(end) = [];
