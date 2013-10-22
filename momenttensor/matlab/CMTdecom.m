@@ -78,6 +78,9 @@ for ii = 1:n
     U(:,:,ii) = Vsort;
 end
 
+% ensure that U is right-handed
+U = Udetcheck(U);
+
 %==========================================================================
 
 if 0==1

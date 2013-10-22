@@ -2,7 +2,7 @@ function [gamma,delta,M0,kappa,theta,sigma,K,N,S,mu,lam] = CMT2TT(M,idisplay)
 %CMT2TT converts a moment tensor to six parameters of TapeTape2012
 %
 % INPUT
-%   M           6 x n moment tensors in CMT convention
+%   M           6 x n moment tensors in CMT convention (UP-SOUTH-EAST)
 %               M = [Mrr Mtt Mpp Mrt Mrp Mtp]; r=up, theta=south, phi=east
 %   idisplay    OPTIONAL (if present, will display details)
 %               
@@ -13,9 +13,9 @@ function [gamma,delta,M0,kappa,theta,sigma,K,N,S,mu,lam] = CMT2TT(M,idisplay)
 %   kappa       strike angle, degrees: [0,360]
 %   theta       dip angle, degrees: [0,90]
 %   sigma       slip (or rake) angle, degrees: [-90,90]
-%   K           strike vector
-%   N           normal vector 
-%   S           slip vector
+%   K           strike vector (SOUTH-EAST-UP)
+%   N           normal vector (SOUTH-EAST-UP)
+%   S           slip vector (SOUTH-EAST-UP)
 %   mu          angle to DC
 %   lam         eigenvalues
 %
@@ -28,22 +28,23 @@ function [gamma,delta,M0,kappa,theta,sigma,K,N,S,mu,lam] = CMT2TT(M,idisplay)
 % make sure M is 6 x n
 [M,n] = Mdim(M);
 
-disp(sprintf('CMT2sph.m: %i moment tensors to convert into spherical coordinates',n));
+disp(sprintf('CMT2TT.m: %i moment tensors to convert into lune + strike/dip/rake',n));
 
-% KEY: convert from up-south-east (GCMT) to north-west-up (Kanamori)
-% U will be with respect to this basis
-M = convert_MT(1,3,M);
+% KEY: convert M into another basis
+% YOU MUST ALSO CHANGE north AND zenith IN faultvec2ang BELOW
+% --> U will be with respect to this basis (from CMTdecom.m)
+%M = convert_MT(1,3,M);
+M = convert_MT(1,5,M);  % moment tensor in south-east-up basis
 
 %---------------------
 % PART 1: moment tensor source type (or pattern)
 
-% decomposition of DEVIATORIC moment tensor into eigenbasis
+% decomposition of moment tensor into eigenvalues + basis (M = U*lam*U')
 % NOTE: ordering of eigenvalues is important
 isort = 1;
 [lam,U] = CMTdecom(M,isort);
 
-% compute spherical angles in moment tensor 'pattern' space
-%[gamma,delta,M0,mu,lamdev,lamiso] = lam2lune(lam);
+% compute lune coordinates and magnitude from eigenvalues
 [gamma,delta,M0,mu] = lam2lune(lam);
 
 %---------------------
@@ -146,15 +147,20 @@ end
 %--------------------------------------------------------------------------
 
 function [theta,sigma,kappa,K] = faultvec2ang(S,N)
-% returns fault angles in degrees
+% returns fault angles in degrees, assumes input vectors in south-east-up basis
 
 deg = 180/pi;
 
 [~,n] = size(S);
 
 % for north-west-up basis (as in TT2012)
-zenith = [0 0 1]';
-north  = [1 0 0]';
+%zenith = [0 0 1]'; north  = [1 0 0]';
+
+% for up-south-east basis (GCMT)
+%zenith = [1 0 0]'; north  = [0 -1 0]';
+
+% for south-east-up basis (as in TT2012)
+zenith = [0 0 1]'; north  = [-1 0 0]';
 
 kappa = NaN(n,1);
 theta = NaN(n,1);

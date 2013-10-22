@@ -12,10 +12,10 @@ function [M,lam,U] = TT2CMT(gamma,delta,M0,kappa,theta,sigma)
 %   sigma       slip (or rake) angle, degrees
 %
 % OUTPUT
-%   M           6 x n set of moment tensors in CMT convention
+%   M           6 x n set of moment tensors in CMT convention (UP-SOUTH-EAST)
 %               M = [Mrr Mtt Mpp Mrt Mrp Mtp]; r=up, theta=south, phi=east
 %   lam         3 x n set of eigenvalues
-%   U           3 x 3 x n set of bases in up-south-east convention
+%   U           3 x 3 x n set of bases in SOUTH-EAST-UP convention
 %
 % Reverse program for CMT2TT.m
 % See WTape and CTape (2012) "A geometric setting for moment tensors" (TT2012).
@@ -46,9 +46,11 @@ lam = lune2lam(gamma,delta,M0);
 % return the fault vectors, then keep in mind the basis (north-west-up),
 % or transform them to up-south-east to be consistent with M.
 
-% convention in TT2012 is north-west-up
-north = [1 0 0]';
-zenith = [0 0 1]';
+% for north-west-up basis (TapeTape2012)
+%north = [1 0 0]'; zenith = [0 0 1]';
+
+% for south-east-up basis (TapeTape2013)
+north = [-1 0 0]'; zenith = [0 0 1]';
 
 phi = -kappa;
 
@@ -75,10 +77,14 @@ end
 M = Mvec2Mmat(M,2);
 
 % convert from north-west-up to up-south-east
-i1 = 3;
-i2 = 1;
+%i1 = 3; i2 = 1;
+%M = convert_MT(i1,i2,M);
+%U = convertv(i1,i2,U);
+
+% convert moment tensor from south-east-up to up-south-east
+% (note: U is still in south-east-up)
+i1 = 5; i2 = 1;
 M = convert_MT(i1,i2,M);
-U = convertv(i1,i2,U);
     
 %==========================================================================
 % EXAMPLES
