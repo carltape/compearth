@@ -22,13 +22,13 @@ function [Mout,T] = convert_MT(i1,i2,M)
 % Convention 2: Aki and Richards
 %   1: north, 2: east, 3: down
 %
-% Convention 3: Kanamori
+% Convention 3: Kanamori (also TapeTape2012a "A geometric setting...")
 %   1: north, 2: west, 3: up
 % 
 % Convention 4:
 %   1: east, 2: north, 3: up
 % 
-% Convention 5 (Tape and Tape, 2012):
+% Convention 5 (TapeTape2013 "The classical model for moment tensors"):
 %   1: south, 2: east, 3: up
 %
 % Carl Tape, 11/2010
