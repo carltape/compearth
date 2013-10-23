@@ -79,6 +79,7 @@ U12 = U1'*U2;
 [omega,xi0] = CMT2omega_xi0(M1,M2,0,1);
 [xi0,ixi0,q] = U2xi0(U12,1,1);     % more info
 
+% four possible quaternions
 Uall = Ufour(U12);
 [~,~,qall] = U2xi0(Uall,0,1);
 
@@ -87,9 +88,35 @@ disp(sprintf('first moment tensor with scale factor (%.3e) removed:',fac1))
 disp('M1:'); disp(Mvec2Mmat(M1/fac1,1))
 U1, U2
 disp('U1^T * U2:'); disp(U12);
-disp('one of four possible quaternions for U1^T*U2:');
-qall(:,1)
+disp('one of four possible quaternions for U1^T*U2:'); disp(qall(:,1))
 xi0
 disp('============================================================================');
 
-%==========================================================================
+% checking output on 10/23/2013
+
+% ========== FULL RESULTS FROM APPENDIX E OF TAPE AND TAPE (2012) ===========
+% first moment tensor with scale factor (1.000e+19) removed:
+% M1:
+%    -0.4120    0.3980   -1.2390
+%     0.3980    0.0840    1.0580
+%    -1.2390    1.0580    0.3280
+% U1 =
+%     0.4041    0.6425    0.6511
+%    -0.4565    0.7585   -0.4651
+%    -0.7927   -0.1093    0.5998
+% U2 =
+%    -0.8217    0.4860   -0.2978
+%    -0.2373   -0.7667   -0.5965
+%    -0.5183   -0.4195    0.7453
+% U1^T * U2:
+%     0.1871    0.8789   -0.4388
+%    -0.6512   -0.2235   -0.7252
+%    -0.7355    0.4215    0.5305
+% one of four possible quaternions for U1^T*U2:
+%     0.6112
+%     0.4691
+%     0.1213
+%    -0.6259
+% xi0 =
+%   102.5062
+% ============================================================================
