@@ -10,7 +10,7 @@ Uout = Uin;
 for ii=1:n
    U0 = Uout(:,:,ii);
    if det(U0) < 0
-       disp('WARNING: det(U) < 0: flipping sign of 2nd column');
+       disp('det(U) < 0: flipping sign of 2nd column');
        Uout(:,:,ii) = [U0(:,1) -U0(:,2) U0(:,3)];
        %detU = det(Uout(:,:,ii)) 
        %UUt = Uout(:,:,ii) * Uout(:,:,ii)'
