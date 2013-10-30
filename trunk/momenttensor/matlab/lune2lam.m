@@ -27,6 +27,11 @@ beta = 90 - delta;  % colatitude
 M0 = M0(:)';        % (row vector)
 n = length(gamma);
 
+if and(length(M0)~=n,length(M0)==1)
+   disp('WARNING: assigning all M0 values to be the same as the input');
+   M0 = M0*ones(1,n); 
+end
+
 % magnitude of lambda vectors (TT2012, p. 490 text)
 rho = M0*sqrt(2);
 

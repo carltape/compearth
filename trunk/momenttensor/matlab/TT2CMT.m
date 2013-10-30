@@ -17,13 +17,34 @@ function [M,lam,U] = TT2CMT(gamma,delta,M0,kappa,theta,sigma)
 %   lam         3 x n set of eigenvalues
 %   U           3 x 3 x n set of bases in SOUTH-EAST-UP convention
 %
+% Note that the basis for M and U are different.
+%
 % Reverse program for CMT2TT.m
 % See WTape and CTape (2012) "A geometric setting for moment tensors" (TT2012).
 %
 % Carl Tape, 12/2012
 %
 
-n = length(gamma);
+n1 = length(gamma);
+n2 = length(delta);
+n3 = length(M0);
+n4 = length(kappa);
+n5 = length(theta);
+n6 = length(sigma);
+if length(unique([n1 n2 n3 n4 n5 n6])) > 2
+    whos gamma delta M0 kappa theta sigma
+    error('only dimension n or 1 allowed');
+end
+n = max([n1 n2 n3 n4 n5 n6]);
+disp(sprintf('TT2CMT.m: %i points',n));
+if and(n > 1, any([n1 n2 n3 n4 n5 n6]~=n))
+    if n1~=n, gamma = gamma(1)*ones(1,n); disp('WARNING: assigning all gamma values to be the same as the input'); end
+    if n2~=n, delta = delta(1)*ones(1,n); disp('WARNING: assigning all delta values to be the same as the input');end
+    if n3~=n,    M0 = M0(1)*ones(1,n);    disp('WARNING: assigning all M0 values to be the same as the input'); end
+    if n4~=n, kappa = kappa(1)*ones(1,n); disp('WARNING: assigning all kappa values to be the same as the input');end
+    if n5~=n, theta = theta(1)*ones(1,n); disp('WARNING: assigning all theta values to be the same as the input');end
+    if n6~=n, sigma = sigma(1)*ones(1,n); disp('WARNING: assigning all sigma values to be the same as the input');end
+end
 
 for ii=1:n
     if theta(ii)==0
@@ -41,10 +62,12 @@ lam = lune2lam(gamma,delta,M0);
 %---------------------
 % PART 2: moment tensor orientation
 % NOTE: Algorithmically, it would be simpler to compute V directly from the
-% expression in Proposition 2. Here we do not need the fault vectors at
-% all. But the implementaion below is more conceptual. If you want to
-% return the fault vectors, then keep in mind the basis (north-west-up),
-% or transform them to up-south-east to be consistent with M.
+% expression in Proposition 2, since this requires fewer calculations.
+% (In the case here, we do not need the fault vectors at all.)
+% The implementaion below is more conceptual.
+% The basis is specified through specification of the north and zenith
+% vectors. But the output for M and U can be changed by using convert_MT.m
+% or convertv.m.
 
 % for north-west-up basis (TapeTape2012)
 %north = [1 0 0]'; zenith = [0 0 1]';
@@ -52,6 +75,7 @@ lam = lune2lam(gamma,delta,M0);
 % for south-east-up basis (TapeTape2013)
 north = [-1 0 0]'; zenith = [0 0 1]';
 
+% TT2012, p. 485
 phi = -kappa;
 
 % TT2012, Eq 27abc
