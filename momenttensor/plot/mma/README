@@ -1,0 +1,11 @@
+README
+
+some Mathematica notebooks that can be used for 3D plotting of moment tensor space presented in Tape and Tape (2012), "A geometric setting for moment tensors"
+
+Lune.nb         -- starter script for points on the lune
+                   see Lune.pdf for example output
+LuneExtended.nb -- script for fancier plotting on the lune;
+                   execute commonMMAfuns.nb FIRST
+                   see LuneExtended.pdf for example output
+
+-----------
