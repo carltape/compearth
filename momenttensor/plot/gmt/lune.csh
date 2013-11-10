@@ -2,8 +2,6 @@ gmtset PAPER_MEDIA letter MEASURE_UNIT inch BASEMAP_TYPE plain PLOT_DEGREE_FORMA
 psbasemap -JH0/3i -R-30/30/-90/90 -Ba10f5g10:" ":/a10f5g10:" ":wesn -G255/255/255 -K -V -P -X2 -Y1 > lune_hammer_iplot1.ps
 psxy ./dfiles//beach_arc_03.lonlat -W2p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps
 psxy ./dfiles//beach_arc_04.lonlat -W2p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps
-psxy ./dfiles//beach_arc_05.lonlat -W2p,0 -W2p,50/205/50 -J -R -K -O -V >>lune_hammer_iplot1.ps
-psxy ./dfiles//beach_arc_06.lonlat -W2p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps
 psxy -N -Sp8p -W1p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
 0.0000 -90.0000
 EOF
@@ -51,24 +49,6 @@ psxy -N -Sp8p -W1p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
 EOF
 pstext -N -J -R -K -O -V -D10.00p/0.00p >>lune_hammer_iplot1.ps<<EOF
 30.0000 -35.2644 14 0 1 LM (0,0,-1)
-EOF
-psxy -N -Sp8p -W1p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
-0.0000 0.0000
-EOF
-pstext -N -J -R -K -O -V -D10.00p/10.00p >>lune_hammer_iplot1.ps<<EOF
-0.0000 0.0000 14 0 1 LB (1,0,-1)
-EOF
-psxy -N -Sp8p -W1p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
--30.0000 60.5038
-EOF
-pstext -N -J -R -K -O -V -D-10.00p/0.00p >>lune_hammer_iplot1.ps<<EOF
--30.0000 60.5038 14 0 1 RM (3,1,1)
-EOF
-psxy -N -Sp8p -W1p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
-30.0000 -60.5038
-EOF
-pstext -N -J -R -K -O -V -D10.00p/0.00p >>lune_hammer_iplot1.ps<<EOF
-30.0000 -60.5038 14 0 1 LM (-1,-1,-3)
 EOF
 psxy ./dfiles//beachpts_Walter2010_points.dat -N -Sc8p -W0.5p,0/0/0 -G160/32/240 -J -R -K -O -V >>lune_hammer_iplot1.ps
 psxy ./dfiles//beachpts_Walter2009_points.dat -N -Sc8p -W0.5p,0/0/0 -G50/205/50 -J -R -K -O -V >>lune_hammer_iplot1.ps
