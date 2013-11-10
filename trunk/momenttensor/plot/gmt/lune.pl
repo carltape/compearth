@@ -9,8 +9,10 @@
 #  Example plot of representing moment tensors on the funamental lune.
 #  The basic concepts behind this representation of moment tensors can be found in
 #  W. Tape and C. Tape, "A geometric setting for moment tensors," Geophysical J. International, 2012
+#  See also examples in
+#  W. Tape and C. Tape, "The classical model for moment tensors," Geophysical J. International, 2013
 #
-#  Last tested 8-22-2012 with GMT 4.5.8, but with a custom psmeca by Doug Dreger
+#  Last tested 11-10-2013 with GMT 4.5.3 using a custom psmeca by Doug Dreger
 #  
 #==========================================================
 
@@ -67,7 +69,7 @@ $dgray = 120;
 # PLOTTING OPTIONS
 $iplot = 1;  # =0 (reference lune), =1 (dots from published studies), =2 (reference beachballs)
 $lplot = 1;  # =1-2: reference MTs on the lune (iplot=2 only)
-$kplot = 3;  # =1-4: orientation of MT at center of lune (iplot=2 only)
+$kplot = 1;  # =1-4: orientation of MT at center of lune (iplot=2 only)
 if($iplot==2) {
   $psfile = "lune_${ftag}_iplot${iplot}_lplot${lplot}_kplot${kplot}.ps";
 } else {
@@ -78,10 +80,10 @@ $ipatchgcdc = 0;       # patches for gCDC model for nu=0.25
 $iarcgcdc = 0;         # boundary arcs for gCDC model for nu=0.25
 
 $idev = 0;             # deviatoric arc
-$inup25 = 1;           # nu=0.25 arc between crack points
+$inup25 = 0;           # nu=0.25 arc between crack points
 $inup36 = 0;           # nu=0.36 arc between crack points
 $ilam3 = 1;            # lam3 = 0 arc
-$ilam2 = 1;            # lam2 = 0 arc between dipoles
+$ilam2 = 0;            # lam2 = 0 arc between dipoles
 $ilam1 = 1;            # lam1 = 0 arc
 
 $ilegend = 0;          # legend for data points
@@ -229,6 +231,7 @@ if ($iplot==1) {
   # moment tensors from various studies
 
   # NOTE: NOTE ALL OF THESE DATA SETS ARE AVAILABLE HERE
+  #       ONLY THE ONES THAT ARE LISTED IN PUBLICATIONS ARE AVAILABLE
   @ftags = ("Ford2009","Ford2009nuclear","Ford2009earthquake","Ford2009mine","Foulger2004","Minson2007","Minson2008","Walter2009","Walter2010","Pesicek2012","Miller1996phd",
       "Baig2010","Sileny2006","Sileny2008","Sileny2009","Dreger2012","Julian2010","Pesicek2012_238Fig14","Ross1996","Ross1996phd","Vavrycuk2001","Vavrycuk2011");
 
@@ -239,14 +242,15 @@ if ($iplot==1) {
        $green,$red,$orange,$magenta,$cyan,$cyan,$cyan,$cyan,$dgray,$magenta,$brown);
 
   @inds = (9,8,1,6,5);            # TapeTape2012 figure 25
-  #@inds = (11,5,22,21,7,6,10);    # non-induced
-  #@inds = (12,20,17,13,14,15,4);  # induced
+  #@inds = (11,5,22,21,7,6,10);    # TapeTape2013 figure 14b: mostly volcanic and geothermal
+  #@inds = (2..4);                 # TapeTape2013 figure 14c: Ford2009 (nu = 0.25)
+  #@inds = (8,9);                  # TapeTape2013 figure 14d: Walter2009,2010 (nu = 0.36)
+  #@inds = (12,20,17,13,14,15,4);  # TapeTape2013 figure S14: induced events (lam2 = 0)
+
   #@inds = (17,13,14,15,4);        # induced -- no Baig
-  #@inds = (11,20);                # Foulger2004, Figure 8
+  #@inds = (11,20);                # Foulger2004, Figure 8ab (not c)
   #@inds = (16);                   # Dreger2012 (excluding Long Valley and Geysers regions)
   #@inds = (13..15);               # Sileny     
-  #@inds = (2..4);                 # Ford2009
-  #@inds = (8,9);                   # Walter2009,2010
   #@inds = 14;
 
         for ($i = 1; $i <= @inds; $i++) {
