@@ -97,11 +97,11 @@ end
 % EXAMPLE
 
 if 0==1
-    kap1 = 350;
+    kappa1 = 350;
     theta1 = 80;
-    Xin = [kap1 theta1]
+    Xin = [kappa1 theta1]
     Xout = strdip2normal(Xin,1,1);
-    Xcheck = strdip2normal(Xout,0,1);
+    Xcheck = strdip2normal(Xout,0,1)
 end
 
 %==========================================================================

@@ -54,6 +54,7 @@ else
 end
 
 % ensure that U are rotation matrices: det U = 1
+% note: this may already be done in CMTdecom.m
 U1 = Udetcheck(U1);
 U2 = Udetcheck(U2);
 
@@ -79,12 +80,12 @@ for ii=1:n
    cosom(ii) = dot(M1x(:),M2x(:));
 end
 cosom = cosom / 2;  % since |Lam0| = sqrt(2)
-% correction for numerical errors
+% correction for possible numerical errors
+% this correction is needed for comparing U's that are very close to each other
 ipos = cosom > 1;
 ineg = cosom < -1;
 disp(sprintf('%i/%i dot products > 1',sum(ipos),n));
 disp(sprintf('%i/%i dot products < 1',sum(ineg),n));
-% this correction is needed for comparing U's that are very close to each other
 cosom(ipos) = 1;
 cosom(ineg) = -1;
 omega = acos(cosom) * 180/pi;

@@ -19,6 +19,7 @@ function [otime,tshift,hdur,lat,lon,dep,M,eid,elabel] = read_CMTSOLUTION(filenam
 %   dep     
 %   M       6 x n moment tensors in CMT convention
 %           M = [Mrr Mtt Mpp Mrt Mrp Mtp]; r=up, theta=south, phi=east
+%           WARNING: units here are N-m, not dyne-cm as in CMTSOLUTION
 %   eid     
 %   elabel  
 %
