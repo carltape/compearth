@@ -15,21 +15,25 @@ function [Mout,T] = convert_MT(i1,i2,M)
 %   Mout    6 x n set of moment tensors in basis of i2
 %   T       transformation matrix to change basis of M from i1 to i2: Mout = T*M*T'
 %
-%
-% Convention 1: Harvard CMT
+% Convention 1: up-south-east (GCMT) (www.globalcmt.org)
 %   1: up (r), 2: south (theta), 3: east (phi)
 %
-% Convention 2: Aki and Richards
+% Convention 2: Aki and Richards (1980, p. 114-115, 118)
+%   also Jost and Herrman (1989, Fig. 1)
 %   1: north, 2: east, 3: down
 %
-% Convention 3: Kanamori (also TapeTape2012a "A geometric setting...")
+% Convention 3: Stein and Wysession (2003, p. 218)
+%   also TapeTape2012a "A geometric setting for moment tensors"
+%   also several Kanamori codes
 %   1: north, 2: west, 3: up
 % 
-% Convention 4:
+% Convention 4: 
 %   1: east, 2: north, 3: up
 % 
-% Convention 5 (TapeTape2013 "The classical model for moment tensors"):
+% Convention 5: TapeTape2013 "The classical model for moment tensors"
 %   1: south, 2: east, 3: up
+%
+% See the vector version convertv.m 
 %
 % Carl Tape, 11/2010
 %
@@ -68,11 +72,11 @@ Tall{5,4} = Tall{4,5}';
 % transformation matrix
 T = Tall{i1,i2};
 
-stlabs = {'GCMT (up-south-east)',...
-    'Aki (north-east-down)',...
-    'Kanamori (north-west-up)',...
-    'C4 (east-north-up)',...
-    'C5 (south-east-up)'};
+stlabs = {'up-south-east (GCMT)',...
+    'north-east-down (AkiRichards)',...
+    'north-west-up',...
+    'east-north-up',...
+    'south-east-up'};
 disp(sprintf('convert_MT.n: %s to %s',stlabs{i1},stlabs{i2}));
 
 if nargin==2
@@ -94,28 +98,28 @@ end
 Mout = [];  % initialize
 
 if i1==1
-    if i2==2        % Harvard to Aki (AR, 1980, p. 118)
+    if i2==2        % up-south-east (GCMT) to north-east-down (AkiRichards) (AR, 1980, p. 118)
         Mout(1,:) = M(2,:);
         Mout(2,:) = M(3,:);
         Mout(3,:) = M(1,:);
         Mout(4,:) = -M(6,:);
         Mout(5,:) = M(4,:);
         Mout(6,:) = -M(5,:);
-    elseif i2==3    % Harvard to Kanamori (/opt/seismo-util/bin/faultpar2cmtsol.pl)
+    elseif i2==3    % up-south-east (GCMT) to north-west-up (/opt/seismo-util/bin/faultpar2cmtsol.pl)
         Mout(1,:) = M(2,:);
         Mout(2,:) = M(3,:);
         Mout(3,:) = M(1,:);
         Mout(4,:) = M(6,:);
         Mout(5,:) = -M(4,:);
         Mout(6,:) = -M(5,:);
-    elseif i2==4    % Harvard to C4
+    elseif i2==4    % up-south-east (GCMT) to east-north-up
         Mout(1,:) = M(3,:);
         Mout(2,:) = M(2,:);
         Mout(3,:) = M(1,:);
         Mout(4,:) = -M(6,:);
         Mout(5,:) = M(5,:);
         Mout(6,:) = -M(4,:);
-    elseif i2==5    % Harvard to C5
+    elseif i2==5    % up-south-east (GCMT) to south-east-up
         Mout(1,:) = M(2,:);
         Mout(2,:) = M(3,:);
         Mout(3,:) = M(1,:);
@@ -125,28 +129,28 @@ if i1==1
     end
     
 elseif i1==2
-    if i2==1        % Aki to Harvard (AR, 1980, p. 118)
+    if i2==1        % north-east-down (AkiRichards) to up-south-east (GCMT) (AR, 1980, p. 118)
         Mout(1,:) = M(3,:);
         Mout(2,:) = M(1,:);
         Mout(3,:) = M(2,:);
         Mout(4,:) = M(5,:);
         Mout(5,:) = -M(6,:);
         Mout(6,:) = -M(4,:);
-    elseif i2==3    % Aki to Kanamori
+    elseif i2==3    % north-east-down (AkiRichards) to north-west-up
         Mout(1,:) = M(1,:);
         Mout(2,:) = M(2,:);
         Mout(3,:) = M(3,:);
         Mout(4,:) = -M(4,:);
         Mout(5,:) = -M(5,:);
         Mout(6,:) = M(6,:);   
-    elseif i2==4    % Aki to C4
+    elseif i2==4    % north-east-down (AkiRichards) to east-north-up
         Mout(1,:) = M(2,:);
         Mout(2,:) = M(1,:);
         Mout(3,:) = M(3,:);
         Mout(4,:) = M(4,:);
         Mout(5,:) = -M(6,:);
         Mout(6,:) = -M(5,:);
-    elseif i2==5    % Aki to C5
+    elseif i2==5    % north-east-down (AkiRichards) to south-east-up
         Mout(1,:) = M(1,:);
         Mout(2,:) = M(2,:);
         Mout(3,:) = M(3,:);
@@ -156,28 +160,28 @@ elseif i1==2
     end
     
 elseif i1==3
-    if i2==1        % Kanamori to Harvard
+    if i2==1        % north-west-up to up-south-east (GCMT)
         Mout(1,:) = M(3,:);
         Mout(2,:) = M(1,:);
         Mout(3,:) = M(2,:);
         Mout(4,:) = -M(5,:);
         Mout(5,:) = -M(6,:);
         Mout(6,:) = M(4,:);
-    elseif i2==2    % Kanamori to Aki
+    elseif i2==2    % north-west-up to north-east-down (AkiRichards)
         Mout(1,:) = M(1,:);
         Mout(2,:) = M(2,:);
         Mout(3,:) = M(3,:);
         Mout(4,:) = -M(4,:);
         Mout(5,:) = -M(5,:);
         Mout(6,:) = M(6,:); 
-    elseif i2==4    % Kanamori to C4
+    elseif i2==4    % north-west-up to east-north-up
         Mout(1,:) = M(2,:);
         Mout(2,:) = M(1,:);
         Mout(3,:) = M(3,:);
         Mout(4,:) = -M(4,:);
         Mout(5,:) = -M(6,:);
         Mout(6,:) = M(5,:); 
-    elseif i2==5    % Kanamori to C5
+    elseif i2==5    % north-west-up to south-east-up
         Mout(1,:) = M(1,:);
         Mout(2,:) = M(2,:);
         Mout(3,:) = M(3,:);
@@ -187,28 +191,28 @@ elseif i1==3
     end
     
 elseif i1==4
-    if i2==1        % C4 to Harvard
+    if i2==1        % east-north-up to up-south-east (GCMT)
         Mout(1,:) = M(3,:);
         Mout(2,:) = M(2,:);
         Mout(3,:) = M(1,:);
         Mout(4,:) = -M(6,:);
         Mout(5,:) = M(5,:);
         Mout(6,:) = -M(4,:);
-    elseif i2==2    % C4 to Aki
+    elseif i2==2    % east-north-up to north-east-down (AkiRichards)
         Mout(1,:) = M(2,:);
         Mout(2,:) = M(1,:);
         Mout(3,:) = M(3,:);
         Mout(4,:) = M(4,:);
         Mout(5,:) = -M(6,:);
         Mout(6,:) = -M(5,:);
-    elseif i2==3    % C4 to Kanamori
+    elseif i2==3    % east-north-up to north-west-up
         Mout(1,:) = M(2,:);
         Mout(2,:) = M(1,:);
         Mout(3,:) = M(3,:);
         Mout(4,:) = -M(4,:);
         Mout(5,:) = M(6,:);
         Mout(6,:) = -M(5,:); 
-    elseif i2==5    % C4 to C5
+    elseif i2==5    % east-north-up to south-east-up
         Mout(1,:) = M(2,:);
         Mout(2,:) = M(1,:);
         Mout(3,:) = M(3,:);
@@ -217,7 +221,7 @@ elseif i1==4
         Mout(6,:) = M(5,:); 
     end
     
-elseif i1==5        % C5 to Harvard
+elseif i1==5        % south-east-up to up-south-east (GCMT)
     if i2==1
         Mout(1,:) = M(3,:);
         Mout(2,:) = M(1,:);
@@ -225,21 +229,21 @@ elseif i1==5        % C5 to Harvard
         Mout(4,:) = M(5,:);
         Mout(5,:) = M(6,:);
         Mout(6,:) = M(4,:);
-    elseif i2==2    % C5 to Aki
+    elseif i2==2    % south-east-up to north-east-down (AkiRichards)
         Mout(1,:) = M(1,:);
         Mout(2,:) = M(2,:);
         Mout(3,:) = M(3,:);
         Mout(4,:) = -M(4,:);
         Mout(5,:) = M(5,:);
         Mout(6,:) = -M(6,:);
-    elseif i2==3    % C5 to Kanamori
+    elseif i2==3    % south-east-up to north-west-up
         Mout(1,:) = M(1,:);
         Mout(2,:) = M(2,:);
         Mout(3,:) = M(3,:);
         Mout(4,:) = M(4,:);
         Mout(5,:) = -M(5,:);
         Mout(6,:) = -M(6,:);
-    elseif i2==4    % C5 to C4
+    elseif i2==4    % south-east-up to east-north-up
         Mout(1,:) = M(2,:);
         Mout(2,:) = M(1,:);
         Mout(3,:) = M(3,:);
@@ -271,9 +275,10 @@ if 0==1
     Mvec2Mmat(M1,1)                 % up-south-east
     Mcheck = T*Mvec2Mmat(M1,1)*T'   % south-east-up
     Mvec2Mmat(M2,1)                 % (check)
+    % example vector v, example matrix M
     v1 = rand(3,1)                  % up-south-east
     v2 = T*v1                       % south-east-up
-    X1 = randi(10,3); X1=X1'*X1,  X2=T*X1*T'
+    X = randi(10,3); X1=X'*X,  X2=T*X1*T'
     
     % check all possible transofrmations
     M1 = rand(6,1);
