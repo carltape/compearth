@@ -19,6 +19,7 @@ function theta = fangle(va,vb)
 %    n = n2a;
 %end
 if or(n2a ~= n2b, n1a ~= n1b)
+    whos va vb
     error('va and vb must be same dimension');
 else
     n = n2a;

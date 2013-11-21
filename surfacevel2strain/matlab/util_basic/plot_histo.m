@@ -19,8 +19,8 @@ h = findobj(gca,'Type','patch');
 set(h,'FaceColor',[0 1 1],'EdgeColor','k');
 
 if length(hdat) ~= sum(N)
-   disp(sprintf('WARNING: check edges -- the number of input (%i)',length(hdat)));
-   disp(sprintf('         does not equal the sum of bin counts (%i)',sum(N)));
+   disp(sprintf('WARNING (plot_histo.m): You may want to extend the edges --'));
+   disp(sprintf(' the number of input (%i) does not equal the sum of bin counts (%i).',length(hdat),sum(N)));
 end
 
 centers = edges + dbin/2;
