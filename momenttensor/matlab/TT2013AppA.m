@@ -100,6 +100,7 @@ disp('======= Table A1 of TapeTape2013 ===========');
 
 rho = sqrt(sum(lams.^2))
 
+% normalized eigenvalues
 lamh = lams / rho
 lam1h = lamh(1);
 lam2h = lamh(2);
@@ -109,31 +110,41 @@ u = (lam1-lam3) / sqrt(2)
 v = (-lam1 + 2*lam2 - lam3)/sqrt(6)
 w = (lam1 + lam2 + lam3)/sqrt(3)
 
-beta = 90 - delta3(ipick)
-gamma = gamma3(ipick)
+delta = asin(w/rho)*deg         % delta3(ipick)
+beta = acos(w/rho)*deg          % 90 - delta3(ipick)
+gamma = atan(v/u)*deg           % gamma3(ipick)
 
 alpha = acos( (lam1-2*lam2+lam3) / (lam1-lam3) )*deg
-nu = nu3(ipick)
+nu = lam2 / (lam1 + lam3)       % nu3(ipick)
 
 zeta = acos( sqrt(2*(lam1-lam2)*(lam2-lam3)) / rho ) * deg
+cosz = cos(zeta/deg);
+sinz = sin(zeta/deg);
 
 % eqs 24
 phi = atan( (lam1-2*lam2+lam3)/(sqrt(2)*(lam1+lam2+lam3)) )*deg
 
+% unit double couple tensors
 D = 1/sqrt(2) * [0 0 1 ; 0 0 0 ; 1 0 0]
 
+% unit crack tensor
 K0 = [lam2 0 0 ; 0 lam2 0 ; 0 0 lam1-lam2+lam3 ];
-Knorm = sqrt(sum(diag(K0).^2));
+Knorm = sqrt(sum(diag(K0).^2));     % norm(K0(:))
 K = K0 / Knorm
+% check with Eq 47, which uses normalized eigenvalues
+% Kcheck = 1/sinz * [lam2h 0 0 ; 0 lam2h 0 ; 0 0 lam1h-lam2h+lam3h ];
 
-% note: using normalized eigenvalues
+% Eq 48, which uses normalized eigenvalues
 Mh = [lam2h 0 sqrt((lam1h-lam2h)*(lam2h-lam3h)) ; ...
     0 lam2h 0 ; ...
-    sqrt((lam1h-lam2h)*(lam2h-lam3h)) 0 lam1h - lam2h + lam3h]
+    sqrt((lam1h-lam2h)*(lam2h-lam3h)) 0 lam1h-lam2h+lam3h]
 
 t1 = sqrt((lam2-lam3)/(lam1-lam3));
 t2 = sqrt((lam1-lam2)/(lam1-lam3));
 Uh = [t1 0 -t2 ; 0 1 0 ; t2 0 t1]
+
+% various checks
+% norm(D(:)), norm(K(:)), norm(Mh(:)), Uh'*Uh
 
 %------------
 % Table A2
@@ -144,16 +155,22 @@ disp('======= Table A2 ===========');
 N1 = Umat*rotmat(-alpha/2,2)*[1 0 0]'
 N2 = Umat*rotmat(alpha/2,2)*[1 0 0]'
 
-% 
+% unit double couple tensors
 chi = (180 - alpha)/2;       % Eq 51
 U1 = Umat*rotmat(chi,2)
 U2 = Umat*rotmat(180,1)*rotmat(chi,2)
 DU1 = U1*D*U1'
 DU2 = U2*D*U2'
 
-% 
+% unit crack tensors
 KU1 = U1*K*U1'
 KU2 = U2*K*U2'
+
+% various checks
+% norm(DU1(:)), norm(DU2(:)), norm(KU1(:)), norm(KU2(:)), U1'*U1, U2'*U2
+
+% ultimate check
+% Mmat, rho*(cosz*DU1 + sinz*KU1), rho*(cosz*DU2 + sinz*KU2)
 
 % CHECK ON 10/22/2013
 %
