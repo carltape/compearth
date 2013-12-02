@@ -1,16 +1,29 @@
 README
 
-some Mathematica notebooks that can be used for 3D plotting of moment tensor space presented in Tape and Tape (2012), "A geometric setting for moment tensors"
+some Mathematica notebooks that can be used for 3D plotting of moment tensor space
+References:
+W. Tape and C. Tape (GJI 2012), "A geometric setting for moment tensors"
+W. Tape and C. Tape (GJI 2013), "The classical model for moment tensors"
 
-BeachballCodeAlone.nb
-  plot moment tensors in 3D
- 
+-----------
+
 Lune.nb
-  starter script for points on the lune
+  stand-alone starter script for points on the lune
   see Lune.pdf for example output
 
-LuneExtended.nb
-  script for fancier plotting on the lune; execute commonMMAfuns.nb FIRST
-  see LuneExtended.pdf for example output
+-----------
+For more plotting features, run the following two notebooks (in order):
+  common_funs.nb
+  common_MTfuns.nb
+
+Then try one of these:
+
+BBs3D.nb
+  plotting moment tensors in 3D
+  see BBs3D.pdf for example output
+
+LuneWithOptions.nb
+  plotting points on the lune with fancier options
+  see LuneWithOptions.pdf for example output
 
 -----------
