@@ -18,12 +18,10 @@ For more plotting features, run the following two notebooks (in order):
 
 Then try one of these:
 
-BBs3D.nb
-  plotting moment tensors in 3D
-  see BBs3D.pdf for example output
-
 LuneWithOptions.nb
   plotting points on the lune with fancier options
-  see LuneWithOptions.pdf for example output
+
+BBs3D.nb
+  plotting moment tensors in 3D (and 2D)
 
 -----------

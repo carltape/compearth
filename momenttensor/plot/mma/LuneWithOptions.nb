@@ -10,457 +10,14 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[     30285,        758]
-NotebookOptionsPosition[     29510,        732]
-NotebookOutlinePosition[     30126,        754]
-CellTagsIndexPosition[     30083,        751]
+NotebookDataLength[     12305,        320]
+NotebookOptionsPosition[     11818,        302]
+NotebookOutlinePosition[     12233,        318]
+CellTagsIndexPosition[     12190,        315]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
-Cell[BoxData[
- RowBox[{
-  RowBox[{
-   RowBox[{"Paxes", "[", 
-    RowBox[{
-    "t1_", ",", "t2_", ",", "t3_", ",", "u_", ",", "c_", ",", "lengthAxis_", 
-     ",", "BBrad_", ",", "ArrowScale_", ",", "tkns_", ",", "eye_", ",", 
-     "WantArrowColor_"}], "]"}], ":=", 
-   RowBox[{"{", "\[IndentingNewLine]", 
-    RowBox[{
-     RowBox[{"If", "[", 
-      RowBox[{"t1", ",", 
-       RowBox[{"{", 
-        RowBox[{
-         RowBox[{"{", 
-          RowBox[{
-           RowBox[{"Thickness", "[", "tkns", "]"}], ",", "       ", 
-           RowBox[{"Line", "[", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"c", "+", 
-               RowBox[{"u", ".", "#"}]}], "&"}], "/@", 
-             RowBox[{"{", 
-              RowBox[{
-               RowBox[{"{", 
-                RowBox[{"BBrad", ",", "0", ",", "0"}], "}"}], ",", 
-               RowBox[{"{", 
-                RowBox[{
-                 RowBox[{".95", "lengthAxis"}], ",", "0", ",", "0"}], "}"}]}],
-               "}"}]}], "]"}]}], "}"}], ",", "\[IndentingNewLine]", 
-         RowBox[{"{", 
-          RowBox[{
-           RowBox[{"Lighting", "\[Rule]", "\"\<Neutral\>\""}], ",", 
-           RowBox[{"If", "[", 
-            RowBox[{"WantArrowColor", ",", 
-             RowBox[{"Hue", "[", ".01", "]"}], ",", 
-             RowBox[{"{", "}"}]}], "]"}], ",", 
-           RowBox[{"Arrow3D", "[", 
-            RowBox[{"c", ",", 
-             RowBox[{"c", "+", 
-              RowBox[{"1.07", 
-               RowBox[{"u", ".", 
-                RowBox[{"{", 
-                 RowBox[{"lengthAxis", ",", "0", ",", "0"}], "}"}]}]}]}], ",",
-              "ArrowScale", ",", 
-             RowBox[{".1", "tkns"}], ",", "eye"}], "]"}]}], "}"}]}], "}"}], 
-       ",", 
-       RowBox[{"{", "}"}]}], "]"}], ",", "\[IndentingNewLine]", 
-     RowBox[{"If", "[", 
-      RowBox[{"t2", ",", 
-       RowBox[{"{", 
-        RowBox[{
-         RowBox[{"{", 
-          RowBox[{
-           RowBox[{"Thickness", "[", "tkns", "]"}], ",", "       ", 
-           RowBox[{"Line", "[", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"c", "+", 
-               RowBox[{"u", ".", "#"}]}], "&"}], "/@", 
-             RowBox[{"{", 
-              RowBox[{
-               RowBox[{"{", 
-                RowBox[{"0", ",", "BBrad", ",", "0"}], "}"}], ",", 
-               RowBox[{"{", 
-                RowBox[{"0", ",", 
-                 RowBox[{".95", "lengthAxis"}], ",", "0"}], "}"}]}], "}"}]}], 
-            "]"}]}], "}"}], ",", "\[IndentingNewLine]", 
-         RowBox[{"{", 
-          RowBox[{
-           RowBox[{"Lighting", "\[Rule]", "\"\<Neutral\>\""}], ",", 
-           RowBox[{"If", "[", 
-            RowBox[{"WantArrowColor", ",", 
-             RowBox[{"Hue", "[", ".6", "]"}], ",", 
-             RowBox[{"{", "}"}]}], "]"}], ",", 
-           RowBox[{"Arrow3D", "[", 
-            RowBox[{"c", ",", 
-             RowBox[{"c", "+", 
-              RowBox[{"1.07", 
-               RowBox[{"u", ".", 
-                RowBox[{"{", 
-                 RowBox[{"0", ",", "lengthAxis", ",", "0"}], "}"}]}]}]}], ",",
-              "ArrowScale", ",", 
-             RowBox[{".1", "tkns"}], ",", "eye"}], "]"}]}], "}"}]}], "}"}], 
-       ",", 
-       RowBox[{"{", "}"}]}], "]"}], ",", "\[IndentingNewLine]", 
-     RowBox[{"If", "[", 
-      RowBox[{"t3", ",", 
-       RowBox[{"{", 
-        RowBox[{
-         RowBox[{"{", 
-          RowBox[{
-           RowBox[{"Thickness", "[", "tkns", "]"}], ",", "       ", 
-           RowBox[{"Line", "[", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"c", "+", 
-               RowBox[{"u", ".", "#"}]}], "&"}], "/@", 
-             RowBox[{"{", 
-              RowBox[{
-               RowBox[{"{", 
-                RowBox[{"0", ",", "0", ",", "BBrad"}], "}"}], ",", 
-               RowBox[{"{", 
-                RowBox[{"0", ",", "0", ",", 
-                 RowBox[{".95", "lengthAxis"}]}], "}"}]}], "}"}]}], "]"}]}], 
-          "}"}], ",", "\[IndentingNewLine]", 
-         RowBox[{"{", 
-          RowBox[{
-           RowBox[{"Lighting", "\[Rule]", "\"\<Neutral\>\""}], ",", 
-           RowBox[{"If", "[", 
-            RowBox[{"WantArrowColor", ",", 
-             RowBox[{"Hue", "[", ".15", "]"}], ",", 
-             RowBox[{"{", "}"}]}], "]"}], ",", 
-           RowBox[{"Arrow3D", "[", 
-            RowBox[{"c", ",", 
-             RowBox[{"c", "+", 
-              RowBox[{"1.07", 
-               RowBox[{"u", ".", 
-                RowBox[{"{", 
-                 RowBox[{"0", ",", "0", ",", "lengthAxis"}], "}"}]}]}]}], ",",
-              "ArrowScale", ",", 
-             RowBox[{".1", "tkns"}], ",", "eye"}], "]"}]}], "}"}]}], "}"}], 
-       ",", 
-       RowBox[{"{", "}"}]}], "]"}]}], "}"}]}], ";"}]], "Input"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"Lune", "[", 
-   RowBox[{
-   "\[CapitalLambda]list_", ",", "ExtraPts_", ",", "eye_", ",", 
-    "\[CapitalLambda]axes_", ",", "uvwAxes_", ",", "grid_", ",", 
-    "ZeroLam1Lam3_", ",", "DeviatoricArc_", ",", "LuneBoundary_", ",", 
-    "\[Nu]List_"}], "]"}], ":=", 
-  RowBox[{"Graphics3D", "[", 
-   RowBox[{
-    RowBox[{"{", "\[IndentingNewLine]", 
-     RowBox[{
-      RowBox[{"If", "[", 
-       RowBox[{"True", ",", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"GrayLevel", "[", ".7", "]"}], ",", 
-          RowBox[{"EdgeForm", "[", "]"}], ",", 
-          RowBox[{"Polygon", "/@", 
-           RowBox[{"SpherePolyList", "[", 
-            RowBox[{
-            "1", ",", "30", ",", "330", ",", "0", ",", "180", ",", "5", ",", 
-             "5"}], "]"}]}]}], "}"}], ",", 
-        RowBox[{"{", "}"}]}], "]"}], ",", "        ", 
-      RowBox[{"(*", " ", 
-       StyleBox[
-        RowBox[{"opaque", " ", "sphere"}],
-        FontColor->RGBColor[1, 0, 0]], " ", "*)"}], "\[IndentingNewLine]", 
-      RowBox[{"If", "[", 
-       RowBox[{"True", ",", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"Hue", "[", 
-           RowBox[{".1", ",", "1", ",", ".5"}], "]"}], ",", 
-          RowBox[{"EdgeForm", "[", "]"}], ",", 
-          RowBox[{"Polygon", "/@", 
-           RowBox[{"Map", "[", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"MapEyeward", "[", 
-               RowBox[{"#", ",", 
-                RowBox[{"-", ".015"}], ",", "eye"}], "]"}], "&"}], ",", 
-             RowBox[{"SpherePolyList", "[", 
-              RowBox[{"1", ",", 
-               RowBox[{"-", "30"}], ",", "30", ",", "0", ",", "180", ",", "5",
-                ",", "5"}], "]"}], ",", 
-             RowBox[{"{", "2", "}"}]}], "]"}]}]}], "}"}], ",", 
-        RowBox[{"{", "}"}]}], "]"}], ",", "    ", 
-      RowBox[{"(*", " ", 
-       StyleBox[
-        RowBox[{"opaque", " ", "lune"}],
-        FontColor->RGBColor[1, 0, 0]], " ", "*)"}], "\[IndentingNewLine]", 
-      RowBox[{"If", "[", 
-       RowBox[{"uvwAxes", ",", 
-        RowBox[{"Paxes", "[", 
-         RowBox[{"True", ",", "True", ",", "True", ",", "id", ",", 
-          RowBox[{"{", 
-           RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", "1.3", ",", "1", 
-          ",", "ArrowScale", ",", "tkns", ",", "eye", ",", "False"}], "]"}], 
-        ",", 
-        RowBox[{"{", "}"}]}], "]"}], ",", "       ", 
-      RowBox[{"(*", " ", 
-       StyleBox[
-        RowBox[{"uvw", " ", "axes"}],
-        FontColor->RGBColor[1, 0, 0]], " ", "*)"}], "\[IndentingNewLine]", 
-      RowBox[{"If", "[", 
-       RowBox[{"\[CapitalLambda]axes", ",", "    ", 
-        RowBox[{"Paxes", "[", 
-         RowBox[{"True", ",", "True", ",", "True", ",", "uG", ",", 
-          RowBox[{"{", 
-           RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", "1.3", ",", "1", 
-          ",", "ArrowScale", ",", "tkns", ",", "eye", ",", "True"}], "]"}], 
-        ",", 
-        RowBox[{"{", "}"}]}], "]"}], ",", "            ", 
-      RowBox[{"(*", " ", 
-       StyleBox[
-        RowBox[{"\[CapitalLambda]", " ", "axes"}],
-        FontColor->RGBColor[1, 0, 0]], " ", "*)"}], "\[IndentingNewLine]", 
-      RowBox[{"If", "[", 
-       RowBox[{"grid", ",", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"Hue", "[", ".10", "]"}], ",", 
-          RowBox[{"Table", "[", 
-           RowBox[{
-            RowBox[{"Line", "[", 
-             RowBox[{"Table", "[", 
-              RowBox[{
-               RowBox[{"xyztp", "[", 
-                RowBox[{"{", 
-                 RowBox[{"\[Gamma]", ",", "\[Beta]"}], "}"}], "]"}], ",", 
-               RowBox[{"{", 
-                RowBox[{"\[Gamma]", ",", 
-                 RowBox[{"-", "30"}], ",", "30", ",", "2."}], "}"}]}], "]"}], 
-             "]"}], ",", 
-            RowBox[{"{", 
-             RowBox[{"\[Beta]", ",", "10", ",", "170", ",", "10."}], "}"}]}], 
-           "]"}], ",", "       ", 
-          RowBox[{"(*", " ", 
-           StyleBox[
-            RowBox[{
-             RowBox[{"lunar", " ", "lat"}], "-", 
-             RowBox[{"long", " ", "grid"}]}],
-            FontColor->RGBColor[1, 0, 0]], " ", "*)"}], "\[IndentingNewLine]",
-           "                                        ", 
-          RowBox[{"Table", "[", 
-           RowBox[{
-            RowBox[{"Line", "[", 
-             RowBox[{"Table", "[", 
-              RowBox[{
-               RowBox[{"xyztp", "[", 
-                RowBox[{"{", 
-                 RowBox[{"\[Gamma]", ",", "\[Beta]"}], "}"}], "]"}], ",", 
-               RowBox[{"{", 
-                RowBox[{"\[Beta]", ",", "10", ",", "170", ",", "2."}], 
-                "}"}]}], "]"}], "]"}], ",", 
-            RowBox[{"{", 
-             RowBox[{"\[Gamma]", ",", 
-              RowBox[{"-", "30"}], ",", "30", ",", "10."}], "}"}]}], "]"}]}], 
-         "}"}], ",", 
-        RowBox[{"{", "}"}]}], "]"}], ",", "\[IndentingNewLine]", 
-      "\[IndentingNewLine]", 
-      RowBox[{"If", "[", 
-       RowBox[{"ZeroLam1Lam3", ",", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"{", 
-           RowBox[{
-            RowBox[{"Hue", "[", ".01", "]"}], ",", 
-            RowBox[{"Thickness", "[", "tkns", "]"}], ",", 
-            RowBox[{"Line", "[", 
-             RowBox[{"arc", "[", 
-              RowBox[{
-               RowBox[{"uG", ".", 
-                RowBox[{"{", 
-                 RowBox[{"1", ",", "0", ",", "0"}], "}"}]}], ",", 
-               RowBox[{"uG", ".", 
-                RowBox[{"unit", "[", 
-                 RowBox[{"{", 
-                  RowBox[{"1", ",", "1", ",", "0"}], "}"}], "]"}]}]}], "]"}], 
-             "]"}]}], "}"}], ",", "       ", 
-          RowBox[{"(*", " ", 
-           StyleBox[
-            RowBox[{
-            "zero", " ", "contour", " ", "for", " ", "\[Lambda]1", " ", "and",
-              " ", "\[Lambda]3"}],
-            FontColor->RGBColor[1, 0, 0]], " ", "*)"}], "\[IndentingNewLine]",
-           "                                     ", 
-          RowBox[{"{", 
-           RowBox[{"White", ",", "  ", 
-            RowBox[{"Thickness", "[", "tkns", "]"}], ",", "    ", 
-            RowBox[{"Line", "[", 
-             RowBox[{"arc", "[", 
-              RowBox[{
-               RowBox[{"uG", ".", 
-                RowBox[{"{", 
-                 RowBox[{"0", ",", "0", ",", 
-                  RowBox[{"-", "1"}]}], "}"}]}], ",", 
-               RowBox[{"uG", ".", 
-                RowBox[{"unit", "[", 
-                 RowBox[{"{", 
-                  RowBox[{"0", ",", 
-                   RowBox[{"-", "1"}], ",", 
-                   RowBox[{"-", "1"}]}], "}"}], "]"}]}]}], "]"}], "]"}]}], 
-           "}"}]}], " ", "}"}], ",", 
-        RowBox[{"{", "}"}]}], "]"}], ",", "\[IndentingNewLine]", 
-      RowBox[{"If", "[", 
-       RowBox[{"DeviatoricArc", ",", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"Hue", "[", ".80", "]"}], ",", 
-          RowBox[{"Thickness", "[", "tkns", "]"}], ",", 
-          RowBox[{"Line", "[", 
-           RowBox[{"arc", "[", 
-            RowBox[{
-             RowBox[{"uG", ".", 
-              RowBox[{"unit", "[", 
-               RowBox[{"{", 
-                RowBox[{"2", ",", 
-                 RowBox[{"-", "1"}], ",", 
-                 RowBox[{"-", "1"}]}], "}"}], "]"}]}], ",", 
-             RowBox[{"uG", ".", 
-              RowBox[{"unit", "[", 
-               RowBox[{"{", 
-                RowBox[{"1", ",", "1", ",", 
-                 RowBox[{"-", "2"}]}], "}"}], "]"}]}]}], "]"}], "]"}]}], 
-         "}"}], ",", 
-        RowBox[{"{", "}"}]}], "]"}], ",", "       ", 
-      RowBox[{"(*", " ", 
-       StyleBox[
-        RowBox[{"deviatoric", " ", "arc"}],
-        FontColor->RGBColor[1, 0, 0]], " ", "*)"}], "\[IndentingNewLine]", 
-      RowBox[{"If", "[", 
-       RowBox[{"LuneBoundary", ",", "  ", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"Hue", "[", ".10", "]"}], ",", 
-          RowBox[{"Thickness", "[", "tkns", "]"}], ",", 
-          RowBox[{"Line", "[", 
-           RowBox[{
-            RowBox[{
-             RowBox[{"xyztp", "[", 
-              RowBox[{"{", 
-               RowBox[{
-                RowBox[{"-", "30"}], ",", "#"}], "}"}], "]"}], "&"}], "/@", 
-            RowBox[{"Range", "[", 
-             RowBox[{"0.", ",", "180", ",", "3"}], "]"}]}], "]"}], ",", 
-          "\[IndentingNewLine]", 
-          "                                                                   \
-                                ", 
-          RowBox[{"Line", "[", 
-           RowBox[{
-            RowBox[{
-             RowBox[{"xyztp", "[", 
-              RowBox[{"{", "  ", 
-               RowBox[{"30", ",", "#"}], "}"}], "]"}], "&"}], "/@", 
-            RowBox[{"Range", "[", 
-             RowBox[{"0.", ",", "180", ",", "3"}], "]"}]}], "]"}]}], "}"}], 
-        ",", 
-        RowBox[{"{", "}"}]}], "]"}], ",", "       ", 
-      RowBox[{"(*", " ", 
-       StyleBox[
-        RowBox[{"lune", " ", "boundary", " ", "curves"}],
-        FontColor->RGBColor[1, 0, 0]], " ", "*)"}], "\[IndentingNewLine]", 
-      "\[IndentingNewLine]", 
-      RowBox[{"{", 
-       RowBox[{
-        RowBox[{"Hue", "[", ".55", "]"}], ",", 
-        RowBox[{"Thickness", "[", "tkns", "]"}], ",", 
-        RowBox[{"Line", "[", 
-         RowBox[{"Map", "[", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"uG", ".", "#"}], "&"}], ",", 
-           RowBox[{"NuContour", "/@", "\[Nu]List"}], ",", 
-           RowBox[{"{", "2", "}"}]}], "]"}], "]"}]}], "}"}], ",", "       ", 
-      RowBox[{"(*", " ", 
-       StyleBox[
-        RowBox[{"\[Nu]", " ", "=", " ", 
-         RowBox[{"constant", " ", "curves"}]}],
-        FontColor->RGBColor[1, 0, 0]], " ", "*)"}], "\[IndentingNewLine]", 
-      "                                   ", "\[IndentingNewLine]", 
-      RowBox[{"{", 
-       RowBox[{
-        RowBox[{"Hue", "[", ".15", "]"}], ",", 
-        RowBox[{"PointSize", "[", "ptsz", "]"}], ",", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"Point", "[", 
-           RowBox[{"MapEyeward", "[", 
-            RowBox[{
-             RowBox[{"uG", ".", 
-              RowBox[{"unit", "[", "#", "]"}]}], ",", ".03", ",", "eye"}], 
-            "]"}], "]"}], "&"}], "/@", "\[CapitalLambda]list"}]}], "}"}], ",",
-       "      ", 
-      RowBox[{"(*", " ", 
-       StyleBox[
-        RowBox[{"the", " ", "eigenvalue", " ", "triples"}],
-        FontColor->RGBColor[1, 0, 0]], " ", "*)"}], "\[IndentingNewLine]", 
-      RowBox[{"{", "                      ", 
-       RowBox[{
-        RowBox[{"PointSize", "[", ".02", "]"}], ",", "  ", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"Point", "[", 
-           RowBox[{"MapEyeward", "[", 
-            RowBox[{
-             RowBox[{"uG", ".", 
-              RowBox[{"unit", "[", "#", "]"}]}], ",", ".02", ",", "eye"}], 
-            "]"}], "]"}], "&"}], "/@", "ExtraPts"}]}], " ", "}"}]}], 
-     "\[IndentingNewLine]", "}"}], ",", 
-    RowBox[{"ViewPoint", "\[Rule]", "eye"}], ",", 
-    RowBox[{"Lighting", "\[Rule]", "\"\<Neutral\>\""}], ",", 
-    RowBox[{"Boxed", "->", "False"}]}], "]"}]}]], "Input",
- CellChangeTimes->{{3.5677121804655223`*^9, 3.5677122573268566`*^9}, {
-   3.5677123967130995`*^9, 3.567712644878332*^9}, {3.567712688293208*^9, 
-   3.5677127378856945`*^9}, {3.5677128682083216`*^9, 
-   3.5677129256164217`*^9}, {3.5677129892645326`*^9, 3.567713007703765*^9}, {
-   3.567713046922233*^9, 3.5677130562198496`*^9}, {3.567713299049873*^9, 
-   3.567713299517874*^9}, {3.567720544952149*^9, 3.5677205668882875`*^9}, 
-   3.5677980179584956`*^9, {3.5677980762395973`*^9, 3.5677980797677035`*^9}, 
-   3.5677982021169176`*^9, {3.5677983010304904`*^9, 3.5677983023564925`*^9}, 
-   3.5926845072389603`*^9, {3.592684539479005*^9, 3.5926846504091578`*^9}, {
-   3.592684683889204*^9, 3.5926847066992354`*^9}, {3.5926847565893044`*^9, 
-   3.59268480357137*^9}, {3.5926848359214153`*^9, 3.592684946343569*^9}, 
-   3.592685060335727*^9, 3.5926851022777863`*^9, {3.592685183307898*^9, 
-   3.592685210249936*^9}, {3.592685283602039*^9, 3.592685341882119*^9}, {
-   3.592685508452349*^9, 3.5926855096023507`*^9}, {3.59268555877442*^9, 
-   3.5926855669044313`*^9}, {3.5926855999644766`*^9, 3.592685627894515*^9}, {
-   3.592685740904671*^9, 3.59268580451676*^9}, {3.59268589760889*^9, 
-   3.5926858984088907`*^9}, {3.5926859350789413`*^9, 
-   3.5926859646289825`*^9}, {3.5926860391190853`*^9, 
-   3.5926862829634247`*^9}, {3.592686320763477*^9, 3.592686335403497*^9}, {
-   3.5926863666255417`*^9, 3.5926864609776726`*^9}, 3.5926864923877163`*^9, {
-   3.592686522507758*^9, 3.5926866381019197`*^9}, 3.5926866952819986`*^9, {
-   3.5926867274820433`*^9, 3.592686750322075*^9}, {3.592686804776152*^9, 
-   3.592686974068387*^9}, {3.5926870311004667`*^9, 3.5926872088827133`*^9}, {
-   3.5926873329328847`*^9, 3.5926873490429068`*^9}, {3.5926874450650406`*^9, 
-   3.5926874931651073`*^9}, {3.5926875500951853`*^9, 
-   3.5926875901772423`*^9}, {3.5926876223072863`*^9, 3.592687624057289*^9}, {
-   3.5926877766274996`*^9, 3.5926878245995665`*^9}, 3.5926886968197803`*^9, {
-   3.592688908682074*^9, 3.592688909362075*^9}, {3.592688947772128*^9, 
-   3.5926889487921295`*^9}, {3.592689041424258*^9, 3.5926890422342596`*^9}, {
-   3.5927065839312325`*^9, 3.5927066991298957`*^9}, {3.5927067394199514`*^9, 
-   3.5927067495924654`*^9}, 3.592707484733987*^9, {3.5927075169840317`*^9, 
-   3.5927075170940323`*^9}, {3.5927075752441125`*^9, 
-   3.5927075958541408`*^9}, {3.592707715196307*^9, 3.592707721126315*^9}, {
-   3.5927078055589323`*^9, 3.5927078189589505`*^9}, {3.5927078680510197`*^9, 
-   3.5927078736210275`*^9}, 3.592709412742171*^9, {3.5927615773461347`*^9, 
-   3.592761799678443*^9}, {3.592761838140997*^9, 3.592761906243591*^9}, {
-   3.5927620022202263`*^9, 3.5927620163402452`*^9}, {3.5927621101778755`*^9, 
-   3.592762154722438*^9}, {3.5927622163770247`*^9, 3.592762338906197*^9}, {
-   3.59276265722814*^9, 3.5927627706007967`*^9}, {3.592762872363437*^9, 
-   3.592762925132513*^9}, {3.592763012727634*^9, 3.5927630598276987`*^9}, 
-   3.592763249511964*^9, {3.5927637912592216`*^9, 3.5927638503263044`*^9}, {
-   3.592763899586373*^9, 3.592763974650978*^9}, {3.5927640224650464`*^9, 
-   3.5927640320200596`*^9}, {3.592764123844688*^9, 3.592764137764707*^9}}],
-
 Cell[BoxData[{
  RowBox[{
   RowBox[{
@@ -543,18 +100,18 @@ Cell[BoxData[{
      StyleBox["*",
       FontColor->RGBColor[1, 0, 0]], ")"}]]}]}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"uvwAxes", "=", "False"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"WantUVWaxes", "=", "False"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"\[CapitalLambda]axes", "=", "False"}], 
+  RowBox[{"Want\[CapitalLambda]axes", "=", "False"}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"grid", "=", "False"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"WantGrid", "=", "False"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"ZeroLam1Lam3", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"WantZeroLam1Lam3", "=", "True"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"DeviatoricArc", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"WantDeviatoricArc", "=", "True"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"LuneBoundary", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"WantLuneBoundary", "=", "True"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{"\[Nu]List", "=", 
@@ -587,9 +144,9 @@ Cell[BoxData[{
  RowBox[{"Lune", "[", 
   RowBox[{
   "\[CapitalLambda]list", ",", "ExtraPts", ",", "eye", ",", 
-   "\[CapitalLambda]axes", ",", "uvwAxes", ",", "grid", ",", "ZeroLam1Lam3", 
-   ",", "DeviatoricArc", ",", "LuneBoundary", ",", "\[Nu]List"}], 
-  "]"}]}], "Input",
+   "Want\[CapitalLambda]axes", ",", "WantUVWaxes", ",", "WantGrid", ",", 
+   "WantZeroLam1Lam3", ",", "WantDeviatoricArc", ",", "WantLuneBoundary", ",",
+    "\[Nu]List"}], "]"}]}], "Input",
  CellChangeTimes->{{3.592687640827312*^9, 3.5926877062774024`*^9}, {
    3.5926879330997167`*^9, 3.592687939259725*^9}, {3.592688055429886*^9, 
    3.5926880555798855`*^9}, {3.5926880881199303`*^9, 
@@ -605,7 +162,11 @@ Cell[BoxData[{
    3.592763374106637*^9}, {3.5927634163086967`*^9, 3.5927634236087065`*^9}, {
    3.592763478506283*^9, 3.5927635372988644`*^9}, {3.592763614502475*^9, 
    3.5927636539100294`*^9}, 3.592763703615098*^9, {3.5927637629191823`*^9, 
-   3.592763773709197*^9}, {3.5927640659501066`*^9, 3.592764095092647*^9}}],
+   3.592763773709197*^9}, {3.5927640659501066`*^9, 3.592764095092647*^9}, {
+   3.594587454019518*^9, 3.594587478499552*^9}, {3.5945875300096235`*^9, 
+   3.594587584702199*^9}, {3.59458763517177*^9, 3.594587646831786*^9}, {
+   3.594587693208353*^9, 3.5945877293584023`*^9}, {3.5945878073160105`*^9, 
+   3.5945878238160334`*^9}, {3.594589845480216*^9, 3.5945898503902225`*^9}}],
 
 Cell["Now experiment with the inputs :", "Text",
  CellChangeTimes->{{3.5927645936058426`*^9, 3.5927646022258544`*^9}},
@@ -653,17 +214,18 @@ Cell[BoxData[{
         RowBox[{"-", "1"}]}], "}"}]}], "}"}]}], ";"}], 
   " "}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"uvwAxes", "=", "False"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"WantUVWaxes", "=", "False"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"\[CapitalLambda]axes", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"Want\[CapitalLambda]axes", "=", "True"}], 
+  ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"grid", "=", "False"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"WantGrid", "=", "False"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"ZeroLam1Lam3", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"WantZeroLam1Lam3", "=", "True"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"DeviatoricArc", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"WantDeviatoricArc", "=", "True"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"LuneBoundary", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"WantLuneBoundary", "=", "True"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{"\[Nu]List", "=", 
@@ -683,61 +245,63 @@ Cell[BoxData[{
  RowBox[{"Lune", "[", 
   RowBox[{
   "\[CapitalLambda]list", ",", "ExtraPts", ",", "eye", ",", 
-   "\[CapitalLambda]axes", ",", "uvwAxes", ",", "grid", ",", "ZeroLam1Lam3", 
-   ",", "DeviatoricArc", ",", "LuneBoundary", ",", "\[Nu]List"}], 
-  "]"}]}], "Input",
+   "Want\[CapitalLambda]axes", ",", "WantUVWaxes", ",", "WantGrid", ",", 
+   "WantZeroLam1Lam3", ",", "WantDeviatoricArc", ",", "WantLuneBoundary", ",",
+    "\[Nu]List"}], "]"}]}], "Input",
  CellChangeTimes->{{3.592764213769314*^9, 3.5927643025994363`*^9}, {
-  3.5927643423569913`*^9, 3.592764343666993*^9}}],
+  3.5927643423569913`*^9, 3.592764343666993*^9}, {3.59458745540952*^9, 
+  3.594587456779522*^9}, {3.5945875310396247`*^9, 3.594587532039626*^9}, {
+  3.594587569102177*^9, 3.5945875713221807`*^9}, {3.5945876370817723`*^9, 
+  3.5945876394317756`*^9}, {3.5945876946083546`*^9, 3.5945877238883953`*^9}}],
 
 Cell[BoxData[{
  RowBox[{
-  RowBox[{"uvwAxes", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"WantUVWaxes", "=", "True"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"\[CapitalLambda]axes", "=", "False"}], 
+  RowBox[{"Want\[CapitalLambda]axes", "=", "False"}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{"Lune", "[", 
   RowBox[{
   "\[CapitalLambda]list", ",", "ExtraPts", ",", "eye", ",", 
-   "\[CapitalLambda]axes", ",", "uvwAxes", ",", "grid", ",", "ZeroLam1Lam3", 
-   ",", "DeviatoricArc", ",", "LuneBoundary", ",", "\[Nu]List"}], 
-  "]"}]}], "Input",
+   "Want\[CapitalLambda]axes", ",", "WantUVWaxes", ",", "WantGrid", ",", 
+   "WantZeroLam1Lam3", ",", "WantDeviatoricArc", ",", "WantLuneBoundary", ",",
+    "\[Nu]List"}], "]"}]}], "Input",
  CellChangeTimes->{{3.592688364659315*^9, 3.592688372639326*^9}, {
    3.5926886722197466`*^9, 3.592688672639747*^9}, {3.592688771299883*^9, 
    3.5926887716198835`*^9}, {3.5927069718337765`*^9, 
    3.5927070053738227`*^9}, {3.5927083462931843`*^9, 3.592708456235836*^9}, 
    3.592709541932349*^9, 3.592709633774477*^9, {3.5927096937265606`*^9, 
    3.592709694586562*^9}, 3.5927642039968*^9, {3.5927643886290565`*^9, 
-   3.5927644061490808`*^9}, 3.592773811079462*^9}],
+   3.5927644061490808`*^9}, {3.5945874618995295`*^9, 3.594587464739533*^9}, {
+   3.594587533199628*^9, 3.5945875342696295`*^9}, 3.594587572162182*^9, 
+   3.5945876407317777`*^9, {3.594587696258357*^9, 3.594587724628396*^9}, {
+   3.5945898950302844`*^9, 3.594589896920287*^9}}],
 
 Cell[BoxData[{
  RowBox[{
-  RowBox[{"grid", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"WantGrid", "=", "True"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"ZeroLam1Lam3", "=", "False"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"WantZeroLam1Lam3", "=", "False"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"DeviatoricArc", "=", "False"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"WantDeviatoricArc", "=", "False"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"\[Nu]List", "=", 
    RowBox[{"{", "}"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{"Lune", "[", 
   RowBox[{
   "\[CapitalLambda]list", ",", "ExtraPts", ",", "eye", ",", 
-   "\[CapitalLambda]axes", ",", "uvwAxes", ",", "grid", ",", "ZeroLam1Lam3", 
-   ",", "DeviatoricArc", ",", "LuneBoundary", ",", "\[Nu]List"}], 
-  "]"}]}], "Input",
+   "Want\[CapitalLambda]axes", ",", "WantUVWaxes", ",", "WantGrid", ",", 
+   "WantZeroLam1Lam3", ",", "WantDeviatoricArc", ",", "WantLuneBoundary", ",",
+    "\[Nu]List"}], "]"}]}], "Input",
  CellChangeTimes->{{3.5926888384799757`*^9, 3.592688860262007*^9}, 
    3.5926890222242317`*^9, 3.592707015683837*^9, {3.592707069946412*^9, 
    3.592707121988984*^9}, 3.59270955687237*^9, {3.592764462704159*^9, 
-   3.592764523526244*^9}}]
+   3.592764523526244*^9}, 3.594587465769534*^9, 3.59458753501963*^9, {
+   3.5945875736721835`*^9, 3.594587574722185*^9}, {3.5945876419117794`*^9, 
+   3.59458764282178*^9}, {3.5945876974983587`*^9, 3.594587725638397*^9}}]
 },
 WindowSize->{1303, 803},
-WindowMargins->{{201, Automatic}, {Automatic, 0}},
-PrintingCopies->1,
-PrintingPageRange->{Automatic, Automatic},
-PrintingOptions->{"PaperOrientation"->"Portrait",
-"PaperSize"->{Automatic, Automatic},
-"PostScriptOutputFile"->"",
-"PrintingMargins"->36},
+WindowMargins->{{75, Automatic}, {58, Automatic}},
 PrivateNotebookOptions->{"VersionedStylesheet"->{"Default.nb"[8.] -> False}},
 FrontEndVersion->"9.0 for Linux x86 (64-bit) (February 7, 2013)",
 StyleDefinitions->"Default.nb"
@@ -753,13 +317,11 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[545, 20, 4698, 123, 165, "Input"],
-Cell[5246, 145, 14130, 316, 451, "Input"],
-Cell[19379, 463, 5613, 144, 319, "Input"],
-Cell[24995, 609, 196, 4, 31, "Text"],
-Cell[25194, 615, 2544, 74, 275, "Input"],
-Cell[27741, 691, 913, 18, 77, "Input"],
-Cell[28657, 711, 849, 19, 121, "Input"]
+Cell[545, 20, 5963, 148, 363, "Input"],
+Cell[6511, 170, 196, 4, 31, "Text"],
+Cell[6710, 176, 2846, 78, 297, "Input"],
+Cell[9559, 256, 1172, 21, 99, "Input"],
+Cell[10734, 279, 1080, 21, 143, "Input"]
 }
 ]
 *)
