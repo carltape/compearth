@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[     15609,        403]
-NotebookOptionsPosition[     14583,        366]
-NotebookOutlinePosition[     14999,        382]
-CellTagsIndexPosition[     14956,        379]
+NotebookDataLength[     15833,        410]
+NotebookOptionsPosition[     14841,        373]
+NotebookOutlinePosition[     15186,        388]
+CellTagsIndexPosition[     15143,        385]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -216,7 +216,14 @@ Cell[BoxData[{
    3.546964329241476*^9, {3.557848520391572*^9, 3.5578485217643747`*^9}, {
    3.5578486380001774`*^9, 3.5578486681082296`*^9}, 3.557934173358012*^9, {
    3.5579484727585306`*^9, 3.5579484768457375`*^9}, 3.5947439289348917`*^9, 
-   3.594746742942459*^9}]
+   3.594746742942459*^9}],
+
+Cell[TextData[StyleBox["The beachballs can be rotated with the mouse.",
+ FontFamily->"Times New Roman",
+ FontSize->14]], "Text",
+ CellChangeTimes->{{3.5517191256512923`*^9, 3.551719137460513*^9}, 
+   3.5947439982119884`*^9},
+ FontColor->RGBColor[1, 0, 0]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -365,9 +372,8 @@ Cell[BoxData[
 }, Open  ]]
 },
 WindowSize->{1281, 750},
-WindowMargins->{{198, Automatic}, {Automatic, 16}},
-PrivateNotebookOptions->{"VersionedStylesheet"->{"Default.nb"[8.] -> False}},
-FrontEndVersion->"9.0 for Linux x86 (64-bit) (February 7, 2013)",
+WindowMargins->{{71, Automatic}, {90, Automatic}},
+FrontEndVersion->"7.0 for Microsoft Windows (32-bit) (January 30, 2009)",
 StyleDefinitions->"Default.nb"
 ]
 (* End of Notebook Content *)
@@ -382,28 +388,29 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[567, 22, 318, 6, 45, "Subsection"],
-Cell[888, 30, 2341, 44, 55, "Input"],
-Cell[3232, 76, 957, 26, 55, "Input"],
-Cell[4192, 104, 1344, 35, 99, "Input"],
-Cell[5539, 141, 1394, 36, 99, "Input"],
-Cell[6936, 179, 1975, 39, 55, "Input"]
+Cell[567, 22, 318, 6, 36, "Subsection"],
+Cell[888, 30, 2341, 44, 52, "Input"],
+Cell[3232, 76, 957, 26, 52, "Input"],
+Cell[4192, 104, 1344, 35, 72, "Input"],
+Cell[5539, 141, 1394, 36, 72, "Input"],
+Cell[6936, 179, 1975, 39, 52, "Input"],
+Cell[8914, 220, 255, 5, 30, "Text"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[8948, 223, 416, 7, 71, "Subsection"],
-Cell[9367, 232, 1167, 32, 55, "Input"]
+Cell[9206, 230, 416, 7, 36, "Subsection"],
+Cell[9625, 239, 1167, 32, 52, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[10571, 269, 236, 3, 45, "Subsection"],
-Cell[10810, 274, 1629, 28, 32, "Input"]
+Cell[10829, 276, 236, 3, 36, "Subsection"],
+Cell[11068, 281, 1629, 28, 31, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[12476, 307, 281, 6, 45, "Subsection"],
-Cell[12760, 315, 886, 23, 55, "Input"]
+Cell[12734, 314, 281, 6, 36, "Subsection"],
+Cell[13018, 322, 886, 23, 52, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[13683, 343, 266, 3, 45, "Subsection"],
-Cell[13952, 348, 615, 15, 32, "Input"]
+Cell[13941, 350, 266, 3, 36, "Subsection"],
+Cell[14210, 355, 615, 15, 31, "Input"]
 }, Open  ]]
 }
 ]
