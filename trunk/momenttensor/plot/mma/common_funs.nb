@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[     83727,       2547]
-NotebookOptionsPosition[     81546,       2474]
-NotebookOutlinePosition[     82738,       2517]
-CellTagsIndexPosition[     82695,       2514]
+NotebookDataLength[     87142,       2651]
+NotebookOptionsPosition[     84961,       2578]
+NotebookOutlinePosition[     86153,       2621]
+CellTagsIndexPosition[     86110,       2618]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -67,17 +67,17 @@ Cell[BoxData[{
    RowBox[{"DateList", "[", "]"}], ",", "\"\<no\>\""}], "]"}]}], "Input"],
 
 Cell[BoxData[
- TemplateBox[{"12","\"-\"","1","\"-\"","2013"},
+ TemplateBox[{"12","\"-\"","2","\"-\"","2013"},
   "RowDefault"]], "Output",
  CellChangeTimes->CompressedData["
-1:eJwBRQG6/iFib1JlAQAAACcAAAA5NcvhPP/pQfAeIwQ9/+lBBt1kKWL/6UHs
-NMKL7wnqQfzaw/m3D+pBDFjj7YAT6kGUxlJutRTqQYeOQnT7FOpBHADRPAwV
-6kHC5NKejhXqQb4csW75FepBEEWFmFUa6kHee4jPfxrqQXwA7pCcHepBpnOF
-DOAe6kFSAqOz2x/qQaqAXbp2IupB9jCTU5km6kGkpIgYvSjqQbhD5kyOKupB
-VqkdibAs6kHM5ON5Dy7qQf75DdKLMepByLUXwcBD6kEcKjnNP0fqQSy2JEg2
-SOpBxHaGsgtJ6kES2pOexFLqQVRmCvh2U+pBJHHds4hd6kHknaI/W2bqQZId
-P3/kdupB1LbG8w+D6kGgpNwmDITqQVRBiZZGnepBxPEbm6+h6kF4GKmz9KHq
-QVNowdsCuOpBLqif7cjI6kEU+6IC
+1:eJxTTMoPSmVkYGDQBGJL09MPbf6/dPwgp8xiC6TZ7qZoJgHpNyaHut9zvnL8
+c+vwz+38rxx5Ih6/bRB+5TjlWFDeVpFXju19TiW/gbQMw0UbHtFXjoeeXJrX
+B6T3yWzM+wmkBVxbZ4RKvXK8V91xvh5I1zC8mzBH9pXjsuJWngdyrxyDmBZv
+vi3/ynFVQ+yuMqVXjt8MJgfPVHvluGRJh8RejVeOO5yf+fRpvXIMWynbuUHn
+leOZJ48r+fVeOf77yXup2/CV44mt4gcPOAPt17I8a+/+ylFnm4qHmccrxyNl
+bZu4PV85Ct2aPO9I0CvHkDSuH2XBrxxVCu9u7oh95fhk7iL76LRXjpNk7euf
+lL1yvLLt2Gf+5leOC5bcUeNpAap37JzmNhdozkfp2esXvnKskFi5+QuQDs44
+eJtpxyvHhezOf/NOAO2blPXnM5BOmvbsy1cgDQB93Kv0
   "]]
 }, Open  ]],
 
@@ -171,7 +171,7 @@ Cell[BoxData[{
      RowBox[{"Cpt", "-", "Bpt"}]}], "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
-   RowBox[{"SignedAngle", "[", 
+   RowBox[{"signedangle", "[", 
     RowBox[{"a_", ",", "b_", ",", "nor_"}], "]"}], ":=", 
    RowBox[{"If", "[", 
     RowBox[{
@@ -193,8 +193,31 @@ Cell[BoxData[{
          RowBox[{"a", ",", "b"}], "]"}]}]}], "]"}]}], "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
+   RowBox[{"SignedAngle", "[", 
+    RowBox[{"a_", ",", "b_", ",", "nor_"}], "]"}], ":=", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"EqualNumbers", "[", 
+      RowBox[{
+       RowBox[{"Angle", "[", 
+        RowBox[{"a", ",", "b"}], "]"}], ",", "\[Pi]"}], "]"}], ",", "\[Pi]", 
+     ",", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Det", "[", 
+         RowBox[{"{", 
+          RowBox[{"a", ",", "b", ",", "nor"}], "}"}], "]"}], ">=", "0"}], ",", 
+       RowBox[{"Angle", "[", 
+        RowBox[{"a", ",", "b"}], "]"}], ",", 
+       RowBox[{"-", 
+        RowBox[{"Angle", "[", 
+         RowBox[{"a", ",", "b"}], "]"}]}]}], "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
    RowBox[{
-    RowBox[{"AngleRad", "[", 
+    RowBox[{"Angle", "[", 
      RowBox[{"u_", ",", "v_"}], "]"}], ":=", 
     RowBox[{"Chop", "[", 
      RowBox[{
@@ -218,7 +241,7 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{
-    RowBox[{"AngleRad", "[", 
+    RowBox[{"Angle", "[", 
      RowBox[{"u_", ",", "v_"}], "]"}], ":=", 
     RowBox[{"ArcCos", "[", 
      FractionBox[
@@ -227,9 +250,28 @@ Cell[BoxData[{
        RowBox[{"length", "[", "u", "]"}], " ", 
        RowBox[{"length", "[", "v", "]"}]}]], "]"}]}], ";"}], "    ", 
   RowBox[{"(*", " ", 
-   StyleBox[
-    RowBox[{"choose", " ", "one"}],
-    FontColor->RGBColor[1, 0, 0]], " ", "*)"}], "   "}], "\n", 
+   RowBox[{
+    StyleBox[
+     RowBox[{"C", 
+      StyleBox["hoose",
+       FontColor->RGBColor[1, 0, 0]]}]], 
+    StyleBox[" ",
+     FontColor->RGBColor[1, 0, 0]], 
+    StyleBox[
+     RowBox[{"one", ".", " ", "Used"}],
+     FontColor->RGBColor[1, 0, 0]], 
+    StyleBox[" ",
+     FontColor->RGBColor[1, 0, 0]], 
+    StyleBox["to",
+     FontColor->RGBColor[1, 0, 0]], 
+    StyleBox[" ",
+     FontColor->RGBColor[1, 0, 0]], 
+    StyleBox["be",
+     FontColor->RGBColor[1, 0, 0]], 
+    StyleBox[" ",
+     FontColor->RGBColor[1, 0, 0]], 
+    StyleBox["AngleRad",
+     FontColor->RGBColor[1, 0, 0]]}], " ", "*)"}], "   "}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"ScalarProj", "[", 
@@ -608,6 +650,18 @@ Cell[BoxData[{
        SuperscriptBox["z", "2"]}]]], "]"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
+   RowBox[{"Phi", "[", 
+    RowBox[{"{", 
+     RowBox[{"x_", ",", "y_", ",", "z_"}], "}"}], "]"}], ":=", 
+   RowBox[{"ArcCos", "[", 
+    FractionBox["z", 
+     SqrtBox[
+      RowBox[{
+       SuperscriptBox["x", "2"], "+", 
+       SuperscriptBox["y", "2"], "+", 
+       SuperscriptBox["z", "2"]}]]], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
    RowBox[{"theta", "[", 
     RowBox[{"{", 
      RowBox[{"x_", ",", "y_", ",", "z_"}], "}"}], "]"}], ":=", 
@@ -710,6 +764,41 @@ Cell[BoxData[{
     "changed", " ", "Feb", " ", "2009", " ", "also", " ", "eliminated", " ", 
      "carets"}],
     FontColor->RGBColor[1, 0, 0]], " ", "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"Theta", "[", 
+     RowBox[{"{", 
+      RowBox[{"x_", ",", "y_", ",", "z_"}], "}"}], "]"}], ":=", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{
+       SqrtBox[
+        RowBox[{
+         SuperscriptBox["x", "2"], "+", 
+         SuperscriptBox["y", "2"]}]], "==", "0"}], ",", "0", ",", 
+      "               ", "\n", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"y", "\[GreaterEqual]", "0"}], ",", 
+        RowBox[{"ArcCos", "[", 
+         FractionBox["x", 
+          SqrtBox[
+           RowBox[{
+            SuperscriptBox["x", "2"], "+", 
+            SuperscriptBox["y", "2"]}]]], "]"}], ",", 
+        RowBox[{"-", 
+         RowBox[{"ArcCos", "[", 
+          FractionBox["x", 
+           SqrtBox[
+            RowBox[{
+             SuperscriptBox["x", "2"], "+", 
+             SuperscriptBox["y", "2"]}]]], "]"}]}]}], "]"}]}], "]"}]}], ";"}],
+   "  ", 
+  RowBox[{"(*", " ", 
+   StyleBox[
+    RowBox[{"used", " ", "for", " ", "lune", " ", "coordinates"}],
+    FontColor->RGBColor[1, 0, 0]], " ", "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{"theta2d", "[", "v_", "]"}], ":=", 
@@ -954,6 +1043,14 @@ Cell[BoxData[{
    RowBox[{
     RowBox[{"Abs", "[", 
      RowBox[{"x", "-", "y"}], "]"}], "<", ".00001"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"EqualVectors", "[", 
+    RowBox[{"x_", ",", "y_"}], "]"}], ":=", 
+   RowBox[{
+    RowBox[{"length", "[", 
+     RowBox[{"x", "-", "y"}], "]"}], "<", ".00001"}]}], 
+  ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{"SegmentList", "[", "PointList_", "]"}], ":=", 
@@ -1403,7 +1500,7 @@ Cell[BoxData[{
       "a"}], "&"}], "/@", 
     RowBox[{"myRange", "[", 
      RowBox[{"0", ",", 
-      RowBox[{"AngleRad", "[", 
+      RowBox[{"Angle", "[", 
        RowBox[{"a", ",", "b"}], "]"}], ",", "30"}], "]"}]}]}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
@@ -1517,7 +1614,12 @@ Cell[BoxData[{
    3.594492902030691*^9, 3.594492936992742*^9}, {3.594493034604878*^9, 
    3.594493069734926*^9}, {3.594493106114977*^9, 3.59449322455514*^9}, 
    3.59449358324364*^9, 3.594515431065692*^9, {3.5945158044122105`*^9, 
-   3.594515805652213*^9}},
+   3.594515805652213*^9}, {3.5947545896350193`*^9, 3.5947546197350607`*^9}, {
+   3.594828417439077*^9, 3.594828449759122*^9}, {3.594926309197468*^9, 
+   3.5949263218474855`*^9}, {3.594927514981152*^9, 3.5949275153411527`*^9}, {
+   3.594929784751333*^9, 3.5949297858113346`*^9}, {3.59492992226153*^9, 
+   3.594929926493537*^9}, {3.5949299683435946`*^9, 3.5949300347036858`*^9}, 
+   3.5950188480312347`*^9},
  AspectRatioFixed->True],
 
 Cell[CellGroupData[{
@@ -1627,7 +1729,8 @@ Cell[BoxData[
        FractionBox["\[Lambda]1", "3"]}], "-", 
       FractionBox["\[Lambda]2", "3"], "-", 
       FractionBox["\[Lambda]3", "3"]}]}]}], "}"}], "}"}]], "Output",
- CellChangeTimes->{3.5945193554846935`*^9, 3.5949300292008677`*^9}],
+ CellChangeTimes->{3.5945193554846935`*^9, 3.5947458342146816`*^9, 
+  3.5950182114603434`*^9, 3.595022247373889*^9}],
 
 Cell[BoxData[
  RowBox[{"{", 
@@ -1646,7 +1749,8 @@ Cell[BoxData[
      FractionBox["\[Lambda]1", "3"]}], "-", 
     FractionBox["\[Lambda]2", "3"], "-", 
     FractionBox["\[Lambda]3", "3"]}]}], "}"}]], "Output",
- CellChangeTimes->{3.5945193554846935`*^9, 3.594930029260741*^9}]
+ CellChangeTimes->{3.5945193554846935`*^9, 3.5947458342146816`*^9, 
+  3.5950182114603434`*^9, 3.5950222474337893`*^9}]
 }, Open  ]],
 
 Cell["ARROW2D IS FOR 2-DIMENSIONAL.  REDONE JUNE 2002", "SmallText",
@@ -2475,7 +2579,7 @@ Cell[BoxData[{
 WindowToolbars->"RulerBar",
 CellGrouping->Manual,
 WindowSize->{1017, 878},
-WindowMargins->{{161, Automatic}, {Automatic, 0}},
+WindowMargins->{{307, Automatic}, {0, Automatic}},
 PrintingCopies->1,
 PrintingPageRange->{Automatic, Automatic},
 PageHeaders->{{
@@ -2519,36 +2623,36 @@ Notebook[{
 Cell[545, 20, 183, 2, 31, "Text"],
 Cell[CellGroupData[{
 Cell[753, 26, 1448, 40, 99, "Input"],
-Cell[2204, 68, 588, 12, 31, "Output"]
+Cell[2204, 68, 604, 12, 31, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[2829, 85, 46381, 1435, 3802, "Input",
+Cell[2845, 85, 49678, 1537, 4014, "Input",
  PageBreakWithin->Automatic,
  PageBreakBelow->Automatic],
 Cell[CellGroupData[{
-Cell[49235, 1524, 2830, 82, 143, "Input"],
-Cell[52068, 1608, 719, 21, 54, "Output"],
-Cell[52790, 1631, 572, 17, 54, "Output"]
+Cell[52548, 1626, 2830, 82, 143, "Input"],
+Cell[55381, 1710, 768, 22, 54, "Output"],
+Cell[56152, 1734, 625, 18, 54, "Output"]
 }, Open  ]],
-Cell[53377, 1651, 145, 3, 28, "SmallText",
+Cell[56792, 1755, 145, 3, 28, "SmallText",
  Evaluatable->False],
-Cell[53525, 1656, 1588, 52, 99, "Input",
+Cell[56940, 1760, 1588, 52, 99, "Input",
  PageBreakBelow->Automatic],
-Cell[55116, 1710, 232, 8, 28, "SmallText",
+Cell[58531, 1814, 232, 8, 28, "SmallText",
  Evaluatable->False],
-Cell[55351, 1720, 11967, 319, 847, "Input"],
-Cell[67321, 2041, 362, 14, 47, "SmallText",
+Cell[58766, 1824, 11967, 319, 847, "Input"],
+Cell[70736, 2145, 362, 14, 47, "SmallText",
  Evaluatable->False],
-Cell[67686, 2057, 5526, 149, 395, "Input"]
+Cell[71101, 2161, 5526, 149, 395, "Input"]
 }, Open  ]],
-Cell[73227, 2209, 128, 2, 28, "SmallText"],
-Cell[73358, 2213, 818, 22, 55, "Input"],
-Cell[74179, 2237, 499, 19, 47, "SmallText"],
-Cell[74681, 2258, 4133, 124, 319, "Input"],
-Cell[78817, 2384, 1682, 54, 180, "Input"],
-Cell[80502, 2440, 194, 5, 47, "SmallText",
+Cell[76642, 2313, 128, 2, 28, "SmallText"],
+Cell[76773, 2317, 818, 22, 55, "Input"],
+Cell[77594, 2341, 499, 19, 47, "SmallText"],
+Cell[78096, 2362, 4133, 124, 319, "Input"],
+Cell[82232, 2488, 1682, 54, 196, "Input"],
+Cell[83917, 2544, 194, 5, 47, "SmallText",
  Evaluatable->False],
-Cell[80699, 2447, 843, 25, 55, "Input"]
+Cell[84114, 2551, 843, 25, 55, "Input"]
 }
 ]
 *)

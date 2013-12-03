@@ -10,14 +10,37 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[     12305,        320]
-NotebookOptionsPosition[     11818,        302]
-NotebookOutlinePosition[     12233,        318]
-CellTagsIndexPosition[     12190,        315]
+NotebookDataLength[     14770,        394]
+NotebookOptionsPosition[     14277,        375]
+NotebookOutlinePosition[     14623,        390]
+CellTagsIndexPosition[     14580,        387]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
+Cell["\<\
+This first command is optional.  It will speed up the beachball plotting by \
+decreasing the resolution on the balls.\
+\>", "Text",
+ CellChangeTimes->{{3.5927645936058426`*^9, 3.5927646022258544`*^9}, 
+   3.5950202416776795`*^9, {3.595021171106996*^9, 3.5950212033295403`*^9}},
+ FontFamily->"Times New Roman",
+ FontSize->14,
+ FontColor->RGBColor[1, 0, 0]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"PolyListForBB", "=", 
+    RowBox[{"BasicPolys", "[", 
+     RowBox[{
+      RowBox[{"Range", "[", 
+       RowBox[{"0.", ",", "360", ",", "10"}], "]"}], ",", 
+      RowBox[{"Range", "[", 
+       RowBox[{"0.", ",", "90", ",", "10"}], "]"}]}], "]"}]}], ";"}], 
+  "  "}]], "Input",
+ CellChangeTimes->{{3.5950212069995456`*^9, 3.595021212169553*^9}}],
+
 Cell[BoxData[{
  RowBox[{
   RowBox[{
@@ -166,10 +189,83 @@ Cell[BoxData[{
    3.594587454019518*^9, 3.594587478499552*^9}, {3.5945875300096235`*^9, 
    3.594587584702199*^9}, {3.59458763517177*^9, 3.594587646831786*^9}, {
    3.594587693208353*^9, 3.5945877293584023`*^9}, {3.5945878073160105`*^9, 
-   3.5945878238160334`*^9}, {3.594589845480216*^9, 3.5945898503902225`*^9}}],
+   3.5945878238160334`*^9}, {3.594589845480216*^9, 3.5945898503902225`*^9}, {
+   3.5950184864027305`*^9, 3.595018512746769*^9}, {3.595019818043092*^9, 
+   3.5950198227430983`*^9}, {3.595019907903216*^9, 3.5950199107132196`*^9}}],
 
-Cell["Now experiment with the inputs :", "Text",
- CellChangeTimes->{{3.5927645936058426`*^9, 3.5927646022258544`*^9}},
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"eye", "=", 
+   RowBox[{"10.", 
+    RowBox[{"xyztp", "[", 
+     RowBox[{"{", 
+      RowBox[{"35", ",", "70"}], "}"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"\[CapitalLambda]list", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"1", ",", "0", ",", 
+       RowBox[{"-", "1"}]}], "}"}], ",", 
+     RowBox[{"\[CapitalLambda]of\[Beta]\[Gamma]", "[", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"100", "Degree"}], ",", 
+        RowBox[{"10", "Degree"}]}], "}"}], "]"}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ExtraPts", "=", 
+   RowBox[{"{", "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"WantUVWaxes", "=", "False"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Want\[CapitalLambda]axes", "=", "False"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"WantGrid", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"WantZeroLam1Lam3", "=", "False"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"WantDeviatoricArc", "=", "False"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"WantLuneBoundary", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"\[Nu]List", "=", 
+    RowBox[{"{", "}"}]}], ";"}], " "}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ptsz", "=", ".015"}], ";", 
+  RowBox[{"BBrad", "=", ".22"}], ";", 
+  RowBox[{"SpokeLength", "=", "2.2"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Show", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Lune", "[", 
+      RowBox[{
+      "\[CapitalLambda]list", ",", "ExtraPts", ",", "eye", ",", 
+       "Want\[CapitalLambda]axes", ",", "WantUVWaxes", ",", "WantGrid", ",", 
+       "WantZeroLam1Lam3", ",", "WantDeviatoricArc", ",", "WantLuneBoundary", 
+       ",", "\[Nu]List"}], "]"}], ",", 
+     RowBox[{"Graphics3D", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"BeachballOnSphereForLamU", "[", 
+         RowBox[{
+         "#", ",", "id", ",", "BBrad", ",", "SpokeLength", ",", "eye"}], 
+         "]"}], "&"}], "/@", "\[CapitalLambda]list"}], "]"}]}], "}"}], ",", 
+   RowBox[{"ViewPoint", "\[Rule]", "eye"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.595015789444954*^9, 3.5950158319950123`*^9}, {
+   3.595016117801411*^9, 3.5950161267414236`*^9}, {3.5950183361245184`*^9, 
+   3.5950183401345234`*^9}, {3.595019615980812*^9, 3.5950196346608377`*^9}, {
+   3.5950196681108837`*^9, 3.5950197294809685`*^9}, 3.595019799793067*^9, {
+   3.5950198395531216`*^9, 3.595019871373165*^9}, {3.595020016365367*^9, 
+   3.595020117367508*^9}}],
+
+Cell["Experiment with the inputs :", "Text",
+ CellChangeTimes->{{3.5927645936058426`*^9, 3.5927646022258544`*^9}, 
+   3.5950202416776795`*^9},
  FontFamily->"Times New Roman",
  FontSize->14,
  FontColor->RGBColor[1, 0, 0]],
@@ -275,35 +371,11 @@ Cell[BoxData[{
    3.5927644061490808`*^9}, {3.5945874618995295`*^9, 3.594587464739533*^9}, {
    3.594587533199628*^9, 3.5945875342696295`*^9}, 3.594587572162182*^9, 
    3.5945876407317777`*^9, {3.594587696258357*^9, 3.594587724628396*^9}, {
-   3.5945898950302844`*^9, 3.594589896920287*^9}}],
-
-Cell[BoxData[{
- RowBox[{
-  RowBox[{"WantGrid", "=", "True"}], ";"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"WantZeroLam1Lam3", "=", "False"}], ";"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"WantDeviatoricArc", "=", "False"}], ";"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"\[Nu]List", "=", 
-   RowBox[{"{", "}"}]}], ";"}], "\[IndentingNewLine]", 
- RowBox[{"Lune", "[", 
-  RowBox[{
-  "\[CapitalLambda]list", ",", "ExtraPts", ",", "eye", ",", 
-   "Want\[CapitalLambda]axes", ",", "WantUVWaxes", ",", "WantGrid", ",", 
-   "WantZeroLam1Lam3", ",", "WantDeviatoricArc", ",", "WantLuneBoundary", ",",
-    "\[Nu]List"}], "]"}]}], "Input",
- CellChangeTimes->{{3.5926888384799757`*^9, 3.592688860262007*^9}, 
-   3.5926890222242317`*^9, 3.592707015683837*^9, {3.592707069946412*^9, 
-   3.592707121988984*^9}, 3.59270955687237*^9, {3.592764462704159*^9, 
-   3.592764523526244*^9}, 3.594587465769534*^9, 3.59458753501963*^9, {
-   3.5945875736721835`*^9, 3.594587574722185*^9}, {3.5945876419117794`*^9, 
-   3.59458764282178*^9}, {3.5945876974983587`*^9, 3.594587725638397*^9}}]
+   3.5945898950302844`*^9, 3.594589896920287*^9}}]
 },
 WindowSize->{1303, 803},
-WindowMargins->{{75, Automatic}, {58, Automatic}},
-PrivateNotebookOptions->{"VersionedStylesheet"->{"Default.nb"[8.] -> False}},
-FrontEndVersion->"9.0 for Linux x86 (64-bit) (February 7, 2013)",
+WindowMargins->{{260, Automatic}, {40, Automatic}},
+FrontEndVersion->"7.0 for Microsoft Windows (32-bit) (January 30, 2009)",
 StyleDefinitions->"Default.nb"
 ]
 (* End of Notebook Content *)
@@ -317,11 +389,13 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[545, 20, 5963, 148, 363, "Input"],
-Cell[6511, 170, 196, 4, 31, "Text"],
-Cell[6710, 176, 2846, 78, 297, "Input"],
-Cell[9559, 256, 1172, 21, 99, "Input"],
-Cell[10734, 279, 1080, 21, 143, "Input"]
+Cell[545, 20, 365, 8, 30, "Text"],
+Cell[913, 30, 390, 11, 31, "Input"],
+Cell[1306, 43, 6115, 150, 272, "Input"],
+Cell[7424, 195, 2602, 68, 272, "Input"],
+Cell[10029, 265, 220, 5, 30, "Text"],
+Cell[10252, 272, 2846, 78, 252, "Input"],
+Cell[13101, 352, 1172, 21, 72, "Input"]
 }
 ]
 *)
