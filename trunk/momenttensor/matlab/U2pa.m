@@ -115,6 +115,25 @@ else
 end
 
 %==========================================================================
+
+function v_out = ph2az(v_in)
+%TH2AZ convert between math and map conventions for azimuthal angle, in degrees
+%
+%   phi       azimuth
+%   0           90
+%   90          0
+%   180         270
+%   270         180
+%
+% NOTE: The formula is the same, whether you are going from ph2az or az2ph.
+% NOTE: does matlab have a built-in function for this?
+%
+
+v_in  = wrapTo360(v_in);
+v_out = -v_in + 90;
+v_out = wrapTo360(v_out);
+
+%==========================================================================
 % EXAMPLE
 
 if 0==1
