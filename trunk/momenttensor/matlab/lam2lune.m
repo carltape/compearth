@@ -57,7 +57,7 @@ trM = sum(lam);
 lamiso = repmat(1/3*trM,3,1);
 lamdev = lam - lamiso;
 
-% conpute mu -- the angle between the DC (0,0) and the point
+% compute mu -- the angle between the DC and the lune point
 %mu = acos( cos(delta/deg) .* cos(gamma/deg) ) * deg;
 mu = acos( (lam(1,:) - lam(3,:)) ./ (sqrt(2)*lammag) ) * deg;
 
