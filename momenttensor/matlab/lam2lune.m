@@ -2,15 +2,13 @@ function [gamma,delta,M0,mu,lamdev,lamiso] = lam2lune(lam)
 %LAM2LUNE convert eigenvalues to lune coordinates (gamma, delta, M0)
 %
 % INPUT
-%   D           3 x n set of input moment tensors in eigenbasis
-%               note 1: eigenvalues sorted as lam1 >= lam2 >= lam3
-%               note 2: normalized such that each MT has moment M0
+%   lam         3 x n set of eigenvalues for a set of moment tensors
 %               
 % OUTPUT
-%   gamma       angle from DC meridian to MT point (-30 <= gamma <= 30)
-%   delta       angle from deviatoric plane to MT point (-90 <= delta <= 90)
-%   M0
-%   mu
+%   gamma       angle from DC meridian to lune point (-30 <= gamma <= 30)
+%   delta       angle from deviatoric plane to lune point (-90 <= delta <= 90)
+%   M0          seismic moment, M0 = |lam| / sqrt(2)
+%   mu          angle from DC to lune point (0 <= mu <= 90)
 %   lamdev      eigenvalues of deviatoric component
 %   lamiso      eigenvalues of isotropic component
 %
@@ -26,8 +24,12 @@ deg = 180/pi;
 
 [a,n] = size(lam);
 if a~=3, error('dimension of lam (%i x %i) must be 3 x %i',a,n,n); end
+if n==3, disp('warning: lam is 3 x 3, so make sure that each column corresponds to a lambda vector'); end
 
-% magnitude of lambda vector (rho of TT2012 -- see p. 490 text)
+% formulas below assume that eigenvalues are sorted as lam1 >= lam2 >= lam3
+lam = sort(lam,'descend');
+
+% magnitude of lambda vector (rho of TT2012 -- see p. 490 within text)
 %lammag = sqrt(2) * M0;
 lammag = sqrt(lam(1,:).^2 + lam(2,:).^2 + lam(3,:).^2);
 
@@ -35,44 +37,35 @@ lammag = sqrt(lam(1,:).^2 + lam(2,:).^2 + lam(3,:).^2);
 %M0 = sqrt(lam(1,:).^2 + lam(2,:).^2 + lam(3,:).^2);
 M0 = lammag / sqrt(2);
 
-% decompose into isotropic and deviatoric parts
-% note: this is not needed for the calculations below
+% TapeTape2012a, Eq. 21a (and 23)
+% numerical safety 1: if trace(M) = 0, delta = 0
+% numerical safety 2: is abs(bdot) > 1, adjust bdot to +1 or -1
+delta = zeros(1,n);         % initialized to delta=0
+idev = find(sum(lam) ~= 0);
+bdot = (lam(1,:) + lam(2,:) + lam(3,:)) ./ (sqrt(3)*lammag);
+bdot(bdot > 1) = 1; bdot(bdot <-1) = -1;
+delta(idev) = 90 - acos(bdot(idev)) * deg;
+
+% TapeTape2012a, Eq. 21a
+% note: we set gamma=0 for (1,1,1) and (-1,-1,-1)
+gamma = atan((-lam(1,:) + 2*lam(2,:) - lam(3,:)) ./ (sqrt(3)*(lam(1,:) - lam(3,:)))) * deg;
+biso = lam(1,:)==lam(3,:);
+gamma(biso) = 0;
+
+% extra output
 trM = sum(lam); 
 lamiso = repmat(1/3*trM,3,1);
 lamdev = lam - lamiso;
 
-% % gamma (use deviatoric eigenvalues)
-% gamma = zeros(n,1);
-% lamdevmag = sqrt(lamdev(1,:).^2 + lamdev(2,:).^2 + lamdev(3,:).^2);
-% inoniso = find(lamdevmag > 0);
-% if ~isempty(inoniso)
-%     gdot(inoniso) = (lamdev(1,inoniso)-lamdev(3,inoniso)) ./ (sqrt(2)*lamdevmag(inoniso));
-%     sg = sign(lamdev(2,:));
-%     gdot(gdot > 1) = 1; gdot(gdot <-1) = -1;
-%     gamma(inoniso) = sg(inoniso) .* acos(gdot(inoniso)) * deg;
-% end
-
-% TapeTape2012a, Eq. 21a (and 23)
-% compute gamma and delta using ACTUAL eigenvalues (allowing for isotropic component)
-% numerical safety 1: if trace(M) = 0, delta = 0
-% numerical safety 2: is abs(bdot) > 1, adjust bdot to +1 or -1
-delta = zeros(n,1);
-idelta = find(sum(lam) ~= 0);
-bdot = (lam(1,:) + lam(2,:) + lam(3,:)) ./ (sqrt(3)*lammag);
-bdot(bdot > 1) = 1; bdot(bdot <-1) = -1;
-delta(idelta) = 90 - acos(bdot(idelta)) * deg;
-
-% TapeTape2012a, Eq. 21a
-gamma = atan((-lam(1,:) + 2*lam(2,:) - lam(3,:)) ./ (sqrt(3)*(lam(1,:) - lam(3,:)))) * deg;
+% conpute mu -- the angle between the DC (0,0) and the point
+%mu = acos( cos(delta/deg) .* cos(gamma/deg) ) * deg;
+mu = acos( (lam(1,:) - lam(3,:)) ./ (sqrt(2)*lammag) ) * deg;
 
 % column vectors
 delta = delta(:);
 gamma = gamma(:);
 M0 = M0(:);
-
-% conpute mu -- the angle between the DC (0,0) and the point
-%mu = acos( cos(delta/deg) .* cos(gamma/deg) ) * deg;
-mu = acos( (lam(1,:) - lam(3,:)) ./ (sqrt(2)*lammag) ) * deg;
+mu = mu(:);
 
 %==========================================================================
 % EXAMPLE
@@ -85,9 +78,9 @@ if 0==1
     gamma0 = G(:);
     delta0 = B(:);
     M00 = 1e16*ones(length(gamma0),1);
-    D = lune2lam(gamma0,delta0,M00);
+    lam = lune2lam(gamma0,delta0,M00);
     
-    [gamma,delta,M0,mu] = lam2lune(D);
+    [gamma,delta,M0,mu] = lam2lune(lam);
     
     figure; nr=2; nc=2;
     subplot(nr,nc,1); plot(gamma-gamma0,'.'); title('gamma residual');
