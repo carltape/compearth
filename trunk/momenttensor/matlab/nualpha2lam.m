@@ -26,9 +26,9 @@ lam2 = 2 .* nu .* cosa ./ (1-2*nu);
 lam3 = cosa ./ (1-2*nu) - 1;
 
 lam = [lam1 ; lam2 ; lam3];
-mag = sqrt( lam(1,:).^2 + lam(1,:).^2 + lam(1,:).^2 );
+mag = sqrt( lam(1,:).^2 + lam(2,:).^2 + lam(3,:).^2 );
 lam = lam ./ repmat(mag,3,1);
-%mag = sqrt( lam(1,:).^2 + lam(1,:).^2 + lam(1,:).^2 );  % check
+%mag = sqrt( lam(1,:).^2 + lam(2,:).^2 + lam(3,:).^2 );  % check
 
 %==========================================================================
 % EXAMPLE
