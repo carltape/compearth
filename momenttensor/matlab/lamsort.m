@@ -1,4 +1,4 @@
-function lam = lamsort(lam)
+function [lam,n] = lamsort(lam)
 %LAMSORT sort eigenvalues as lam1 >= lam2 >= lam3
 
 [a,n] = size(lam);

@@ -22,12 +22,7 @@ function [gamma,delta,M0,mu,lamdev,lamiso] = lam2lune(lam)
 
 deg = 180/pi;
 
-[a,n] = size(lam);
-if a~=3, error('dimension of lam (%i x %i) must be 3 x %i',a,n,n); end
-if n==3, disp('warning: lam is 3 x 3, so make sure that each column corresponds to a lambda vector'); end
-
-% formulas below assume that eigenvalues are sorted as lam1 >= lam2 >= lam3
-lam = sort(lam,'descend');
+[lam,n] = lamsort(lam);
 
 % magnitude of lambda vector (rho of TT2012 -- see p. 490 within text)
 %lammag = sqrt(2) * M0;

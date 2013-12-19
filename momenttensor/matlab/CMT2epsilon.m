@@ -1,9 +1,8 @@
-function [gamma, epsilon, eCLVD, eDC, trM, eISO, eDEV] = CMT2epsilon(M,iepsilon,isort)
+function [gamma,epsilon,trM] = CMT2epsilon(M,iepsilon,isort)
 % CMT2EPSILON converts a moment tensor to CLVD-related parameters
 %
-% This function converts from a (CMT) moment tensor to epsilon, which
-% represents the magnitude of the non-double-couple component in a moment
-% tensor.
+% This function converts from a (CMT) moment tensor to epsilon,
+% which quantifies the CLVD "amount" of a moment tensor.
 %
 % INPUT
 %   M           6 x n set of input moment tensors
@@ -108,27 +107,27 @@ end
 gdot(gdot > 1) = 1; gdot(gdot <-1) = -1;
 gamma = sg .* acos(gdot) * 180/pi;
 
-% fraction of moment that is isotropic
-fiso = zeros(n,1);
-for ii=1:n
-    % an invariant proxy for M0, which is never zero
-    M0 = norm( lamdev(:,ii) + lamiso(:,ii) );
-    fiso(ii) = norm(lamiso(:,ii)) / M0;
-    fdev(ii) = norm(lamdev(:,ii)) / M0;
-end
-eISO = 100*fiso;
-eDEV = 100*fdev;
-
-% express as percent CLVD and percent DC -- Jost and Herrmann (1989)
-eCLVD = 200*epsilon;
-eDC   = 100*(1 - 2*abs(epsilon));
-
-% If the tensor is purely isotropic, then there are no deviatoric
-% eigenvalues, and we set epsilon, eCLVD, eDC all to zero.
-iiso = find( abs(eISO-100) <= 1e-6 );
-if ~isempty(iiso)
-    eCLVD(iiso) = 0; eDC(iiso) = 0; epsilon(iiso) = 0;
-end
+% % fraction of moment that is isotropic
+% fiso = zeros(n,1);
+% for ii=1:n
+%     % an invariant proxy for M0, which is never zero
+%     M0 = norm( lamdev(:,ii) + lamiso(:,ii) );
+%     fiso(ii) = norm(lamiso(:,ii)) / M0;
+%     fdev(ii) = norm(lamdev(:,ii)) / M0;
+% end
+% eISO = 100*fiso;
+% eDEV = 100*fdev;
+% 
+% % express as percent CLVD and percent DC -- Jost and Herrmann (1989)
+% eCLVD = 200*epsilon;
+% eDC   = 100*(1 - 2*abs(epsilon));
+% 
+% % If the tensor is purely isotropic, then there are no deviatoric
+% % eigenvalues, and we set epsilon, eCLVD, eDC all to zero.
+% iiso = find( abs(eISO-100) <= 1e-6 );
+% if ~isempty(iiso)
+%     eCLVD(iiso) = 0; eDC(iiso) = 0; epsilon(iiso) = 0;
+% end
 
 % option to display figure (requires plot_histo.m)
 ifigure = 0;
@@ -142,7 +141,8 @@ if ifigure==1
     xlabel(sprintf('GAMMA, degrees (isort = %i)',isort));
 end
 
-%-------------------
+%==========================================================================
+% EXAMPLES
 
 if 0==1
     clear, clc, close all
@@ -150,7 +150,7 @@ if 0==1
     [otime,~,~,~,~,~,M] = readCMT;
     n = length(otime);
     
-    [gamma, epsilon, eCLVD, eDC, trM, eISO, eDEV] = CMT2epsilon(M,1,1);
+    [gamma, epsilon, trM] = CMT2epsilon(M,1,1);
     
     % check that changing isort will not affect the epsilon values (for fixed iepsilon)
     iepsilon = 1;
@@ -158,17 +158,12 @@ if 0==1
     gamall = zeros(n,4);
     for ii=1:4
         isort = ii;
-        [gamma, epsilon, eCLVD, eDC, trM, eISO, eDEV] = CMT2epsilon(M,iepsilon,isort);
+        [gamma, epsilon, trM] = CMT2epsilon(M,iepsilon,isort);
         epsall(:,ii) = epsilon;
         gamall(:,ii) = gamma;
     end
     figure; plot(epsall,'.');
     figure; plot(gamall,'.');
-
-%     dir1 = '/net/sierra/raid1/carltape/results/SOURCES/socal_4/CMT_files_post_inverted/';
-%     filename = [dir1 'CMTSOLUTION_9818433'];
-%     [date,tshift,hdur,lat,lon,dep,M,eid,elabel] = read_CMTSOLUTION(filename,13,0);
-%     [epsilon, eCLVD, eDC, trM] = CMT2epsilon(M)
 end
 
 %==========================================================================
