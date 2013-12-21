@@ -5,7 +5,6 @@ function [Uout,igreen,ieps] = Ueigvec(Uin,EPSVAL)
 % rotation.
 % 
 % calls iUgreen.m, Udetcheck.m, rotmat.m, rotmat2rotvec.m
-% called by CMT2faultvec.m
 %
 % Carl Tape, 11-March-2011
 %
