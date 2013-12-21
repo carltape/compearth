@@ -15,7 +15,7 @@ function Xout = strdip2normal(Xin,itype,idisplay)
 %  OUTPUT:
 %    Xout       3 x n fault normal vectors
 %
-% Copied from faultvec2faultpar.m on 13-Aug-2013
+% Copied from dcfaultvec2faultpar.m on 13-Aug-2013
 %
 % Carl Tape, 31-Mar-2011
 %
@@ -51,14 +51,14 @@ if itype==0
 
 elseif itype==1
     % NOTE: xyz-coordinates are such that the coordinate vectors i,j,k point
-    %       SOUTH, EAST, UP (see CMT2faultpar.m)
+    %       SOUTH, EAST, UP (see CMT2dcfaultpar.m)
     upvec = [0 0 1]';
     northvec = [-1 0 0]';
     
     % get input fault parameters
     [n,b] = size(Xin);
     if b~=2, error('Xin should be n x 2'); end
-    disp(sprintf('faultvec2faultpar.m: %i sets of input fault parameters',n));
+    disp(sprintf('strdip2normal.m: %i sets of input fault parameters',n));
     kap1   = Xin(:,1);
     theta1 = Xin(:,2);
     
@@ -80,7 +80,6 @@ elseif itype==1
   
 else
     error(sprintf('itype (%i) must be 0 or 1'),itype);   
-    
 end
 
 if idisplay==1

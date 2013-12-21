@@ -139,7 +139,7 @@ if 0==1
     teid = 'M010176A';  % first event in GCMT catalog
     [otime,tshift,hdur,lat,lon,dep,M,~,~,eid,elabel,str1,dip1,rk1,str2,dip2,rk2,...
         lams,pl1,az1,pl2,az2,pl3,az3,icmt,dataused,itri] = readCMT(teid);
-    [MDC,kap1,theta1,sig1,kap2,theta2,sig2,k1,d1,n1,k2,d2,n2,U0,lamsx] = CMT2faultpar(M,0);
+    [MDC,kap1,theta1,sig1,kap2,theta2,sig2,k1,d1,n1,k2,d2,n2,U0,lamsx] = CMT2dcfaultpar(M,0);
     
     % check
     Mt = U0 * diag(lamsx) * U0';

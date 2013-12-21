@@ -1,6 +1,8 @@
-function Xout = faultvec2faultpar(Xin,itype,idisplay)
-%FAULTVEC2FAULTPAR converts between fault vectors and fault parameters
+function Xout = dcfaultvec2faultpar(Xin,itype,idisplay)
+%DCFAULTVEC2FAULTPAR converts between fault vectors and strike/dip/rake
 %
+% This is only meaningful for double couple moment tensors, for which the
+% slip vector is in the fault plane (and therefore the rake angle is meaningful).
 % The basis for all vectors is SOUTH-EAST-UP.
 %
 % itype = 1     convert fault vectors to fault parameters
@@ -27,7 +29,7 @@ if itype==1
     % get input fault vectors
     [a,n] = size(Xin);
     if a~=9, error('Xout should be 9 x n'); end
-    disp(sprintf('faultvec2faultpar.m: %i sets of input fault vectors',n));
+    disp(sprintf('dcfaultvec2faultpar.m: %i sets of input fault vectors',n));
     k1 = Xin(1:3,:);
     d1 = Xin(4:6,:);
     n1 = Xin(7:9,:);
@@ -73,14 +75,14 @@ if itype==1
 
 elseif itype==0
     % NOTE: xyz-coordinates are such that the coordinate vectors i,j,k point
-    %       SOUTH, EAST, UP (see CMT2faultpar.m)
+    %       SOUTH, EAST, UP (see CMT2dcfaultpar.m)
     upvec = [0 0 1]';
     northvec = [-1 0 0]';
     
     % get input fault parameters
     [n,b] = size(Xin);
     if b~=3, error('Xin should be n x 3'); end
-    disp(sprintf('faultvec2faultpar.m: %i sets of input fault parameters',n));
+    disp(sprintf('dcfaultvec2faultpar.m: %i sets of input fault parameters',n));
     kap1 = Xin(:,1);
     theta1 = Xin(:,2);
     sig1 = Xin(:,3);
@@ -160,8 +162,8 @@ if 0==1
     theta1 = 80;
     sig1 = -20;
     Xin = [kap1 theta1 sig1]
-    Xout = faultvec2faultpar(Xin,0,1);
-    Xcheck = faultvec2faultpar(Xout,1,1);
+    Xout = dcfaultvec2faultpar(Xin,0,1);
+    Xcheck = dcfaultvec2faultpar(Xout,1,1);
 end
 
 %==========================================================================

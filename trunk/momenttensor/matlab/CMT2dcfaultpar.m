@@ -1,7 +1,6 @@
-function [MDC,kap1,theta1,sig1,kap2,theta2,sig2,k1,d1,n1,k2,d2,n2,U,lams] = CMT2faultpar(M,idisplay)
-%
-% This converts a seismic moment tensor into two sets of fault parameters
-% for its double couple.
+function [MDC,kap1,theta1,sig1,kap2,theta2,sig2,k1,d1,n1,k2,d2,n2,U,lams] ...
+    = CMT2dcfaultpar(M,idisplay)
+%CMT2DCFAULTPAR convert moment tensor into two sets of fault parameters for its double couple
 %
 % For moment tensors with strong CLVD component, the double-couple
 % representaion of fault parameters has little physical meaning.
@@ -18,10 +17,9 @@ function [MDC,kap1,theta1,sig1,kap2,theta2,sig2,k1,d1,n1,k2,d2,n2,U,lams] = CMT2
 %   d1,d2           slip vector (3 x n) in south-east-up convention
 %   n1,n2           normal vector (3 x n) in south-east-up convention
 %
-% See inverse program faultpar2CMT.m.
+% See inverse program dcfaultpar2CMT.m.
 %
-% calls CMT2faultvec.m, faultvec2faultpar.m, swap.m
-% called by test_CMT2faultpar.m
+% calls CMT2dcfaultvec.m, dcfaultvec2faultpar.m, swap.m
 %
 
 deg = 180/pi;
@@ -29,11 +27,11 @@ if nargin==1, idisplay=0; end
 
 % moment tensor to fault vectors
 % note: we could return the eigenbasis U here also (U = [p1 p2 p3])
-[V1,V2,MDC,U,lams] = CMT2faultvec(M,1,idisplay);
+[V1,V2,MDC,U,lams] = CMT2dcfaultvec(M,1,idisplay);
 
 % fault vectors to fault parameters
-F1 = faultvec2faultpar(V1,1,idisplay);  % plane 1
-F2 = faultvec2faultpar(V2,1,idisplay);  % plane 2
+F1 = dcfaultvec2faultpar(V1,1,idisplay);  % plane 1
+F2 = dcfaultvec2faultpar(V2,1,idisplay);  % plane 2
 
 % fault vectors
 k1 = V1(1:3,:); d1 = V1(4:6,:); n1 = V1(7:9,:);

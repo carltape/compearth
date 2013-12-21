@@ -1,5 +1,8 @@
-function [MDC,k1,d1,n1,p1,p2,p3] = faultpar2CMT(kap1,theta1,sig1,idisplay)
-%FAULTPAR2CMT converts fault parameters (strike, dip, rake) to moment tensor
+function [MDC,k1,d1,n1,p1,p2,p3] = dcfaultpar2CMT(kap1,theta1,sig1,idisplay)
+%DCFAULTPAR2CMT converts fault parameters (strike, dip, rake) to double couple moment tensor
+%
+% This is only meaningful for double couple moment tensors, for which the
+% slip vector is in the fault plane (and therefore the rake angle is meaningful).
 %
 % INPUT:
 %   kap1        strike (0 to 360)
@@ -14,10 +17,9 @@ function [MDC,k1,d1,n1,p1,p2,p3] = faultpar2CMT(kap1,theta1,sig1,idisplay)
 %   n1          normal vector (3 x n) in south-east-up convention
 %   p1,p2,p3    eigenvectors (each 3 x n) in south-east-up convention
 %   
-% See inverse program CMT2faultpar.m
+% See inverse program CMT2dcfaultpar.m
 %
-% calls faultvec2faultpar.m, CMT2faultvec.m
-% called by test_CMT2faultpar.m
+% calls dcfaultvec2faultpar.m, CMT2dcfaultvec.m
 %
 % Carl Tape, 31-Mar-2011
 %
@@ -28,10 +30,10 @@ n = length(kap1);
 
 % convert fault parameters to fault vectors
 F1 = [kap1(:) theta1(:) sig1(:)];
-V1 = faultvec2faultpar(F1,0,idisplay);
+V1 = dcfaultvec2faultpar(F1,0,idisplay);
 
 % convert fault vectors to moment tensor
-[MDC,U] = CMT2faultvec(V1,0,idisplay);
+[MDC,U] = CMT2dcfaultvec(V1,0,idisplay);
 
 % fault vectors in south-east-up convention
 k1 = V1(1:3,:);

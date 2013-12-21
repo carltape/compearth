@@ -1,11 +1,11 @@
-function [Xout1,Xout2,Xout3,Xout4,Xout5] = CMT2faultvec(Xin,itype,idisplay)
+function [Xout1,Xout2,Xout3,Xout4,Xout5] = CMT2dcfaultvec(Xin,itype,idisplay)
 %CMT2FAULTVEC converts between fault vectors and double couple moment tensors
 %
 % A general moment tensor (non-double couple, isotropic) can be used as input.
 % For moment tensors with strong CLVD component, the double-couple
 % representation of fault planes has little physical meaning.
 %
-% itype = 1     convert moment tensors to TWO SETS of fault vectors
+% itype = 1     convert moment tensors to two sets of fault vectors
 %  INPUT:
 %    Xin        6 x n moment tensors in CMT convention
 %               M = [Mrr Mtt Mpp Mrt Mrp Mtp]; r=up, theta=south, phi=east
@@ -30,12 +30,12 @@ function [Xout1,Xout2,Xout3,Xout4,Xout5] = CMT2faultvec(Xin,itype,idisplay)
 %   unit.m
 %   swap.m
 %   fvec2fmat.m, fmat2fvec.m
-% called by CMT2faultpar.m, faultpar2CMT.m
+% called by CMT2dcfaultpar.m, dcfaultpar2CMT.m
 %
 % Carl Tape, 31-Mar-2011
 %
 
-deg = 180/pi;
+%deg = 180/pi;
 if nargin==2, idisplay=0; end
 
 % convert M from up-south-east to south-east-up
@@ -70,7 +70,7 @@ if itype==1
 
     % number of moment tensors
     n = length(trM);
-    disp(sprintf('CMT2faultpar.m: %i input moment tensors',n));
+    disp(sprintf('CMT2dcfaultvec.m: %i input moment tensors',n));
 
     % KEY: convert M from up-south-east to south-east-up
     %Mdev = transform_MT(Bconvert',Mdev);
@@ -183,7 +183,7 @@ if itype==1
         %isamedip = find( round((th1-th2)*deg) == 0);
 
         if ~isempty(isamedip)
-            disp(sprintf('CMT2faultvec.m: %i/%i MTs having planes with same dip',length(isamedip),n));
+            disp(sprintf('CMT2dcfaultvec.m: %i/%i MTs having planes with same dip',length(isamedip),n));
             for jj=1:length(isamedip)   % loop over 
                 ii = isamedip(jj);
 
