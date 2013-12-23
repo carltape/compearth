@@ -33,6 +33,8 @@ if itype==0
     
     % dip and strike
     % dip: theta is [0, 90] because we "force" the normal to point up
+    % (It would be prudent to ensure that the third entry of the normal
+    % vectors are always positive in this south-east-up basis.)
     % strike: kappa is unrestricted, but we force it to [0, 360]
     % NOTE: instead of xyz2tp.m, we should use rotmat.m (see below)
     [n1th,n1ph] = xyz2tp(n1);
