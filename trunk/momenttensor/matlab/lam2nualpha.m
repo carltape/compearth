@@ -21,7 +21,7 @@ lam2 = lam(2,:);
 lam3 = lam(3,:);
 
 % TT2013, Eqs 32ab
-alpha = 180/pi* acos( (lam1 - lam2 + lam3) ./ (lam1 - lam3) );
+alpha = 180/pi* acos( (lam1 - 2*lam2 + lam3) ./ (lam1 - lam3) );
 nu = lam2 ./ (lam1 + lam3);
 
 alpha = alpha(:);

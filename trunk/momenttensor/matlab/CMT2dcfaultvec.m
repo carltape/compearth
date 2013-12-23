@@ -1,9 +1,10 @@
 function [Xout1,Xout2,Xout3,Xout4,Xout5] = CMT2dcfaultvec(Xin,itype,idisplay)
-%CMT2FAULTVEC converts between fault vectors and double couple moment tensors
+%CMT2DCFAULTVEC converts between fault vectors and double couple moment tensors
 %
 % A general moment tensor (non-double couple, isotropic) can be used as input.
 % For moment tensors with strong CLVD component, the double-couple
 % representation of fault planes has little physical meaning.
+% See CMT2faultvec.m for the general case.
 %
 % itype = 1     convert moment tensors to two sets of fault vectors
 %  INPUT:
@@ -316,11 +317,11 @@ if itype==1
             disp(sprintf('                    : %11.3f%11.3f%11.3f%11.3f%11.3f%11.3f',MDC0(:,ii)'/max(abs(MDC0(:,ii)))));
 
             disp('eigenvectors (U = [v1 v2 v3]):');
-            U = U(:,:,ii)
+            Ux = U(:,:,ii)
             disp('eigenvalues:');
             disp(sprintf('%11.3e%11.3e%11.3e',eigvals(:,ii)));
-            UUt = U*U'
-            detU = det(U)
+            UUt = Ux*Ux'
+            detU = det(Ux)
             %disp('index, strike, dip, rake:');
             %disp(sprintf('%6i(1)%6.1f%6.1f%6.1f',ii,kap1(ii),theta1(ii),sig1(ii)));
             %disp(sprintf('%6i(2)%6.1f%6.1f%6.1f',ii,kap2(ii),theta2(ii),sig2(ii)));
