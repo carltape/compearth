@@ -554,7 +554,7 @@ there are only two {\em required} steps to use GPU computing:
 \begin{enumerate}
 \item Enable CUDA during configuration:
 \begin{lstlisting}
-$ ./configure --enable-cuda MPI_INC=-I$MPI_DIR/include
+$ ./configure --enable-cuda
 \end{lstlisting}
 
 \item Enable CUDA at runtime in \path{DATA/Par_file}:
@@ -587,15 +587,8 @@ $ module load cudatoolkit
       wrappers that automatically run the real compilers and apply MPI or CUDA
       options once the modules are loaded.
 
-      When compiling for CUDA, the CUDA compiler (which is separate from the C
-      or Fortran compilers) needs to know where the MPI headers are installed.
-      This information must be set using the \texttt{MPI\_INC} variable when
-      running \path{./configure}. On fish, loading the MPI module sets the
-      \texttt{MPICH\_DIR} environment variable, which is used in the instructions
-      below.
-
 \begin{lstlisting}
-$ ./configure MPIFC=ftn CC=cc FC=ftn --with-cuda MPI_INC=-I$MPICH_DIR/include
+$ ./configure MPIFC=ftn CC=cc FC=ftn --with-cuda
 \end{lstlisting}
 
 \item *TODO*: Copy example config stuff...
