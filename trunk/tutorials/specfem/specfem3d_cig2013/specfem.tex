@@ -327,7 +327,7 @@ $ paraview
 Then \menu{File > Open}, and select all four \path{proc000***_vs.vtk} files. Be sure to select them individually or \paraview\ will treat them as timesteps. When you are done, be sure to unload the \paraview\ module, since here it was compiled with the \texttt{GNU} compiler, which conflicts with the \texttt{portland} compiler we are using.
 %
 \begin{lstlisting}
-$ module unload paraview PrgEnv-gnu openmpi-gnu gcc
+$ module unload paraview PrgEnv-gnu
 $ cd ../../
 \end{lstlisting}
 
@@ -467,7 +467,7 @@ Now reactivate \path{alpha_kernel.vtk}, and while it is highlighted, choose menu
 
 Note: The rescaling of the colour bar is necessary because the magnitude of the kernel is very large at the source and receiver locations due to the unrealistic assumption of point sources. To be able to distinguish the kernel itself, it is sometimes necessary to reduce the maximum values of the colour scale by four orders of magnitude. Smoothing these kernels to get rid of the spuriously large values at the sources and receivers is prudent before using them in tomographic inversions.
    
-Again be sure to run \lstinline{module unload paraview PrgEnv-gnu gcc openmpi-gnu} before proceeding to other examples.
+Again be sure to run \lstinline{module unload paraview PrgEnv-gnu} before proceeding to other examples.
 
 \end{enumerate}
 
