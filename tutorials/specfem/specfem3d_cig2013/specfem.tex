@@ -313,7 +313,7 @@ $ qsub go_generate_databases_pbs.bash
 The job should take about a minute.
 It creates binary mesh files, e.g. 
 \begin{lstlisting}
-proc000***_[rho,vp,vs,x,y,z,ibool,external_mesh].bin
+proc000***_{rho,vp,vs,x,y,z,ibool,external_mesh}.bin
 \end{lstlisting}
 in the directory \path{OUTPUT_FILES/DATABASES_MPI/}.
 
@@ -359,12 +359,11 @@ $ xmgrace OUTPUT_FILES/*Z.semd &
 %===============================================================================
 
 \subsection*{Step-by-step instructions, example 2: homogeneous halfspace sensitivity kernel}
-Following is an example of generating sensitivity kernels for travel-time adjoint source at a single receiver station. Please first go through the procedures of a regular forward parallel simulation based on the instructions given in the last section. Change your directory to \specfem\ before proceeding further.
+Following is an example of generating sensitivity kernels for a travel-time adjoint source at a single receiver station. Please first go through the procedures of a regular forward parallel simulation based on the instructions given in the last section. Change your directory to the top-level \path{SPECFEM3D/} before proceeding further.
+
 \begin{enumerate}
-
-
-\item  First, set up the \path{DATA/Par_file} for a forward simulation with wavefields saved
-
+\item First, set up the \path{DATA/Par_file} for a forward simulation with wavefields saved
+%
 \begin{lstlisting}
 $ utils/change_simulation_type.pl -F
 \end{lstlisting}
@@ -375,7 +374,6 @@ and check that the setting in \path{DATA/Par_file} has been modified to
      SAVE_FORWARD                    = .true.
 \end{lstlisting}
 
-
 \item Provided that you have already compiled \path{xspecfem3D} and various database files are already in \path{OUTPUT_FILES/DATABASES_MPI},
   run the forward simulation by submitting the job script:
 
@@ -383,13 +381,12 @@ and check that the setting in \path{DATA/Par_file} has been modified to
 $ qsub go_solver_pbs.bash
 \end{lstlisting}
 
-After its completion in about $30$ minutes,  you should have now the synthetic seismograms \texttt{X?0.BX[XYZ].semd[dva]} in directory \path{OUTPUT_FILES/}:
-
+After its completion in about $30$ minutes, you should now have the calculated synthetic seismograms \texttt{X?0.BX[XYZ].semd[dva]} in the directory \path{OUTPUT_FILES/}:
 
 \item Now you can create the cross-correlation traveltime adjoint sources from the forward synthetic seismograms for station \verb+X20+. First compile the utility \path{xcreate_adjsrc_traveltime}:
 
 \begin{lstlisting}
-$ cd SPECFEM3D/utils/adjoint_sources/traveltime
+$ cd utils/adjoint_sources/traveltime
 $ make
 $ cd -
 \end{lstlisting}
@@ -398,49 +395,54 @@ and then run in the \specfem\ directory
 $ utils/adjoint_sources/traveltime/xcreate_adjsrc_traveltime 10. 25. 3 \
       OUTPUT_FILES/X20.DB.BX*.semd
 \end{lstlisting}
-which generates traveltime adjoint sources  using the Z-component synthetics signal arrived between 10 - 25 seconds. You can  change the names of adjoint source files and move them to the designated directory
+which generates traveltime adjoint sources using the $Z$-component synthetics signal arriving between 10 -- 25 seconds. You should change the names of the adjoint source files and move them to the designated directory,
 \begin{lstlisting}
 $ mkdir SEM/
 $ mv OUTPUT_FILES/X20*.adj SEM/
 $ cd SEM/
 $ rename .semd.adj .adj *.adj
 \end{lstlisting}
-(on some linux machines, the last line may be \lstinline{rename 's/.semd.adj/.adj/' *.adj}), which  should create the adjoint source files \path{SEM/X20.DB.BX[XYZ].adj}. You can plot them with the \grace\ tool, and you will probably notice that only the Z-component source is non-zero as designed.
+(on some linux machines, the last line may be \lstinline{rename 's/.semd.adj/.adj/' *.adj}), which should create the adjoint source files \path{SEM/X20.DB.BX[XYZ].adj}. You can plot them with the \grace\ tool, and you will probably notice that only the $Z$-component source is non-zero, as designed.
 
-
-\item Setup corresponding adjoint stations file \path{STATIONS_ADJOINT} for those receivers (e.g., \verb+X20+) with adjoint source files already setup in \path{SEM/}:
+\item Setup corresponding adjoint stations file \path{STATIONS_ADJOINT} for those receivers with adjoint source files already setup in \path{SEM/} (e.g., \texttt{X20}):
 
 \begin{lstlisting}
 $ cp examples/homogeneous_halfspace/DATA/STATIONS_ADJOINT DATA/
 \end{lstlisting}
 
-
-\item Now you can finally run the kernel simulation that interacts adjoint wavefields with the restored forward wavefields. In the \specfem\ directory, first change the simulation type in \path{DATA/Par_file} again:
-
+\item Now you can finally run the kernel simulation that interacts adjoint wavefields with the restored forward wavefields. In the \path{SPECFEM3D/} directory, first change the simulation type in \path{DATA/Par_file} again:
+%
 \begin{lstlisting}
 $ utils/change_simulation_type.pl -b
 \end{lstlisting}
-
+%
 which sets in \path{DATA/Par_file}:
-
+%
 \begin{lstlisting}
      # forward or adjoint simulation
      SIMULATION_TYPE                 = 3
      SAVE_FORWARD                    = .false.
 \end{lstlisting}
+
+Because the kernel simulation is in essence two simulations at the same time,
+you will need to increase the requested runtime to $\sim 1.5$ hours to ensure
+that there is enough leeway to complete the run. In \path{go_solver_pbs.bash},
+%
+\begin{lstlisting}
+#PBS -l nodes=1:ppn=4,walltime=1:30:00
+\end{lstlisting}
+
 Then run the kernel simulation by submitting the job script:
 \begin{lstlisting}
 $ qsub go_solver_pbs.bash
 \end{lstlisting}
 
-
-If successful after $\sim 1$ hour runtime, it will create  travel-time kernel files as defined in eqn (17-20) of Tromp et al. (2005) as 
+If successful after $\sim 1.5$ hours runtime, it will create travel-time kernel files as defined in Eq~(17-20) of Tromp et al. (2005) as 
 \begin{lstlisting}
-OUTPUT_FILES/DATABASES_MPI/proc000***_[alpha,beta,kappa,mu,rho,rhop]_kernel.bin
+OUTPUT_FILES/DATABASES_MPI/proc000***_{alpha,beta,kappa,mu,rho,rhop}_kernel.bin
 \end{lstlisting}
 
-
-\item The kernel files can be visualized with \paraview. First compile the program that can combine selected slices of kernels and produce vtk files for \paraview. In the \specfem\ directory, \blue{is cd bin really necessary?}
+\item The kernel files can be visualized with \paraview. First compile the program that combines selected slices of kernels and produces vtk files for \paraview. In the \path{SPECFEM3D/} directory,
 
 \begin{lstlisting}
 $ make xcombine_vol_data
@@ -448,25 +450,24 @@ $ cd bin/
 $ ./xcombine_vol_data 0 3 alpha_kernel ../OUTPUT_FILES/DATABASES_MPI/ ../OUTPUT_FILES/ 1
 \end{lstlisting}
 
-where id 0 to 3 indicates that we use all 4 partitions of the processors. By default, it produces the vtk file \path{OUTPUT_FILES/alpha_kernel.vtk}, which can be imported into \paraview
+where id 0 to 3 indicates that we use all 4 partitions of the processors. By default, it produces the vtk file \path{OUTPUT_FILES/alpha_kernel.vtk}, which can be imported into \paraview.
 
+\item You can then visualize the vtk kernel file in \paraview. After opening up the \paraview\ GUI, on the top menu, click \menu{File > Open}, navigate to the \path{OUTPUT_FILES/} directory, choose the \path{alpha_kernel.vtk} file and click \menu{Apply} in the \menu{Properties} tab. Go to the \menu{Display} tab, and in the \menu{Style} section, choose \menu{Representation > Surface}, and then in the \menu{Color} section, choose \menu{Color by > alpha\_kernel}. Now the model block can be rotated by the left button of the mouse, translated by the middle button and zoomed in/out by the right button (the binding of the keys may be different on Mac).
 
-\item You can then visualize the vtk kernel file in \paraview. After open up \paraview\ GUI, on the top menu, click \menu{File > Open}, navigate to the \path{OUTPUT_FILES/} directory, choose the \path{alpha_kernel.vtk} file and click \menu{Apply}. Go to \menu{Display} tab, and in the \menu{Style} section, choose \menu{Representation > Surface}, and then in the \menu{Color} section, choose \menu{Color by > alpha\_kernel}. Now the model block can be rotated by the left button of the mouse, translated by the middle button and zoomed in/out by the right button (the binding of the keys may be different on Mac).
+Similarly we can visualize the source/receiver positions. Click \menu{File > Open}, choose \path{OUTPUT_FILES/sr.vtk} and click \menu{Apply}. While it is highlighted in the \menu{Pipeline Browser} tab, select menu \menu{Filters > Alphabetical > Glyph}, and click \menu{Apply}. In the \menu{Properties} tab, select \menu{Glyph Type > Sphere}, and hit \menu{Apply} again. The little sphere representing the receiver will appear on the free surface. To see both the source and receiver, click on the eye-like icon in front of \path{alpha_kernel.vtk} in the \menu{Pipeline Browser} to hide the view of \verb+alpha_kernel+. You will find the source sphere at the center of the block.
 
-   Similarly we can visualize the source/receiver positions. Click \menu{File > Open}, choose \path{OUTPUT_FILES/sr.vtk} and click \menu{Apply}. While it is highlighted in the \menu{Pipeline Browser}, select menu \menu{Filters > Alphabetical > Glyph}, and click \menu{Apply}. In the \menu{Properties} tab, select \menu{Glyph Type > Sphere}, and hit \menu{Apply} again. The little sphere representing the receiver will appear on the free surface. To see both the source and receiver, click on the eye-like icon in front of \path{alpha_kernel.vtk} in the \menu{Pipeline Browser} to hide the view of \verb+alpha_kernel+. You will find the source sphere at the center of the block.
-
- Now reactivate \path{alpha_kernel.vtk}, and while it is highlighted, choose menu \menu{Filters > Alphabetical > Clip}, and in the \menu{Properties} tab, type in the \menu{Normal} of a y-plane $[0,1,0]$ (the default origin is fine), click \menu{Apply} to accept, and choose in the \menu{Display} tab, \menu{Representation > Surface}, \menu{Color by > alpha\_kernel}. Then click on \menu{Edit color map} button to work with the \menu{Color Scale Editor} pop-up menu. In this window, \menu{Choose Preset > Red to blue HSV > OK} (note it is possible to import your own favourite color scales). Unclick \menu{Automatically Rescale to Fit Data Range}, then click \menu{Rescale Range} to choose a minimum of $-1e-12$ and maximum $1e-12$, and click \menu{Rescale}. You may then click the \menu{Color Legend} tab and choose to \menu{Show Color Legend}. Close the popup window, and now the P sensitivity kernel linking the source and receiver can be nicely seen. The visualization results can be saved by menu \menu{File > Save screenshot},  which produces an png file that is similar Figure 2.
+Now reactivate \path{alpha_kernel.vtk}, and while it is highlighted, choose menu \menu{Filters > Alphabetical > Clip}, and in the \menu{Properties} tab, type in the \menu{Normal} of a y-plane $[0,1,0]$ (the default origin is fine), click \menu{Apply} to accept, and on the \menu{Display} tab, \menu{Representation > Surface} and \menu{Color by > alpha\_kernel}. Then click on \menu{Edit color map} button to work with the \menu{Color Scale Editor} pop-up menu. In this window, \menu{Choose Preset > Red to blue HSV > OK} (In this dialog, you may also import your own favourite color scales). Then unclick the \menu{Automatically Rescale to Fit Data Range} checkbox, click \menu{Rescale Range} to choose a minimum of $-1$e$-12$ and maximum $1$e$-12$, and click \menu{Rescale}. You may then click the \menu{Color Legend} tab and choose to \menu{Show Color Legend}. Close the popup window, and now the $P$ sensitivity kernel linking the source and receiver can be nicely seen. The visualization results can be saved by menu \menu{File > Save screenshot}, which produces a PNG file that is similar to Figure 2.
 
 \begin{figure}[h]
 \begin{center}
 \includegraphics[width=0.7\textwidth]{homogeneous_halfspace_P_kernel.png}
 \end{center}
-\caption{P travel-time sensitivity kernel for example 2}
+\caption{$P$ travel-time sensitivity kernel for example 2}
 \end{figure}
 
- Note: The rescaling of colorbar is necessary because the values of the kernel is very large at the source and receiver locations due to unrealistic assumption of point sources. To be able to see better the kernel itself, it is sometimes necessary to reduce the maximum values of color scales by four orders of magitude. This is also why smoothing these kernels to get rid of the spuriously large values at the sources and receivers is required before using them in tomographic inversions.
+Note: The rescaling of the colour bar is necessary because the magnitude of the kernel is very large at the source and receiver locations due to the unrealistic assumption of point sources. To be able to distinguish the kernel itself, it is sometimes necessary to reduce the maximum values of the colour scale by four orders of magnitude. Smoothing these kernels to get rid of the spuriously large values at the sources and receivers is prudent before using them in tomographic inversions.
    
-Again be sure to run \lstinline{module unload paraview} before proceeding to other examples.
+Again be sure to run \lstinline{module unload paraview PrgEnv-gnu gcc openmpi-gnu} before proceeding to other examples.
 
 \end{enumerate}
 
