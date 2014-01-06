@@ -627,7 +627,7 @@ $ cp go_decomposer_pbs.bash go_generate_databases_pbs.bash go_solver_pbs.bash ..
 $ cd ../../../
 $ vim *.bash
   # Change 'mpirun -np' to 'aprun -n'
-  # Add '#PBS -q gpu'
+  # Change '#PBS -q standard' to '#PBS -q gpu' (only necessary for go_solver_pbs.bash)
 \end{lstlisting}
 *TODO*: Add note about one process per node for GPU runs. This probably depends
 on which example we're using.
