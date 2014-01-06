@@ -70,7 +70,6 @@
 %      \textcolor{red}{\rotatebox[origin=c]{180}{$\Lsh$}}%
 %    \EndAccSupp{}\space%
 %  },
-  escapechar=\@,
   backgroundcolor=\color{codebg},
   frame=single,
   framesep=10pt,
@@ -148,36 +147,35 @@ Currently Loaded Modulefiles:
 
 If you do not see these modules listed, load the PGI compiler environment with \lstinline{module load PrgEnv-pgi}.
 
-\item Change to the \verb+$CENTER+ directory (as \verb+$HOME+ has a limited quota of 4 GB), and check out two copies\footnote{There's no need for two copies, but they will make it a bit easier to keep track of the different exampled.} of \specfem\ version 22719 from the code repository at CIG (\url{http://www.geodynamics.org/})
+\item Change to the \verb+$CENTER+ directory (as \verb+$HOME+ has a limited quota of 4 GB), and check out two copies\footnote{There's no need for two copies, but they will make it a bit easier to keep track of the different exampled.} of the \specfem\ master branch from the code repository on GitHub (\url{https://github.com/geodynamics/specfem3d}) \blue{We will need to (a) pick a random revision (not recommended) or (b) tag a revision (more useful).}
 %
 \begin{lstlisting}
 $ cd $CENTER
-$ svn co -r 22719 http://geodynamics.org/svn/cig/seismo/3D/SPECFEM3D/trunk \
-        SPECFEM3D_22719_default
-$ svn co -r 22719 http://geodynamics.org/svn/cig/seismo/3D/SPECFEM3D/trunk \
-        SPECFEM3D_22719_socal
+$ git clone --recursive https://github.com/geodynamics/specfem3d.git SPECFEM3D_default
+$ git clone --recursive https://github.com/geodynamics/specfem3d.git SPECFEM3D_socal
 \end{lstlisting}
 %
 (This may take a few minutes.)
 
-\item check version info
+\item check version info \blue{Commit ID will need to be fixed.}
 %
 \begin{lstlisting}
-$ cd SPECFEM3D_22719_default
-$ svn info
-Path: .
-URL: http://geodynamics.org/svn/cig/seismo/3D/SPECFEM3D/trunk
-Repository Root: http://geodynamics.org/svn/cig
-Repository UUID: 42e91aa9-f6fe-0310-9bd8-dd834c9eb30a
-Revision: 22719
-Node Kind: directory
-Schedule: normal
-Last Changed Author: danielpeter
-Last Changed Rev: 22719
-Last Changed Date: 2013-08-20 06:16:30 -0800 (Tue, 20 Aug 2013)
+$ cd SPECFEM3D_default
+$ git status
+# On branch master
+nothing to commit, working directory clean
+$ git show
+commit 846f6e400927b639d94bfba3a76ca132e07ef03e
+Merge: 4ba0960 fa99f77
+Author: Matthieu Lefebvre <ml15@princeton.edu>
+Date:   Mon Dec 2 11:07:05 2013 -0800
+
+    Merge pull request #74 from carltape/master
+
+    added a clarification comment for running xcombine_vol_data after generating the databases.
 \end{lstlisting}
 
-The {\em base directory} for the code is \path{SPECFEM3D_22719_default}, which we will call \path{SPECFEM3D} in the instructions.
+The {\em base directory} for the code is \path{SPECFEM3D_default}, which we will call \path{SPECFEM3D} in the instructions.
 
 \item Take a quick look at the user manual, mainly as a reminder to come back to it for details. 
 %
@@ -484,8 +482,8 @@ This example is at a scale that will likely not run on a single laptop or deskto
 \item Copy bash scripts into the base directory:
 
 \begin{lstlisting}
-$ cd SPECFEM3D_22719_socal
-$ cp ../SPECFEM3D_22719_default/*bash .
+$ cd SPECFEM3D_socal
+$ cp ../SPECFEM3D_default/*bash .
 \end{lstlisting}
 
 \item configure
@@ -574,10 +572,10 @@ at ARSC.
 \begin{enumerate}
 \item *TODO*: start with login to fish
 
-\item Check out version 22719 from SVN again:
+\item Check out version XXX again:
 \begin{lstlisting}
-$ svn co -r 22719 http://geodynamics.org/svn/cig/seismo/3D/SPECFEM3D/trunk SPECFEM3D_22719_GPU
-$ cd SPECFEM3D_22719_GPU
+$ git clone --recursive https://github.com/geodynamics/specfem3d.git SPECFEM3D_GPU
+$ cd SPECFEM3D_GPU
 \end{lstlisting}
 
 \item Load the CUDA toolkit:
