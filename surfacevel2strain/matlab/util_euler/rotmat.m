@@ -1,8 +1,5 @@
-%
-% function R = rotmat(xdeg,ixyz)
-% Carl Tape, 01-April-2011
-%
-% This returns a rotation matrix, given an angle and an index for the axis.
+function R = rotmat(xdeg,ixyz)
+%ROTMAT given index of axis (1,2,3) and angle, return rotation matrix
 %
 % INPUT
 %   x       input angle, degrees
@@ -10,11 +7,8 @@
 % OUTPUT
 %   R       rotation matrix
 %
-% calls xxx
-% called xxx
+% Carl Tape, 01-April-2011
 %
-
-function R = rotmat(xdeg,ixyz)
 
 n = length(xdeg);
 cosx = cos(xdeg * pi/180);
