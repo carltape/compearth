@@ -29,6 +29,9 @@ iwrite = 1;
 
 ropt  = input(' Type an index corresponding to a region (1=socal): ');
 dopt  = input(' Type an index corresponding to a dataset (1=moho): ');
+
+%====================================================================
+% GET DATA SET
 [dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt);
 dir_output = [bdir 'matlab_output/'];
 
@@ -77,7 +80,7 @@ if iwavelet==1
     destGslope_plot = atan(destG_plot / 6371) * 180/pi;
     
     figure; scatter(dlon_plot,dlat_plot,4^2,destGslope_plot,'filled');
-    axis(ax0); title('Slope of Moho, degrees'); colorbar;
+    axis(ax0); title('Slope of surface, degrees'); colorbar;
 end
 
 %----------------------------------------------------------------

@@ -204,11 +204,14 @@ dsig_post = sqrt(Cd_u_diag);               % n x 1
 
 figure; nr=2; nc=2;
 resmax = max(abs(d_res));
+dmin = min([d ; dest]);
+dmax = max([d ; dest]);
 
 subplot(2,1,1); hold on;
 plot( d, dest, '.');
 %plot(max(abs(d))*[-1 1],max(abs(d))*[-1 1],'r--');
-plot([0 60],[0 60],'r--');
+%plot([0 60],[0 60],'r--');
+plot([dmin dmax],[dmin dmax],'r--');
 xlabel(['OBSERVED ' ulabel]);
 ylabel(['ESTIMATED ' ulabel]);
 %title(['cor(d-obs, d-est) = ' num2str(corr(d,dest))]);  %
@@ -310,7 +313,7 @@ else
     scatter(dlon,dlat,msize,d,'filled');
     scatter(dlon,dlat,msize,'ko');
 end
-colorbar; axis(ax0);
+colorbar; axis(ax0); grid on;
 xlabel('Longitude'); ylabel('Latitude');
 title(['Estimated field (plotting grid), ' ulabel]);
 

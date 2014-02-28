@@ -31,7 +31,11 @@ iwrite = 1;
 % 5-6 alaska moho
 ropt  = input(' Type an index corresponding to a region (1=socal, 2=cal, 3=maricopa, 4=nenana): ');
 dopt  = input(' Type an index corresponding to a dataset (1=moho,2,3,4,5=grav): ');
-[dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset_carl(ropt,dopt);
+
+%========================================================
+% GET DATA SET
+
+[dlon,dlat,d,dsig,ax0,slabel,ulabel,isource,ftags] = get_1D_dataset_carl(ropt,dopt);
 dir_output = '/home/carltape/MOHO/WAVELET/MATLAB_EST/';
 
 %====================================================================
@@ -56,7 +60,9 @@ if iwavelet==1
             [polyx,polyy,polylon,polylat] = textread(file0,'%f%f%f%f');
             
         case 3
+            szone = '11S';
             qmin = 5; qmax = 11;   % qmax = 11 or 12
+            %qmax = 8;       % testing
             nlam = 40; ilampick = 1;
             ntrsh = 3;
             nx = 200;
@@ -64,7 +70,8 @@ if iwavelet==1
             [polyx,polyy] = textread(file0,'%f%f');
             [polylon,polylat] = utm2ll(polyx,polyy,szone,1);    
             
-        case 4            
+        case 4      
+            szone = '11S';
             qmin = 2; qmax = 10;   % qmax = 9 or 10
             nlam = 40; ilampick = 1;
             ntrsh = 3;
@@ -122,7 +129,7 @@ if iwavelet==1
     destGslope_plot = atan(destG_plot / 6371) * 180/pi;
     
     figure; scatter(dlon_plot,dlat_plot,4^2,destGslope_plot,'filled');
-    axis(ax0); title('Slope of Moho, degrees'); colorbar;
+    axis(ax0); title('Slope of surface, degrees'); colorbar;
 end
 
 % optional: threshold the plotting field to eliminate unphysical values
@@ -168,6 +175,21 @@ if and(iwavelet==1,iwrite==1)
     fid = fopen([flab '_lambda.dat'],'w');
     fprintf(fid,'%18.8e\n',lam0);
     fclose(fid);
+    
+    % optional: write data constraints
+    break
+    write_surf_data(flab,[],dlon,dlat,d,dsig,isource,ftags,szone);
+    
+    % testing output figure
+    if 0==1
+        %%
+        % multiple values on the western SAF (vertical fault)
+        dx = load('/home/carltape/MOHO/WAVELET/MATLAB_EST/maricopa_maricopa_basement_q05_q11_ir03_id03.dat');
+        [~,ix] = sort(dx(:,3),'ascend');
+        figure; scatter(dx(ix,1),dx(ix,2),4^2,dx(ix,3),'filled'); colorbar;
+        [~,ix] = sort(dx(:,3),'descend');
+        figure; scatter(dx(ix,1),dx(ix,2),4^2,dx(ix,3),'filled'); colorbar;
+    end
 end
 
 %========================================================
