@@ -1,15 +1,13 @@
-%
-% [dlon,dlat,d,dsig,ax0,slabel,ulabel,iall] = get_1D_dataset_carl(ropt,dopt)
-% Carl Tape, 01-Feb-2011
+function [dlon,dlat,d,dsig,ax0,slabel,ulabel,isource,ftags] = get_1D_dataset_carl(ropt,dopt)
+%GET_1D_DATASET_CARL
 %
 % This loads a set of discrete (1D) observations on the sphere
 % that we will use to estimate a smooth continuous field.
 %
-% calls xxx
 % called by sphereinterp.m
 %
-
-function [dlon,dlat,d,dsig,ax0,slabel,ulabel,iall] = get_1D_dataset_carl(ropt,dopt)
+% Carl Tape, 01-Feb-2011
+%
 
 % GEOGRAPHIC REGION 
 switch ropt
@@ -21,9 +19,12 @@ switch ropt
     case 5, rlabel = 'alaska'; ax0 = [190 230 54 72]; szone = '5V';        
 end
 
-%========================================================
+%==========================================================================
 % LOAD OBSERVATIONS
 
+isource = [];
+
+% CALIFORNIA MOHO
 if dopt == 1
     %---------------------------
     % load Moho points from all available sources
@@ -116,33 +117,33 @@ if dopt == 1
             zdep_all = [zdep_crust2 ; zdep_salton ; zdep_mooney ; zdep_yan ; zdep_gilbert ; zdep_gocad];
             zdep_sigma_all = [zdep_sigma_crust2 ; zdep_sigma_salton ; ...
                 zdep_sigma_mooney ; zdep_sigma_yan ; zdep_sigma_gilbert ; zdep_sigma_gocad];
-            iall = [1*ones(ncrust2,1) ; 3*ones(nsalton,1) ; ...
+            isource = [1*ones(ncrust2,1) ; 3*ones(nsalton,1) ; ...
                 5*ones(nmooney,1) ; 6*ones(nyan,1)  ; 7*ones(ngilbert,1) ; 8*ones(ngocad,1)];
         case 2
             xlon_all = [xlon_crust2 ; xlon_gilbert];
             ylat_all = [ylat_crust2 ; ylat_gilbert];
             zdep_all = [zdep_crust2 ; zdep_gilbert];
             zdep_sigma_all = [zdep_sigma_crust2 ; zdep_sigma_gilbert ];
-            iall = [1*ones(ncrust2,1) ; 7*ones(ngilbert,1) ];
+            isource = [1*ones(ncrust2,1) ; 7*ones(ngilbert,1) ];
         case 3
             xlon_all = [xlon_crust2 ; xlon_yan];
             ylat_all = [ylat_crust2 ; ylat_yan];
             zdep_all = [zdep_crust2 ; zdep_yan];
             zdep_sigma_all = [zdep_sigma_crust2 ; zdep_sigma_yan ];
-            iall = [1*ones(ncrust2,1) ; 6*ones(nyan,1) ];
+            isource = [1*ones(ncrust2,1) ; 6*ones(nyan,1) ];
         case 10
             xlon_all = [xlon_crust2];
             ylat_all = [ylat_crust2];
             zdep_all = [zdep_crust2];
             zdep_sigma_all = [zdep_sigma_crust2];
-            iall = ones(ncrust2,1);
+            isource = ones(ncrust2,1);
         case 11
             xlon_all = [xlon_crust2 ; xlon_EARS ; xlon_salton ; xlon_wtrb ; xlon_mooney ; xlon_yan];
             ylat_all = [ylat_crust2 ; ylat_EARS ; ylat_salton ; ylat_wtrb ; ylat_mooney ; ylat_yan];
             zdep_all = [zdep_crust2 ; zdep_EARS ; zdep_salton ; zdep_wtrb ; zdep_mooney ; zdep_yan];
             zdep_sigma_all = [zdep_sigma_crust2 ; zdep_sigma_EARS ; zdep_sigma_salton ; zdep_sigma_wtrb ; ...
                 zdep_sigma_mooney ; zdep_sigma_yan ];
-            iall = [1*ones(ncrust2,1) ; 2*ones(nEARS,1) ; 3*ones(nsalton,1) ; 4*ones(nwtrb,1) ; ...
+            isource = [1*ones(ncrust2,1) ; 2*ones(nEARS,1) ; 3*ones(nsalton,1) ; 4*ones(nwtrb,1) ; ...
                 5*ones(nmooney,1) ; 6*ones(nyan,1) ];
     end
 
@@ -153,7 +154,7 @@ if dopt == 1
     disp(sprintf('increasing zdepth uncertainty for %i points :',nlowerror));
     for ii=1:nlowerror
         jj = ilowerror(ii);
-        fprintf('%6i%6i%10.4f%10.4f%10.4f%10.4f%10.4f\n',ii,iall(jj),xlon_all(jj),ylat_all(jj),...
+        fprintf('%6i%6i%10.4f%10.4f%10.4f%10.4f%10.4f\n',ii,isource(jj),xlon_all(jj),ylat_all(jj),...
             zdep_all(jj),zdep_sigma_all(jj),sigminfrac*zdep_all(jj));
     end
     zdep_sigma_all(ilowerror) = sigminfrac*zdep_all(ilowerror);
@@ -164,17 +165,17 @@ if dopt == 1
     ylat_all       = ylat_all(iokay);
     zdep_all       = zdep_all(iokay);
     zdep_sigma_all = zdep_sigma_all(iokay);
-    iall           = iall(iokay);
+    isource        = isource(iokay);
 
     % quick plot showing the range of uncertainties for each dataset
-    figure; plot(iall, zdep_sigma_all,'.')
-    xlim([min(iall)-1 max(iall)+1]);
+    figure; plot(isource, zdep_sigma_all,'.')
+    xlim([min(isource)-1 max(isource)+1]);
     xlabel('Index of dataset'); ylabel('Uncertainty in Moho depth');
 
     % more informative display -- histogram for each dataset
     figure; nr=4; nc=2;
     for ii=1:8
-        itemp = find(iall==ii);
+        itemp = find(isource==ii);
         subplot(nr,nc,ii);
         N = plot_histo(zdep_sigma_all(itemp),[0:1:10]);
         ylim([0 0.5]); xlabel('Uncertainty in Moho depth, km');
@@ -191,28 +192,36 @@ if dopt == 1
     dsig = zdep_sigma_all;
     dlabel = sprintf('moho%2.2i',idata);
     ulabel = 'zdep, km';
-    
+
+% GREAT VALLEY BASEMENT SURFACE
 elseif dopt==2
     [dlon,dlat,zdep,zdep_sigma] = read_basement_cal;
     d = zdep;
     dsig = zdep_sigma;
     dlabel = 'USGSxtalbasement';
     ulabel = 'zdep, km';
-    
+
+% MARICOPA BASIN (southernmost San Joaquin basin)
 elseif dopt==3
-    [dlon,dlat,zdep,zdep_sigma] = read_basement_maricopa;
+    %[dlon,dlat,zdep,zdep_sigma] = read_basement_maricopa;
+    [dlon,dlat,zdep,zdep_sigma,isource,ftags] = read_basement_maricopa;
+    % up-weight the deeper points
+    zdep_sigma = 0.5 + 0.2*(max(zdep) - zdep);
+    
     d = zdep;
     dsig = zdep_sigma;
     dlabel = 'maricopa_basement';
     ulabel = 'zdep, km';
-    
+
+% SAN JOAQUIN BASIN -- BASE TERTIARY
 elseif dopt==4
     [dlon,dlat,zdep,zdep_sigma] = read_basement_sjb; 
     d = zdep;
     dsig = zdep_sigma;
     dlabel = 'base_tertiary';
     ulabel = 'zdep, km';
-    
+
+% ALASKA GRAVITY
 elseif dopt==5
     % isostatic residual gravity anomaly (column 5)
     [dlon,dlat,dg,gsig] = read_grav_akusgs(ax0);
@@ -220,7 +229,8 @@ elseif dopt==5
     dsig = gsig;
     dlabel = 'USGSgrav';
     ulabel = 'dgrav, mgal';
-    
+
+% ALASKA MOHO DATA (from alaska_moho.m)
 elseif dopt==6
     ifile = '/home/carltape/PROJECTS/alaska/tomo_models/alaska_moho_depth_data.dat';
     [dlon,dlat,d,dsig] = textread(ifile,'%f%f%f%f');
@@ -234,7 +244,11 @@ dlon = dlon(inds);
 dlat = dlat(inds);
 d = d(inds);
 dsig = dsig(inds);
-if dopt==1, iall = iall(inds); end
+if ~isempty(isource)
+    isource = isource(inds);
+else
+    isource = ones(length(d),1);    % default (all from the same source)
+end
 
 if isempty(dlon), error('get_1D_dataset.m: zero observations within specified region'); end
 
@@ -250,7 +264,7 @@ if ifig==1
         plot(xlon_crust2,ylat_crust2,'o');
         axis(ax0);
         for ii=1:length(dlon)
-           text( dlon(ii), dlat(ii), sprintf('%i:%.0f',iall(ii),d(ii)));
+           text( dlon(ii), dlat(ii), sprintf('%i:%.0f',isource(ii),d(ii)));
         end
     end
     
@@ -272,4 +286,4 @@ if ifig==1
 
 end
 
-%========================================================
+%==========================================================================

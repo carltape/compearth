@@ -4,18 +4,18 @@
 % This loads a set of discrete (1D) observations on the sphere
 % that we will use to estimate a smooth continuous field.
 %
-% calls xxx
 % called by sphereinterp.m
 %
 
 function [dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt)
 
+%==========================================================================
 % GEOGRAPHIC REGION 
 switch ropt
     case 1, rlabel = 'socal'; ax0 = [-122 -113 30 38]; szone = '11S';
 end
 
-%========================================================
+%==========================================================================
 % LOAD OBSERVATIONS
 
 dir_data = '/home/carltape/compearth/surfacevel2strain/data/examples/';
@@ -60,4 +60,4 @@ if ifig==1
     orient tall, wysiwyg, fontsize(11)
 end
 
-%========================================================
+%==========================================================================
