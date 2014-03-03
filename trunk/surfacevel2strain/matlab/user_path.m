@@ -3,21 +3,24 @@
 %
 % File to set Matlab paths into subdirectories.
 %
+% Probably it would be cleaner to all user_path.n only ONCE, since this
+% will keep adding the same directories into the path each time you run
+% surfacevel2strain.m.
 %
 
-% USER change
-bdir = '/home/carltape/compearth/surfacevel2strain/';
-bdir1 = [bdir 'matlab/'];
-
-if ~exist(bdir,'dir')
-    bdir
-    error('user_path.m: dir does not exist: ');
+% THIS ASSUMES THAT YOU HAVE compearth IN YOUR HOME DIRECTORY
+% IF IT IS NOT, THEN CHANGE IT.
+dir_home = getenv('HOME');
+dir_compearth = strcat(dir_home,'/compearth/');
+if ~exist(dir_compearth,'dir')
+    dir_compearth
+    error('user_path.m: compearth directory does not exist: ');
 end
 
-% add path to additional matlab scripts
-path(path,bdir1);
-path(path,[bdir1 'util_basic']);
-path(path,[bdir1 'util_est']);
-path(path,[bdir1 'util_euler']);
+dir_s2strain = strcat(dir_compearth,'surfacevel2strain/');
+bdir = strcat(dir_s2strain,'matlab/');
 
-%------------------------------------------------------------------------
+addpath(strcat(bdir));
+addpath(strcat(bdir,'util_basic'));
+addpath(strcat(bdir,'util_est'));
+addpath(strcat(bdir,'util_euler'));

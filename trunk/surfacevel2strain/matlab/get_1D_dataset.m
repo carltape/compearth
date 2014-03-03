@@ -1,16 +1,22 @@
-%
-% function [dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt)
+function [dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt)
+%GET_1D_DATASET load a set of discrete (1D) observations on the sphere
 % 
-% This loads a set of discrete (1D) observations on the sphere
-% that we will use to estimate a smooth continuous field.
+% We will use these data to estimate a smooth continuous field.
 %
 % called by sphereinterp.m
 %
 
-function [dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt)
+%==========================================================================
+% USER PARAMETERS
+
+% this assumes that compearth is in your home dir (see also user_path.m)
+dir_home = getenv('HOME');
+dir_compearth = strcat(dir_home,'/compearth/');
+dir_data = strcat(dir_compearth,'surfacevel2strain/data/examples/');
 
 %==========================================================================
 % GEOGRAPHIC REGION 
+
 switch ropt
     case 1, rlabel = 'socal'; ax0 = [-122 -113 30 38]; szone = '11S';
 end
@@ -18,13 +24,15 @@ end
 %==========================================================================
 % LOAD OBSERVATIONS
 
-dir_data = '/home/carltape/compearth/surfacevel2strain/data/examples/';
-
 switch dopt
     case 1
         dlabel = 'moho03'; 
         ulabel = 'zdep, km';
-        [dlon,dlat,d,dsig] = textread([dir_data 'socal_moho_example.dat'],'%f%f%f%f');
+        dfile = [dir_data 'socal_moho_example.dat']
+        if ~exist(dfile,'file')
+            error('file does not exist');
+        end
+        [dlon,dlat,d,dsig] = textread(dfile,'%f%f%f%f');
 end
 
 % subset
