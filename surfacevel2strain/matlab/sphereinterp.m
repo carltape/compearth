@@ -32,8 +32,9 @@ dopt  = input(' Type an index corresponding to a dataset (1=moho): ');
 
 %====================================================================
 % GET DATA SET
+
 [dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt);
-dir_output = [bdir 'matlab_output/'];
+dir_output = [dir_s2strain 'matlab_output/'];
 
 %====================================================================
 % ESTIMATE A SMOOTH MOHO MAP USING SPHERICAL WAVELETS
@@ -44,7 +45,7 @@ if iwavelet==1
             qmin = 2; qmax = 8; % qmax = 8 or 9
             nlam = 40; ilampick = 2;
             ntrsh = 3;
-            nx = 100;
+            nx = 50;        % controls density of points in plotting grid
     end
     
     qsec = round(mean([qmin qmax]));
@@ -81,6 +82,11 @@ if iwavelet==1
     
     figure; scatter(dlon_plot,dlat_plot,4^2,destGslope_plot,'filled');
     axis(ax0); title('Slope of surface, degrees'); colorbar;
+    
+    %X = reshape(dlon_plot,na,nb);
+    %Y = reshape(dlat_plot,na,nb);
+    %Z = reshape(destGslope_plot,na,nb);
+    %figure; pcolor(X,Y,Z); shading interp;
 end
 
 %----------------------------------------------------------------
