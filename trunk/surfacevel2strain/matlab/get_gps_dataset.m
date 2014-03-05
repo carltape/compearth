@@ -1,14 +1,13 @@
+function [dlon,dlat,vu,vs,ve,su,ss,se,ax1,slabel,stref] = get_gps_dataset(ropt,dopt,dir_data)
+%GET_GPS_DATASET load a velocity field for certain points on the sphere
 %
-% function get_gps_dataset.m
-%
-% This function loads a velocity field for certain points on the sphere.
 % The examples in surfacevel2strain are for the socal REASON velocity field
 % and for a full set of synthetic velocity fields.
 %
 % INPUT
-%   dir_data    directory containing data sets
 %   ropt        index denoting the region (lat-lon box)
 %   dopt        index denoting the data set
+%   dir_data    directory containing data sets
 %
 % OUTPUT:
 %   dlon    longitude of observation
@@ -26,8 +25,6 @@
 % calls platemodel2gps.m, read_gps_3D.m
 % called by surfacevel2strain.m
 %
-
-function [dlon,dlat,vu,vs,ve,su,ss,se,ax1,slabel,stref] = get_gps_dataset(dir_data,ropt,dopt)
 
 % GEOGRAPHIC REGION -- USER SHOULD MODIFY THESE REGIONS
 % slabel        label for the region

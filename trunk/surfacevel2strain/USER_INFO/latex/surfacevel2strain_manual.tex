@@ -1,12 +1,4 @@
-%
-%=====================================================
-%
-%   dvips -t letter surfacevel2strain_manual.dvi -o surfacevel2strain_manual.ps ; ps2pdf surfacevel2strain_manual.ps
-%
-%   Notes on converting discrete GPS velocity fields to continuous fields, and then strain rates.
-% 
-%=====================================================%
-
+%dvips -t letter surfacevel2strain_manual.dvi -o surfacevel2strain_manual.ps ; ps2pdf surfacevel2strain_manual.ps
 \documentclass[11pt,titlepage,fleqn]{article}
 
 \usepackage{amsmath}
@@ -58,7 +50,7 @@
 
 \begin{spacing}{1.5}
 \begin{center}
-{\large \bf Notes on using {\tt surfacevel2strain.m}:
+{\large \bf Notes on using {\tt surfacevel2strain.m} (and {\tt sphereinterp.m}):
 
 A Matlab program to convert surface velocity fields into strain-rate maps}
 \end{center}
@@ -376,31 +368,9 @@ For testing purposes, try decreasing one of these:
 \section{Output from {\tt surfacevel2strain.m}}
 \label{sec:surfacevel2strain_out}
 
-\subsection*{Part 1: Estimating the model vector of spherical harmonic coefficients}
+\subsection*{Part 1: Estimating the model vector of spherical wavelet coefficients}
 
-To generate some of the figures in this document, run \verb+surfacevel2strain.m+ with the following input options (for basic testing, specify 0 for ``write output files for GMT plotting''):
-%
-\begin{spacing}{1.0}
-\begin{verbatim}
- Type 1 for new inversion or 0 otherwise: 1
- Type 1 to use spherical wavelets, 2 for spherical splines: 1
- Type 1 to use the DIAGONAL covariance matrix for weighting (0 otherwise): 1
- Type the number of components of the v-field for the inversion (2 or 3) : 2
- Type 1 to plot with the mask (0 otherwise) : 1
- Type 1 to write output to files for GMT plotting (0 otherwise) : 1
- Type an index corresponding to a region (1=us, 2=cal, 3=socal, ..., 8=parkfield): 3
- Type an index corresponding to a v-field dataset (1=REASON): 1
- Type 1 to remove a uniform rotation, 0 otherwise: 1
- Type min allowable grid order, qmin >= 0 (try 3): 3
- Type max allowable grid order, qmax: 7
- Enter max q grid for secular field (3 <= qsec <= 7): 5
-Type an index for lambda (try iOCV = 28): 28
-Type an index for lambda (try iOCV = 28): 28
-\end{verbatim}
-\end{spacing}
-%
-\noindent
-The full output (and input) is shown below. This will also generate \refFigab{fig:2D_A5}{fig:2D_A7}, among many more (\refSec{sec:surfacevel2strain}).
+The full output (and input) is shown below. This will also generate \refFigab{fig:2D_A5}{fig:2D_A7}, among many more (\refSec{sec:surfacevel2strain}). For basic testing, specify 0 for ``write output files for GMT plotting''.
 %
 %\small
 \begin{spacing}{1.0}
@@ -532,7 +502,8 @@ Constructing the design matrix...
 regularization curves for scalar field vsouth
  ii = 1/40, lam = 0.001
  ii = 2/40, lam = 0.0017013
-  :
+   :
+   :
  ii = 39/40, lam = 587801.6072
  ii = 40/40, lam = 1000000
 L-curve lambda = 4.924e+03 (index 30)
@@ -542,7 +513,9 @@ Type an index for lambda (try iOCV = 28): 28
 regularization curves for scalar field veast
  ii = 1/40, lam = 0.001
  ii = 2/40, lam = 0.0017013
-  :
+   :
+   :
+ ii = 38/40, lam = 345510.7295
  ii = 39/40, lam = 587801.6072
  ii = 40/40, lam = 1000000
 L-curve lambda = 4.924e+03 (index 30)
@@ -552,7 +525,7 @@ Type an index for lambda (try iOCV = 28): 28
   
  got the regularization parameters (vr, vth, vphi):
     lam0 = NaN 1.70e+03 1.70e+03
->> 
+>>  
 \end{verbatim}
 \end{spacing}
 %\normalsize

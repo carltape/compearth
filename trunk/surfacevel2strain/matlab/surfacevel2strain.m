@@ -64,13 +64,9 @@ if ireg == 1
     %smod = mod_labs{iplate_model};
     stq = num2str(sprintf('%2.2i', q));
 
-    % USER: CHANGE THESE
-    %bdir    = '/home/carltape/compearth/surfacevel2strain/';
+    % path to input data and output files
     dir_output  = [bdir 'matlab_output/'];
     dir_data    = [bdir 'data/examples/'];
-    %dir_data    = [bdir 'data/gps_data/'];  % carl
-    %dir_grids   = [bdir 'fortran/grids_output/full_grids/'];
-    %dir_plates  = '/home/carltape/gmt/plates/';
     
     %========================================================
 
@@ -115,9 +111,9 @@ if ireg == 1
         sdopt = sprintf('d%2.2i', dopt);
         
         % KEY COMMAND: get the velocity field (and error estimates)
-        [dlon,dlat,vu,vs,ve,su,sn,se,ax0,slabel,stref] = get_gps_dataset(dir_data,ropt,dopt);
+        [dlon,dlat,vu,vs,ve,su,sn,se,ax0,slabel,stref] = get_gps_dataset(ropt,dopt,dir_data);
         %[dlon,dlat,vu,vs,ve,su,sn,se,ax0,slabel,stref] = ...
-        %    get_gps_dataset_carl(dir_data,ropt,dopt,istore,iplate_model);
+        %    get_gps_dataset_carl(ropt,dopt,dir_data,istore,iplate_model);
     end
     
     % modify booleans (see get_gps_dataset.m)

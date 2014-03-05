@@ -1,18 +1,10 @@
-function [dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt)
+function [dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt,dir_data)
 %GET_1D_DATASET load a set of discrete (1D) observations on the sphere
 % 
 % We will use these data to estimate a smooth continuous field.
 %
 % called by sphereinterp.m
 %
-
-%==========================================================================
-% USER PARAMETERS
-
-% this assumes that compearth is in your home dir (see also user_path.m)
-dir_home = getenv('HOME');
-dir_compearth = strcat(dir_home,'/compearth/');
-dir_data = strcat(dir_compearth,'surfacevel2strain/data/examples/');
 
 %==========================================================================
 % GEOGRAPHIC REGION 
