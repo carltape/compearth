@@ -20,7 +20,7 @@ format short, format compact
 
 % add path to additional matlab scripts (specify bdir)
 user_path;
-    
+   
 %========================================================
 % USER PARAMETERS
 
@@ -30,11 +30,13 @@ iwrite = 1;
 ropt  = input(' Type an index corresponding to a region (1=socal): ');
 dopt  = input(' Type an index corresponding to a dataset (1=moho): ');
 
+dir_data   = [bdir 'data/examples/'];
+dir_output = [bdir 'matlab_output/'];
+
 %====================================================================
 % GET DATA SET
 
-[dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt);
-dir_output = [dir_s2strain 'matlab_output/'];
+[dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt,dir_data);
 
 %====================================================================
 % ESTIMATE A SMOOTH MOHO MAP USING SPHERICAL WAVELETS

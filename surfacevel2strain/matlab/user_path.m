@@ -17,10 +17,10 @@ if ~exist(dir_compearth,'dir')
     error('user_path.m: compearth directory does not exist: ');
 end
 
-dir_s2strain = strcat(dir_compearth,'surfacevel2strain/');
-bdir = strcat(dir_s2strain,'matlab/');
+bdir = strcat(dir_compearth,'surfacevel2strain/');
+bdir_matlab = strcat(bdir,'matlab/');
 
-addpath(strcat(bdir));
-addpath(strcat(bdir,'util_basic'));
-addpath(strcat(bdir,'util_est'));
-addpath(strcat(bdir,'util_euler'));
+addpath(strcat(bdir_matlab));
+addpath(strcat(bdir_matlab,'util_basic'));
+addpath(strcat(bdir_matlab,'util_est'));
+addpath(strcat(bdir_matlab,'util_euler'));
