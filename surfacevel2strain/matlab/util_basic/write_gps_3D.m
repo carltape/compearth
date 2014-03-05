@@ -1,16 +1,8 @@
-%
-% function write_gps_3D.m
-%
-% This program writes a 3D GPS velocity field into a semi-standard format
-% that can easily be loaded back into Matlab for other purposes.
+function write_gps_3D(filetag,lon,lat,ve,vn,vu,se,sn,su,ren,reu,rnu,start_date,finish_date,name)
+%WRITE_GPS writes a 3D GPS velocity field into a semi-standard format
 %
 % See also read_gps_3D.m for reading such files.
 %
-% calls xxx
-% called by xxx
-%
-
-function write_gps_3D(filetag,lon,lat,ve,vn,vu,se,sn,su,ren,reu,rnu,start_date,finish_date,name)
 
 % number of stations
 nstation = length(name);
@@ -26,5 +18,3 @@ for ii = 1:nstation
         start_date(ii),finish_date(ii),name{ii} );   
 end
 fclose(fid);
-    
-%=======================================================================

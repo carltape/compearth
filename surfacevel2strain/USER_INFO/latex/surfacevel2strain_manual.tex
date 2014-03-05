@@ -178,8 +178,33 @@ These scripts will require several modifications for your own purposes.
 The primary scripts to run are \verb+plot_strain.pl+ and \verb+foursub.pl+.
 Example output figures are shown in \refFigii{fig:2D_gmt1}{fig:2D_gmt2}.
 
+%--------------------------------------------------------------------------------
+
+\section{Using your own data set}
+\label{sec:user}
+
+Assuming that the examples work for you, you can try out either \verb+sphereinterp.m+ or \verb+surfacevel2strain.m+ on your own data sets. The starting point is to get your data into a format that will work within the codes. For example, our test data for \verb+surfacevel2strain.m+ was read in by \verb+get_gps_dataset.m+, which in turn will call \verb+read_gps_3D.m+. The code has the capability of using all three components $(u_e,u_n,u_u)$ and estimated uncertainties ($\sigma_e$, $\sigma_n$, $\sigma_u$); it does not allow for covariance terms. The output from \verb+read_gps_3D.m+ has the basis convention of up-south-east, depicted as $\brh$-$\bthetah$-$\bphih$. In the example above, the conversion between basis occurred with these lines in \verb+read_gps_3D.m+
+%
+\begin{verbatim}
+vu   = data_all(:,3); vs = -data_all(:,4); ve = data_all(:,5);
+su   = data_all(:,6); ss =  data_all(:,7); se = data_all(:,8);
+\end{verbatim}
+%
+All units need to be in meters (or m/s). If you do not have uncertainty estimates, then assign these to be constant-valued. If you do not have a vertical component, assign it to be a vector of zeros. (In \verb+surfacevel2strain.m+ you have the choice to use 3- or 2-component data.)
+
+The spatial region over which you estimate the velocity field is distinct from the data set itself. You can create your own region ``index'' under the line in \verb+read_gps_3D.m+ that says
+% 
+\begin{verbatim}
+GEOGRAPHIC REGION -- USER SHOULD MODIFY THESE REGIONS%
+\end{verbatim}
+%
+(What is listed there are some regions used in \citet{Tape2009gps} and other problems.)
+
+\bigskip\noindent
+The corresponding code to load the data set for \verb+sphereinterp.m+ is \verb+get_1D_dataset.m+.
+
 %=====================================================
-\pagebreak
+%\pagebreak
 %\small
 \addcontentsline{toc}{section}{References}
 \bibliographystyle{agu08}
@@ -188,6 +213,8 @@ Example output figures are shown in \refFigii{fig:2D_gmt1}{fig:2D_gmt2}.
 %=====================================================
 
 \appendix
+
+\pagebreak
 \section{Output from {\tt sphereinterp.m}}
 \label{sec:sphereinterp_out}
 
@@ -365,6 +392,7 @@ For testing purposes, try decreasing one of these:
 
 %-------------------------------------------------------
 
+%\pagebreak
 \section{Output from {\tt surfacevel2strain.m}}
 \label{sec:surfacevel2strain_out}
 
