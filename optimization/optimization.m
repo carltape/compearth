@@ -1,42 +1,25 @@
 %
 % optimization.m
-% Carl Tape, 20-March-2010
-%
-% MORE INFORMATION:
-% This code is supplemented with a set of PDF notes, including figures.
-% Ask Carl for them.
-% 
-% See also hwoptim.m, a reduced version of this program for quasi-Newton
-% method only, but also contains some additional analysis such as
-% correlation matrices, posterior data analysis, and confidence ellipses.
 %
 % This program tests several optimization methods presented in Albert
 % Tarantola's book Inverse Problem Theory (2nd Ed., 2005) in Section 6.22.
 % The program was written in July 2007 following Tarantola's sabbatical
-% visit to Caltech.
+% visit to Caltech. It is designed for teaching purposes.
 %
-% The square-root variable metric is discussed in Hull and Tapley (1977),
-% which was transcribed into a set of Latex notes that has notation
-% consistent with that of Tarantola (2005).
-%
-% The user is given two options for the forward problem:
-%    (1)  Simple epicenter (x, y, t) plus homogeneous velocity (v)
-%    (2)  Epicenter problem from Tarantola (2005), Section 7-1
-%    (3)  DISABLED: Spectroscopic measurements of leaf properties
+% MORE INFORMATION:
+% See INFO/optimization_guide.pdf
 %
 % NOTE: If there are constants in the Matlab in-line functions, then these
 % constants are assigned at the time the function is INITIALIZED, not at
 % the time the function is called.
 %
-% THIS PROGRAM CALLS :
-%    optimization_method.m           all the iterative algorithms
+% THIS PROGRAM CALLS:
+%    optimization_method.m          all the iterative algorithms
 %    forward_epicenter.m
-%    forward_leaf.m
+%    forward_crescent.m
 %    plot_histo.m                   plot a particular style of histogram
 %
-%    vm_F.m, vm_F_chi.m             variable metric
-%    srvm_Fhat.m, srvm_Shat_chi.m   square-root variable metric
-%    srvm_nu.m                      square-root variable metric
+% Carl Tape (carltape@gi.alaska), 20-March-2010
 %
 
 clc
@@ -60,7 +43,7 @@ stlabels = {
     };
 stlabels2 = {'none','newton','quasi','steepest','cg','cgpoly','vmmatrix','vmvector','srvmmatrix','srvmvector'}';
 nmethod0 = length(stlabels)-1;
-%nmethod0 = 6;   % only first 6 are used here
+nmethod0 = 6;   % only first 6 are used here
 
 %=========================================
 % USER INPUT : choose optimization method
