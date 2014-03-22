@@ -19,7 +19,7 @@ h = findobj(gca,'Type','patch');
 set(h,'FaceColor',[0 1 1],'EdgeColor','k');
 
 if length(hdat) ~= sum(N)
-   disp(sprintf('WARNING (plot_histo.m): You may want to extend the edges --'));
+   disp(sprintf('NOTE (plot_histo.m): You may want to extend the edges --'));
    disp(sprintf(' there are %i/%i input that are outside the specified range',...
        length(hdat)-sum(N),length(hdat)));
    %disp(sprintf(' the number of input (%i) does not equal the sum of bin counts (%i).',length(hdat),sum(N)));
