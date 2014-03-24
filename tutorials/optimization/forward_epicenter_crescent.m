@@ -56,8 +56,8 @@ G = @(m) ([
 % M x M matrix of second partial derivatives (only used in full Newton method)
 % note: this contains the measurement index i
 G2 = @(m,i)  ([
-   (d1(m(1),m(2),xrec(i),yrec(i)))^-3*(yrec(i)-m(2))^2/(V0*exp(m(4)))                -(d1(m(1),m(2),xrec(i),yrec(i)))^-3*(xrec(i)-m(1))*(yrec(i)-m(2))/(V0*exp(m(4)))    
-  -(d1(m(1),m(2),xrec(i),yrec(i)))^-3*(xrec(i)-m(1))*(yrec(i)-m(2))/(V0*exp(m(4)))   (d1(m(1),m(2),xrec(i),yrec(i)))^-3*(xrec(i)-m(1))^2/(V0*exp(m(4)))                  
+   (d1(m(1),m(2),xrec(i),yrec(i)))^-3*(yrec(i)-m(2))^2/V                -(d1(m(1),m(2),xrec(i),yrec(i)))^-3*(xrec(i)-m(1))*(yrec(i)-m(2))/V    
+  -(d1(m(1),m(2),xrec(i),yrec(i)))^-3*(xrec(i)-m(1))*(yrec(i)-m(2))/V   (d1(m(1),m(2),xrec(i),yrec(i)))^-3*(xrec(i)-m(1))^2/V                  
 ]);
 
 %---------------------------------------------
