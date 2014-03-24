@@ -32,11 +32,10 @@ switch imethod
             end
             Hhat  = Hhat1 + Hhat2;                                   % full Hessian
             disp('Hhat = Hhat1 + Hhat2:');
-            disp(sprintf('%8.4f %8.4f %8.4f %8.4f   %8.4f %8.4f %8.4f %8.4f + %8.4f %8.4f %8.4f %8.4f',Hhat(1,:),Hhat1(1,:),Hhat2(1,:)));
-            disp(sprintf('%8.4f %8.4f %8.4f %8.4f = %8.4f %8.4f %8.4f %8.4f + %8.4f %8.4f %8.4f %8.4f',Hhat(2,:),Hhat1(2,:),Hhat2(2,:)));
-            disp(sprintf('%8.4f %8.4f %8.4f %8.4f   %8.4f %8.4f %8.4f %8.4f + %8.4f %8.4f %8.4f %8.4f',Hhat(3,:),Hhat1(3,:),Hhat2(3,:)));
-            disp(sprintf('%8.4f %8.4f %8.4f %8.4f   %8.4f %8.4f %8.4f %8.4f + %8.4f %8.4f %8.4f %8.4f',Hhat(4,:),Hhat1(4,:),Hhat2(4,:)));
-
+            for xx=1:nparm
+            disp(sprintf('%8.4f %8.4f %8.4f %8.4f   %8.4f %8.4f %8.4f %8.4f + %8.4f %8.4f %8.4f %8.4f',Hhat(xx,:),Hhat1(xx,:),Hhat2(xx,:)));
+            end
+            
             if 1==1
                 %mnew  = m - inv(Hhat)*ghat;
                 dm    = -Hhat\ghat;
