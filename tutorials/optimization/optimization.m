@@ -45,7 +45,7 @@ stlabels2 = {'none','newton','quasi','steepest','cg','cgpoly','vmmatrix','vmvect
 nmethod0 = length(stlabels)-1;
 nmethod0 = 6;   % only first 6 are used here
 
-%=========================================
+%==========================================================================
 % USER INPUT : choose optimization method
 
 % set this =1 if you want to use the default values or =0 if you want
@@ -76,20 +76,19 @@ inormalization = 1;
 
 % print figures to EPS files in directory pdir
 iprint = 0;
-%pdir = pwd;
-pdir = '/home/carltape/latex/notes/tomo/figures_optim/';
+pdir = pwd;
+if ~exist(pdir,'dir'), error('pdir does not exist'); end
 
-stnsamples = [num2str(nsamples) ' samples'];
-
-stlabS = {'Sd(m^k)','Sm(m^k)','S(m^k) = Sd + Sm'};
-      
-%---------------------------------------------
+%==========================================================================
 % FORWARD PROBLEM    
 
 % KEY: call the forward model
 if iforward == 1, forward_epicenter; end
 if iforward == 2, forward_epicenter_crescent; end
 %if iforward == 3, forward_leaf; end
+
+stnsamples = [num2str(nsamples) ' samples'];
+stlabS = {'Sd(m^k)','Sm(m^k)','S(m^k) = Sd + Sm'};
 
 % plots showing some of the random vectors
 if 0==1
@@ -122,6 +121,28 @@ dprior = d(mprior);
 dinitial = d(minitial);
 
 if ifig==1
+    if 0==1
+        % plot Gaussian random samples
+        figure; nr=4; nc=2;
+        sigma = 1;
+        edges = [-4*sigma: sigma/2 : 4*sigma];
+        for ii=1:nparm
+            etemp = randn_vecs_m(ii,:);
+            subplot(nr,nc,ii); plot_histo(etemp,edges); ylim([0 0.301]); grid on;
+            title({['Model parameter ' num2str(ii) ],
+                ['mean = ' sprintf('%.5f',mean(etemp)) ...
+                '; std = ' sprintf('%.5f',std(etemp)) ]});
+        end
+        subplot(2,1,2); hold on;
+        plot(randn_vecs_m,'.-');
+        title(sprintf('Gaussian distribution: %i samples',nsamples));
+        xlim([0.5 nparm+0.5]);
+        set(gca,'xtick',[1:nparm]);
+        %set(gca,'xticklabel',mlabs);
+        xlabel('model parameter'); ylabel('model parameter value'); grid on;
+        if iprint==1, orient tall; print(gcf,'-depsc',[pdir 'randn_new']); end
+    end
+
     %-----------------
     % plot different histograms of properties of the prior model covariance samples
     
@@ -140,7 +161,7 @@ if ifig==1
     
     if 0==1
         % display model samples (nsamples COLUMNS of cov_samples_m)
-        % -- this is not a very useful representation
+        % -- this is NOT a very useful representation
         figure; nr=2; nc=1;
         subplot(nr,nc,1); plot(cov_samples_m,'.-'); xlim([0.5 nparm+0.5]);
         set(gca,'xtick',[1:nparm],'xticklabel',mlabs); grid on;
