@@ -114,15 +114,15 @@ icprior0 = inv(cprior0);
 Lprior   = chol(cprior0,'lower')';      % square-root (lower triangular)
 
 % sample the prior model distribution using the square-root UNNORMALIZED covariance matrix
-for ii=1:nsamples, randn_vecs_m(:,ii) = randn(nparm,1); end
+for xx=1:nsamples, randn_vecs_m(:,xx) = randn(nparm,1); end
 cov_samples_m  = Lprior * randn_vecs_m;
 mprior_samples = repmat(mprior,1,nsamples) + cov_samples_m;
 
 % compute the norm of each model sample using the inverse NORMALIZED covariance matrix
 norm2_mprior = zeros(nsamples,1);
-for ii=1:nsamples
-    dm = mprior_samples(:,ii) - mprior;
-    norm2_mprior(ii) = dm' * icprior * dm;
+for xx=1:nsamples
+    dm = mprior_samples(:,xx) - mprior;
+    norm2_mprior(xx) = dm' * icprior * dm;
 end
 %figure; plot(norm2_mprior,'.')
 
@@ -176,15 +176,15 @@ icobs0 = inv(cobs0);
 Lcobs  = chol(cobs0,'lower')';      % square-root (lower triangular)
 
 % sample the data distribution using the square-root UNNORMALIZED covariance matrix
-for ii=1:nsamples, randn_vecs_d(:,ii) = randn(ndata,1); end
+for xx=1:nsamples, randn_vecs_d(:,xx) = randn(ndata,1); end
 cov_samples_d = Lcobs * randn_vecs_d;
 dobs_samples  = repmat(dtarget,1,nsamples) + cov_samples_d;
 
 % compute the norm of each data sample using the inverse NORMALIZED covariance matrix
 norm2_dobs = zeros(nsamples,1);
-for ii=1:nsamples
-    dd = dobs_samples(:,ii) - dtarget;
-    norm2_dobs(ii) = dd' * icobs * dd;
+for xx=1:nsamples
+    dd = dobs_samples(:,xx) - dtarget;
+    norm2_dobs(xx) = dd' * icobs * dd;
 end
 %figure; plot(norm2_dobs,'.')
 
