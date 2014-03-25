@@ -88,33 +88,7 @@ if iforward == 2, forward_epicenter_crescent; end
 %if iforward == 3, forward_leaf; end
 
 stnsamples = [num2str(nsamples) ' samples'];
-stlabS = {'Sd(m^k)','Sm(m^k)','S(m^k) = Sd + Sm'};
-
-% plots showing some of the random vectors
-if 0==1
-    % Gaussian 'white nose' random vectors: values between -1 and 1
-    rand_vecs_m = -1 + 2*rand(nparm,nsamples);  % model
-    rand_vecs_d = -1 + 2*rand(ndata,nsamples);  % data
-
-    for kk=1:2
-        if kk==1, tmat = rand_vecs_m;  stlab = ' Uniform distribution'; fname = 'rand';
-        else      tmat = randn_vecs_m; stlab = ' Gaussian distribution'; fname = 'randn';
-        end
-        figure; nr=4; nc=2;
-        for ii=1:nparm
-            subplot(nr,nc,ii); plot_histo(tmat(ii,:),[-4:0.5:4]); ylim([0 0.3]); grid on;
-            title(['Model Parameter ' num2str(ii) ' (' mlabs{ii} ')']);
-        end
-        
-        subplot(2,1,2); plot(tmat,'.-'); ylim([-5 5]);
-        xlabel(' Model parameter'); title([stlab ' : ' stnsamples]);
-        set(gca,'xtick',[1:nparm],'xticklabel',mlabs);
-        xlim([0.5 nparm+0.5]); grid on;
-        
-        orient tall, wysiwyg
-        if iprint==1, print(gcf,'-depsc',[pdir fname]); end
-    end
-end
+stlabS = {'Sd(m^n)','Sm(m^n)','S(m^n) = Sd + Sm'};
 
 % predictions for prior and initial models (not necessary)
 dprior = d(mprior);
@@ -122,14 +96,14 @@ dinitial = d(minitial);
 
 if ifig==1
     if 0==1
-        % plot Gaussian random samples
+        % plot Gaussian random samples (randn_vecs_m) based on randn (not rand)
         figure; nr=4; nc=2;
         sigma = 1;
         edges = [-4*sigma: sigma/2 : 4*sigma];
-        for ii=1:nparm
-            etemp = randn_vecs_m(ii,:);
-            subplot(nr,nc,ii); plot_histo(etemp,edges); ylim([0 0.301]); grid on;
-            title({['Model parameter ' num2str(ii) ],
+        for kk=1:nparm
+            etemp = randn_vecs_m(kk,:);
+            subplot(nr,nc,kk); plot_histo(etemp,edges); ylim([0 0.301]); grid on;
+            title({['Model parameter ' num2str(kk) ],
                 ['mean = ' sprintf('%.5f',mean(etemp)) ...
                 '; std = ' sprintf('%.5f',std(etemp)) ]});
         end
@@ -148,12 +122,12 @@ if ifig==1
     
     % display distributions for each model parameter (nparm ROWS of cov_samples_m)
     figure; nr=2; nc=2;
-    for ii=1:nparm
-        sigma = sigma_prior(ii);
+    for kk=1:nparm
+        sigma = sigma_prior(kk);
         edges = [-4*sigma: sigma/2 : 4*sigma];
-        etemp = cov_samples_m(ii,:);
-        subplot(nr,nc,ii); plot_histo(etemp,edges); ylim([0 0.4]); grid on;
-        title({['mprior samples: Model parameter ' num2str(ii) ' (' mlabs{ii} ')'],
+        etemp = cov_samples_m(kk,:);
+        subplot(nr,nc,kk); plot_histo(etemp,edges); ylim([0 0.4]); grid on;
+        title({['mprior samples: Model parameter ' num2str(kk) ' (' mlabs{kk} ')'],
             ['mean = ' sprintf('%.5f',mean(etemp)) ...
             '; std = ' sprintf('%.5f',std(etemp)) ]});
     end
@@ -246,7 +220,7 @@ end
 
 disp('  ');
 disp('Optimization methods:');
-for ii=0:nmethod0, disp(['    ' num2str(ii) ' : ' stlabels{ii+1}]); end
+for xx=0:nmethod0, disp(['    ' num2str(xx) ' : ' stlabels{xx+1}]); end
 disp('TYPE A NUMBER AFTER EACH PROMPT AND HIT ENTER:');
 disp('   IF YOU WANT MULTIPLE METHODS, LIST THE NUMBERS IN BRACKETS (e.g., [1 4 5])');
 disp(['   IF YOU WANT ALL METHODS, USE [1:' num2str(nmethod0) ']']);
@@ -343,7 +317,7 @@ for imodel = 1:nmodel
         
         % limits for y-axis on convergence plots
         ylims = 10.^[-1 2];
-        %ylims = 10.^[-3 0.5];
+        if iforward==2, ylims = 10.^[-2 0.5]; end
         %ylims = [6 10];
 
         %--------------------------
@@ -419,7 +393,7 @@ for imodel = 1:nmodel
         if or(imethod >= 1, imethod <= nmethod0)
             
             mcov_samples = zeros(nparm,nsamples);
-            for ii=1:nsamples, randn_vecs_m(:,ii) = randn(nparm,1); end
+            for xx=1:nsamples, randn_vecs_m(:,xx) = randn(nparm,1); end
             if or(imethod >= 1, imethod <= nmethod0)
                 mcov_samples  = Lpost * randn_vecs_m;
             elseif or(imethod==8, imethod==9)
@@ -468,16 +442,16 @@ for imodel = 1:nmodel
 
                 % display distributions for each model parameter (nparm ROWS of cov_samples_m)
                 figure; nr=2; nc=2;
-                for ii=1:nparm
-                    sigma = sigma_post(ii);
+                for kk=1:nparm
+                    sigma = sigma_post(kk);
                     edges = [-4*sigma: sigma/2 : 4*sigma];
-                    etemp = mcov_samples(ii,:);
-                    subplot(nr,nc,ii); plot_histo(etemp,edges); ylim([0 0.4]); grid on;
+                    etemp = mcov_samples(kk,:);
+                    subplot(nr,nc,kk); plot_histo(etemp,edges); ylim([0 0.4]); grid on;
                     stl1 = ['mpost samples for ' stlabels2{imethod+1} ' method'];
-                    stl2 = ['Model parameter ' num2str(ii) ' (' mlabs{ii} ')'];
+                    stl2 = ['Model parameter ' num2str(kk) ' (' mlabs{kk} ')'];
                     stl3 = ['mean = ' sprintf('%.5f',mean(etemp)) ...
                         '; std = ' sprintf('%.5f',std(etemp)) ];
-                    if ii==1, title({stl1,stl2,stl3});
+                    if kk==1, title({stl1,stl2,stl3});
                     else title({stl2,stl3}); end
                 end
                 if iprint==1, print(gcf,'-depsc',[pdir 'mpost2_' ftag]); end
@@ -504,7 +478,7 @@ for imodel = 1:nmodel
                     'linewidth',2,'markersize',20);
                 legend(stlabS); xlim([-0.5 niter+0.5]); ylim(log10(ylims));
                 set(gca,'xtick',[-1:niter+1]); grid on;
-                xlabel('k, iteration'); ylabel(' log10[ S(m^k) ], misfit function'); title(stit);
+                xlabel('n, iteration'); ylabel(' log10[ S(m^n) ], misfit function'); title(stit);
                 if iprint==1, print(gcf,'-depsc',[pdir 'converge_' ftag]); end
             end
             
@@ -516,13 +490,13 @@ for imodel = 1:nmodel
         % misfit function values
 
         disp(sprintf('%8s%16s%16s%16s','iter','Sd','Sm','S = Sm + Sd'));
-        for ii=1:niter+1, disp(sprintf('%8i%16.10f%16.10f%16.10f',iter_vec(ii),Sd_vec(ii),Sm_vec(ii),S_vec(ii))); end
+        for nn=1:niter+1, disp(sprintf('%8i%16.10f%16.10f%16.10f',iter_vec(nn),Sd_vec(nn),Sm_vec(nn),S_vec(nn))); end
 
 %         if and(ifig==1, nmethod==1)
 %            figure; semilogy(iter_vec, S_vec,'b.','markersize',24);
 %            xlim([-0.5 niter+0.5]); ylim(ylims);
 %            set(gca,'xtick',[-1:niter+1]); grid on;
-%            xlabel('k, iteration'); ylabel(' S(m^k), misfit function');
+%            xlabel('n, iteration'); ylabel(' S(m^n), misfit function');
 %            title([stlabels{imethod+1} ' method with ' num2str(niter) ' iterations']);
 %         end
         
@@ -552,7 +526,7 @@ for imodel = 1:nmodel
         legend(stlabels{imethod_vec+1});
         xlim([-0.5 niter+0.5]); ylim(log10(ylims));
         set(gca,'xtick',[-1:niter+1]); grid on;
-        xlabel('k, iteration'); ylabel('log10[ S(m^k) ], misfit function');
+        xlabel('n, iteration'); ylabel('log10[ S(m^n) ], misfit function');
         title(stS0);
         %orient tall, wysiwyg
         if iprint==1, print(gcf,'-depsc',[pdir 'converge_Nmethod_' stnmodel]); end
@@ -568,7 +542,7 @@ for imodel = 1:nmodel
 %             legend(stlabels{6},stlabels{7},stlabels{8},stlabels{9});
 %             xlim([-0.5 niter+0.5]); ylim(log10(ylims));
 %             set(gca,'xtick',[-1:niter+1]); grid on;
-%             xlabel('k, iteration'); ylabel('log10[ S(m^k) ], misfit function');
+%             xlabel('n, iteration'); ylabel('log10[ S(m^n) ], misfit function');
 %             title(stS0);
 %             if iprint==1, print(gcf,'-depsc',[pdir 'variable_metric']); end
 %         end
@@ -598,7 +572,7 @@ if and(nmodel==1, nmethod==1)
 %         'linewidth',2,'markersize',20);
 %     legend(stlabS); xlim([-0.5 niter+0.5]); ylim(log10(ylims));
 %     set(gca,'xtick',[-1:niter+1]); grid on;
-%     xlabel('k, iteration'); ylabel(' log10[ S(m^k) ], misfit function'); title(stit);
+%     xlabel('n, iteration'); ylabel(' log10[ S(m^n) ], misfit function'); title(stit);
 %     if iprint==1, print(gcf,'-depsc',[pdir 'converge_' stlabels2{imethod+1} '_1run']); end
     
 elseif and(nmodel > 1, nmethod==1)
@@ -607,20 +581,20 @@ elseif and(nmodel > 1, nmethod==1)
 
     % compute mean curves
     sumcurve1 = zeros(niter+1,1); sumcurve2 = zeros(niter+1,1); sumcurve3 = zeros(niter+1,1);
-    for ii=1:nmodel
-        temp1 = log10(Sd_array(:,1,ii));
-        temp2 = log10(Sm_array(:,1,ii));
-        temp3 = log10(S_array(:,1,ii));
+    for xx=1:nmodel
+        temp1 = log10(Sd_array(:,1,xx));
+        temp2 = log10(Sm_array(:,1,xx));
+        temp3 = log10(S_array(:,1,xx));
         sumcurve1 = sumcurve1 + temp1;
         sumcurve2 = sumcurve2 + temp2;
         sumcurve3 = sumcurve3 + temp3;
     end
     
     figure; nr=2; nc=2;
-    for ii=1:nmodel
-        temp1 = log10(Sd_array(:,1,ii));
-        temp2 = log10(Sm_array(:,1,ii));
-        temp3 = log10(S_array(:,1,ii));
+    for xx=1:nmodel
+        temp1 = log10(Sd_array(:,1,xx));
+        temp2 = log10(Sm_array(:,1,xx));
+        temp3 = log10(S_array(:,1,xx));
         subplot(nr,nc,1); hold on; plot(iter_vec, temp1, 'r');
         subplot(nr,nc,2); hold on; plot(iter_vec, temp2, 'b');
         subplot(nr,nc,3); hold on; plot(iter_vec, temp3, 'k');
@@ -634,13 +608,13 @@ elseif and(nmodel > 1, nmethod==1)
     p2 = plot(iter_vec, sumcurve2/nmodel,'b','linewidth',4);
     p3 = plot(iter_vec, sumcurve3/nmodel,'k','linewidth',4);
     legend([p1 p2 p3],stlabS);
-    for ii=1:4
-        subplot(nr,nc,ii);   
+    for xx=1:4
+        subplot(nr,nc,xx);   
         xlim([-0.5 niter+0.5]); ylim(log10(ylims));
         set(gca,'xtick',[-1:niter+1]); grid on;
-        xlabel('k, iteration');
-        if ii==4, ylabel([' log10[ ' stlabS{3} ' ]']); title(stit);
-        else ylabel([' log10[ ' stlabS{ii} ' ]']); end
+        xlabel('n, iteration');
+        if xx==4, ylabel([' log10[ ' stlabS{3} ' ]']); title(stit);
+        else ylabel([' log10[ ' stlabS{xx} ' ]']); end
     end
     orient tall, wysiwyg
     if iprint==1, print(gcf,'-depsc',[pdir 'converge_' stlabels2{imethod+1} '_' stnmodel]); end
@@ -650,8 +624,8 @@ elseif and(nmodel > 1, nmethod==1)
     %       cpost0 samples for each run
     if or(iforward==1, iforward==2)
         figure; hold on;
-        for ii=1:nmodel
-            plot([minitial_models(1,ii) mpost_models(1,ii)],[minitial_models(2,ii) mpost_models(2,ii)],'k');
+        for xx=1:nmodel
+            plot([minitial_models(1,xx) mpost_models(1,xx)],[minitial_models(2,xx) mpost_models(2,xx)],'k');
         end
         p0 = plot(mprior_samples(1,:),mprior_samples(2,:),'.');
         p1 = plot(minitial_models(1,:),minitial_models(2,:),'o','markersize',10,'markerfacecolor','k','markeredgecolor','w');
@@ -676,8 +650,8 @@ elseif and(nmodel > 1, nmethod > 1)
     for zz = 1:5
         subplot(nr,nc,zz); hold on;
         sumcurve = zeros(niter+1,1);
-        for ii=1:nmodel
-            temp = log10(S_array(:,zz,ii));
+        for xx=1:nmodel
+            temp = log10(S_array(:,zz,xx));
             plot(iter_vec, temp, 'k');
             sumcurve = sumcurve + temp;
         end
@@ -685,7 +659,7 @@ elseif and(nmodel > 1, nmethod > 1)
         plot(iter_vec, meancurves(:,zz),'r','linewidth',2);
         xlim([-0.5 niter+0.5]); ylim(log10(ylims));
         set(gca,'xtick',[-1:niter+1]); grid on;
-        xlabel('k, iteration'); ylabel(' log10[ S(m^k) ], misfit function');
+        xlabel('n, iteration'); ylabel(' log10[ S(m^n) ], misfit function');
         title([stlabels{zz+1} ', ' num2str(nmodel) ' runs']);
     end
     orient tall, wysiwyg
@@ -696,7 +670,7 @@ elseif and(nmodel > 1, nmethod > 1)
     legend(stlabels{2},stlabels{3},stlabels{4},stlabels{5},stlabels{6});
     xlim([-0.5 niter+0.5]); ylim(log10(ylims));
     set(gca,'xtick',[-1:niter+1]); grid on;
-    xlabel('k, iteration'); ylabel(' log10[ S(m^k) ], misfit function');
+    xlabel('n, iteration'); ylabel(' log10[ S(m^n) ], misfit function');
     title(['MEANS for each method, ' num2str(nmodel) ' runs']);
     if iprint==1, print(gcf,'-depsc',[pdir 'converge_Nmethod_' stnmodel]); end
     
@@ -704,4 +678,4 @@ else
     if ifig==0, disp('use ifig=1 to compare multiple methods for a single run'); end
 end
 
-%==================================================
+%==========================================================================
