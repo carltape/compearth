@@ -34,8 +34,9 @@ switch imethod
             % Hhat2 term. The iith entry of the residual vector is the
             % weight for the corresponding matrix of partial derivatives (G2).
             % Note that the observations are present in Hhat2 but not in Hhat1.
+            dwt = icobs*(delta-dobs);
             for ii=1:ndata
-                Hhat2 = G2(m,ii) * dot(icobs(:,ii),delta-dobs);
+                Hhat2 = dwt(ii) * G2(m,ii);
             end
             Hhat  = Hhat1 + Hhat2;                                   % full Hessian
             disp('Hhat = Hhat1 + Hhat2:');
