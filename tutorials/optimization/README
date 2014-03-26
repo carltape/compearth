@@ -2,6 +2,15 @@ Carl Tape
 carltape@gi.alaska.edu
 24-June-2010
 
+To check out this directory from the google project compearth, try this from a command line:
+
+svn checkout https://compearth.googlecode.com/svn/trunk/tutorials/optimization
+
+(This assumes you have svn, which is a pretty standard program for linux machines.)
+If this does not work for you, please email me.
+
+---------------------------
+
 This directory is aimed at illustrating various gradient-based optimization techniques,
 which are outlined in Section 6.22 of Albert Tarantola's 2005 SIAM book, Inverse Problem Theory.
 
