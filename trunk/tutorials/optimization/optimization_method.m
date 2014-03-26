@@ -22,19 +22,19 @@ switch imethod
         for nn = 1:niter
             disp([' iteration ' num2str(nn) ' out of ' num2str(niter) ]);
             m     = mnew;
-            delta = d(m);
+            dpred = d(m);
             Ga    = G(m);
 
             % update the model: Tarantola (2005), Eq 6.319
             % (the line-search parameter is assumed to be nu = 1)
-            ghat  = Ga'*icobs*(delta - dobs) + icprior*(m - mprior);  % gradient
+            ghat  = Ga'*icobs*(dpred - dobs) + icprior*(m - mprior);  % gradient
             Hhat1 = icprior + Ga'*icobs*Ga;                           % approximate Hessian
             Hhat2 = zeros(nparm,nparm);
             % The ONLY difference between quasi-Newton and Newton is the
             % Hhat2 term. The iith entry of the residual vector is the
             % weight for the corresponding matrix of partial derivatives (G2).
             % Note that the observations are present in Hhat2 but not in Hhat1.
-            dwt = icobs*(delta-dobs);
+            dwt = icobs*(dpred-dobs);
             for ii=1:ndata
                 Hhat2 = dwt(ii) * G2(m,ii);
             end
@@ -51,7 +51,7 @@ switch imethod
                 mnew  = m + dm;
             else
                 % equivalent formula: see Tarantola and Valette (1982), Eq. 23-35
-                mutemp = (Ga*cprior*Ga' + cobs) \ (dobs-delta + Ga*(m - mprior));
+                mutemp = (Ga*cprior*Ga' + cobs) \ (dobs-dpred + Ga*(m - mprior));
                 mnew  = mprior + cprior*Ga'*mutemp;
             end
 
@@ -69,13 +69,13 @@ switch imethod
         for nn = 1:niter
             disp([' iteration ' num2str(nn) ' out of ' num2str(niter) ]);
             m     = mnew;
-            delta = d(m);
+            dpred = d(m);
             Ga    = G(m);
 
             % update the model: Tarantola (2005), Eq 6.319
             % (the line-search parameter is assumed to be nu = 1)
             Hhat  = icprior + Ga'*icobs*Ga;                           % approximate Hessian
-            ghat  = Ga'*icobs*(delta - dobs) + icprior*(m - mprior);  % gradient
+            ghat  = Ga'*icobs*(dpred - dobs) + icprior*(m - mprior);  % gradient
 
             if 1==1
                 %mnew  = m - inv(Hhat)*ghat;
@@ -83,7 +83,7 @@ switch imethod
                 mnew  = m + dm;
             else
                 % equivalent formula: see Tarantola and Valette (1982), Eq. 23-35
-                mutemp = (Ga*cprior*Ga' + cobs) \ (dobs-delta + Ga*(m - mprior));
+                mutemp = (Ga*cprior*Ga' + cobs) \ (dobs-dpred + Ga*(m - mprior));
                 mnew  = mprior + cprior*Ga'*mutemp;
             end
 
@@ -107,9 +107,9 @@ switch imethod
             m = mnew;
 
             % steepest ascent vector (Eq. 6.307 or 6.312)
-            delta = d(m);
+            dpred = d(m);
             Ga    = G(m);
-            g     = cprior*Ga'*icobs*(delta - dobs) + (m - mprior);
+            g     = cprior*Ga'*icobs*(dpred - dobs) + (m - mprior);
 
             % search direction (preconditioned by F) (Eq. 6.311)
             p = F*g;
@@ -133,9 +133,9 @@ switch imethod
             m = mnew;
 
             % steepest ascent vector (Tarantola, 2005, Eq. 6.312)
-            delta = d(m);
+            dpred = d(m);
             Ga    = G(m);
-            g     = cprior*Ga'*icobs*(delta - dobs) + (m - mprior);
+            g     = cprior*Ga'*icobs*(dpred - dobs) + (m - mprior);
 
             % search direction (Tarantola, 2005, Eq. 6.329)
             l = F0*g;
@@ -169,9 +169,9 @@ switch imethod
             Sval  = S(m,dobs,mprior,icobs,icprior);   % misfit value
 
             % steepest ascent vector (Tarantola, 2005, Eq. 6.312)
-            delta = d(m);
+            dpred = d(m);
             Ga    = G(m);
-            g     = cprior*Ga'*icobs*(delta - dobs) + (m - mprior);
+            g     = cprior*Ga'*icobs*(dpred - dobs) + (m - mprior);
 
             % search direction (Tarantola, 2005, Eq. 6.329)
             l = F0*g;
@@ -231,9 +231,9 @@ switch imethod
             m = mnew;
 
             % steepest ascent vector
-            delta = d(m);
+            dpred = d(m);
             Ga    = G(m);
-            g     = cprior*Ga'*icobs*(delta - dobs) + (m - mprior);
+            g     = cprior*Ga'*icobs*(dpred - dobs) + (m - mprior);
 
             % update the preconditioner F
             if nn > 1
