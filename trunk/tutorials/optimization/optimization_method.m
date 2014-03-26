@@ -10,6 +10,11 @@
 % Carl Tape, 3/2010
 %
 
+% testing (run optimization_method.m)
+%mnew = minitial;
+%Sd_vec = zeros(niter+1,1); Sm_vec = Sd_vec; S_vec = Sd_vec;
+%Sd_vec(1) = Sd_0; Sm_vec(1) = Sm_0; S_vec(1) = S_0;
+
 % display initial model
 nn = 0;
 disp([' iteration ' num2str(nn) ' out of ' num2str(niter) ]);
@@ -146,9 +151,11 @@ switch imethod
                p = l + alpha*pold;
             end
 
-            % update model
+            % calculate step length
             b = Ga*p;
             mu = g'*icprior*p / (p'*icprior*p + b'*icobs*b);  % Eq. 6.333
+            
+            % update model
             mnew = m - mu*p;
             gold = g;
             pold = p;
@@ -166,8 +173,21 @@ switch imethod
         for nn = 1:niter
             disp([' iteration ' num2str(nn) ' out of ' num2str(niter) ]);
             m     = mnew;
-            Sval  = S(m,dobs,mprior,icobs,icprior);   % misfit value
-
+            Sval  = S(m,dobs,mprior,icobs,icprior)   % misfit value
+            
+            % note: this block should not be needed if some minor changes
+            %       are made to the calculation of step length mu
+            if nn > 1
+                if Sval > S_vec(nn-1)
+                    Sval, S_vec(nn-1)
+                    disp('new model has larger misfit, so stop at previous model');
+                    Sd_vec(nn:end) = Sd_vec(nn-1);
+                    Sm_vec(nn:end) = Sm_vec(nn-1);
+                    S_vec(nn:end)  = S_vec(nn-1);
+                    break
+                end
+            end
+            
             % steepest ascent vector (Tarantola, 2005, Eq. 6.312)
             dpred = d(m);
             Ga    = G(m);
@@ -181,18 +201,19 @@ switch imethod
                alpha = (g - gold)'*icprior*l / (gold'*icprior*lold);  % Eq. 6.331-2
                p = l + alpha*pold;
             end
-
+            
             %--------------------
             % test model using quadratic extrapolation: Tape-Liu-Tromp (2007)
+            % (compared with the previous CG algorithm, we do not use b = Ga*b to get mu)
             mu_test   = -2*Sval / sum( g'*icprior*p );
             m_test    = m + mu_test*p;
             Sval_test = S(m_test,dobs,mprior,icobs,icprior);
 
             % end iteration if the test model is unrealistic
             if ~isreal(Sval_test)
-                disp(' polynomial step is TOO FAR');
+                disp('polynomial step is TOO FAR');
                 S_vec(nn+1:end) = S_vec(nn);
-                break;
+                break
             end
 
             % determine coefficients of quadratic polynomial (ax^2 + bx + c),
@@ -206,7 +227,7 @@ switch imethod
             Pb = g1;
             Pc = y1 - Pa*x1^2 - Pb*x1;
 
-            % get the analytical minimum of the parabola
+            % get the mu value associated with analytical minimum of the parabola
             if Pa ~= 0, mu = -Pb / (2*Pa); else error('check the input polynomial'); end
             %--------------------
 

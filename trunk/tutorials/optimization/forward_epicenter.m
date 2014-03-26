@@ -78,12 +78,12 @@ G = @(m) ([
     ]);
 
 % M x M matrix of second partial derivatives (only used in full Newton method)
-% note: this contains the measurement index i
-G2 = @(m,i)  ([
-   (d1(m(1),m(2),xrec(i),yrec(i)))^-3*(yrec(i)-m(2))^2/(V0*exp(m(4)))               -(d1(m(1),m(2),xrec(i),yrec(i)))^-3*(xrec(i)-m(1))*(yrec(i)-m(2))/(V0*exp(m(4)))     0  (d1(m(1),m(2),xrec(i),yrec(i)))^-1*(xrec(i)-m(1))/(V0*exp(m(4)))
-  -(d1(m(1),m(2),xrec(i),yrec(i)))^-3*(xrec(i)-m(1))*(yrec(i)-m(2))/(V0*exp(m(4)))   (d1(m(1),m(2),xrec(i),yrec(i)))^-3*(xrec(i)-m(1))^2/(V0*exp(m(4)))                  0  (d1(m(1),m(2),xrec(i),yrec(i)))^-1*(yrec(i)-m(2))/(V0*exp(m(4)))
+% note: this contains the measurement index ii
+G2 = @(m,ii)  ([
+   (d1(m(1),m(2),xrec(ii),yrec(ii)))^-3*(yrec(ii)-m(2))^2/(V0*exp(m(4)))               -(d1(m(1),m(2),xrec(ii),yrec(ii)))^-3*(xrec(ii)-m(1))*(yrec(ii)-m(2))/(V0*exp(m(4)))     0  (d1(m(1),m(2),xrec(ii),yrec(ii)))^-1*(xrec(ii)-m(1))/(V0*exp(m(4)))
+  -(d1(m(1),m(2),xrec(ii),yrec(ii)))^-3*(xrec(ii)-m(1))*(yrec(ii)-m(2))/(V0*exp(m(4)))   (d1(m(1),m(2),xrec(ii),yrec(ii)))^-3*(xrec(ii)-m(1))^2/(V0*exp(m(4)))                  0  (d1(m(1),m(2),xrec(ii),yrec(ii)))^-1*(yrec(ii)-m(2))/(V0*exp(m(4)))
     0                                                                                0                                                                                   0   0
-   (d1(m(1),m(2),xrec(i),yrec(i)))^-1*(xrec(i)-m(1))/(V0*exp(m(4)))                  (d1(m(1),m(2),xrec(i),yrec(i)))^-1*(yrec(i)-m(2))/(V0*exp(m(4)))                    0   d1(m(1),m(2),xrec(i),yrec(i))/(V0*exp(m(4)))
+   (d1(m(1),m(2),xrec(ii),yrec(ii)))^-1*(xrec(ii)-m(1))/(V0*exp(m(4)))                  (d1(m(1),m(2),xrec(ii),yrec(ii)))^-1*(yrec(ii)-m(2))/(V0*exp(m(4)))                    0   d1(m(1),m(2),xrec(ii),yrec(ii))/(V0*exp(m(4)))
 ]);
 
 %---------------------------------------------

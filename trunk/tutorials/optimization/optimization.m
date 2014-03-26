@@ -71,7 +71,7 @@ else
     idata_errors = 2;
     ifig = 1;
 end
-%inormalization  = input(' Type 1 for normalization factors for Cd and Cm: ');
+%inormalization = input(' Type 1 for normalization factors for Cd and Cm: ');
 inormalization = 1;
 
 % print figures to EPS files in directory pdir
