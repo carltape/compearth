@@ -173,20 +173,18 @@ switch imethod
         for nn = 1:niter
             disp([' iteration ' num2str(nn) ' out of ' num2str(niter) ]);
             m     = mnew;
-            Sval  = S(m,dobs,mprior,icobs,icprior)   % misfit value
+            Sval  = S(m,dobs,mprior,icobs,icprior);   % misfit value
             
-            % note: this block should not be needed if some minor changes
-            %       are made to the calculation of step length mu
-            if nn > 1
-                if Sval > S_vec(nn-1)
-                    Sval, S_vec(nn-1)
-                    disp('new model has larger misfit, so stop at previous model');
-                    Sd_vec(nn:end) = Sd_vec(nn-1);
-                    Sm_vec(nn:end) = Sm_vec(nn-1);
-                    S_vec(nn:end)  = S_vec(nn-1);
-                    break
-                end
-            end
+%             if nn > 1
+%                 if Sval > S_vec(nn-1)
+%                     Sval, S_vec(nn-1)
+%                     disp('new model has larger misfit, so stop at previous model');
+%                     Sd_vec(nn:end) = Sd_vec(nn-1);
+%                     Sm_vec(nn:end) = Sm_vec(nn-1);
+%                     S_vec(nn:end)  = S_vec(nn-1);
+%                     break
+%                 end
+%             end
             
             % steepest ascent vector (Tarantola, 2005, Eq. 6.312)
             dpred = d(m);

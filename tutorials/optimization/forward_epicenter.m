@@ -5,16 +5,20 @@
 % from a source with an unknown origin time to a receiver in a
 % homogeneous medium with unknown velocity V.
 %
+% NOTE: variables such as minitial, mtarget, and eobs may be over-written
+% within optimization.m when the user specifies multiple runs.
+%
 % NOTE: If there are constants in the Matlab in-line functions, then these
 % constants are assigned at the time the function is INITIALIZED, not at
 % the time the function is called.
 %
-% calls plot_epicenters.m
+% CALLED BY : optimization.m
+% CALLS     : plot_epicenters.m
 %
 % Carl Tape, 3/18/2010
 %
 
-%=========================================
+%==========================================================================
 % FORWARD PROBLEM    
 
 ndata = 12;
@@ -86,14 +90,14 @@ G2 = @(m,ii)  ([
    (d1(m(1),m(2),xrec(ii),yrec(ii)))^-1*(xrec(ii)-m(1))/(V0*exp(m(4)))                  (d1(m(1),m(2),xrec(ii),yrec(ii)))^-1*(yrec(ii)-m(2))/(V0*exp(m(4)))                    0   d1(m(1),m(2),xrec(ii),yrec(ii))/(V0*exp(m(4)))
 ]);
 
-%---------------------------------------------
+%--------------------------------------------------------------------------
 % RANDOM VECTORS (for sampling covariance matrices)
 
 % Gaussian random vectors, each with mean = 0 and standard deviation = 1
 randn_vecs_m = randn(nparm,nsamples);   % model
 randn_vecs_d = randn(ndata,nsamples);   % data
 
-%---------------------------------------------
+%--------------------------------------------------------------------------
 % PRIOR MODEL (MEAN MODEL) : ts, xs, ys, v
 
 % prior model
@@ -126,14 +130,14 @@ for xx=1:nsamples
 end
 %figure; plot(norm2_mprior,'.')
 
-%---------------------------------------------
+%--------------------------------------------------------------------------
 % INITIAL MODEL
 
 % minitial is DIFFERENT FOR EACH RUN, or you can fix it for testing purposes
 if irandom_initial_model == 1
-    minitial = mprior_samples(:,1);      % first sample
+    minitial = mprior_samples(:,1);     % first sample (random)
 else
-    minitial = [
+    minitial = [                        % fixed
         46.5236
         40.1182
         15.3890
@@ -141,14 +145,14 @@ else
     ];
 end
 
-%---------------------------------------------
+%--------------------------------------------------------------------------
 % TARGET MODEL
 
 % mtarget is DIFFERENT FOR EACH RUN, or you can fix it for testing purposes
 if irandom_target_model == 1  
-    mtarget = mprior_samples(:,end);      % last sample
+    mtarget = mprior_samples(:,end);    % last sample (random)
 else
-    mtarget = [
+    mtarget = [                         % fixed  
            21.2922
            46.2974
            16.1314
@@ -156,7 +160,7 @@ else
                 ];
 end
 
-%---------------------------------------------
+%--------------------------------------------------------------------------
 
 % TARGET DATA
 dtarget = d(mtarget);
@@ -195,7 +199,7 @@ switch idata_errors
     case 0
         eobs = zeros(ndata,1);          % no errors
     case 1
-        eobs = cov_samples_d(:,1);      % first sample
+        eobs = cov_samples_d(:,1);      % first sample (random)
     case 2
         eobs = [                        % fixed
             -0.8689
@@ -216,7 +220,7 @@ end
 % "true" observations (includes added errors)
 dobs = dtarget + eobs;
 
-%---------------------------------------------
+%--------------------------------------------------------------------------
 % PLOTS
 
 axepi = [0 100 0 100];
@@ -234,4 +238,4 @@ opts = {xrec,yrec,0,axepi};
 plot_epicenters(mprior_samples,mprior,minitial,mtarget,opts);
 if iprint==1, print(gcf,'-depsc',sprintf('%smprior_f%i',pdir,iforward)); end
 
-%========================================================================
+%==========================================================================
