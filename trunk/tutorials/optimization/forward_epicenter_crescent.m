@@ -3,6 +3,9 @@
 %
 % Epicenter problem in Tarantola (2005), Problem 7-1.
 %
+% NOTE: variables such as minitial, mtarget, and eobs may be over-written
+% within optimization.m when the user specifies multiple runs.
+%
 % NOTE: If there are constants in the Matlab in-line functions, then these
 % constants are assigned at the time the function is INITIALIZED, not at
 % the time the function is called.
@@ -192,6 +195,8 @@ switch idata_errors
 end
 
 % "true" observations (includes added errors)
+% note: this will be over-written in optimization.m if the user chooses to
+%       add different random data errors for each run
 dobs = dtarget + eobs;
 
 %---------------------------------------------

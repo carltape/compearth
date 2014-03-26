@@ -31,7 +31,7 @@ format short
 % optimization method options
 stlabels = {
     'none (stop here)',
-    'Newton (full Hessian)',
+    'Newton',
     'quasi-Newton',
     'steepest descent',
     'conjugate gradient',
@@ -77,6 +77,7 @@ inormalization = 1;
 % print figures to EPS files in directory pdir
 iprint = 0;
 pdir = pwd;
+%pdir = '/home/carltape/latex/notes/tomo/figures_optim/';
 if ~exist(pdir,'dir'), error('pdir does not exist'); end
 
 %==========================================================================
@@ -89,6 +90,7 @@ if iforward == 2, forward_epicenter_crescent; end
 
 stnsamples = [num2str(nsamples) ' samples'];
 stlabS = {'Sd(m^n)','Sm(m^n)','S(m^n) = Sd + Sm'};
+stc = {'kp-','ro-','bV-','gs-','m^-','kd-','rV-','bs-','g^-','mo-'};
 
 % predictions for prior and initial models (not necessary)
 dprior = d(mprior);
@@ -230,48 +232,56 @@ nmethod = length(imethod_vec);
 
 niter = input(' Select the number of iterations (10): ');
 if any([idata_errors irandom_initial_model irandom_target_model]==1)
-    nmodel  = input([' Select the number of different runs for each inversion method (1 <= nmodel <= ' num2str(nsamples) '): ']);
+    nrun = input([' Select the number of different runs for each inversion method (1 <= nrun <= ' num2str(nsamples) '): ']);
 else
-    nmodel = 1;
+    nrun = 1;
 end
-stnmodel = sprintf('%4.4irun',nmodel);
+stnrun = sprintf('%4.4irun',nrun);
     
 %========================================================================
 
 Sd_mat = zeros(niter+1,nmethod);
 Sm_mat = zeros(niter+1,nmethod);
 S_mat = zeros(niter+1,nmethod);
-Sd_array = zeros(niter+1,nmethod,nmodel);
-Sm_array = zeros(niter+1,nmethod,nmodel);
-S_array = zeros(niter+1,nmethod,nmodel);
-%if and(nmodel > 1,nmethod==1)
-if nmethod==1
-    minitial_models = zeros(nparm,nmodel);    
-    mpost_models = zeros(nparm,nmodel);
-end
+Sd_array = zeros(niter+1,nmethod,nrun);
+Sm_array = zeros(niter+1,nmethod,nrun);
+S_array = zeros(niter+1,nmethod,nrun);
+% note: these are used for summary plots if nmethod=1 and nrun > 1
+mpost_models = zeros(nparm,nrun);
+mtarget_models = zeros(nparm,nrun); 
+minitial_models = zeros(nparm,nrun);    
 
-% LOOP OVER DIFFERENT INITIAL MODELS
-for imodel = 1:nmodel
-    disp('  '); disp([' Initial model ' num2str(imodel) ' out of ' num2str(nmodel)]);
+% LOOP OVER DIFFERENT RUNS (VARYING INITIAL MODEL, TARGET MODEL, OR DATA ERRORS)
+for irun = 1:nrun
+    disp('  '); disp(['Run ' num2str(irun) ' out of ' num2str(nrun)]);
     
     % compute a set of observations for a randomly picked target model,
     % and add in the appropriate errors to the target data
     %if or(irandom==1, nmodel > 1)
-    %    mtarget = mprior_samples(:,imodel); 
+    %    mtarget = mprior_samples(:,irun); 
     %    dtarget = d(mtarget);
-    %    eobs = cov_samples_d(:,imodel);
+    %    eobs = cov_samples_d(:,irun);
     %    dobs = dtarget + eobs;
     %end
     
     % pick initial model
-    if irandom_initial_model==1   
-        minitial = mprior_samples(:,imodel); 
+    if irandom_initial_model==1
+        iinitial = irun;            % draw from the START of mprior samples
+        minitial = mprior_samples(:,iinitial); 
     end
-    minitial_models(:,imodel) = minitial;
+    minitial_models(:,irun) = minitial;
+    
+    % pick target model
+    if irandom_target_model==1 
+        itarget = nsamples+1-irun;  % draw from the END of mprior samples
+        mtarget = mprior_samples(:,itarget);
+        dtarget = d(mtarget);
+    end
+    mtarget_models(:,irun) = mtarget;
     
     % pick errors for target model
     if idata_errors==1
-        eobs = cov_samples_d(:,imodel);
+        eobs = cov_samples_d(:,irun);
     end
     dobs = dtarget + eobs;
     
@@ -345,19 +355,19 @@ for imodel = 1:nmodel
         % store mpost
         %if and(nmodel > 1,nmethod==1)
         if nmethod==1
-            mpost_models(:,imodel) = mpost;
+            mpost_models(:,irun) = mpost;
         end
         
         % using matlab functions or not
         if 0==1
             % posterior model uncertainties
-            for i = 1:nparm, sigma_post(i) = cpost0(i,i)^(1/2); end
+            for kk=1:nparm, sigma_post(kk) = cpost0(kk,kk)^(1/2); end
 
             % a posteriori model correlations
             rho_post = zeros(nparm,nparm);
-            for i = 1:nparm
-                for j = 1:nparm
-                    rho_post(i,j) = (cpost0(i,j)/(sigma_post(i)*sigma_post(j)));
+            for k1=1:nparm
+                for k2=1:nparm
+                    rho_post(k1,k2) = (cpost0(k1,k2)/(sigma_post(k1)*sigma_post(k2)));
                 end
             end
         else
@@ -420,7 +430,7 @@ for imodel = 1:nmodel
             disp('  ');
             
             if ifig==1
-                ftag = [stlabels2{imethod+1} '_' sprintf('run%4.4i',imodel) ];
+                ftag = [stlabels2{imethod+1} '_' sprintf('run%4.4i',irun) ];
                 
                 if 0==1
                     % this representation is not very useful
@@ -465,14 +475,14 @@ for imodel = 1:nmodel
                     plot(mpost(1),mpost(2),'o','markersize',10,'markerfacecolor','c','markeredgecolor','w');
                     plot(mtarget(1),mtarget(2),'o','markersize',10,'markerfacecolor','r','markeredgecolor','w');
                     title([stlabels{imethod+1} ' -- samples of prior (blue) and posterior (cyan), ' ...
-                        sprintf('run %i out of %i',imodel,nmodel) ]);
+                        sprintf('run %i out of %i',irun,nrun) ]);
                     %orient tall, wysiwyg
                     if iprint==1, print(gcf,'-depsc',[pdir 'mpost_' ftag '_epi']); end
                 end
                 
                 % convergence curve
                 stit = [stlabels{imethod+1} ': ' num2str(niter) ' iterations, ' ...
-                    sprintf('run %i out of %i',imodel,nmodel) ];
+                    sprintf('run %i out of %i',irun,nrun) ];
                 figure; hold on;
                 plot(iter_vec, log10(Sd_vec),'r.-',iter_vec, log10(Sm_vec),'b.-',iter_vec, log10(S_vec),'k.-',...
                     'linewidth',2,'markersize',20);
@@ -512,13 +522,13 @@ for imodel = 1:nmodel
     end  % for zz=1:imethod
     
     % store all misfit curves
-    Sd_array(:,:,imodel) = Sd_mat;
-    Sm_array(:,:,imodel) = Sm_mat;
-    S_array(:,:,imodel) = S_mat;
+    Sd_array(:,:,irun) = Sd_mat;
+    Sm_array(:,:,irun) = Sm_mat;
+    S_array(:,:,irun) = S_mat;
 
     % superimpose convergence plots for difference methods
     if and(ifig==1, nmethod > 1)
-        stc = {'kp-','gx--','ro-','bV-','gx-','m^-', 'kp--','ro--','bV--','m^--'};
+        
         figure; hold on;
         for zz=1:nmethod
             plot(iter_vec, log10(S_mat(:,zz)), stc{zz},'markersize',12);
@@ -529,7 +539,7 @@ for imodel = 1:nmodel
         xlabel('n, iteration'); ylabel('log10[ S(m^n) ], misfit function');
         title(stS0);
         %orient tall, wysiwyg
-        if iprint==1, print(gcf,'-depsc',[pdir 'converge_Nmethod_' stnmodel]); end
+        if iprint==1, print(gcf,'-depsc',[pdir 'converge_Nmethod_' stnrun]); end
         %ylim([-0.1 1.3]); print(gcf,'-depsc',['converge_Nmethod_' stnmodel]);
         
 %         % variable metric methods (check that ALL FOUR ARE the same)
@@ -551,21 +561,21 @@ for imodel = 1:nmodel
 %     % plot epicenters
 %     if and(and(ifig==1, iforward==1),nmethod==1)
 %         plot_epicenters(mprior_samples,mprior,minitial,mtarget,opts,mpost);
-%         title(sprintf('run %i out of %i',imodel,nmodel));
+%         title(sprintf('run %i out of %i',irun,nrun));
 %         orient tall, wysiwyg
 %         if iprint==1, print(gcf,'-depsc',[pdir 'mpost_epi']); end
 %     end
 
-end  % for imodel
+end  % for irun
 
 %======================================================================
 % SUMMARY FIGURES
 
-if and(nmodel==1, nmethod==1)
+if and(nrun==1, nmethod==1)
     if ifig==0, disp('use ifig=1 to compare one method for a single run'); end
     
 %     % plot figure for a SINGLE method for a SINGLE run
-%     stit = [stlabels{imethod+1} ': ' num2str(niter) ' iterations, ' num2str(nmodel) ' initial models'];
+%     stit = [stlabels{imethod+1} ': ' num2str(niter) ' iterations, ' num2str(nrun) ' runs'];
 % 
 %     figure; hold on;
 %     plot(iter_vec, log10(Sd_array),'r.-',iter_vec, log10(Sm_array),'b.-',iter_vec, log10(S_array),'k.-',...
@@ -575,13 +585,13 @@ if and(nmodel==1, nmethod==1)
 %     xlabel('n, iteration'); ylabel(' log10[ S(m^n) ], misfit function'); title(stit);
 %     if iprint==1, print(gcf,'-depsc',[pdir 'converge_' stlabels2{imethod+1} '_1run']); end
     
-elseif and(nmodel > 1, nmethod==1)
+elseif and(nrun > 1, nmethod==1)
     % plot figure for a SINGLE method for multiple runs
-    stit = [stlabels{imethod+1} ': ' num2str(niter) ' iterations, ' num2str(nmodel) ' initial models'];
-
+    stit = sprintf('%s: %i iterations, %i runs',stlabels{imethod+1},niter,nrun);
+    
     % compute mean curves
     sumcurve1 = zeros(niter+1,1); sumcurve2 = zeros(niter+1,1); sumcurve3 = zeros(niter+1,1);
-    for xx=1:nmodel
+    for xx=1:nrun
         temp1 = log10(Sd_array(:,1,xx));
         temp2 = log10(Sm_array(:,1,xx));
         temp3 = log10(S_array(:,1,xx));
@@ -591,88 +601,93 @@ elseif and(nmodel > 1, nmethod==1)
     end
     
     figure; nr=2; nc=2;
-    for xx=1:nmodel
+    for xx=1:10
         temp1 = log10(Sd_array(:,1,xx));
         temp2 = log10(Sm_array(:,1,xx));
         temp3 = log10(S_array(:,1,xx));
-        subplot(nr,nc,1); hold on; plot(iter_vec, temp1, 'r');
-        subplot(nr,nc,2); hold on; plot(iter_vec, temp2, 'b');
-        subplot(nr,nc,3); hold on; plot(iter_vec, temp3, 'k');
-        subplot(nr,nc,4); hold on; plot(iter_vec, temp1, 'r',iter_vec, temp2, 'b',iter_vec, temp3, 'k');
+        subplot(nr,nc,1); hold on; plot(iter_vec, temp1,'m');
+        subplot(nr,nc,2); hold on; plot(iter_vec, temp2,'c');
+        subplot(nr,nc,3); hold on; plot(iter_vec, temp3,'color',0.5*[1 1 1]);
+        %subplot(nr,nc,4); hold on; plot(iter_vec, temp1, 'r',iter_vec, temp2, 'b',iter_vec, temp3, 'k');
     end
-    subplot(nr,nc,1); plot(iter_vec, sumcurve1/nmodel,'r','linewidth',4);
-    subplot(nr,nc,2); plot(iter_vec, sumcurve2/nmodel,'b','linewidth',4);
-    subplot(nr,nc,3); plot(iter_vec, sumcurve3/nmodel,'k','linewidth',4);
-    subplot(nr,nc,4);
-    p1 = plot(iter_vec, sumcurve1/nmodel,'r','linewidth',4);
-    p2 = plot(iter_vec, sumcurve2/nmodel,'b','linewidth',4);
-    p3 = plot(iter_vec, sumcurve3/nmodel,'k','linewidth',4);
+    subplot(nr,nc,1); plot(iter_vec, sumcurve1/nrun,'r','linewidth',4);
+    subplot(nr,nc,2); plot(iter_vec, sumcurve2/nrun,'b','linewidth',4);
+    subplot(nr,nc,3); plot(iter_vec, sumcurve3/nrun,'k','linewidth',4);
+    subplot(nr,nc,4); hold on;
+    p1 = plot(iter_vec, sumcurve1/nrun,'r','linewidth',4);
+    p2 = plot(iter_vec, sumcurve2/nrun,'b','linewidth',4);
+    p3 = plot(iter_vec, sumcurve3/nrun,'k','linewidth',4);
     legend([p1 p2 p3],stlabS);
+    % labels and axis limits for each subplot
     for xx=1:4
         subplot(nr,nc,xx);   
         xlim([-0.5 niter+0.5]); ylim(log10(ylims));
         set(gca,'xtick',[-1:niter+1]); grid on;
         xlabel('n, iteration');
-        if xx==4, ylabel([' log10[ ' stlabS{3} ' ]']); title(stit);
-        else ylabel([' log10[ ' stlabS{xx} ' ]']); end
+        if xx==4, ylabel(sprintf('log10[ %s ]',stlabS{3})); title(stit);
+        else ylabel(sprintf('log10[ %s ]',stlabS{xx})); end
     end
     orient tall, wysiwyg
-    if iprint==1, print(gcf,'-depsc',[pdir 'converge_' stlabels2{imethod+1} '_' stnmodel]); end
+    if iprint==1
+        pfile = sprintf('%sconverge_%s_%s_derr%i',pdir,stlabels2{imethod+1},stnrun,idata_errors);
+        print(gcf,'-depsc',pfile);
+    end
 
     % modified version of plot_epicenter.m
     % NOTE: we are plotting mpost for each run, but NOT the associated
     %       cpost0 samples for each run
     if or(iforward==1, iforward==2)
         figure; hold on;
-        for xx=1:nmodel
+        for xx=1:nrun
+            % line segment connecting initial (x,y) to post (x,y)
             plot([minitial_models(1,xx) mpost_models(1,xx)],[minitial_models(2,xx) mpost_models(2,xx)],'k');
         end
         p0 = plot(mprior_samples(1,:),mprior_samples(2,:),'.');
         p1 = plot(minitial_models(1,:),minitial_models(2,:),'o','markersize',10,'markerfacecolor','k','markeredgecolor','w');
         p2 = plot(mpost_models(1,:),mpost_models(2,:),'o','markersize',10,'markerfacecolor','g','markeredgecolor','w');
         pP = plot(mprior(1),mprior(2),'o','markersize',10,'markerfacecolor','b','markeredgecolor','w');
-        pT = plot(mtarget(1),mtarget(2),'o','markersize',10,'markerfacecolor','r','markeredgecolor','w');
+        pT = plot(mtarget_models(1,:),mtarget_models(2,:),'o','markersize',10,'markerfacecolor','r','markeredgecolor','w');
         plot(xrec,yrec,'kV','markersize',10,'Linewidth',2);
         for ii=1:ndata, text(xrec(ii),yrec(ii),num2str(ii)); end
-        legend([p0(1) p1(1) p2(1) pP pT],'Cprior sample','m00',sprintf('m%2.2i (%i tests)',niter,nmodel),'mprior','mtarget');
+        legend([p0(1) p1(1) p2(1) pP pT],'Cprior sample','m00',sprintf('m%2.2i',niter),'mprior','mtarget');
         axis equal; axis(axepi); grid on;
         %set(gca,'xtick',[0:20:100],'ytick',[0:20:100]);
-        xlabel(' X distance (km)'); ylabel(' Y distance (km)'); title(stit);
+        xlabel('X distance (km)'); ylabel('Y distance (km)'); title(stit);
         orient tall, wysiwyg
-        if iprint==1, print(gcf,'-depsc',[pdir 'converge_' stlabels2{imethod+1} '_' stnmodel '_epi']); end
+        if iprint==1, print(gcf,'-depsc',[pfile '_epi']); end
     end
 
-elseif and(nmodel > 1, nmethod > 1)
-    % compare the convergence results for all nmodel data sets
+elseif and(nrun > 1, nmethod > 1)
+    % compare the convergence results for all nrun data sets
     % NOTE: here we do NOT separate S = Sd + Sm parts
-    figure; nr=3; nc=2;
-    meancurves = zeros(niter+1,5);
-    for zz = 1:5
+    figure; nc=2; nr=ceil(nmethod/2);
+    meancurves = zeros(niter+1,nmethod);
+    for zz = 1:nmethod
         subplot(nr,nc,zz); hold on;
         sumcurve = zeros(niter+1,1);
-        for xx=1:nmodel
+        for xx=1:nrun
             temp = log10(S_array(:,zz,xx));
             plot(iter_vec, temp, 'k');
             sumcurve = sumcurve + temp;
         end
-        meancurves(:,zz) = sumcurve/nmodel;
+        meancurves(:,zz) = sumcurve/nrun;
         plot(iter_vec, meancurves(:,zz),'r','linewidth',2);
         xlim([-0.5 niter+0.5]); ylim(log10(ylims));
         set(gca,'xtick',[-1:niter+1]); grid on;
-        xlabel('n, iteration'); ylabel(' log10[ S(m^n) ], misfit function');
-        title([stlabels{zz+1} ', ' num2str(nmodel) ' runs']);
+        xlabel('n, iteration'); ylabel('log10[ S(m^n) ], misfit function');
+        title([stlabels{zz+1} ', ' num2str(nrun) ' runs']);
     end
     orient tall, wysiwyg
-    if iprint==1, print(gcf,'-depsc',[pdir 'converge_Nmethod_' stnmodel '_all']); end
+    if iprint==1, print(gcf,'-depsc',[pdir 'converge_Nmethod_' stnrun '_all']); end
 
-    figure; hold on; stc = {'kp-','ro-','bV-','gx-','m^-'};
-    for zz=1:5, plot(iter_vec, meancurves(:,zz), stc{zz},'markersize',12); end
-    legend(stlabels{2},stlabels{3},stlabels{4},stlabels{5},stlabels{6});
+    figure; hold on;
+    for zz=1:nmethod, plot(iter_vec, meancurves(:,zz), stc{zz},'markersize',12); end
+    legend(stlabels(imethod_vec+1));
     xlim([-0.5 niter+0.5]); ylim(log10(ylims));
     set(gca,'xtick',[-1:niter+1]); grid on;
-    xlabel('n, iteration'); ylabel(' log10[ S(m^n) ], misfit function');
-    title(['MEANS for each method, ' num2str(nmodel) ' runs']);
-    if iprint==1, print(gcf,'-depsc',[pdir 'converge_Nmethod_' stnmodel]); end
+    xlabel('n, iteration'); ylabel('log10[ S(m^n) ], misfit function');
+    title(['MEANS for each method, ' num2str(nrun) ' runs']);
+    if iprint==1, print(gcf,'-depsc',[pdir 'converge_Nmethod_' stnrun]); end
     
 else
     if ifig==0, disp('use ifig=1 to compare multiple methods for a single run'); end
