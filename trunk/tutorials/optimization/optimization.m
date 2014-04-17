@@ -76,7 +76,7 @@ inormalization = 1;
 
 % print figures to EPS files in directory pdir
 iprint = 0;
-pdir = pwd;
+pdir = strcat(pwd,'/');
 %pdir = '/home/carltape/latex/notes/tomo/figures_optim/';
 if ~exist(pdir,'dir'), error('pdir does not exist'); end
 
@@ -403,7 +403,7 @@ for irun = 1:nrun
         if or(imethod >= 1, imethod <= nmethod0)
             
             mcov_samples = zeros(nparm,nsamples);
-            for xx=1:nsamples, randn_vecs_m(:,xx) = randn(nparm,1); end
+            randn_vecs_m = randn(nparm,nsamples);
             if or(imethod >= 1, imethod <= nmethod0)
                 mcov_samples  = Lpost * randn_vecs_m;
             elseif or(imethod==8, imethod==9)
