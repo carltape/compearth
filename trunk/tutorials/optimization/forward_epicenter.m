@@ -118,7 +118,6 @@ icprior0 = inv(cprior0);
 Lprior   = chol(cprior0,'lower')';      % square-root (lower triangular)
 
 % sample the prior model distribution using the square-root UNNORMALIZED covariance matrix
-for xx=1:nsamples, randn_vecs_m(:,xx) = randn(nparm,1); end
 cov_samples_m  = Lprior * randn_vecs_m;
 mprior_samples = repmat(mprior,1,nsamples) + cov_samples_m;
 
@@ -180,7 +179,6 @@ icobs0 = inv(cobs0);
 Lcobs  = chol(cobs0,'lower')';      % square-root (lower triangular)
 
 % sample the data distribution using the square-root UNNORMALIZED covariance matrix
-for xx=1:nsamples, randn_vecs_d(:,xx) = randn(ndata,1); end
 cov_samples_d = Lcobs * randn_vecs_d;
 dobs_samples  = repmat(dtarget,1,nsamples) + cov_samples_d;
 
