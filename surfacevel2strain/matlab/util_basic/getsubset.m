@@ -4,8 +4,10 @@ function [inds,xval,yval] = getsubset(x,y,ax0)
 % input x and y can be vectors or matrices
 
 inds = find( and( and( x >= ax0(1), x <= ax0(2)), and(y >= ax0(3), y <= ax0(4))) );
-xval = x(inds);
-yval = y(inds);
+if nargout==3
+    xval = x(inds);
+    yval = y(inds);
+end
 
 disp(sprintf('getsubset.m: %i points in the subset out of %i',length(inds(:)),length(x(:))));
 
