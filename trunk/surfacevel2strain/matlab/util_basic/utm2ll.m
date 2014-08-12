@@ -1,4 +1,4 @@
-function [x,y,estr] = utm2ll(xi,yi,s_zone,i_type,ellipsoid) 
+function [x,y] = utm2ll(xi,yi,s_zone,i_type,ellipsoid) 
 % UTM2LL black-box Matlab code to convert between utm and lon-lat coordinates
 %
 % NOTE: Requires Matlab Mapping Toolbox.
@@ -36,29 +36,31 @@ function [x,y,estr] = utm2ll(xi,yi,s_zone,i_type,ellipsoid)
 utmstruct = defaultm('utm'); 
 utmstruct.zone = s_zone;        % e.g., '11S'
 
-% if no ellipsoid is given then use Matlab default ellipsoid for that zone
+% if no ellipsoid is given, use WGS84
 if nargin == 4
-    % NOTE: utmgeoid may return MULTIPLE geoids for a given zone
-    %       [ellipsoid,estr] = utmgeoid('46N');
-    [ellipsoid,estr] = utmgeoid(utmstruct.zone);
-    %ellipsoid = almanac('earth','wgs84','meters');
-    %ellipsoid = almanac('earth','clarke66','meters');
-    %ellipsoid = [6.378206400000000e+06 0.082271854223002];
-
-    [ng,~] = size(ellipsoid);
-    disp('no ellipsoid is provided as input');
-    if ng > 1
-        for jj=1:ng, estrc{jj} = strtrim(estr(jj,:)); end
-        disp(sprintf('--> using #1 out of %i listed in utmgeoid.m (%s)',ng,estrc{1}));
-    else
-        estrc = {estr};
-        disp(sprintf('--> using the matlab default from utmgeoid.m (%s)',estrc{1}));
-    end
-    for jj=1:ng
-        disp(sprintf('ellipsoid %2i: %14s : %.10e  %.10e',jj,estrc{jj},ellipsoid(jj,:)));
-    end
-    ellipsoid = ellipsoid(1,:);
-    %estr0 = strtrim(estr(1,:));
+    ellipsoid = almanac('earth','wgs84','meters');
+    
+%     % NOTE: utmgeoid may return MULTIPLE geoids for a given zone
+%     %       [ellipsoid,estr] = utmgeoid('46N');
+%     [ellipsoid,estr] = utmgeoid(utmstruct.zone);
+%     %ellipsoid = almanac('earth','wgs84','meters');
+%     %ellipsoid = almanac('earth','clarke66','meters');
+%     %ellipsoid = [6.378206400000000e+06 0.082271854223002];
+% 
+%     [ng,~] = size(ellipsoid);
+%     disp('no ellipsoid is provided as input');
+%     if ng > 1
+%         for jj=1:ng, estrc{jj} = strtrim(estr(jj,:)); end
+%         disp(sprintf('--> using #1 out of %i listed in utmgeoid.m (%s)',ng,estrc{1}));
+%     else
+%         estrc = {estr};
+%         disp(sprintf('--> using the matlab default from utmgeoid.m (%s)',estrc{1}));
+%     end
+%     for jj=1:ng
+%         disp(sprintf('ellipsoid %2i: %14s : %.10e  %.10e',jj,estrc{jj},ellipsoid(jj,:)));
+%     end
+%     ellipsoid = ellipsoid(1,:);
+%     %estr0 = strtrim(estr(1,:));
 else
     disp(sprintf('user-specified ellipsoid: %.10e  %.10e',ellipsoid));
 end
