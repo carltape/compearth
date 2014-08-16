@@ -27,13 +27,13 @@ function write_psmeca(filename,otime,lat,lon,dep,M,eid,slabel)
 % Carl Tape, 02-Feb-2011
 %
 
-n = length(otime);
+n = length(lat);
 
 % make sure M is 6 x n
 [M,n1] = Mdim(M);
 
 % check input argument dimensions
-if n1~=n, whos M otime, error('dimension mismatch (M otime)'); end
+if n1~=n, whos M lat, error('dimension mismatch (M otime)'); end
 if length(lat)~=n, whos lat otime, error('dimension mismatch (lat otime)'); end
 if length(lon)~=n, whos lon otime, error('dimension mismatch (lon otime)'); end
 if length(dep)~=n, whos dep otime, error('dimension mismatch (dep otime)'); end
@@ -61,6 +61,9 @@ else
     imin = 5; imax = 6;
     if length(slabel)~=n, whos slabel otime, error('dimension mismatch (slabel otime)'); end
 end
+
+% if no origin times are specified, then just plot one output file
+if isempty(otime), imin=5; imax=5; end
 
 if length(eid)~=n, whos eid otime, error('dimension mismatch (eid otime)'); end
 
