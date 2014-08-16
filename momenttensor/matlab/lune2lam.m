@@ -24,12 +24,17 @@ deg = 180/pi;
 delta = delta(:);   % (column vector)
 gamma = gamma(:);   % (column vector)
 beta = 90 - delta;  % colatitude
-M0 = M0(:)';        % (row vector)
 n = length(gamma);
 
-if and(length(M0)~=n,length(M0)==1)
-   disp('WARNING: assigning all M0 values to be the same as the input');
-   M0 = M0*ones(1,n); 
+if nargin==2
+    M0 = 1/sqrt(2) * ones(1,n);
+    warning('no M0 provided: assigning all M0 values to 1/sqrt(2) such that rho=1');
+else
+    M0 = M0(:)';        % (row vector) 
+    if and(length(M0)~=n,length(M0)==1)
+       warning('assigning all M0 values to be the same as the input value');
+       M0 = M0*ones(1,n); 
+    end
 end
 
 % magnitude of lambda vectors (TT2012, p. 490 text)
