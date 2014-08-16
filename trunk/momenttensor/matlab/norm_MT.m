@@ -1,4 +1,4 @@
-function mnorm = norm_MT(M)
+function mnorm = norm_MT(M,Lnorm)
 %NORM_MT compute matrix (Frobenius) norm for symmetric matrix (moment tensor)
 %
 % INPUT
