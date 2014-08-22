@@ -99,15 +99,18 @@ for ilab = imin:imax
 
         fac = 10^-iexp_all(ii);
 
-        % originally had 16 char for final string; changed to open
         if ilab==5
-            fprintf(fid,'%14.6f%14.6f%14.6f%14.6e%14.6e%14.6e%14.6e%14.6e%14.6e%4i\n',...
+            stfmt = '%14.6f%14.6f%14.6f%14.6e%14.6e%14.6e%14.6e%14.6e%14.6e%4i\n';
+            fprintf(fid,stfmt,...
                 lon(ii), lat(ii), dep(ii),...
                 M(1,ii)*fac, M(2,ii)*fac, M(3,ii)*fac,...
                 M(4,ii)*fac, M(5,ii)*fac, M(6,ii)*fac,...
                 iexp_all(ii));
         else
-            fprintf(fid,'%14.6f%14.6f%14.6f%14.6e%14.6e%14.6e%14.6e%14.6e%14.6e%4i%14.6e%14.6e %s\n',...
+            % originally had 16 char for final string; changed to open
+            stfmt = '%14.6f%14.6f%14.6f%14.6e%14.6e%14.6e%14.6e%14.6e%14.6e%4i%14.6e%14.6e %s\n';
+            %stfmt = '%14.6f%14.6f%14.6f%14.6f%14.6f%14.6f%14.6f%14.6f%14.6f%4i%14.6f%14.6f %s\n';
+            fprintf(fid,stfmt,...
                 lon(ii), lat(ii), dep(ii),...
                 M(1,ii)*fac, M(2,ii)*fac, M(3,ii)*fac,...
                 M(4,ii)*fac, M(5,ii)*fac, M(6,ii)*fac,...
@@ -118,15 +121,17 @@ for ilab = imin:imax
     fclose(fid);
 end
 
-% write a list of event IDs
-file2 = [filename '_eid'];
-fid = fopen(file2,'w');
-for ii=1:n, fprintf(fid,'%s\n',char(eid{ii})); end
-fclose(fid);
-
 disp(' writing psmeca file for GMT plotting...');
-disp([' output file : ' file1]);
-disp([' output file : ' file2]);
 disp([' number of CMT solutions : ' num2str(n)]);
+disp([' output file : ' file1]);
 
-%======================================================
+if ~isempty(otime)
+    % write a list of event IDs (useful to have for other scripts)
+    file2 = [filename '_eid'];
+    fid = fopen(file2,'w');
+    for ii=1:n, fprintf(fid,'%s\n',char(eid{ii})); end
+    fclose(fid);
+    disp([' output file : ' file2]);
+end
+
+%==========================================================================
