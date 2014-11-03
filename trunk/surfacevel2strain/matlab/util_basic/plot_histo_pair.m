@@ -1,7 +1,7 @@
 function plot_histo_pair(hdat1,hdat2,st1,st2,edges)
 %PLOT_HISTO_PAIR plots two dets of data as a superimposed histogram
 
-figure; hold on;
+hold on;
 
 Ntotal = length(hdat1);
 [N,bin] = histc(hdat1,edges);
