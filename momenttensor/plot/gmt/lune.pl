@@ -105,6 +105,8 @@ if($ipatch==1) {$clune = $lgray;}
 print CSH "psbasemap $J $R $B -G$clune -K -V -P $origin > $psfile\n"; # START
 
 $pdir = "./dfiles/";
+# files outside of compearth
+$pdir2 = "/home/carltape/PROJECTS/cmt/figs/bfiles/";
 
 # plot patches
 if ($ipatch==1) {
@@ -232,17 +234,18 @@ if ($iplot==1) {
 
   # NOTE: NOTE ALL OF THESE DATA SETS ARE AVAILABLE HERE
   #       ONLY THE ONES THAT ARE LISTED IN PUBLICATIONS ARE AVAILABLE
-  @ftags = ("Ford2009","Ford2009nuclear","Ford2009earthquake","Ford2009mine","Foulger2004","Minson2007","Minson2008","Walter2009","Walter2010","Pesicek2012","Miller1996phd",
-      "Baig2010","Sileny2006","Sileny2008","Sileny2009","Dreger2012","Julian2010","Pesicek2012_238Fig14","Ross1996","Ross1996phd","Vavrycuk2001","Vavrycuk2011");
+  @ftags = ("Ford2009","Ford2009nuclear","Ford2009earthquake","Ford2009mine","Foulger2004","Minson2007","Minson2008","Walter2009","Walter2010","Pesicek2012",
+      "Miller1996phd","Baig2010","Sileny2006","Sileny2008","Sileny2009","Dreger2012","Julian2010","Pesicek2012_238Fig14","Ross1996","Ross1996phd",
+      "Vavrycuk2001","Vavrycuk2011","Ortega2014");
 
   $csize = 8;  # size of dots
   @csizes = ($csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,
-      $csize/2,$csize,$csize,$csize,$csize/2,$csize,$csize,$csize,$csize,$csize,$csize);
+      $csize/2,$csize,$csize,$csize,$csize/2,$csize,$csize,$csize,$csize,$csize,$csize,$csize);
   @cols = ($lgray,$lred,$lpurple,$green,$orange,$red,$blue,$green,$magenta,$lgray,$green,
-       $green,$red,$orange,$magenta,$cyan,$cyan,$cyan,$cyan,$dgray,$magenta,$brown);
+       $green,$red,$orange,$magenta,$cyan,$cyan,$cyan,$cyan,$dgray,$magenta,$brown,$cyan);
 
   @inds = (9,8,1,6,5);            # TapeTape2012 figure 25
-  #@inds = (11,5,22,21,7,6,10);    # TapeTape2013 figure 14b: mostly volcanic and geothermal
+  #@inds = (11,5,22,21,7,6,10,23); # TapeTape2013 figure 14b: mostly volcanic and geothermal
   #@inds = (2..4);                 # TapeTape2013 figure 14c: Ford2009 (nu = 0.25)
   #@inds = (8,9);                  # TapeTape2013 figure 14d: Walter2009,2010 (nu = 0.36)
   #@inds = (12,20,17,13,14,15,4);  # TapeTape2013 figure S14: induced events (lam2 = 0)
@@ -257,7 +260,12 @@ if ($iplot==1) {
           $j = $inds[$i-1];
           $cz = $csizes[$j-1];
           $fname = sprintf("$pdir/beachpts_%s_points.dat",$ftags[$j-1]);
-          if (not -f $fname) {die("\n check if input file $fname exists\n")}
+          if (not -f $fname) {
+              print "\n input file $fname does not exist\n";
+              # check files in second directory
+              $fname = sprintf("$pdir2/beachpts_%s_points.dat",$ftags[$j-1]);
+              if (not -f $fname) {die("\n check if input file $fname exists\n")}
+          }
           print CSH "psxy $fname -N -Sc${cz}p -W0.5p,0/0/0 -G$cols[$j-1] -J -R -K -O -V >>$psfile\n";
         }
 
