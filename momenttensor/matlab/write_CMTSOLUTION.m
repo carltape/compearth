@@ -1,5 +1,5 @@
 function write_CMTSOLUTION(dir0,ione_file,otime,tshift,hdur,lat,lon,dep,M,  eid,elabel,ftag,nspace_between_entries)
-% WRITE_CMTSOLUTION outputs files in CMTSOLUTION format
+%WRITE_CMTSOLUTION outputs files in CMTSOLUTION format
 %
 % NOTE: In read_CMTSOLUTION.m we apply the time shift from CMT into the (absolute)
 % origin time; thus for most purposes, tshift should be set to zero.
@@ -79,7 +79,7 @@ if or(nargin==9,nargin==13)
         nspace_between_entries = 0;
     end
 else
-    error('writCMT.m: only 9 or 13 arguments is permissible (some of which can be empty [])');
+    error('write_CMTSOLUTION.m: only 9 or 13 arguments is permissible (some of which can be empty [])');
 end
 
 if ione_file == 1       % write to a single file
@@ -168,13 +168,15 @@ else            % write to individual files
     end
     
     % write list of event IDs
-    disp(sprintf('write_CMTSOLUTION.m: writing %i event IDs to file',enum));
-    disp(sprintf('  output directory: %s',dir0));
-    fid = fopen(sprintf('%s/eids_%s',dir0,ftag),'w');
-    for kk = 1:enum
-        fprintf(fid,'%s\n',eid{kk});
+    if enum > 1
+        disp(sprintf('write_CMTSOLUTION.m: writing %i event IDs to file',enum));
+        disp(sprintf('  output directory: %s',dir0));
+        fid = fopen(sprintf('%s/eids_%s',dir0,ftag),'w');
+        for kk = 1:enum
+            fprintf(fid,'%s\n',eid{kk});
+        end
+        fclose(fid);
     end
-    fclose(fid);
 end
 
 %-----------------------------------
@@ -185,7 +187,8 @@ if 0==1
     otime = datenum(3000,1,1);
 	write_CMTSOLUTION('./',0,otime,0,0,34.1081,-118.9683,90,M);
     
-    % I discovered that the command minute (and perhaps the others)
+    % TECHNICAL NOTE
+    % The command 'minute' (and perhaps the others)
     % will round up instead of using floor.
     % WHAT ABOUT THE OTHER COMMANDS, like year, month, day, etc?
     n0 = 7.310495416587963e+05;
