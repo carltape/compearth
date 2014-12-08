@@ -14,6 +14,7 @@ j = bar(edges,N/Ntotal,'histc');
 set(j,'FaceColor','none','EdgeColor','r','linewidth',3);
 xlim([min(edges) max(edges)]);
 ylabel('Fraction of total');
-legend(sprintf('%s (N = %i)',st1,length(hdat1)),...
-    sprintf('%s (N = %i)',st2,length(hdat2)));
+legend({sprintf('%s (N = %i)',st1,length(hdat1)),...
+        sprintf('%s (N = %i)',st2,length(hdat2))},...
+        'interpreter','none');
 % note: need to add xlabel
