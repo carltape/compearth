@@ -98,7 +98,7 @@ switch imethod
             Sm_vec(nn+1) = Sm(mnew,mprior,icprior);
             S_vec(nn+1) = S(mnew,dobs,mprior,icobs,icprior);
 
-            disp([num2str(nn) '/' num2str(niter) ' : prior, current, target:']);
+            disp(sprintf('%i/%i : prior, current, target:',nn,niter));
             disp([mprior mnew mtarget]);
         end
 
@@ -124,11 +124,12 @@ switch imethod
             mu   = g'*icprior*p / (p'*icprior*p + b'*icobs*b);  % Eq. 6.314 (Eq. 6.309 if F = I)
             mnew = m - mu*p;    % Eq 6.297
 
-            disp(sprintf('%i/%i : prior, current, target:',nn,niter));
-            disp([mprior mnew mtarget]);
             Sd_vec(nn+1) = Sd(mnew,dobs,icobs);
             Sm_vec(nn+1) = Sm(mnew,mprior,icprior);
             S_vec(nn+1) = S(mnew,dobs,mprior,icobs,icprior);
+            
+            disp(sprintf('%i/%i : prior, current, target:',nn,niter));
+            disp([mprior mnew mtarget]);
         end
 
     case 4      % conjugate gradient
@@ -161,11 +162,12 @@ switch imethod
             pold = p;
             lold = l;
 
-            disp(sprintf('%i/%i : prior, current, target:',nn,niter));
-            disp([mprior mnew mtarget]);
             Sd_vec(nn+1) = Sd(mnew,dobs,icobs);
             Sm_vec(nn+1) = Sm(mnew,mprior,icprior);
             S_vec(nn+1) = S(mnew,dobs,mprior,icobs,icprior);
+            
+            disp(sprintf('%i/%i : prior, current, target:',nn,niter));
+            disp([mprior mnew mtarget]);
         end
 
     case 5      % conjugate gradient (polynomial line search)
@@ -235,11 +237,12 @@ switch imethod
             pold = p;
             lold = l;
 
-            disp(sprintf('%i/%i : prior, current, target:',nn,niter));
-            disp([mprior mnew mtarget]);
             Sd_vec(nn+1) = Sd(mnew,dobs,icobs);
             Sm_vec(nn+1) = Sm(mnew,mprior,icprior);
             S_vec(nn+1) = S(mnew,dobs,mprior,icobs,icprior);
+            
+            disp(sprintf('%i/%i : prior, current, target:',nn,niter));
+            disp([mprior mnew mtarget]);
         end   
 
     case 6      % variable metric (matrix version)
@@ -272,11 +275,12 @@ switch imethod
             mnew = m + dm;
             gold = g; 
             
-            disp(sprintf('%i/%i : prior, current, target:',nn,niter));
-            disp([mprior mnew mtarget]);
             Sd_vec(nn+1) = Sd(mnew,dobs,icobs);
             Sm_vec(nn+1) = Sm(mnew,mprior,icprior);
             S_vec(nn+1) = S(mnew,dobs,mprior,icobs,icprior);
+            
+            disp(sprintf('%i/%i : prior, current, target:',nn,niter));
+            disp([mprior mnew mtarget]);
         end
 
         % estimated posterior covariance matrix from F_hat, Eq. 6.362
