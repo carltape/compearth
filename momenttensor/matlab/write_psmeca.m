@@ -69,6 +69,9 @@ if length(eid)~=n, whos eid otime, error('dimension mismatch (eid otime)'); end
 
 %--------------------
 
+nfile = imax-imin+1;
+disp(sprintf('looping from %i to %i for %i files',imin,imax,nfile));
+
 for ilab = imin:imax
     
     if ilab==0, ext = ''; end
@@ -121,9 +124,9 @@ for ilab = imin:imax
     fclose(fid);
 end
 
-disp(' writing psmeca file for GMT plotting...');
-disp([' number of CMT solutions : ' num2str(n)]);
-disp([' output file : ' file1]);
+disp('writing psmeca file for GMT plotting...');
+disp(sprintf('number of CMT solutions : %i',n));
+disp(sprintf('output file (1 of %i): %s',nfile,file1));
 
 if ~isempty(otime)
     % write a list of event IDs (useful to have for other scripts)
@@ -131,7 +134,7 @@ if ~isempty(otime)
     fid = fopen(file2,'w');
     for ii=1:n, fprintf(fid,'%s\n',char(eid{ii})); end
     fclose(fid);
-    disp([' output file : ' file2]);
+    disp(sprintf('output file: %s',file2));
 end
 
 %==========================================================================
