@@ -7,16 +7,20 @@
 % presented in surfacevel2strain (Tape et al. 2009, GJI).
 %
 % INPUT
-%   dlon    longitude of data points
-%   dlat    latitude of data points
-%   d    scalar value of data points
-%   dsig    estimated uncertainties associated with each scalar value
-%   ax0     lon-lat box contained desired region
-%   pparm   plotting parameters
-%        1. nx, number of gridpoints in x direction
-%        2. ulabel, label for the observations (e.g., 'zdep, km')
-%        3. polyxlon, polygon containing plotting points (optional)
-%        4. polyylat, polygon containing plotting points (optional)
+%   spline_tot  
+%   dlon        longitude of data points
+%   dlat        latitude of data points
+%   d           scalar value of data points
+%   dsig        estimated uncertainties associated with each scalar value
+%   ax0         lon-lat box contained desired region
+%   rparm       inversion parameters
+%                   1. nlam, number of lambda values
+%                   2. ilampick (=1,2,3, or ngative), which method to use to pick lambda
+%   pparm       plotting parameters
+%                   1. numx_plot, number of gridpoints in x direction
+%                   2. ulabel, label for the observations (e.g., 'zdep, km')
+%                   3. polylon, polygon containing plotting points (optional)
+%                   4. polylat, polygon containing plotting points (optional)
 %
 % calls dogsph_vals.m, ridge_carl.m
 % called by sphereinterp.m
@@ -28,12 +32,10 @@ function [dest,dest_plot,destdph_plot,destdth_plot,lam0,dlon_plot,dlat_plot,na,n
 disp('------------------------------------------------------------');
 disp('entering sphereinterp_est.m to estimate smooth scalar field on the sphere');
 
-earthr = 6371*1e3;      % earth radius (m)
-deg = 180/pi;
+%earthr = 6371*1e3;      % earth radius (m)
+%deg = 180/pi;
 msize = 6^2;
 ngrid = length(spline_tot);
-
-dlab = 'zdep (km)';  % USER PARAMETER
 
 nlam = rparm{1};
 ilampick = rparm{2};  % =1 (iL), =2 (iOCV), =3 (iGCV)
@@ -73,7 +75,7 @@ disp(streg);
 %-------------------------------
 % USER PARAMETERS
 
-slabel = 'sphereinterp_est.m';
+%slabel = 'sphereinterp_est.m';
 
 % min number of gridpoints for a particular order
 %nmin = 1;
@@ -222,7 +224,7 @@ subplot(nr,nc,3); hold on;
 plot(d_res, '.');
 xlabel('Observation number ');
 ylabel(['RESIDUALS (d - dest), ' ulabel]);
-title(['median(abs(res)) = ' num2str(median(abs(d_res))) ' km']);
+title(sprintf('median(abs(res)) = %.1f',median(abs(d_res))));
 grid on;
 
 edges = linspace(-resmax,resmax,15);
