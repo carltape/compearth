@@ -1,6 +1,8 @@
 function [N,Nplot,centers] = plot_histo(hdat,edges,itype)
 %PLOT_HISTO plot a histogram with cyan bars and black boundaries
 
+hdat = hdat(:);
+
 make_plot = true;
 
 % default is to plot the fraction of the total for each bin
