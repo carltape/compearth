@@ -111,18 +111,21 @@ v = (-lam1 + 2*lam2 - lam3)/sqrt(6)
 w = (lam1 + lam2 + lam3)/sqrt(3)
 
 delta = asin(w/rho)*deg         % delta3(ipick)
-beta = acos(w/rho)*deg          % 90 - delta3(ipick)
+beta  = acos(w/rho)*deg         % 90 - delta3(ipick)
 gamma = atan(v/u)*deg           % gamma3(ipick)
 
 alpha = acos( (lam1-2*lam2+lam3) / (lam1-lam3) )*deg
 nu = lam2 / (lam1 + lam3)       % nu3(ipick)
 
-zeta = acos( sqrt(2*(lam1-lam2)*(lam2-lam3)) / rho ) * deg
+zeta = acos( sqrt(2*(lam1-lam2)*(lam2-lam3)) / rho )*deg
 cosz = cos(zeta/deg);
 sinz = sin(zeta/deg);
 
 % eqs 24
 phi = atan( (lam1-2*lam2+lam3)/(sqrt(2)*(lam1+lam2+lam3)) )*deg
+
+% not listed in table
+theta = acos( (lam1-lam3)/(sqrt(2)*rho) )*deg
 
 % unit double couple tensors
 D = 1/sqrt(2) * [0 0 1 ; 0 0 0 ; 1 0 0]
@@ -218,6 +221,8 @@ KU2 = U2*K*U2'
 %    37.4790
 % phi =
 %     7.5323
+% theta =
+%    36.3965
 % D =
 %          0         0    0.7071
 %          0         0         0
