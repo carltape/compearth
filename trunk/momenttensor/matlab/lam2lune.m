@@ -1,4 +1,4 @@
-function [gamma,delta,M0,mu,lamdev,lamiso] = lam2lune(lam)
+function [gamma,delta,M0,theta,lamdev,lamiso] = lam2lune(lam)
 %LAM2LUNE convert eigenvalues to lune coordinates (gamma, delta, M0)
 %
 % INPUT
@@ -7,8 +7,8 @@ function [gamma,delta,M0,mu,lamdev,lamiso] = lam2lune(lam)
 % OUTPUT
 %   gamma       angle from DC meridian to lune point (-30 <= gamma <= 30)
 %   delta       angle from deviatoric plane to lune point (-90 <= delta <= 90)
-%   M0          seismic moment, M0 = |lam| / sqrt(2)
-%   mu          angle from DC to lune point (0 <= mu <= 90)
+%   M0          seismic moment, M0 = ||lam|| / sqrt(2)
+%   theta       angle from DC to lune point (0 <= theta <= 90)
 %   lamdev      eigenvalues of deviatoric component
 %   lamiso      eigenvalues of isotropic component
 %
@@ -52,15 +52,15 @@ trM = sum(lam);
 lamiso = repmat(1/3*trM,3,1);
 lamdev = lam - lamiso;
 
-% compute mu -- the angle between the DC and the lune point
-%mu = acos( cos(delta/deg) .* cos(gamma/deg) ) * deg;
-mu = acos( (lam(1,:) - lam(3,:)) ./ (sqrt(2)*lammag) ) * deg;
+% compute theta -- the angle between the DC and the lune point
+%theta = acos( cos(delta/deg) .* cos(gamma/deg) ) * deg;
+theta = acos( (lam(1,:) - lam(3,:)) ./ (sqrt(2)*lammag) ) * deg;
 
 % column vectors
 delta = delta(:);
 gamma = gamma(:);
 M0 = M0(:);
-mu = mu(:);
+theta = theta(:);
 
 %==========================================================================
 % EXAMPLE
@@ -75,14 +75,14 @@ if 0==1
     M00 = 1e16*ones(length(gamma0),1);
     lam = lune2lam(gamma0,delta0,M00);
     
-    [gamma,delta,M0,mu] = lam2lune(lam);
+    [gamma,delta,M0,theta] = lam2lune(lam);
     
     figure; nr=2; nc=2;
     subplot(nr,nc,1); plot(gamma-gamma0,'.'); title('gamma residual');
     subplot(nr,nc,2); plot(delta-delta0,'.'); title('delta residual');
     subplot(nr,nc,3); plot(M0-M00,'.'); title('M0 residual');
     
-    figure; scatter(gamma,delta,4^2,mu,'filled');
+    figure; scatter(gamma,delta,4^2,theta,'filled');
     caxis([0 90]); colorbar;
     xlabel('gamma, deg'); ylabel('delta, deg');
     title('angle between DC and MT point');
