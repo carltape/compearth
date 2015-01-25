@@ -124,7 +124,7 @@ sinz = sin(zeta/deg);
 % eqs 24
 phi = atan( (lam1-2*lam2+lam3)/(sqrt(2)*(lam1+lam2+lam3)) )*deg
 
-% not listed in table
+% eq S1 (not listed in table)
 theta = acos( (lam1-lam3)/(sqrt(2)*rho) )*deg
 
 % unit double couple tensors
