@@ -1,12 +1,13 @@
-function [N,Nplot,centers] = plot_histo(hdat,edges,itype)
+function [N,Nplot,centers] = plot_histo(hdat,edges,itype,make_plot)
 %PLOT_HISTO plot a histogram with cyan bars and black boundaries
 
 hdat = hdat(:);
 
-make_plot = true;
+% default is to plot the histogram
+if nargin==3, make_plot=true; end
 
 % default is to plot the fraction of the total for each bin
-if nargin==2, itype=2; end
+if nargin==2, itype=2; make_plot=true; end
 
 % bin width (only relevant if bins are the same width)
 dbin = edges(2) - edges(1);
