@@ -17,6 +17,19 @@ if nargin==1
 end
 
 d = d(:);
+
+% remove Inf and NaN values
+iinf = isinf(d);
+if any(iinf)
+    warning(sprintf('excluding %i/%i points that have Inf values',sum(iinf),length(d)));
+    d(iinf) = [];
+end
+inan = isnan(d);
+if any(inan)
+    warning(sprintf('excluding %i/%i points that have Inf values',sum(inan),length(d)));
+    d(inan) = [];
+end
+
 dmin = min(d);
 dmax = max(d);
 
