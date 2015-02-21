@@ -1,4 +1,4 @@
-function [gamma,delta,M0,kappa,theta,sigma,K,N,S,mu,lam] = CMT2TT(M,idisplay)
+function [gamma,delta,M0,kappa,theta,sigma,K,N,S,thetaDC,lam,U] = CMT2TT(M,idisplay)
 %CMT2TT converts a moment tensor to six parameters of TapeTape2012
 %
 % INPUT
@@ -16,14 +16,18 @@ function [gamma,delta,M0,kappa,theta,sigma,K,N,S,mu,lam] = CMT2TT(M,idisplay)
 %   K           strike vector (SOUTH-EAST-UP)
 %   N           normal vector (SOUTH-EAST-UP)
 %   S           slip vector (SOUTH-EAST-UP)
-%   mu          angle to DC
+%   thetaDC     angle to DC
 %   lam         eigenvalues
+%   U           basis (SOUTH-EAST-UP)
 %
 % Reverse program for TT2CMT.m
 % See WTape and CTape (2012) "A geometric setting for moment tensors" (TT2012).
 %
 % Carl Tape, 12/2012
 %
+
+global BIGN
+BIGN = 1e5;
 
 % make sure M is 6 x n
 [M,n] = Mdim(M);
@@ -41,11 +45,13 @@ M = convert_MT(1,5,M);  % moment tensor in south-east-up basis
 
 % decomposition of moment tensor into eigenvalues + basis (M = U*lam*U')
 % NOTE: ordering of eigenvalues is important
+if n >= BIGN, disp('CMT2TT: M to lam + U...'); end
 isort = 1;
 [lam,U] = CMTdecom(M,isort);
 
 % compute lune coordinates and magnitude from eigenvalues
-[gamma,delta,M0,mu] = lam2lune(lam);
+if n >= BIGN, disp('CMT2TT: lam to lune...'); end
+[gamma,delta,M0,thetaDC] = lam2lune(lam);
 
 %---------------------
 % PART 2: moment tensor orientation
@@ -108,7 +114,7 @@ if exist('idisplay','var')
     end
 end
 
-% pick the one (among the four) with the right bounds
+% pick the one (among the four) that is within the correct bounding region
 btheta = [theta1 theta2 theta3 theta4] <= 90;       % dip angles
 bsigma = abs([sigma1 sigma2 sigma3 sigma4]) <= 90;  % slip angle
 bmatch = and(btheta,bsigma);
@@ -149,9 +155,11 @@ end
 function [theta,sigma,kappa,K] = faultvec2ang(S,N)
 % returns fault angles in degrees, assumes input vectors in south-east-up basis
 
+global BIGN
 deg = 180/pi;
 
 [~,n] = size(S);
+if n >= BIGN, disp('CMT2TT: running faultvec2ang...'); end
 
 % for north-west-up basis (as in TT2012)
 %zenith = [0 0 1]'; north  = [1 0 0]';
@@ -220,14 +228,14 @@ if 0==1
     %kappa = -10; theta = 30; sigma = 45; gamma = -20; delta = 70; M0 = 1;
     M = TT2CMT(gamma,delta,M0,kappa,theta,sigma);
     
-    [gammac,deltac,M0c,kappac,thetac,sigmac,K,N,S,mu,lam] = CMT2TT(M,1);
+    [gammac,deltac,M0c,kappac,thetac,sigmac,K,N,S,thetaDC,lam,U] = CMT2TT(M,1);
     disp([gamma gammac delta deltac M0 M0c kappa kappac theta thetac sigma sigmac]);
     
     % horizontal fault
     kappa = 30; theta = 0; sigma = 310;
     M = TT2CMT(0,0,1,kappa,theta,sigma)
     M = [0 0 0 -sqrt(3)/2 1/2 0]'
-    [gammac,deltac,M0c,kappac,thetac,sigmac,K,N,S,mu,lam] = CMT2TT(M,1);
+    [gammac,deltac,M0c,kappac,thetac,sigmac,K,N,S,thetaDC,lam,U] = CMT2TT(M,1);
     disp([kappa kappac theta thetac sigma sigmac]);
 end
 
