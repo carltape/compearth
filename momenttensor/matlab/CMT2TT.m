@@ -1,4 +1,4 @@
-function [gamma,delta,M0,kappa,theta,sigma,K,N,S,thetaDC,lam,U] = CMT2TT(M,idisplay)
+function [gamma,delta,M0,kappa,theta,sigma,K,N,S,thetadc,lam,U] = CMT2TT(M,idisplay)
 %CMT2TT converts a moment tensor to six parameters of TapeTape2012
 %
 % INPUT
@@ -16,7 +16,7 @@ function [gamma,delta,M0,kappa,theta,sigma,K,N,S,thetaDC,lam,U] = CMT2TT(M,idisp
 %   K           strike vector (SOUTH-EAST-UP)
 %   N           normal vector (SOUTH-EAST-UP)
 %   S           slip vector (SOUTH-EAST-UP)
-%   thetaDC     angle to DC
+%   thetadc     angle to DC
 %   lam         eigenvalues
 %   U           basis (SOUTH-EAST-UP)
 %
@@ -51,7 +51,7 @@ isort = 1;
 
 % compute lune coordinates and magnitude from eigenvalues
 if n >= BIGN, disp('CMT2TT: lam to lune...'); end
-[gamma,delta,M0,thetaDC] = lam2lune(lam);
+[gamma,delta,M0,thetadc] = lam2lune(lam);
 
 %---------------------
 % PART 2: moment tensor orientation
@@ -228,14 +228,14 @@ if 0==1
     %kappa = -10; theta = 30; sigma = 45; gamma = -20; delta = 70; M0 = 1;
     M = TT2CMT(gamma,delta,M0,kappa,theta,sigma);
     
-    [gammac,deltac,M0c,kappac,thetac,sigmac,K,N,S,thetaDC,lam,U] = CMT2TT(M,1);
+    [gammac,deltac,M0c,kappac,thetac,sigmac,K,N,S,thetadc,lam,U] = CMT2TT(M,1);
     disp([gamma gammac delta deltac M0 M0c kappa kappac theta thetac sigma sigmac]);
     
     % horizontal fault
     kappa = 30; theta = 0; sigma = 310;
     M = TT2CMT(0,0,1,kappa,theta,sigma)
     M = [0 0 0 -sqrt(3)/2 1/2 0]'
-    [gammac,deltac,M0c,kappac,thetac,sigmac,K,N,S,thetaDC,lam,U] = CMT2TT(M,1);
+    [gammac,deltac,M0c,kappac,thetac,sigmac,K,N,S,thetadc,lam,U] = CMT2TT(M,1);
     disp([kappa kappac theta thetac sigma sigmac]);
 end
 

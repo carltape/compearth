@@ -1,4 +1,4 @@
-function [gamma,delta,M0,thetaDC,lamdev,lamiso] = lam2lune(lam)
+function [gamma,delta,M0,thetadc,lamdev,lamiso] = lam2lune(lam)
 %LAM2LUNE convert eigenvalues to lune coordinates (gamma, delta, M0)
 %
 % INPUT
@@ -8,7 +8,7 @@ function [gamma,delta,M0,thetaDC,lamdev,lamiso] = lam2lune(lam)
 %   gamma       angle from DC meridian to lune point (-30 <= gamma <= 30)
 %   delta       angle from deviatoric plane to lune point (-90 <= delta <= 90)
 %   M0          seismic moment, M0 = ||lam|| / sqrt(2)
-%   thetaDC     angle from DC to lune point (0 <= thetaDC <= 90)
+%   thetadc     angle from DC to lune point (0 <= thetadc <= 90)
 %   lamdev      eigenvalues of deviatoric component
 %   lamiso      eigenvalues of isotropic component
 %
@@ -52,15 +52,15 @@ trM = sum(lam);
 lamiso = repmat(1/3*trM,3,1);
 lamdev = lam - lamiso;
 
-% compute thetaDC -- the angle between the DC and the lune point
+% compute thetadc -- the angle between the DC and the lune point
 %theta = acos( cos(delta/deg) .* cos(gamma/deg) ) * deg;
-thetaDC = acos( (lam(1,:) - lam(3,:)) ./ (sqrt(2)*lammag) ) * deg;
+thetadc = acos( (lam(1,:) - lam(3,:)) ./ (sqrt(2)*lammag) ) * deg;
 
 % column vectors
 delta = delta(:);
 gamma = gamma(:);
 M0 = M0(:);
-thetaDC = thetaDC(:);
+thetadc = thetadc(:);
 
 %==========================================================================
 % EXAMPLE
@@ -75,14 +75,14 @@ if 0==1
     M00 = 1e16*ones(length(gamma0),1);
     lam = lune2lam(gamma0,delta0,M00);
     
-    [gamma,delta,M0,thetaDC] = lam2lune(lam);
+    [gamma,delta,M0,thetadc] = lam2lune(lam);
     
     figure; nr=2; nc=2;
     subplot(nr,nc,1); plot(gamma-gamma0,'.'); title('gamma residual');
     subplot(nr,nc,2); plot(delta-delta0,'.'); title('delta residual');
     subplot(nr,nc,3); plot(M0-M00,'.'); title('M0 residual');
     
-    figure; scatter(gamma,delta,4^2,thetaDC,'filled');
+    figure; scatter(gamma,delta,4^2,thetadc,'filled');
     caxis([0 90]); colorbar;
     xlabel('gamma, deg'); ylabel('delta, deg');
     title('angle between DC and MT point');

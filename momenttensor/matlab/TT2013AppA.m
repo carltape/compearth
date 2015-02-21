@@ -125,7 +125,7 @@ sinz = sin(zeta/deg);
 phi = atan( (lam1-2*lam2+lam3)/(sqrt(2)*(lam1+lam2+lam3)) )*deg
 
 % eq S1 (not listed in table)
-thetaDC = acos( (lam1-lam3)/(sqrt(2)*rho) )*deg
+thetadc = acos( (lam1-lam3)/(sqrt(2)*rho) )*deg
 
 % unit double couple tensors
 D = 1/sqrt(2) * [0 0 1 ; 0 0 0 ; 1 0 0]
@@ -221,7 +221,7 @@ KU2 = U2*K*U2'
 %    37.4790
 % phi =
 %     7.5323
-% thetaDC =
+% thetadc =
 %    36.3965
 % D =
 %          0         0    0.7071
