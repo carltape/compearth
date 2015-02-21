@@ -18,9 +18,11 @@ function [omega,xi0,U] = CMT2omega_xi0(X1,X2,iorthoU,idisplay)
 % For details, see TapeTape2012 "Angle between principal axis triples".
 %
 % EXAMPLES: see below and also TT2012kaganAppE.m
-% Set ifigure=1 to plot histograms of the distributions.
+% Set bfigure=true to plot histograms of the distributions.
 % 
 % Carl Tape 8/11/2012
+
+bfigure = true;
 
 % default: no information displayed
 if ~exist('idisplay','var'), idisplay = 0; end 
@@ -69,26 +71,7 @@ end
 lam0 = repmat([1 0 -1]',1,n);
 MDC1 = CMTrecom(lam0,U1);
 MDC2 = CMTrecom(lam0,U2);
-% convert to matrix
-M1mat = Mvec2Mmat(MDC1,1);
-M2mat = Mvec2Mmat(MDC2,1);
-% calculate omega
-cosom = zeros(n,1);
-for ii=1:n
-   M1x = M1mat(:,:,ii);
-   M2x = M2mat(:,:,ii);
-   cosom(ii) = dot(M1x(:),M2x(:));
-end
-cosom = cosom / 2;  % since |Lam0| = sqrt(2)
-% correction for possible numerical errors
-% this correction is needed for comparing U's that are very close to each other
-ipos = cosom > 1;
-ineg = cosom < -1;
-disp(sprintf('%i/%i dot products > 1',sum(ipos),n));
-disp(sprintf('%i/%i dot products < 1',sum(ineg),n));
-cosom(ipos) = 1;
-cosom(ineg) = -1;
-omega = acos(cosom) * 180/pi;
+omega = CMT2omega(MDC1,MDC2);
 
 % XI
 % compute U = U1'*U2
@@ -105,8 +88,7 @@ if idisplay==1
    end
 end
 
-ifigure = 1;
-if and(ifigure==1, n>1)
+if and(bfigure, n>1)
    OMAX = 0.07;  % will depend on bin size
    figure; nr=2; nc=1;
    subplot(nr,nc,1); hold on; plot_histo(omega,[0:5:180]);
