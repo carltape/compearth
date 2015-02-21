@@ -76,7 +76,7 @@ end
 U1 = U14(:,:,4);
 U2 = U24(:,:,4);
 U12 = U1'*U2;
-[omega,xi0] = CMT2omega_xi0(M1,M2,0,1);
+[omega,xi0] = CMT2omegadc_xi0(M1,M2,0,1);
 [xi0,ixi0,q] = U2xi0(U12,1,1);     % more info
 
 % four possible quaternions
