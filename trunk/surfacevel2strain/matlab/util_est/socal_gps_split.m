@@ -1,18 +1,13 @@
+function [iwest, ieast] = socal_gps_split(ax0,lon,lat)
+%SOCAL_GPS_SPLIT split observation points into sets divided by the San Andreas
 %
-% socal_gps_split.m
 % Carl Tape, 16-Jan-2008
 %
-%
-% calls xxx
-% called by xxx
-%
-
-function [iwest, ieast] = socal_gps_split(ax0,lon,lat)
 
 % constants
 deg = 180/pi;
 earthr = 6371*1e3;
-ifig = 1;
+bfigure = true;
 
 lonmin = ax0(1);
 lonmax = ax0(2);
@@ -21,11 +16,13 @@ latmax = ax0(4);
 
 % USER: load the SAF for plotting: latsaf, lonsaf, xsaf, ysaf
 % NOTE: San Andreas fault is indexed from NORTH to SOUTH
-gdir = '/home/carltape/compearth/surfacevel2strain/gmt/input/';
-%gdir = '../gmt/input/';
+%gdir = '/home/carltape/compearth/surfacevel2strain/gmt/input/';
+gdir = '../gmt/input/';
 if exist(gdir)==7
     [lonsaf,latsaf,xsay,ysaf] = textread([gdir 'safdata2.dat'],'%f%f%f%f');
     nsaf = length(lonsaf);
+    disp('socal_gps_split.m: loaded San Andreas fault file');
+    figure; plot(lonsaf,latsaf,'.'); axis(ax0);
 else
     error(['gdir does not exist: ' gdir]);
 end
@@ -38,6 +35,8 @@ isub0 = find(isaf_in == 1);
 isub = [isub0(1)-1 ; isub0 ; isub0(end)+1];   % add a point on both ends
 blon = lonsaf(isub);
 blat = latsaf(isub);
+
+warning('this will probably only work for the socal region (see get_gps_fataset.m), as in Tape et al 2009');
 
 % Pacific plate "boundary", starting from SW corner going clockwise
 pa_lon = [lonmin ; blon ; lonmin];
@@ -58,7 +57,7 @@ igps  = find(igps_in == 1);
 
 if length(iwest)+length(ieast) ~= length(igps), error('mismatch of indexing'); end
 
-if ifig == 1
+if bfigure
     figure; hold on;
     plot(lonsaf, latsaf, 'bo')
     plot(lonsaf(isub), latsaf(isub), 'ro')

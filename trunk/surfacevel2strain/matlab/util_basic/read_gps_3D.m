@@ -16,8 +16,6 @@ function [lon,lat,ve,vn,vu,se,sn,su,ren,reu,rnu,start_date,finish_date,name] = r
 % called by get_gps_dataset.m
 %
 
-function [lon,lat,ve,vn,vu,se,sn,su,ren,reu,rnu,start_date,finish_date,name] = read_gps_3D(filename)
-
 if ~exist(filename,'file')
     error([filename ' does not exist']);
 else

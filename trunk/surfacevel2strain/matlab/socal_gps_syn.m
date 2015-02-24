@@ -48,7 +48,7 @@ iwrite = 0;
 
 %===========================================
 % USER INPUT
-ropt = input(' Enter an index corresponding to a region (1=us, 2=cal, 3=socal, ..., 9=japan, etc): ');
+ropt = input(' Enter an index corresponding to a region (see get_gps_dataset.m): ');
 dopt = input(' Enter an index that controls the type of synthetic field (10-83): ');
 
 dmat = NaN*ones(60,3);
@@ -87,7 +87,8 @@ dopt_0 = 1;   % NASA REASON cGPS dataset (408 pts in socal)
 %dopt_0 = 2;   % CCMMv1 (1093 pts in socal)
 dir_data = [bdir 'data/examples/'];
 [lon_gps,lat_gps,vu_gps,vs_gps,ve_gps,su,sn,se,ax0,slabel,stref] ...
-    = get_gps_dataset(dir_data,ropt,dopt_0,1,0);
+    = get_gps_dataset(ropt,dopt_0,dir_data);
+
 
 lonmin = ax0(1); lonmax = ax0(2);
 latmin = ax0(3); latmax = ax0(4);
