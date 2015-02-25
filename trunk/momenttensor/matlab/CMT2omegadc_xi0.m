@@ -68,8 +68,9 @@ if iorthoU > 0
     U2 = Uorth(U2,iorthoU);
 end
   
-% omegadc
-% find angle between closest double couples
+% omegadc: angle between closest double couples
+% note that this measure is based on differences in orientations only,
+% not eigenvalues (source types) or magnitudes
 lam0 = repmat([1 0 -1]',1,n);
 MDC1 = CMTrecom(lam0,U1);
 MDC2 = CMTrecom(lam0,U2);
