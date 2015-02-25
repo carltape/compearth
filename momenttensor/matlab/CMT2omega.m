@@ -10,6 +10,12 @@ function omega = CMT2omega(M1,M2)
 % If M2 is missing, then a reference M is assumed for M1.
 % If M1 or M2 is size 6x1, then all moment tensors in the other set will eb
 % measured w.r.t. the 6x1 matrix.
+%
+% omega is a measure between two moment tensors and combines differences in
+% eigenvalues (source types) and orientation, but not magnitude.
+% omegadc, the angle introduced in TapeTape2012 ("Angle between principal
+% axis triples"), measures a difference in orientation only.
+% omegadc is the 9-angle (or omega angle) between the closest double couples (see CMT2omegadc_xi0.m).
 % 
 % Carl Tape 2/20/2015
 
