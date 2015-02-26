@@ -1,5 +1,5 @@
 function [iwest, ieast] = socal_gps_split(ax0,lon,lat)
-%SOCAL_GPS_SPLIT split observation points into sets divided by the San Andreas
+%SOCAL_GPS_SPLIT split observation points into sets divided by the San Andreas fault
 %
 % Carl Tape, 16-Jan-2008
 %
@@ -36,7 +36,7 @@ isub = [isub0(1)-1 ; isub0 ; isub0(end)+1];   % add a point on both ends
 blon = lonsaf(isub);
 blat = latsaf(isub);
 
-warning('this will probably only work for the socal region (see get_gps_fataset.m), as in Tape et al 2009');
+warning('this will probably only work for the socal region (see get_gps_dataset.m), as in Tape et al 2009');
 
 % Pacific plate "boundary", starting from SW corner going clockwise
 pa_lon = [lonmin ; blon ; lonmin];
