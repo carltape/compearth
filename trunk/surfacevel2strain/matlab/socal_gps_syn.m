@@ -29,7 +29,6 @@
 %    platemodel2gps.m
 %    get_gps_dataset.m
 %    socal_gps_split.m
-% called by xxx
 %
 
 clear
@@ -44,7 +43,9 @@ earthr = 6371*1e3;
 izone = 11;
 szone = '11S';      % UTM zone
 
-iwrite = 0;
+iwrite = 1;
+%odir = [bdir 'data/synthetic/'];
+odir = [bdir 'data/examples/'];
 
 %===========================================
 % USER INPUT
@@ -785,7 +786,6 @@ end
 if iwrite == 0
     disp('Not writing any synthetic velocity fields.');
 else
-    odir = [bdir 'data/synthetic/'];   % USER CHANGE
     filetag = [odir file1];
     disp(['write files of the form ' filetag]);
     
