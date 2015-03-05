@@ -22,28 +22,33 @@ function omega = CMT2omega(M1,M2)
 bdisplay = false;
 bfigure = true;
 
-if nargin==1
+if nargin==1        % M1 only specified
     [M,n] = Mdim(M1);
     Mref = 1/sqrt(2)*[1 0 -1 0 0 0]';
     M2   = repmat(Mref,1,n);
     warning('measuring omega from the DC to all other MTs in the set');
     
-else
+else                % M1 and M2 specified
     [M1,n1] = Mdim(M1);
     [M2,n2] = Mdim(M2);
     if or(n1==1,n2==1)
         warning('measuring omega from one MT to all other MTs in the set');
-        if n1==1
+        if n1==1    % M1 dimension 1
            n = n2;
            M1
            M1 = repmat(M1,1,n);
-        else
+        else        % M2 dimension 1
            n = n1;
            M2
            M2 = repmat(M2,1,n);
         end
-    else
-       error('M1 or M2 must have only one MT if they are not the same size');
+        
+    elseif n1~=n2   % M1 and M2 have different dimension (but neither is dimension 1)
+        n1, n2
+        error('M1 or M2 must have only one MT if they are not the same size');
+        
+    else            % M1 and M2 have same dimension
+        n = n1;
     end
 end
   
