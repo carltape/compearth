@@ -1,4 +1,4 @@
-function [gamma,delta,M0,kappa,theta,sigma,K,N,S,thetadc,lam,U] = CMT2TT(M,idisplay)
+function [gamma,delta,M0,kappa,theta,sigma,K,N,S,thetadc,lam,U] = CMT2TT(M,bdisplay)
 %CMT2TT converts a moment tensor to six parameters of TapeTape2012
 %
 % INPUT
@@ -25,6 +25,8 @@ function [gamma,delta,M0,kappa,theta,sigma,K,N,S,thetadc,lam,U] = CMT2TT(M,idisp
 %
 % Carl Tape, 12/2012
 %
+
+if nargin==1, bdisplay=false; end
 
 global BIGN
 BIGN = 1e5;
@@ -88,7 +90,7 @@ S4 = -N; N4 = -S;
 % K4 = setzero(K4); N4 = setzero(N4); S4 = setzero(S4);
 
 % display all four options
-if exist('idisplay','var')
+if bdisplay
     %xlab = '(theta, sigma, kappa)';
     xlab = '(strike, dip, slip)';
     stfmt = '(%7.1f, %7.1f, %7.1f)';

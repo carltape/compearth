@@ -32,7 +32,9 @@ else                % M1 and M2 specified
     [M1,n1] = Mdim(M1);
     [M2,n2] = Mdim(M2);
     if or(n1==1,n2==1)
-        warning('measuring omega from one MT to all other MTs in the set');
+        if n1~=n2
+            warning('measuring omega from one MT to all other MTs in the set');
+        end
         if n1==1    % M1 dimension 1
            n = n2;
            M1
