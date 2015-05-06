@@ -48,8 +48,12 @@ end
 
 if 0==1
     M0 = 2.7 * 1e23;   % Cipar and Kanamori (1974), N-m
-    Mw = m02mw(1,M0)
     Mw = m02mw(2,M0)
+    Mw = m02mw(1,M0)
+    
+    % check direct calculation for M0 in N-m
+    k = -(2/3)*(11.8 - log10(1/2e4) - 7)
+    Mw = (2/3)*log10(M0) + k
 end
 
 %=====================================================
