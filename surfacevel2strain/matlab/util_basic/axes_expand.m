@@ -10,6 +10,7 @@ function ax1 = axes_expand(ax0,fac,iopt)
 % 1D, 2D, 3D
 ndim = length(ax0)/2;
 ax1 = zeros(1,ndim*2);
+if nargin==2, iopt=0; end
 
 % return original axes if new axes are non-sensical
 
