@@ -65,9 +65,8 @@ lam = lune2lam(gamma,delta,M0);
 % expression in Proposition 2, since this requires fewer calculations.
 % (In the case here, we do not need the fault vectors at all.)
 % The implementaion below is more conceptual.
-% The basis is specified through specification of the north and zenith
-% vectors. But the output for M and U can be changed by using convert_MT.m
-% or convertv.m.
+% The basis is specified from the components of the north and zenith vectors.
+% The output for M and U can be changed by using convert_MT.m or convertv.m.
 
 % for north-west-up basis (TapeTape2012)
 %north = [1 0 0]'; zenith = [0 0 1]';
