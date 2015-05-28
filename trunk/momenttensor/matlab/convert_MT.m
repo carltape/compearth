@@ -23,17 +23,17 @@ function [Mout,T] = convert_MT(i1,i2,M)
 %   1: north, 2: east, 3: down
 %
 % Convention 3: Stein and Wysession (2003, p. 218)
-%   also TapeTape2012a "A geometric setting for moment tensors"
+%   also TapeTape2012a "A geometric setting for moment tensors" (p. 478)
 %   also several Kanamori codes
 %   1: north, 2: west, 3: up
 % 
 % Convention 4: 
 %   1: east, 2: north, 3: up
 % 
-% Convention 5: TapeTape2013 "The classical model for moment tensors"
+% Convention 5: TapeTape2013 "The classical model for moment tensors" (p. 1704)
 %   1: south, 2: east, 3: up
 %
-% See the vector version convertv.m 
+% See the vector version of this function: convertv.m 
 %
 % Carl Tape, 11/2010
 %
