@@ -29,6 +29,7 @@ iwrite = 1;
 % 3-3 Maricopa basement
 % 4-5 nenana gravity
 % 5-6 alaska moho
+% 2-7 California rock data
 ropt  = input(' Type an index corresponding to a region (1=socal, 2=cal, 3=maricopa, 4=nenana): ');
 dopt  = input(' Type an index corresponding to a dataset (1=moho,2,3,4,5=grav): ');
 
@@ -92,6 +93,12 @@ if iwavelet==1
             nlam = 40; ilampick = 2;
             ntrsh = 3;
             nx = 200;
+            
+        case 7
+            qmin = 0; qmax = 8;
+            nlam = 40; ilampick = 2;
+            ntrsh = 3;
+            nx = 50;
     end
     
     %nx = 50; qmin = 2; qmax = 7;   % testing
