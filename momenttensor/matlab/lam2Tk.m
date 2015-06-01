@@ -7,16 +7,20 @@ function [T,k] = lam2Tk(lam)
 %   T       CLVD measure of Hudson et al. (1989)
 %   k       ISO measure of Hudson et al. (1989)
 %
-% NOTE: The input eigenvalues do NOT need to be sorted in any order.
+% NOTE: The input eigenvalues do NOT need to be sorted in any order,
+%       since the sorting will be done here.
 %
 % Carl Tape, 12/2012
 
 if numel(lam)==3, n=1; else [~,n] = size(lam); end
+
+% "isotropic moment" (e.g., Ford et al. (2009), opening paragraph)
 lamI = 1/3*sum(lam);
 
 % deviatoric eigenvalues
 lamd = lam - repmat(lamI,3,1);
 
+%-----------
 % T: CLVD component
 % Julian et al. (1998), Eq. (18)
 % (see also CMT2epsilon.m)
@@ -33,9 +37,11 @@ for ii=1:n
 end
 T = -2*epsilon;
 
+% other unclear or more complicated equations for T
+% Hudson et al. (1989, Eq 19)
+
+%-----------
 % k: isotropic component
-% Ford et al. (2009), Baig and Urbancic (2010)
-lammaxd = max(abs(lamd));
 
 % % Julian et al. (1998), Eq. (19) -- THIS EQUATION IS AMBIGUOUS
 % % SHOULD WE GET M3, THEN TAKE THE DEVIATORIC PART (AS HERE),
@@ -48,9 +54,11 @@ lammaxd = max(abs(lamd));
 % end
 % lammaxd = lammax - lamI;
 
-% other unclear equations for k:
-% Hudson et al. (1989), Foulger et al. (2004)
+% other unclear or more complicated equations for k:
+% Hudson et al. (1989, Eq 18), Foulger et al. (2004)
 
+% Ford et al. (2009, Eq 3), Baig and Urbancic (2010)
+lammaxd = max(abs(lamd));
 k = lamI ./ ( abs(lamI) + abs(lammaxd) );
 
 %==========================================================================
