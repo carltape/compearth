@@ -108,7 +108,7 @@ if 0==1
     thall = 180/pi*[th1 ; th1m ; th2 ; th2m];
     phall = 180/pi*[ph1 ; ph1m ; ph2 ; ph2m];
     % convert phi to azimuth, measured counter-clockwise from north
-    azall = wrapTo360(-phall + 180);
+    azall = wrap360(-phall + 180);
     % convert to plunge
     plall = thall - 90;
     % check that this makes sense

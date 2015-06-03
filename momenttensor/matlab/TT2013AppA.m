@@ -6,7 +6,8 @@
 %
 % It may be helpful in understanding the equations within the paper.
 %
-% It uses several functions stored within the google project 'compearth'.
+% It uses several functions stored within the github project compearth.
+% https://github.com/carltape/compearth
 %
 % Carl Tape, 10/22/2013
 %
@@ -35,11 +36,11 @@ Xcheck = U2pa(U,1)
 for ii=1:n3
    disp(sprintf('%s',eid3{ii}));
    disp(sprintf('  Tpl %8.4f %8.4f',Uin(ii,1),Xcheck(ii,1)));
-   disp(sprintf('  Taz %8.4f %8.4f',wrapTo360(Uin(ii,2)),wrapTo360(Xcheck(ii,2))));
+   disp(sprintf('  Taz %8.4f %8.4f',wrap360(Uin(ii,2)),wrap360(Xcheck(ii,2))));
    disp(sprintf('  Npl %8.4f %8.4f',Uin(ii,3),Xcheck(ii,3)));
-   disp(sprintf('  Naz %8.4f %8.4f',wrapTo360(Uin(ii,4)),wrapTo360(Xcheck(ii,4))));
+   disp(sprintf('  Naz %8.4f %8.4f',wrap360(Uin(ii,4)),wrap360(Xcheck(ii,4))));
    disp(sprintf('  Ppl %8.4f %8.4f',Uin(ii,5),Xcheck(ii,5)));
-   disp(sprintf('  Paz %8.4f %8.4f',wrapTo360(Uin(ii,6)),wrapTo360(Xcheck(ii,6))));
+   disp(sprintf('  Paz %8.4f %8.4f',wrap360(Uin(ii,6)),wrap360(Xcheck(ii,6))));
 end
 
 % calculate quantities from the eigenvalues

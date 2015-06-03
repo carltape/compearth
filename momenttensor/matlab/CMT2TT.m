@@ -198,7 +198,7 @@ for ii=1:n
     sigma(ii) = fangle_signed(K(:,ii),S(:,ii),N(:,ii));
 end
 
-kappa = wrapTo360(kappa);
+kappa = wrap360(kappa);
 
 %--------------------------------------------------------------------------
 

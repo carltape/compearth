@@ -55,9 +55,9 @@ if itype==1
     pl1 = lat1;
     pl2 = lat2;
     pl3 = lat3;
-    az1 = wrapTo360(-lon1);
-    az2 = wrapTo360(-lon2);
-    az3 = wrapTo360(-lon3);
+    az1 = wrap360(-lon1);
+    az2 = wrap360(-lon2);
+    az3 = wrap360(-lon3);
 
     Uout = [pl1 az1 pl2 az2 pl3 az3];
     
@@ -116,6 +116,13 @@ end
 
 %==========================================================================
 
+function [lat,lon] = antipode(lat,lon)
+
+lat = -lat;
+lon = 180 - mod(-lon, 360);
+
+%==========================================================================
+
 function v_out = ph2az(v_in)
 %PH2AZ convert between math and map conventions for azimuthal angle, in degrees
 %
@@ -128,9 +135,9 @@ function v_out = ph2az(v_in)
 % NOTE: The formula is the same, whether you are going from ph2az or az2ph.
 % NOTE: does matlab have a built-in function for this?
 
-v_in  = wrapTo360(v_in);
+v_in  = wrap360(v_in);
 v_out = -v_in + 90;
-v_out = wrapTo360(v_out);
+v_out = wrap360(v_out);
 
 %==========================================================================
 % EXAMPLE
