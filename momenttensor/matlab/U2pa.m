@@ -1,23 +1,34 @@
 function Uout = U2pa(Uin,itype,iorthoU)
 %U2PA convert between basis U and plunge/azimuth of three basis vectors
 %
+% [itype = 1]
 % INPUT
-%   Uin     either 3 x 3 x n array U OR n x 6 set of plunge/azimuth angles
+%   Uin     3 x 3 x n array of bases
 %   itype   =1 for U to plunge/azimuth
-%           =0 for plunge/azimuth to U
-%   iorthoU OPTIONAL: type of orthogonalization to apply to U (see Uorth.m)
-%   
 % OUTPUT
-%   Uout    either 3 x 3 x n array U OR n x 6 set of plunge/azimuth angles
+%   Uout    n x 6 set of plunge/azimuth angles
+%           =[pl1 az1 pl2 az2 pl3 az3]
 %
-%   U       eigenbasis in SOUTH-EAST-UP convention
-%           (but U does NOT have to be in the green zone)
+% [itype = 0]
+% INPUT
+%   Uin     n x 6 set of plunge/azimuth angles
+%           =[pl1 az1 pl2 az2 pl3 az3]
+%   itype   =0 for plunge/azimuth to U
+% OUTPUT
+%   Uout    3 x 3 x n array of bases
 %
 %   pl1,az1 plunge and azimuth for 1st eigenvector
 %   pl2,az2 plunge and azimuth for 2nd eigenvector
 %   pl3,az3 plunge and azimuth for 3rd eigenvector
 %   eigenvectors ordered as lam1 >= lam2 >= lam3
 % 
+% The basis U has convention SOUTH-EAST-UP. You may need to convert your
+% basis prior to using this function (see convert_MT.m).
+%
+% A third argument, iorthoU, can be set to zero to NOT ensure that the
+% input or output U are orthogonal. Or a different typoe of
+% orthogonalizatrion can be specified. See Uorth.m.
+%
 % Carl Tape, 12-August-2011
 %
 
