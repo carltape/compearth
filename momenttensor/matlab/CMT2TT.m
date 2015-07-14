@@ -124,9 +124,13 @@ imatch = NaN(n,1);
 for ii=1:n
     itemp = find(bmatch(ii,:)==1);
     if length(itemp)~=1
-        ii, itemp
-        %error('should only be one match among four possibilities');
-        disp('WARNING: >1 candidates implies an anomalous geometry (e.g., horizontal fault)');
+        warning('>1 candidates implies an anomalous geometry (e.g., horizontal fault)');
+        disp(sprintf('index in list is %i/%i',ii,n));
+        disp('Mrr,Mtt,Mpp,Mrt,Mrp,Mtp (N-m):');
+        for kk=1:6, disp(sprintf('%18.8e',M(kk,ii))); end
+        itemp
+        disp(sprintf('thetas: %5.1f, %5.1f, %5.1f, %5.1f',theta1(ii),theta2(ii),theta3(ii),theta4(ii)));
+        disp(sprintf('sigmas: %5.1f, %5.1f, %5.1f, %5.1f',sigma1(ii),sigma2(ii),sigma3(ii),sigma4(ii)));
         % FOR NOW WE JUST TAKE THE FIRST IN THE LIST, BUT IN THE FUTURE WE
         % NEED TO CAREFULLY IMPLEMENT THE CHOICES IN TT2012 Appendix B
         imatch(ii) = itemp(1);
