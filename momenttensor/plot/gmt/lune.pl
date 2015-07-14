@@ -232,20 +232,22 @@ if ($plot_ref_points || $plot_ref_labels) {
 if ($iplot==1) {
   # moment tensors from various studies
 
-  # NOTE: NOTE ALL OF THESE DATA SETS ARE AVAILABLE HERE
-  #       ONLY THE ONES THAT ARE LISTED IN PUBLICATIONS ARE AVAILABLE
+  # NOTE: NOT ALL OF THESE DATA SETS ARE AVAILABLE HERE;
+  #       ONLY THE ONES THAT ARE LISTED IN PUBLICATIONS ARE AVAILABLE (see ./dfiles/README/).
   @ftags = ("Ford2009","Ford2009nuclear","Ford2009earthquake","Ford2009mine","Foulger2004","Minson2007","Minson2008","Walter2009","Walter2010","Pesicek2012",
       "Miller1996phd","Baig2010","Sileny2006","Sileny2008","Sileny2009","Dreger2012","Julian2010","Pesicek2012_238Fig14","Ross1996","Ross1996phd",
-      "Vavrycuk2001","Vavrycuk2011","Ortega2014");
+      "Vavrycuk2001","Vavrycuk2011","Ortega2014","Alvizuri2015");
 
   $csize = 8;  # size of dots
-  @csizes = ($csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,
-      $csize/2,$csize,$csize,$csize,$csize/2,$csize,$csize,$csize,$csize,$csize,$csize,$csize);
-  @cols = ($lgray,$lred,$lpurple,$green,$orange,$red,$blue,$green,$magenta,$lgray,$green,
-       $green,$red,$orange,$magenta,$cyan,$cyan,$cyan,$cyan,$dgray,$magenta,$brown,$cyan);
+  @csizes = ($csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,
+      $csize,$csize/2,$csize,$csize,$csize,$csize/2,$csize,$csize,$csize,$csize,
+      $csize,$csize,$csize,$csize);
+  @cols = ($lgray,$lred,$lpurple,$green,$orange,$cyan,$blue,$green,$magenta,$lgray,
+       $green,$green,$red,$orange,$magenta,$cyan,$cyan,$cyan,$cyan,$dgray,
+       $magenta,$brown,$cyan,$red);
 
   @inds = (9,8,1,6,5);            # TapeTape2012 figure 25
-  #@inds = (11,5,22,21,7,6,10,23); # TapeTape2013 figure 14b: mostly volcanic and geothermal
+  #@inds = (11,5,22,21,7,6,10,24); # TapeTape2013 figure 14b: mostly volcanic and geothermal
   #@inds = (2..4);                 # TapeTape2013 figure 14c: Ford2009 (nu = 0.25)
   #@inds = (8,9);                  # TapeTape2013 figure 14d: Walter2009,2010 (nu = 0.36)
   #@inds = (12,20,17,13,14,15,4);  # TapeTape2013 figure S14: induced events (lam2 = 0)
@@ -253,7 +255,7 @@ if ($iplot==1) {
   #@inds = (17,13,14,15,4);        # induced -- no Baig
   #@inds = (11,20);                # Foulger2004, Figure 8ab (not c)
   #@inds = (16);                   # Dreger2012 (excluding Long Valley and Geysers regions)
-  #@inds = (13..15);               # Sileny     
+  #@inds = (13..15);               # Sileny
   #@inds = 14;
 
         for ($i = 1; $i <= @inds; $i++) {
@@ -273,25 +275,25 @@ if ($iplot==1) {
 #       @ftags = ("Minson2007 (n=14)","GCMT (n=14)");
 #       @cols = ($red,$cyan);
 #       @inds = (1,2);
-#       $fname1 = "/home/carltape/papers/SOURCE_INVERSION/DATA/MinsonGCMT_Minson.dat";
-#       $fname2 = "/home/carltape/papers/SOURCE_INVERSION/DATA/MinsonGCMT_GCMT.dat";
+#       $fname1 = "/home/carltape/papers/SOURCE/DATA/MinsonGCMT_Minson.dat";
+#       $fname2 = "/home/carltape/papers/SOURCE/DATA/MinsonGCMT_GCMT.dat";
 #       print CSH "awk '{print \$8,\$9}' $fname1 | psxy -N -Sc${csize}p -W0.5p,0/0/0 -G$cols[0] -J -R -K -O -V >> $psfile\n";
 #       print CSH "awk '{print \$8,\$9}' $fname2 | psxy -N -Sc${csize}p -W0.5p,0/0/0 -G$cols[1] -J -R -K -O -V >> $psfile\n";
 
-#      # Dreger et al. 2012, colored by F-test significance (comment out default block above)
-#      $cptfile = "color.cpt";
-#      #print CSH "makecpt -Crainbow -T50/100/5 -D > $cptfile\n";
-#      print CSH "makecpt -Cseis -T50/100/5 -D -I > $cptfile\n";
-#      $ilegend = 0;
-#      $fname = "/home/carltape/papers/SOURCE_INVERSION/DATA/bsldreger_fmt_lune.dat";
-#      $Fmin = 40;  # try 40,70,90
-#      `awk '\$3 > $Fmin' $fname > dtemp`;
-#      $nplot = `wc dtemp | awk '{print \$1}'`; chomp($nplot);
-#      print "\n$nplot FMTs with F > $Fmin\n";
-#      print CSH "awk '{print \$1,\$2,\$3}' dtemp | psxy -N -Sc${csize}p -W0.5p,0/0/0 -C$cptfile -J -R -K -O -V >> $psfile\n";
-#      $Dscale = "-D0/1/2/0.2";
-#      $Bscale = "-B10f5:\"F-test significance\": -Eb10p";
-#      print CSH "psscale -C$cptfile $Dscale $Bscale -Xa3.5 -Ya6 -V -K -O >> $psfile\n";
+      # # Dreger et al. 2012, colored by F-test significance (comment out default block above)
+      # $cptfile = "color.cpt";
+      # #print CSH "makecpt -Crainbow -T50/100/5 -D > $cptfile\n";
+      # print CSH "makecpt -Cseis -T50/100/5 -D -I > $cptfile\n";
+      # $ilegend = 0;
+      # $fname = "/home/carltape/papers/SOURCE/DATA/bsldreger_fmt_lune.dat";
+      # $Fmin = 40;  # try 40,70,90
+      # `awk '\$3 > $Fmin' $fname > dtemp`;
+      # $nplot = `wc dtemp | awk '{print \$1}'`; chomp($nplot);
+      # print "\n$nplot FMTs with F > $Fmin\n";
+      # print CSH "awk '{print \$1,\$2,\$3}' dtemp | psxy -N -Sc${csize}p -W0.5p,0/0/0 -C$cptfile -J -R -K -O -V >> $psfile\n";
+      # $Dscale = "-D0/1/2/0.2";
+      # $Bscale = "-B10f5:\"F-test significance\": -Eb10p";
+      # print CSH "psscale -C$cptfile $Dscale $Bscale -Xa3.5 -Ya6 -V -K -O >> $psfile\n";
 
 } elsif ($iplot==2) {
   # reference beachballs on the lune
