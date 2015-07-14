@@ -123,7 +123,8 @@ cosz = cos(zeta/deg);
 sinz = sin(zeta/deg);
 
 % eqs 24
-phi = atan( (lam1-2*lam2+lam3)/(sqrt(2)*(lam1+lam2+lam3)) )*deg
+%phi = atan( (lam1-2*lam2+lam3)/(sqrt(2)*(lam1+lam2+lam3)) )*deg
+phi = atan2( lam1-2*lam2+lam3, sqrt(2)*(lam1+lam2+lam3) )*deg;
 
 % eq S1 (not listed in table)
 thetadc = acos( (lam1-lam3)/(sqrt(2)*rho) )*deg

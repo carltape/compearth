@@ -51,14 +51,14 @@ for ii = 1:n
              M12(ii) M22(ii) M23(ii) ;
              M13(ii) M23(ii) M33(ii) ];
 
-    % default eigenvalue ordering is lowest to highest in ALGEBRAIC sense
+    % Matlab eigenvalue ordering is lowest to highest in ALGEBRAIC sense
     [V,D] = eig(Mx);
     lams = diag(D);
     %(inv(V)*Mcmt*V - D) / norm(Mcmt)
 
-    % sort eigenvalues -- IMPORTANT for moment tensor conventions, such
-    % as the formula for epsilon and M0, or for computing strike, dip, and
-    % rake angles (for double couples)
+    % sort eigenvalues -- IMPORTANT for moment tensor conventions,
+    % such as the formula for epsilon and M0, or for computing
+    % strike, dip, and rake angles (for double couples)
     isign = sign(lams);
     if isort==1
         [lsort, inds] = sort(lams,'descend');
