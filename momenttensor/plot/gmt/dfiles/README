@@ -1,0 +1,19 @@
+compearth/momenttensor/plot/gmt/dfiles/README
+
+This directory contains some reference files for lune plots (like beach_arc_XX.lonlat, beach_points.lonlat, and more), as well as lune points form published data sets of full moment tensors.
+
+---
+beachpts_xxxx_points.dat files
+
+This directory contains lune coordinates (lune longitude, lune latitude) for several published sets of moment tensors. Many of these were plotted in Tape and Tape, "The classical model for moment tensors" (GJI 2013).
+
+These files were made by Carl Tape using a matlab script (FMTdata.m) to read the originally published tables and then convert them to lune coordinates.
+
+Tape and Tape (2013) also included some published-but-not-tabulated data sets that are not provided here but were plotted or discussed in that paper; see the bibliography for details.
+Dreger2012
+Baig2010
+Vavrycuk2011
+Julian2010
+Pesicek2012_238Fig14
+
+---
