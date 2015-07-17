@@ -80,17 +80,5 @@ end
 
 % ensure that U is right-handed
 U = Udetcheck(U);
-
-%==========================================================================
-
-if 0==1
-    clear, close all, clc
-    % generate a set of random moment tensors (but all same magnitude)
-    npt = 1e3;      % number of randomly generated points (MTs)
-    M0ref = 1e16;   % constant M0 for all events
-    iarg = [M0ref npt];
-    M = CMTspace(iarg,1);
-    [lam,U] = CMTdecom(M);
-end
     
 %==========================================================================

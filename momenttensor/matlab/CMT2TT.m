@@ -28,8 +28,9 @@ function [gamma,delta,M0,kappa,theta,sigma,K,N,S,thetadc,lam,U] = CMT2TT(M,bdisp
 
 if nargin==1, bdisplay=false; end
 
-global BIGN
+global BIGN EPSVAL
 BIGN = 1e5;
+EPSVAL = 1e-6;
 
 % make sure M is 6 x n
 [M,n] = Mdim(M);
@@ -91,7 +92,7 @@ S4 = -N; N4 = -S;
 
 % display all four options
 if bdisplay
-    %xlab = '(theta, sigma, kappa)';
+    %xlab = '(kappa, theta, sigma)';
     xlab = '(strike, dip, slip)';
     stfmt = '(%7.1f, %7.1f, %7.1f)';
     %stfmt = '(%.16e, %.16e, %.16e)';
@@ -116,26 +117,48 @@ if bdisplay
     end
 end
 
-% pick the one (among the four) that is within the correct bounding region
-btheta = [theta1 theta2 theta3 theta4] <= 90;       % dip angles
-bsigma = abs([sigma1 sigma2 sigma3 sigma4]) <= 90;  % slip angle
+% There are four combinations of N and S that represent a double couple
+% moment tensor, as shown in Figure 15 of TT2012.
+% From these four combinations, there are two possible fault planes.
+% We want to isolate the combination that is within the bounding
+% region shown in Figures 16 and B1.
+thetaall = [theta1 theta2 theta3 theta4];
+sigmaall = [sigma1 sigma2 sigma3 sigma4];
+kappaall = [kappa1 kappa2 kappa3 kappa4];
+btheta = thetaall <= 90+EPSVAL;       % dip angles
+bsigma = abs(sigmaall) <= 90+EPSVAL;  % slip angle
 bmatch = and(btheta,bsigma);
 imatch = NaN(n,1);
 for ii=1:n
     itemp = find(bmatch(ii,:)==1);
-    if length(itemp)~=1
-        warning('>1 candidates implies an anomalous geometry (e.g., horizontal fault)');
-        disp(sprintf('index in list is %i/%i',ii,n));
-        disp('Mrr,Mtt,Mpp,Mrt,Mrp,Mtp (N-m):');
-        for kk=1:6, disp(sprintf('%18.8e',M(kk,ii))); end
-        itemp
-        disp(sprintf('thetas: %5.1f, %5.1f, %5.1f, %5.1f',theta1(ii),theta2(ii),theta3(ii),theta4(ii)));
-        disp(sprintf('sigmas: %5.1f, %5.1f, %5.1f, %5.1f',sigma1(ii),sigma2(ii),sigma3(ii),sigma4(ii)));
-        % FOR NOW WE JUST TAKE THE FIRST IN THE LIST, BUT IN THE FUTURE WE
-        % NEED TO CAREFULLY IMPLEMENT THE CHOICES IN TT2012 Appendix B
-        imatch(ii) = itemp(1);
-    else
-        imatch(ii) = itemp;
+    switch length(itemp)
+        case 0
+            error('no match');
+        case 1
+            imatch(ii) = itemp;
+        case 2
+            % choose one of the two
+            i1 = itemp(1);
+            i2 = itemp(2);
+            ipick = pickP1(thetaall(ii,i1),sigmaall(ii,i1),kappaall(ii,i1),thetaall(ii,i2),sigmaall(ii,i2),kappaall(ii,i2));
+            imatch(ii) = itemp(ipick);
+            if 0==1     % display output
+                warning('moment tensor on boundary of orientation domain (%i candidates)',length(itemp));
+                display_vals(thetaall(ii,:),sigmaall(ii,:),kappaall(ii,:),M(:,ii),ii,n);
+                itemp, imatch(ii)
+                disp(sprintf(' theta: %5.1f',thetaall(ii,imatch(ii))));
+                disp(sprintf(' sigma: %5.1f',sigmaall(ii,imatch(ii))));
+                disp(sprintf(' kappa: %5.1f',kappaall(ii,imatch(ii))));
+            end
+        case 3
+            % this is a more unusual case, like for horizontal faults
+            warning('moment tensor on boundary of orientation domain (%i candidates)',length(itemp));
+            display_vals(thetaall(ii,:),sigmaall(ii,:),kappaall(ii,:),M(:,ii),ii,n);
+            itemp
+            % just take the first one in the list (for now)
+            imatch(ii) = itemp(1);
+        case 4
+            error('not yet encountered');
     end
 end
 
@@ -160,8 +183,8 @@ end
 
 function [theta,sigma,kappa,K] = faultvec2ang(S,N)
 % returns fault angles in degrees, assumes input vectors in south-east-up basis
-
 global BIGN
+
 deg = 180/pi;
 
 [~,n] = size(S);
@@ -208,15 +231,47 @@ kappa = wrap360(kappa);
 
 function X = setzero(X)
 % try to eliminate numerical round-off errors
+global EPSVAL
 
 % elements near zero
 XN = X ./ max(abs(X(:)));
-EPSVAL = 1e-14;
 X(abs(XN) < EPSVAL) = 0;
 
 % elements near +/- 1
 X(abs(X - 1) < EPSVAL) = -1;
 X(abs(X + 1) < EPSVAL) =  1;
+
+%--------------------------------------------------------------------------
+
+function display_vals(thetas,sigmas,kappas,M,ii,n)
+
+disp(sprintf('index in list is %i/%i',ii,n));
+disp('Mrr,Mtt,Mpp,Mrt,Mrp,Mtp (N-m):');
+for kk=1:6, disp(sprintf('%18.8e',M(kk))); end
+disp(sprintf('thetas: %5.1f, %5.1f, %5.1f, %5.1f',thetas));
+disp(sprintf('sigmas: %5.1f, %5.1f, %5.1f, %5.1f',sigmas));
+disp(sprintf('kappas: %5.1f, %5.1f, %5.1f, %5.1f',kappas));
+            
+%--------------------------------------------------------------------------
+
+function ipick = pickP1(thetaA,sigmaA,kappaA,thetaB,sigmaB,kappaB)
+% choose between two moment tensor orientations based on Figure B1 of TT2012
+% NOTE THAT NOT ALL FEATURES OF FIGURE B1 ARE IMPLEMENTED HERE
+global EPSVAL
+
+% these choices are based on the strike angle
+if abs(thetaA - 90) < EPSVAL
+    ipick = find([kappaA kappaB] < 180); return
+end
+if abs(sigmaA - 90) < EPSVAL
+    ipick = find([kappaA kappaB] < 180); return
+end
+if abs(sigmaA + 90) < EPSVAL
+    ipick = find([kappaA kappaB] < 180); return
+end 
+
+thetaA,sigmaA,kappaA,thetaB,sigmaB,kappaB
+error('no selection criterion was met');
 
 %==========================================================================
 % EXAMPLE
@@ -243,7 +298,12 @@ if 0==1
     M = [0 0 0 -sqrt(3)/2 1/2 0]'
     [gammac,deltac,M0c,kappac,thetac,sigmac,K,N,S,thetadc,lam,U] = CMT2TT(M,1);
     disp([kappa kappac theta thetac sigma sigmac]);
+    
+    % GCMT catalog
+    [otime,tshift,hdur,lat,lon,dep,M,M0,Mw,eid] = readCMT;
+    display_eq_summary(otime,lon,lat,dep,Mw);
+    [gammac,deltac,M0c,kappac,thetac,sigmac] = CMT2TT(M);
+    
 end
 
 %==========================================================================
-
