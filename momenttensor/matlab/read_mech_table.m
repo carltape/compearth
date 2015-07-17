@@ -18,7 +18,7 @@ function [otime,lat,lon,dep,M,eid] = read_mech_table(filename)
 % Carl Tape, 7/16/2015
 %
 
-NHEADER = 21;
+NHEADER = 22;
 fid = fopen(filename);
 C = textscan(fid,'%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%s','headerlines',NHEADER);
 fclose(fid);
