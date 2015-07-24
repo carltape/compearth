@@ -86,7 +86,7 @@ if and(bfigure, n>1)
    figure; hold on; plot_histo(omega,[0:5:180]);
    plot([90 90],[0 OMAX],'r','linewidth',2);
    set(gca,'xtick',0:10:180); %axis([0 120 0 OMAX]);
-   xlabel('omega angle describing difference in orientation');
+   xlabel('omega angle: angular distance to other moment tensors');
    title(sprintf('OMEGA: min = %.2f, max = %.2f',min(omega),max(omega)));
 end
 

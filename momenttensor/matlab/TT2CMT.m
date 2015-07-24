@@ -38,18 +38,18 @@ end
 n = max([n1 n2 n3 n4 n5 n6]);
 disp(sprintf('TT2CMT.m: %i points',n));
 if and(n > 1, any([n1 n2 n3 n4 n5 n6]~=n))
-    if n1~=n, gamma = gamma(1)*ones(1,n); disp('WARNING: assigning all gamma values to be the same as the input'); end
-    if n2~=n, delta = delta(1)*ones(1,n); disp('WARNING: assigning all delta values to be the same as the input');end
-    if n3~=n,    M0 = M0(1)*ones(1,n);    disp('WARNING: assigning all M0 values to be the same as the input'); end
-    if n4~=n, kappa = kappa(1)*ones(1,n); disp('WARNING: assigning all kappa values to be the same as the input');end
-    if n5~=n, theta = theta(1)*ones(1,n); disp('WARNING: assigning all theta values to be the same as the input');end
-    if n6~=n, sigma = sigma(1)*ones(1,n); disp('WARNING: assigning all sigma values to be the same as the input');end
+    if n1~=n, gamma = gamma(1)*ones(1,n); warning('assigning all gamma values to be the same as the input'); end
+    if n2~=n, delta = delta(1)*ones(1,n); warning('assigning all delta values to be the same as the input');end
+    if n3~=n,    M0 = M0(1)*ones(1,n);    warning('assigning all M0 values to be the same as the input'); end
+    if n4~=n, kappa = kappa(1)*ones(1,n); warning('assigning all kappa values to be the same as the input');end
+    if n5~=n, theta = theta(1)*ones(1,n); warning('assigning all theta values to be the same as the input');end
+    if n6~=n, sigma = sigma(1)*ones(1,n); warning('assigning all sigma values to be the same as the input');end
 end
 
 for ii=1:n
     if theta(ii)==0
-        disp(sprintf('WARNING: %i/%i input fault is horizontal, so strike angle (%.1f) is undefined',ii,n,kappa(ii)));
-        disp(sprintf('         resetting slip angle (%.1f) to 0',sigma(ii)));
+        warning('%i/%i input fault is horizontal, so strike angle (%.1f) is undefined',ii,n,kappa(ii));
+        disp(sprintf('resetting slip angle (%.1f) to 0',sigma(ii)));
         sigma(ii) = 0;
     end
 end
