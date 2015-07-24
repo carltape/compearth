@@ -1,5 +1,8 @@
 compearth ("computational earth") contains two projects: surfacevel2strain and moment tensor.
 
+download the zipped file or try this command:
+git clone https://github.com/carltape/compearth
+
 surfacevel2strain uses spherical wavelets to estimate scalar and vector fields on the surface of a sphere. The practical applications include (1) constructing a smooth topographic surface from discrete scalar observations (for example, a Moho map from a set of receiver functions); (2) constructing a smooth strain-rate map from a set of discrete GPS vector observations on the Earth's surface. Reference: Tape, Muse, Simons, Dong, Webb, "Multiscale estimation of GPS velocity fields," Geophysical Journal International, 2009.
 http://www.giseis.alaska.edu/input/carl/research/strain.html
 
