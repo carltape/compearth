@@ -9,8 +9,13 @@ uses spherical wavelets to estimate scalar and vector fields on the surface of a
 
 http://www.giseis.alaska.edu/input/carl/research/strain.html
 
+<<<<<<< HEAD
 momenttensor
 contains some scripts (Matlab, Mathematica, GMT) for plotting and interpreting full moment tensors on the fundamental lune. Reference: W. Tape and C. Tape, "A geometric setting for moment tensors," Geophysical Journal International, 2012. See also W. Tape and C. Tape, "The classical model for moment tensors," Geophysical Journal International, 2013. 
 
 http://www.giseis.alaska.edu/input/carl/research/beachball.html
 
+=======
+momenttensor contains some scripts (Matlab, Mathematica, GMT) for plotting and interpreting full moment tensors on the fundamental lune. Reference: W. Tape and C. Tape, "A geometric setting for moment tensors," Geophysical Journal International, 2012. See also W. Tape and C. Tape, "The classical model for moment tensors," Geophysical Journal International, 2013. 
+http://www.giseis.alaska.edu/input/carl/research/beachball.html
+>>>>>>> 2f7b7b9ee5894676d8b43278f70730f4f65abd53
