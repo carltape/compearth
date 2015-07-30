@@ -21,6 +21,11 @@ switch itype
     case 1, Nplot = N; xlab = 'Count';
     case 2, Nplot = N/Ntotal; xlab = 'Fraction';
     case 3, Nplot = N/Ntotal/dbin; xlab = 'PDF';
+        %if length(unique(edges)) > 1
+        if std(diff(edges))/mean(diff(edges)) > 1e-4       % ad hoc criterion
+            unique(diff(edges))
+            warning('PDF is not implemented to allow bins with varying widths');
+        end
 end
 
 if make_plot
