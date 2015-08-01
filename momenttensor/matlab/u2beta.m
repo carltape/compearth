@@ -10,6 +10,8 @@ function beta = u2beta(u)
 % From Tape and Tape (2015 GJI) "A uniform parameterization for moment tensors"
 %
 
+bdisplayinfo = false;
+
 % u(beta) is not an analytical solution. The accuracy of the numerical
 % solution is controlled by two steps below:
 %   1. the number of interpolation points
@@ -19,7 +21,7 @@ if bfzero
     n0 = 10;
     tol = 1e-12;
     emethod = 'linear';
-    disp(sprintf('u2beta.m: using fzero with tol = %.1e',tol));
+    if bdisplayinfo, disp(sprintf('u2beta.m: using fzero with tol = %.1e',tol)); end
 else
     % For some reason, it is NOT possible to simply increase n0 to achieve
     % arbitrarily good accuracy. I run into this error:
@@ -27,7 +29,7 @@ else
     %    The grid vectors are not strictly monotonic increasing.
     n0 = 1000;
     emethod = 'pchip';
-    disp(sprintf('u2beta.m: using %s interpolation with %i points',emethod,n0));
+    if bdisplayinfo, disp(sprintf('u2beta.m: using %s interpolation with %i points',emethod,n0)); end
 end
 
 u = u(:);
