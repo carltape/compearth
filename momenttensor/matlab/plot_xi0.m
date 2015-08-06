@@ -1,0 +1,52 @@
+function plot_xi0(xi0,nbin)
+
+deg = 180/pi;
+% default: 1-degree bins
+if nargin==1, nbin=120; end
+
+edges = linspace(0,120,nbin+1)'/deg;
+dbin = edges(2)-edges(1);
+
+figure; nr=4; nc=1;
+
+% histogram of xi0
+subplot(nr,nc,1); hold on;
+[N,Nplot,centers] = plot_histo(xi0/deg,edges,3);    % samples
+
+disp(sprintf('first bin is %.1f deg wide and contains %i samples',dbin*deg,N(1)));
+disp(sprintf('last bin is %.1f deg wide and contains %i samples',dbin*deg,N(end)));
+disp(sprintf('integration check: sum(Nplot)*dbin = %16.12f',sum(Nplot)*dbin));
+
+[p,t] = kaganpdf(nbin);     % homogeneous PDF
+
+% histogram of deviations from best fit
+% stairs assumes the evaluations are at the bin EDGES
+%stairs(edges,kaganpdf(edges),'r','linewidth',2);
+plot(t,p,'r-','linewidth',2)
+xlabel('\xi_0 , radians');
+legend('sampled PDF','homogeneous PDF','location','northwest');
+
+res = Nplot./p;
+subplot(nr,nc,2); hold on; xmax = 120/deg; ymax = 2;
+bar(centers,res,1,'c');
+plot([0 pi],[1 1],'r--','linewidth',2);
+xlabel('\xi_0, radians'); axis([0 xmax 0 ymax]);
+ylabel('post / homo');
+
+res = Nplot - p;
+fres = mean(abs(res));
+subplot(nr,nc,3); hold on; ymax = 0.05;
+bar(centers,res,1,'c');
+plot([0 pi],[0 0],'r--','linewidth',2);
+xlabel('\xi_0, radians'); axis([0 xmax -ymax ymax]);
+ylabel('post - homo');
+title(sprintf('mean(abs(post - homo)) = %.4f',fres));
+
+res = log(Nplot./p);
+subplot(nr,nc,4); hold on; ymax = 0.2;
+bar(centers,res,1,'c');
+plot([0 pi],[0 0],'r--','linewidth',2);
+xlabel('\xi_0, radians'); axis([0 xmax -ymax ymax]);
+ylabel('ln( post / homo )');
+ 
+%==========================================================================
