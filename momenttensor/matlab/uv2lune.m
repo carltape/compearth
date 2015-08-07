@@ -2,8 +2,8 @@ function [gamma,delta] = uv2lune(u,v)
 %UV2LUNE convert u-v coordinates to lune coordinates (gamma, delta)
 %
 % INPUT
-%   u       n x 1 vector
-%   v       n x 1 vector
+%   u       n x 1 vector (note: u goes with delta)
+%   v       n x 1 vector (note: v goes with gamma)
 %
 % OUTPUT
 %   gamma   n x 1 vector of gamma angles, degrees

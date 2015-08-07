@@ -2,8 +2,8 @@ function [u,v] = lune2uv(gamma,delta)
 %LUNE2UV convert lune coordinates (gamma, delta) to u-v
 %
 % INPUT
-%   gamma   n x 1 vector of gamma angles, degrees
-%   delta   n x 1 vector of delta angles, degrees
+%   gamma   n x 1 vector of gamma angles, degrees (note: gamma goes with v)
+%   delta   n x 1 vector of delta angles, degrees (note: delta goes with u)
 %
 % OUTPUT
 %   u       n x 1 vector

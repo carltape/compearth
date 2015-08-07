@@ -1,4 +1,5 @@
 compearth ("computational earth") contains two projects
+contact: Carl Tape, University of Alaska Fairbanks, ctape@alaska.edu
 
 download the zipped file or try this command:
 git clone https://github.com/carltape/compearth
@@ -9,6 +10,12 @@ uses spherical wavelets to estimate scalar and vector fields on the surface of a
 http://www.giseis.alaska.edu/input/carl/research/strain.html
 
 [2] momenttensor
-contains some scripts (Matlab, Mathematica, GMT) for plotting and interpreting full moment tensors on the fundamental lune. Reference: W. Tape and C. Tape, "A geometric setting for moment tensors," Geophysical Journal International, 2012. See also W. Tape and C. Tape, "The classical model for moment tensors," Geophysical Journal International, 2013. 
+contains scripts (Matlab, Mathematica, GMT) for plotting and interpreting full moment tensors. These scripts supplement the following publications:
+  W. Tape and C. Tape
+    A geometric setting for moment tensors, GJI 2012
+    A geometric comparison of source-type plots for moment tensors, GJI 2012
+    Angle between principal axis triples, GJI 2012
+    The classical model for moment tensors, GJI 2013
+    A uniform parameterization of moment tensors, GJI 2015
 
 http://www.giseis.alaska.edu/input/carl/research/beachball.html
