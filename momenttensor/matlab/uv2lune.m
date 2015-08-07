@@ -1,15 +1,17 @@
 function [gamma,delta] = uv2lune(u,v)
-%LUNE2UV convert lune coordinates (gamma, delta) to u-v
-%
-% OUTPUT
-%   gamma   n x 1 vector of gamma angles, degrees
-%   delta   n x 1 vector of delta angles, degrees
+%UV2LUNE convert u-v coordinates to lune coordinates (gamma, delta)
 %
 % INPUT
 %   u       n x 1 vector
 %   v       n x 1 vector
 %
+% OUTPUT
+%   gamma   n x 1 vector of gamma angles, degrees
+%   delta   n x 1 vector of delta angles, degrees
+%
 % From Tape and Tape (2015 GJI) "A uniform parameterization for moment tensors"
+%
+% calls v2gamma.m, u2beta.m
 %
 
 disp('entering uv2lune.m');
@@ -19,10 +21,11 @@ deg = 180/pi;
 u = u(:);
 v = v(:);
 
-% radians
+% output in radians
 gamma = v2gamma(v);
 beta = u2beta(u);
 
+% convert to degrees
 gamma = gamma*deg;
 beta = beta*deg;
 delta = 90 - beta;
@@ -30,7 +33,6 @@ delta = 90 - beta;
 %==========================================================================
 
 if 0==1
-    %%
     clear, clc, close all
     n = 100;
     u = linspace(0,3*pi/4,n)';

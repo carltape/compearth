@@ -4,7 +4,7 @@ function [gamma,delta,M0,kappa,theta,sigma,K,N,S,thetadc,lam,U] = CMT2TT(M,bdisp
 % INPUT
 %   M           6 x n moment tensors in CMT convention (UP-SOUTH-EAST)
 %               M = [Mrr Mtt Mpp Mrt Mrp Mtp]; r=up, theta=south, phi=east
-%   idisplay    OPTIONAL (if present, will display details)
+%   bdisplay    OPTIONAL (if present, will display details)
 %               
 % OUTPUT
 %   gamma       angle from DC meridian to MT point (-30 <= gamma <= 30)
@@ -13,6 +13,7 @@ function [gamma,delta,M0,kappa,theta,sigma,K,N,S,thetadc,lam,U] = CMT2TT(M,bdisp
 %   kappa       strike angle, degrees: [0,360]
 %   theta       dip angle, degrees: [0,90]
 %   sigma       slip (or rake) angle, degrees: [-90,90]
+% optional:
 %   K           strike vector (SOUTH-EAST-UP)
 %   N           normal vector (SOUTH-EAST-UP)
 %   S           slip vector (SOUTH-EAST-UP)

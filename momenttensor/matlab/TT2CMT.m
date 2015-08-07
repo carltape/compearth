@@ -118,7 +118,7 @@ if 0==1
     M = TT2CMT(0,0,M0,kappa,theta,sigma)
     [gamma,delta,M0,kappa,theta,sigma] = CMT2TT(M)
     
-    % compare with Mathematica
+    % compare with Mathematica calculations
     deg = 180/pi;
     theta = (pi/4)*deg;
     kappa = (pi/3)*deg;

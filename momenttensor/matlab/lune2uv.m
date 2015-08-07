@@ -11,14 +11,14 @@ function [u,v] = lune2uv(gamma,delta)
 %
 % From Tape and Tape (2015 GJI) "A uniform parameterization for moment tensors"
 %
-% calls gamma2u.m, beta2v.m
+% calls gamma2v.m, beta2u.m
 %
 
 disp('entering lune2uv.m');
 
 deg = 180/pi;
 
-% in radians
+% convert to radians
 delta = delta(:) / deg;   % (column vector)
 gamma = gamma(:) / deg;   % (column vector)
 beta = pi/2 - delta;  % colatitude
@@ -29,7 +29,6 @@ u = beta2u(beta);
 %==========================================================================
 
 if 0==1
-    %%
     clear, clc, close all
     n = 100;
     delta = linspace(90,-90,n)';

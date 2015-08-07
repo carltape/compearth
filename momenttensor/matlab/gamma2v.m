@@ -9,5 +9,10 @@ function v = gamma2v(gamma)
 %
 % From Tape and Tape (2015 GJI) "A uniform parameterization for moment tensors"
 %
+% Example values:
+%   gamma2v(-pi/6) = -1/3
+%   gamma2v(0) = 0
+%   gamma2v(pi/6) = 1/3
+%
 
 v = (1/3)*sin(3*gamma);
