@@ -11,15 +11,16 @@ clear, clc, close all
 deg = 180/pi;
 
 % choose examples (see descriptions below)
-bex1 = true;
-bex2 = false;
-bex3 = false;
-bex4 = false;
-bex5 = false;
-bex6 = false;
-banalog = false;     % insights into the sin^4(omega) distribution
+bex1 = true;       % random full moment tensor
+bex2 = false;       % regular grid of uniform full moment tensors
+bex3 = false;       % random double couple moment tensors
+bex4 = false;       % regular grid of double couple moment tensors
+bex5 = false;       % random moment tensors with fixed eigenvalues
+bex6 = false;       % will generate error (intentionally)
+banalog = false;    % insights into the sin^4(omega) distribution
 
 % reference moment tensor for setting omega=0 in the distributions
+% (alternatively you can choose a moment tensor that is in the set)
 Mref = 1/sqrt(2)*[1 0 -1 0 0 0]';
 
 if bex1
@@ -142,6 +143,8 @@ end
 
 %==========================================================================
 % plot various moment tensor quantities
+
+disp('plotting various quantities...');
 
 n = length(kappa);
 M0 = CMT2m0(1,M);

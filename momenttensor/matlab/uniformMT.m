@@ -22,6 +22,16 @@ if nargin==3
     disp(sprintf('uniformMT.m: generate uniform moment tensors for lune point (\\gamma = %.2f, \\delta = %.2f)',gamma0,delta0));
 end
 
+% calculate the number of points in the set
+switch length(n)
+    case 1, nq = n;
+    case 5
+        if FIXEDLAMBDA, nq = prod(n(3:5)); else nq = prod(n); end
+    otherwise
+        error('n must be length 1 or 5'); 
+end
+disp(sprintf('%i points in the set',nq));
+
 % min and max limits for each parameter
 u1 = 0;         u2 = 3*pi/4;    % similar to lune latitude (ISO)
 v1 = -1/3;      v2 = 1/3;       % similar to lune longitude (CLVD)
@@ -31,12 +41,12 @@ h1 = 0;         h2 = 1;         % cos(dip)
 
 switch length(n)
     case 1      % random grid, full moment tensors
-        disp(sprintf('uniformMT.m: %i random points',n));
-        u       = randomvec(u1,u2,n);
-        v       = randomvec(v1,v2,n);
-        kappa   = randomvec(k1,k2,n);
-        sigma   = randomvec(s1,s2,n);
-        h       = randomvec(h1,h2,n);
+        disp(sprintf('uniformMT.m: %i random points',nq));
+        u       = randomvec(u1,u2,nq);
+        v       = randomvec(v1,v2,nq);
+        kappa   = randomvec(k1,k2,nq);
+        sigma   = randomvec(s1,s2,nq);
+        h       = randomvec(h1,h2,nq);
 
     case 5      % uniform grid, full moment tensors
         nu = n(1);
@@ -48,6 +58,8 @@ switch length(n)
         dk = (k2-k1)/nk;
         ds = (s2-s1)/ns;
         dh = (h2-h1)/nh;
+        % note that with this sampling you NEVER allow for the endpoints of
+        % the interval to be used in the grid search
         kvec  = [ (k1+dk/2) : dk : (k2-dk/2) ]';
         svec  = [ (s1+ds/2) : ds : (s2-ds/2) ]';
         hvec  = [ (h1+dh/2) : dh : (h2-dh/2) ]';
