@@ -1,11 +1,11 @@
 function beta = u2beta(u)
-%V2BETA v(beta) for lune colatitude
-%
-% OUTPUT
-%   beta    n x 1 vector of lune colatitudes, radians
+%U2BETA u(beta) for lune colatitude
 %
 % INPUT
-%   u       n x 1 vector
+%   u       n x 1 vector (u = [0, 3*pi/4])
+%
+% OUTPUT
+%   beta    n x 1 vector of lune colatitudes, radians (beta = [0, pi])
 %
 % From Tape and Tape (2015 GJI) "A uniform parameterization for moment tensors"
 %
@@ -33,7 +33,7 @@ else
 end
 
 u = u(:);
-n = length(u);
+%n = length(u);
 
 % we could define an in-line function instead of using beta2u.m
 %f = @(x)( (3/4)*x - (1/2)*sin(2*x) + (1/16)*sin(4*x) );
@@ -63,8 +63,14 @@ end
 %==========================================================================
 
 if 0==1
-    %%
-    clear, clc, close all
+    % how long does it take to interpolate a million points
+    tic
+    n = 1e6;
+    u = 3*pi/4 * rand(n,1);
+    beta = u2beta(u);
+    disp(sprintf('%.4f s seconds to get %.0e values of beta (lune colatitude) from u',toc,n));
+    
+    % try a linearly spaced input vector
     n = 191;
     n = 1e6;
     % from beta to u and back

@@ -1,11 +1,11 @@
 function u = beta2u(beta)
-%BETA2V u(beta) for lune colatitude
+%BETA2U beta(u) for lune colatitude
 %
 % INPUT
-%   beta    n x 1 vector of lune colatitudes, radians
+%   beta    n x 1 vector of lune colatitudes, radians (beta = [0, pi])
 %
 % OUTPUT
-%   u       n x 1 vector
+%   u       n x 1 vector (u = [0, 3*pi/4])
 %
 % From Tape and Tape (2015 GJI) "A uniform parameterization for moment tensors"
 %
