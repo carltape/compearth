@@ -28,7 +28,7 @@ else
     %    Error using griddedInterpolant
     %    The grid vectors are not strictly monotonic increasing.
     n0 = 1000;
-    emethod = 'pchip';
+    emethod = 'linear';
     if bdisplayinfo, disp(sprintf('u2beta.m: using %s interpolation with %i points',emethod,n0)); end
 end
 
@@ -63,14 +63,14 @@ end
 %==========================================================================
 
 if 0==1
-    % how long does it take to interpolate a million points
+    %% how long does it take to interpolate a million points
     tic
     n = 1e6;
     u = 3*pi/4 * rand(n,1);
     beta = u2beta(u);
     disp(sprintf('%.4f s seconds to get %.0e values of beta (lune colatitude) from u',toc,n));
     
-    % try a linearly spaced input vector
+    %% try a linearly spaced input vector
     n = 191;
     n = 1e6;
     % from beta to u and back
