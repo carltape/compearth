@@ -1,22 +1,33 @@
 #!/usr/bin/perl -w
 
-#==========================================================
+#===================================================================================
 #
 #  lune.pl
 #  Perl script to write a shell script for GMT plotting.
-#  Carl Tape, carltape@gi.alaska.edu, May 2012
+#  Carl Tape, ctape@alaska.edu, May 2012
 #
-#  Example plot of representing moment tensors on the funamental lune.
-#  The basic concepts behind this representation of moment tensors can be found in
-#  W. Tape and C. Tape, "A geometric setting for moment tensors," Geophysical J. International, 2012
-#  See also examples in
-#  W. Tape and C. Tape, "The classical model for moment tensors," Geophysical J. International, 2013
+#  Plot moment tensors (or source types) on the fundamental lune.
+#  The basic concepts behind this representation of moment tensors can be found in TT2012
+#  See also examples in TT2013
 #
-#  Last tested 11-10-2013 with GMT 4.5.3 using a custom psmeca by Doug Dreger
+#  Set kmax=2 to also plot source types on the vw rectangle plot of TT2015
 #  
-#==========================================================
+#  Abbreviations
+#    gCDC = generalized crack-plus-double-couple model (TT2013)
+#
+#  References:
+#  TT2012: W. Tape and C. Tape, "A geometric setting for moment tensors," Geophysical J. International, 2012
+#  TT2013: W. Tape and C. Tape, "The classical model for moment tensors," Geophysical J. International, 2013
+#  TT2015: W. Tape and C. Tape, "A uniform parameterization for seismic moment tensors," Geophysical J. International, 2015
+#
+#  Last tested 11-08-2015 with GMT 4.5.3
+#  Our psmeca (for plotting beachballs) uses a modified version of utilmeca.c by Doug Dreger.
+#  
+#===================================================================================
 
-#use Math::Trig;
+# all we use this for is pi
+use Math::Trig;
+use Math::Trig ':pi';
 
 $cshfile = "lune.csh";
 
@@ -24,27 +35,52 @@ $fontno = "1";
 $ticklen = "0.0c";    # =0 for no ticks
 
 open(CSH,">$cshfile");
-print CSH "gmtset PAPER_MEDIA letter MEASURE_UNIT inch BASEMAP_TYPE plain PLOT_DEGREE_FORMAT D TICK_LENGTH $ticklen LABEL_FONT_SIZE 10 ANOT_FONT_SIZE 10  HEADER_FONT 1 ANOT_FONT 1 LABEL_FONT 1 HEADER_FONT_SIZE 18 FRAME_PEN 2p TICK_PEN 2p\n";
+# set GMT default parameters
+print CSH "gmtset PAPER_MEDIA letter PAGE_ORIENTATION landscape MEASURE_UNIT inch BASEMAP_TYPE plain PLOT_DEGREE_FORMAT D TICK_LENGTH $ticklen LABEL_FONT_SIZE 10 ANOT_FONT_SIZE 10 HEADER_FONT 1 ANOT_FONT 1 LABEL_FONT 1 HEADER_FONT_SIZE 18 FRAME_PEN 2p TICK_PEN 2p\n";
 
-$R = "-R-30/30/-90/90";
-#$R = "-R-30/30/-90/90r";
-$origin = "-X2 -Y1";
+#----------
+# lune source-type plot
+
+$Rlune = "-R-30/30/-90/90";
+#$Rlune = "-R-30/30/-90/90r";
+$origin = "-X2.5 -Y0.5";
 $xtick1 = 10; $ytick1 = 10;
 $xtick2 = 5; $ytick2 = 5;
-#$B = "-Ba${xtick1}f${xtick2}g${xtick1}:\" \":/a${ytick1}f${xtick2}g${ytick1}:\" \":WesN";
-$B = "-Ba${xtick1}f${xtick2}g${xtick1}:\" \":/a${ytick1}f${xtick2}g${ytick1}:\" \":wesn";
-#$B = "-Ba${xtick1}f${xtick2}:\" \":/a${ytick1}f${xtick2}:\" \":wesn";   # no gridlines
+#$Blune = "-Ba${xtick1}f${xtick2}g${xtick1}:\" \":/a${ytick1}f${xtick2}g${ytick1}:\" \":WesN";
+$Blune = "-Ba${xtick1}f${xtick2}g${xtick1}:\" \":/a${ytick1}f${xtick2}g${ytick1}:\" \":wesn";
+#$Blune = "-Ba${xtick1}f${xtick2}:\" \":/a${ytick1}f${xtick2}:\" \":wesn";   # no gridlines
 
-$wid = "3i";
-#$J = "-JA0/0/$wid"; $title = "Lambert equal-area ($J)"; $ftag = "lambert";
-#$J = "-JB0/0/0/90/$wid"; $title = "Albers equal-area ($J)"; $ftag = "albers";
+$wid = "2.8i";
+#$Jlune = "-JA0/0/$wid"; $title = "Lambert equal-area ($Jlune)"; $ftag = "lambert";
+#$Jlune = "-JB0/0/0/90/$wid"; $title = "Albers equal-area ($Jlune)"; $ftag = "albers";
 
-#$J = "-JY0/$wid";  $title1 = "Cylindrical equal-area ($J)"; $ftag = "cylindrical";
-#$J = "-JI0/$wid";  $title1 = "Sinusoidal equal-area ($J)"; $ftag = "sinusoidal";
-#$J = "-JKf0/$wid"; $title1 = "Eckert IV equal-area ($J)"; $ftag = "eckert4";
-#$J = "-JK0/$wid";  $title1 = "Eckert VI equal-area ($J)"; $ftag = "eckert6";
-#$J = "-JW0/$wid";  $title1 = "Mollweide equal-area ($J)"; $ftag = "mollewide";
-$J = "-JH0/$wid";   $title1 = "Hammer equal-area ($J)"; $ftag = "hammer";
+#$Jlune = "-JY0/$wid";  $title1 = "Cylindrical equal-area ($Jlune)"; $ftag = "cylindrical";
+#$Jlune = "-JI0/$wid";  $title1 = "Sinusoidal equal-area ($Jlune)"; $ftag = "sinusoidal";
+#$Jlune = "-JKf0/$wid"; $title1 = "Eckert IV equal-area ($Jlune)"; $ftag = "eckert4";
+#$Jlune = "-JK0/$wid";  $title1 = "Eckert VI equal-area ($Jlune)"; $ftag = "eckert6";
+#$Jlune = "-JW0/$wid";  $title1 = "Mollweide equal-area ($Jlune)"; $ftag = "mollewide";
+$Jlune = "-JH0/$wid";   $title1 = "Hammer equal-area ($Jlune)"; $ftag = "hammer";
+
+#----------
+# vw rectangle source-type plot
+
+$vmax = 1/3;
+$vmin = -$vmax;
+$wmax = 3*pi/8;
+$wmin = -$wmax;
+$vran = $vmax - $vmin;
+$wran = $wmax - $wmin;
+
+$Rrect = "-R$vmin/$vmax/$wmin/$wmax";
+$xtick1 = $vmax; $ytick1 = $wmax;
+$xtick2 = 0.1; $ytick2 = 0.1;
+$Brect = "-Ba${xtick1}f${xtick2}g${xtick1}:\" \":/a${ytick1}f${xtick2}g${ytick1}:\" \":wesn";
+
+$wid = 2.1;
+$ywid = $wid*$wran/$vran;
+$Jrect = "-JX${wid}i/${ywid}i";
+
+#----------
 
 # colors
 #$magenta = "148/0/211";
@@ -66,6 +102,9 @@ $white = "255/255/255";
 $lgray = 200;
 $dgray = 120;
 
+# Poisson values considered for gCDC model
+@nus = (0.25,0.36);
+
 # PLOTTING OPTIONS
 $iplot = 1;  # =0 (reference lune), =1 (dots from published studies), =2 (reference beachballs)
 $lplot = 1;  # =1-2: reference MTs on the lune (iplot=2 only)
@@ -75,21 +114,27 @@ if($iplot==2) {
 } else {
   $psfile = "lune_${ftag}_iplot${iplot}.ps";
 }
-$ipatch = 0;           # two shaded patches on the lune near the ISO regions
-$ipatchgcdc = 0;       # patches for gCDC model for nu=0.25
-$iarcgcdc = 0;         # boundary arcs for gCDC model for nu=0.25
-
-$idev = 0;             # deviatoric arc
-$inup25 = 0;           # nu=0.25 arc between crack points
-$inup36 = 0;           # nu=0.36 arc between crack points
-$ilam3 = 1;            # lam3 = 0 arc
-$ilam2 = 0;            # lam2 = 0 arc between dipoles
-$ilam1 = 1;            # lam1 = 0 arc
-
-$ilegend = 0;          # legend for data points
-$ititle = 0;           # title (see below)
+# points
 $plot_ref_points = 1;  # plot reference points on lune (ISO, DC, etc)
 $plot_ref_labels = 1;  # reference labels: =0 (none), =1 (eigs), =2 (ISO, DC, etc)
+$iiplotDC = 0;
+# patches for lam_i = 0 regions
+$ipatch = 1;
+# arcs
+$idev = 0;             # deviatoric arc
+$inup25 = 1;           # nu=0.25 arc between crack points
+$inup36 = 0;           # nu=0.36 arc between crack points
+$ilam3 = 1;            # lam3 = 0 arc
+$ilam2 = 1;            # lam2 = 0 arc between dipoles
+$ilam1 = 1;            # lam1 = 0 arc
+# gCDC options
+$ipatchgcdc = 0;       # patches for gCDC model (inugcdc > 0)
+$iarcgcdc = 0;         # boundary arcs for gCDC model (inugcdc > 0)
+@nus = (0.25,0.36);    # Poisson values considered for gCDC model
+$inugcdc = 1;          #   =1 for nu=0.25, =2 fo0.36 (ice)
+# other options
+$ilegend = 0;          # legend for data points
+$ititle = 0;           # title (see below)
 
 # iplot options will override some of the above specifications
 #if ($iplot==0) {$plot_ref_points = 1; $plot_ref_labels = 1;}
@@ -102,33 +147,51 @@ $clune = $white;
 #$clune = $sienna;
 if($ipatch==1) {$clune = $lgray;}
 
-print CSH "psbasemap $J $R $B -G$clune -K -V -P $origin > $psfile\n"; # START
+# size of markers
+$msize_ref = 8;
+$msize_data = 6;
 
+# directories with data files
+# pdir2 is for a user's directory of files that are outside of compearth
 $pdir = "./dfiles/";
-# files outside of compearth
 $pdir2 = "/home/carltape/PROJECTS/cmt/figs/bfiles/";
+
+# loop over lune, then vw-rectangle
+$kmax = 1;
+for ($k = 1; $k <= $kmax; $k++) {
+
+if($k==1) {
+  $R = $Rlune; $B = $Blune; $J = $Jlune;
+  print CSH "psbasemap $J $R $B -G$clune -K -V $origin > $psfile\n"; # START
+} else {
+  $R = $Rrect; $B = $Brect; $J = $Jrect;
+  print CSH "psbasemap $J $R $B -G$clune -K -O -V -X5 >> $psfile\n";
+  $ilegend = 0;
+}
+
+# columns 1-2 for lune, columns 3-4 for rectangle
+$col1 = 2*$k - 1;
+$col2 = 2*$k;
 
 # plot patches
 if ($ipatch==1) {
-  $fname = "$pdir/beach_patch_01.lonlat";
-  print CSH "psxy $fname -G$dgray -J -R -K -O -V >>$psfile\n";
-  $fname = "$pdir/beach_patch_02.lonlat";
-  print CSH "psxy $fname -G255 -J -R -K -O -V >>$psfile\n";
+  $fname = "$pdir/sourcetype_patch_01.dat";
+  print CSH "awk '{print \$${col1},\$${col2}}' $fname | psxy -G$dgray -J -R -K -O -V >>$psfile\n";
+  $fname = "$pdir/sourcetype_patch_02.dat";
+  print CSH "awk '{print \$${col1},\$${col2}}' $fname | psxy -G255 -J -R -K -O -V >>$psfile\n";
   print CSH "psbasemap $J $R $B -K -O -V >> $psfile\n";
 }
-if ($ipatchgcdc==1 || $iarcgcdc==1) {
-  #$fname1 = "$pdir/beach_patch_nu0p25_01.lonlat";
-  #$fname2 = "$pdir/beach_patch_nu0p25_02.lonlat";
-  $fname1 = "$pdir/beach_patch_nu0p36_01.lonlat";
-  $fname2 = "$pdir/beach_patch_nu0p36_02.lonlat";
-  if($ipatchgcdc==1) {
-  print CSH "psxy $fname1 -G$red -J -R -K -O -V >>$psfile\n";
-  print CSH "psxy $fname2 -G$red -J -R -K -O -V >>$psfile\n";
+if ( ($ipatchgcdc > 0 || $iarcgcdc > 0) && $inugcdc > 0 ) {
+  $fname1 = sprintf("$pdir/sourcetype_patch_nu0p%2.2i_01.dat",100*$nus[$inugcdc-1]);
+  $fname2 = sprintf("$pdir/sourcetype_patch_nu0p%2.2i_02.dat",100*$nus[$inugcdc-1]);
+  if($ipatchgcdc > 0) {
+  print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | psxy -G$red -J -R -K -O -V >>$psfile\n";
+  print CSH "awk '{print \$${col1},\$${col2}}' $fname2 | psxy -G$red -J -R -K -O -V >>$psfile\n";
   print CSH "psbasemap $J $R $B -K -O -V >> $psfile\n";
 }
-  if($iarcgcdc==1) {
-  print CSH "psxy $fname1 -W2p,$red -J -R -K -O -V >>$psfile\n";
-  print CSH "psxy $fname2 -W2p,$red -J -R -K -O -V >>$psfile\n";
+  if($iarcgcdc > 0) {
+  print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | psxy -W2p,$red -J -R -K -O -V >>$psfile\n";
+  print CSH "awk '{print \$${col1},\$${col2}}' $fname2 | psxy -W2p,$red -J -R -K -O -V >>$psfile\n";
 }
 }
 
@@ -141,60 +204,68 @@ if ($ipatchgcdc==1 || $iarcgcdc==1) {
 # 6 lam2=0 (CDC nu=0) between dipoles
 # 7 CDC nu=0.36
 $lwid = 3;
-$fname1 = "$pdir/beach_arc_01.lonlat";
-$fname2 = "$pdir/beach_arc_02.lonlat";
-$fname3 = "$pdir/beach_arc_03.lonlat";
-$fname4 = "$pdir/beach_arc_04.lonlat";
-$fname5 = "$pdir/beach_arc_05.lonlat";
-$fname6 = "$pdir/beach_arc_06.lonlat";
-$fname7 = "$pdir/beach_arc_07.lonlat";
+$fname1 = "$pdir/sourcetype_arc_01.dat";
+$fname2 = "$pdir/sourcetype_arc_02.dat";
+$fname3 = "$pdir/sourcetype_arc_03.dat";
+$fname4 = "$pdir/sourcetype_arc_04.dat";
+$fname5 = "$pdir/sourcetype_arc_05.dat";
+$fname6 = "$pdir/sourcetype_arc_06.dat";
+$fname7 = "$pdir/sourcetype_arc_07.dat";
 if ($iplot==1) {
   $W = "-W2p,0,--";
   $W = "-W2p,0";
-  if($idev==1) {print CSH "psxy $fname1 $W -W2p,$blue -J -R -K -O -V >>$psfile\n";}
+  if($idev==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | psxy $W -W2p,$blue -J -R -K -O -V >>$psfile\n";}
   #print CSH "psxy $fname2 $W -J -R -K -O -V >>$psfile\n";
-  if($ilam3==1) {print CSH "psxy $fname3 $W -J -R -K -O -V >>$psfile\n";}
-  if($ilam1==1) {print CSH "psxy $fname4 $W -J -R -K -O -V >>$psfile\n";}
-  if($inup25==1) {print CSH "psxy $fname5 $W -W2p,$green -J -R -K -O -V >>$psfile\n";}
-  if($inup36==1) {print CSH "psxy $fname7 $W -W2p,$green -J -R -K -O -V >>$psfile\n";}
-  if($ilam2==1) {print CSH "psxy $fname6 $W -J -R -K -O -V >>$psfile\n";}
+  if($ilam3==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname3 | psxy $W -J -R -K -O -V >>$psfile\n";}
+  if($ilam1==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname4 | psxy $W -J -R -K -O -V >>$psfile\n";}
+  if($inup25==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname5 | psxy $W -W2p,$green -J -R -K -O -V >>$psfile\n";}
+  if($inup36==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname7 | psxy $W -W2p,$green -J -R -K -O -V >>$psfile\n";}
+  if($ilam2==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname6 | psxy $W -J -R -K -O -V >>$psfile\n";}
 } else {
   if($ipatch==1) {@cols = ($magenta,$red,$blue,$blue,$black,$blue);}
   else           {@cols = ($magenta,$orange,$black,$black,$blue,$black);}
-  if($idev==1) {print CSH "psxy $fname1 -W${lwid}p,$cols[0] -J -R -K -O -V >>$psfile\n";}
-  if($ipatch==1) {print CSH "psxy $fname2 -W${lwid}p,$cols[1] -J -R -K -O -V >>$psfile\n";}
-  if($ilam3==1) {print CSH "psxy $fname3 -W${lwid}p,$cols[2] -J -R -K -O -V >>$psfile\n";}
-  if($ilam1==1) {print CSH "psxy $fname4 -W${lwid}p,$cols[3] -J -R -K -O -V >>$psfile\n";}
-  if($inup25==1) {print CSH "psxy $fname5 -W${lwid}p,$cols[4] -J -R -K -O -V >>$psfile\n";}
-  if($inup36==1) {print CSH "psxy $fname7 -W${lwid}p,$cols[4] -J -R -K -O -V >>$psfile\n";}
-  if($ilam2==1) {print CSH "psxy $fname6 -W${lwid}p,$cols[5] -J -R -K -O -V >>$psfile\n";}
+  if($idev==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | psxy -W${lwid}p,$cols[0] -J -R -K -O -V >>$psfile\n";}
+  #if($ipatch==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname2 | psxy -W${lwid}p,$cols[1] -J -R -K -O -V >>$psfile\n";}
+  if($ilam3==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname3 | psxy -W${lwid}p,$cols[2] -J -R -K -O -V >>$psfile\n";}
+  if($ilam1==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname4 | psxy -W${lwid}p,$cols[3] -J -R -K -O -V >>$psfile\n";}
+  if($inup25==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname5 | psxy -W${lwid}p,$cols[4] -J -R -K -O -V >>$psfile\n";}
+  if($inup36==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname7 | psxy -W${lwid}p,$cols[4] -J -R -K -O -V >>$psfile\n";}
+  if($ilam2==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname6 | psxy -W${lwid}p,$cols[5] -J -R -K -O -V >>$psfile\n";}
 }
-if($iarcgcdc==1 && $iplot==1 && $inup25==1) {print CSH "psxy $fname5 -W2p,$blue -J -R -K -O -V >>$psfile\n";}
+if($iarcgcdc==1 && $iplot==1 && $inup25==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname5 | psxy -W2p,$blue -J -R -K -O -V >>$psfile\n";}
 
 # plot lune reference points and labels
 if ($plot_ref_points || $plot_ref_labels) {
-  $fname = "$pdir/beach_points.lonlat";
+  if($k==1) {
+     $fname = "$pdir/sourcetype_points_lune.dat";
+  } else {
+     $fname = "$pdir/sourcetype_points_rect.dat";
+  }
   #if ($plot_ref_points) {
   #  $csize = 12;
   #  print CSH "psxy $fname -N -Sc${csize}p -W1p,0/0/0 -G255 -J -R -K -O -V >>$psfile\n";
   #}
-  $csize = 8;
-  $pinfo = "-N -Sc${csize}p -W1p,0/0/0 -G0";
-  $pinfo = "-N -Sp${csize}p -W1p,0";
-  $fsize = 14;
+  $pinfo = "-N -Sc${msize_ref}p -W1p,0/0/0 -G0";
+  $pinfo = "-N -Sp${msize_ref}p -W1p,0";
+  $fsize = 12;
   $fontno = 1;
+  # full set of reference points
   open(IN,$fname); @plines = <IN>; close(IN);
   $nplot0 = @plines;
-  if($ipatchgcdc==1 || $iarcgcdc==1 || $inup36==1) {
-      $nplot = $nplot0;
-  } else {
-     $nplot=9;
-     $nplot=8;  # no DC point
-     if($inup25==1) {$nplot=11}
-  };
+  # subset of reference points
+  @iiplot = (1..8);  # default points (note: might want 10 and 11 as default)
+  if($inup25==1) {@iiplot = (@iiplot,10,11)}
+  if($inup36==1) {@iiplot = (@iiplot,16,17)}
+  if($inugcdc==1 && ($ipatchgcdc==1 || $iarcgcdc==1)) {@iiplot = (@iiplot,10..15)}
+  if($inugcdc==2 && ($ipatchgcdc==1 || $iarcgcdc==1)) {@iiplot = (@iiplot,16..21)}
+  if($iiplotDC==1) {@iiplot = (@iiplot,9)}
+  #@iiplot = (1..$nplot0);  # all points
+
+  $nplot = @iiplot;
   print "plotting $nplot (out of $nplot0) reference points/labels\n";
   #print "\n @plines \n";
-  for ($i = 1; $i <= $nplot; $i++) {
+  for ($h = 1; $h <= $nplot; $h++) {
+    $i = $iiplot[$h-1];
     ($plon,$plat,$plab,$plab2,$align,$Dx,$Dy) = split(" ",$plines[$i-1]);
     #print "\n--$plon -- $plat-- $plab -- $plab2";
     $D = "-D${Dx}p/${Dy}p";
@@ -238,7 +309,7 @@ if ($iplot==1) {
       "Miller1996phd","Baig2010","Sileny2006","Sileny2008","Sileny2009","Dreger2012","Julian2010","Pesicek2012_238Fig14","Ross1996","Ross1996phd",
       "Vavrycuk2001","Vavrycuk2011","Ortega2014","Alvizuri2015");
 
-  $csize = 8;  # size of dots
+  $csize = $msize_data;  # size of dots
   @csizes = ($csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,
       $csize,$csize/2,$csize,$csize,$csize,$csize/2,$csize,$csize,$csize,$csize,
       $csize,$csize,$csize,$csize);
@@ -261,14 +332,15 @@ if ($iplot==1) {
         for ($i = 1; $i <= @inds; $i++) {
           $j = $inds[$i-1];
           $cz = $csizes[$j-1];
-          $fname = sprintf("$pdir/beachpts_%s_points.dat",$ftags[$j-1]);
+          $fname = sprintf("$pdir/sourcetype_gdvw_%s.dat",$ftags[$j-1]);
           if (not -f $fname) {
-              print "\n input file $fname does not exist\n";
+              print "input file $fname does not exist\n";
               # check files in second directory
-              $fname = sprintf("$pdir2/beachpts_%s_points.dat",$ftags[$j-1]);
+              $fname = sprintf("$pdir2/sourcetype_gdvw_%s.dat",$ftags[$j-1]);
               if (not -f $fname) {die("\n check if input file $fname exists\n")}
           }
-          print CSH "psxy $fname -N -Sc${cz}p -W0.5p,0/0/0 -G$cols[$j-1] -J -R -K -O -V >>$psfile\n";
+          #print CSH "psxy $fname -N -Sc${cz}p -W0.5p,0/0/0 -G$cols[$j-1] -J -R -K -O -V >>$psfile\n";
+          print CSH "awk '{print \$${col1},\$${col2}}' $fname | psxy -N -Sc${cz}p -W0.5p,0/0/0 -G$cols[$j-1] -J -R -K -O -V >> $psfile\n";
         }
 
 #       # Minson vs GCMT (comment out default block above)
@@ -296,9 +368,10 @@ if ($iplot==1) {
       # print CSH "psscale -C$cptfile $Dscale $Bscale -Xa3.5 -Ya6 -V -K -O >> $psfile\n";
 
 } elsif ($iplot==2) {
+  if($k==2) {die("beachball plotting not yet implemented for rectangle plot -- set kmax = 1\n")}
   # reference beachballs on the lune
-  $cmtinfo = "-Sm0.5 -L0.5p/0/0/0 -G255/0/0 -N";
-  $cmtfile = sprintf("$pdir/beachballs_ilune%i_iref%i_psmeca",$lplot,$kplot);
+  $cmtinfo = "-Sm0.45 -L0.5p/0/0/0 -G255/0/0 -N";
+  $cmtfile = sprintf("$pdir/beachballs_ipts%i_iref%i_lune_psmeca",$lplot,$kplot);
   print CSH "psmeca $cmtfile $J $R $cmtinfo -K -O -V >> $psfile\n";
 } 
 
@@ -306,7 +379,7 @@ if ($iplot==1) {
 
 $J_title = "-JX1i";  # -JM7i
 $R_title = "-R0/1/0/1";
-$olegend = "-Xa3.0 -Ya7.2";
+$olegend = "-Xa-2.0 -Ya6.5";
 
 # legend for plotting published studies
 if($iplot==1 && $ilegend==1) {
@@ -317,7 +390,11 @@ if($iplot==1 && $ilegend==1) {
     $x = $x0 + 0.2;
     $y = $y0 - ($i-1)*$dy;
     # number of points (for legend)
-    $fname = sprintf("$pdir/beachpts_%s_points.dat",$ftags[$j-1]);
+    $fname = sprintf("$pdir/sourcetype_gdvw_%s.dat",$ftags[$j-1]);
+    if (not -f $fname) {
+       $fname = sprintf("$pdir2/sourcetype_gdvw_%s.dat",$ftags[$j-1]);
+       if (not -f $fname) {die("\n check if input file $fname exists\n")}
+    }
     $nplot = `wc $fname | awk '{print \$1}'`; chomp($nplot);
     $lab = sprintf("%s (n=%i)",$ftags[$j-1],$nplot);
     #$lab = $ftags[$j-1];      # Minson vs GCMT
@@ -331,6 +408,9 @@ if($iplot==1 && $ilegend==1) {
 
 #-----------------------------
 
+# final command must have no -K
+if($k==$kmax) {$xtag = ""} else {$xtag = "-K"}
+
 # optional: plot a title
 $otitle1 = "-Xa2 -Ya9.0"; $fsize1 = 16;
 $otitle2 = "-Xa2 -Ya8.7"; $fsize2 = 12;
@@ -343,17 +423,20 @@ if ($ititle==1) {
   #$title1 = "Moment tensors for induced events"; $title2 = "";
 
   print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0 0 $fsize1 0 $fontno CM $title1\nEOF\n";
-  print CSH "pstext -N $R_title $J_title $otitle2 -O -V >>$psfile<<EOF\n 0 0 $fsize2 0 $fontno CM $title2\nEOF\n";
+  print CSH "pstext -N $R_title $J_title $otitle2 $xtag -O -V >>$psfile<<EOF\n 0 0 $fsize2 0 $fontno CM $title2\nEOF\n";
 
 } else {
-  # any command with no -K should work (this one will not plot anything)
-  print CSH "pstext $R_title $J_title $otitle2 -O -V >>$psfile<<EOF\n -1 -1 $fsize2 0 $fontno LM TEST\nEOF\n"; 
+  # any command with no -K should work
+  print CSH "psxy -R -J $xtag -O -T -V >> $psfile\n";
 }
+
+}  # for loop over $k
 
 close (CSH);
 system("csh -f $cshfile");
 
-system("ps2pdf $psfile");
+# create a pdf file
+#system("ps2pdf $psfile");
 
 # you may need to install gv to view (or use something else)
 system("gv $psfile &");
