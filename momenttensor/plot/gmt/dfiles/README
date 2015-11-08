@@ -5,11 +5,14 @@ This directory contains published data sets of full moment tensors, as well as s
 ---
 [1] lune points from published data sets
 
-beachpts_xxxx_points.dat
+sourcetype_gdvw_xxxx.dat
+
+gdvw = gamma delta v w
+xxxx = tag associated with a published study
 
 These files contain lune coordinates (lune longitude, lune latitude) for several published sets of moment tensors. Many of these were plotted in Tape and Tape, "The classical model for moment tensors" (GJI 2013).
 
-These files were made by Carl Tape using a matlab script (FMTdata.m) to read the originally published tables and then convert them to lune coordinates.
+These files were made by Carl Tape using a matlab script (FMTdata.m) to read the originally published tables and then convert them to lune coordinates and v-w coordinates.
 
 Tape and Tape (2013) also included some published-but-not-tabulated data sets that are not provided here but were plotted or discussed in that paper; see the bibliography for details.
 Dreger2012
@@ -18,6 +21,7 @@ Vavrycuk2011
 Julian2010
 Pesicek2012_238Fig14
 
+NOT NEEDED IF $pdir2 IS SET IN lune.pl:
 command for Carl:
 ln -s /home/carltape/PROJECTS/cmt/figs/bfiles/beachpts_* .
 
