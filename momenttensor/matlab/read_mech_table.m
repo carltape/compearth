@@ -25,8 +25,8 @@ fclose(fid);
 otime = datenum(C{1},C{2},C{3},C{4},C{5},C{6});
 % check: datestr(otime,'yyyy-mm-dd HH:MM:SS.FFF')
 lon = C{7};
-lat = C{6};
-dep = C{8};
+lat = C{8};
+dep = C{9};
 % the Mij values are listed with the highest precision
 % (this is why we return M but not strike, dip, rake, M0, Mw)
 M = [C{10} C{11} C{12} C{13} C{14} C{15}]';
