@@ -25,19 +25,33 @@ fclose(fid);
 otime = datenum(C{1},C{2},C{3},C{4},C{5},C{6});
 % check: datestr(otime,'yyyy-mm-dd HH:MM:SS.FFF')
 lon = C{7};
-lat = C{6};
-dep = C{8};
+lat = C{8};
+dep = C{9};
 % the Mij values are listed with the highest precision
 % (this is why we return M but not strike, dip, rake, M0, Mw)
 M = [C{10} C{11} C{12} C{13} C{14} C{15}]';
 eid = C{23};
 
 %==========================================================================
-% EXAMPLE
+% EXAMPLES (these will only work with GEOTOOLS at UAF)
 
 if 0==1
+    % Vipul catalog for Tape2015 paper
+    idir = [getenv('GEOTOOLS') 'shared/carltape/mfsz/data/'];
     [otime,lat,lon,dep,M,eid] = read_mech_table('GCMT_mffz_mech.txt');
     [gamma,delta,M0,kappa,theta,sigma,K,N,S,thetadc,lam,U] = CMT2TT(M);
+    
+    % Vipul catalog for Silwal2016 paper
+    idir = [getenv('GEOTOOLS') '/shared/vipul/papers/2014mt/data/'];
+    [otime,elat,elon,dep,M,eid] = read_mech_table([idir 'SCAK_mech.txt']);
+    Mw = CMT2mw(M);
+    display_eq_summary(otime,elon,elat,dep,Mw);
+    
+    % Celso catalog for Alvizuri2016 paper
+    idir = [getenv('GEOTOOLS') '/shared/alvizuri/papers/2014fmt/data/'];
+    [otime,elat,elon,dep,M,eid] = read_mech_table([idir 'uturuncu_mech.txt']);
+    Mw = CMT2mw(M);
+    display_eq_summary(otime,elon,elat,dep,Mw);
 end
 
 %==========================================================================

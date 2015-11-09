@@ -75,7 +75,7 @@ fprintf(fid,'The moment tensor source type is represented by lune longitude (gam
 fprintf(fid,'COLUMNS\n');
 fprintf(fid,stfmt1,'origin time','lon','lat','dep','Mrr','Mtt','Mpp','Mrt','Mrp','Mtp','M0','Mw','strike','dip','slip','lune','lune','eid');
 fprintf(fid,stfmt1,'yy mm dd HH MM SS.FFF','','','km','N-m','N-m','N-m','N-m','N-m','N-m','N-m','','kappa','theta','sigma','gamma','delta','');
-% each row is one event
+% each row is one event that is characterized by 23 COLUMNS
 for ii = 1:n
     fprintf(fid,stfmt,...
         datestr(otime(ii),'yyyy mm dd HH MM SS.FFF'),...
@@ -83,7 +83,6 @@ for ii = 1:n
         M(1,ii), M(2,ii), M(3,ii),...
         M(4,ii), M(5,ii), M(6,ii),...
         M0(ii),Mw(ii),kappa(ii),theta(ii),sigma(ii),gamma(ii),delta(ii),eid{ii});
-
 end
 fclose(fid);
 
