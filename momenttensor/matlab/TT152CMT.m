@@ -1,10 +1,10 @@
-function [M,lam,U] = TT152CMT(rho,u,v,kappa,sigma,h)
+function [M,lam,U] = TT152CMT(rho,v,w,kappa,sigma,h)
 %TT152CMT convert parameters of TapeTape2015 into moment tensors
 %
 % INPUT
 %   rho         norm of the moment tensor (note: rho = sqrt(2)*M0)
-%   u           coordinate proportional to lune colatitude beta
 %   v           coordinate proportional to lune longitude gamma
+%   w           coordinate proportional to lune latitude delta
 %   kappa       strike angle, degrees
 %   sigma       slip (or rake) angle, degrees
 %   h           cos(dip)
@@ -25,7 +25,7 @@ function [M,lam,U] = TT152CMT(rho,u,v,kappa,sigma,h)
 
 theta = acos(h)*180/pi;
 M0 = rho/sqrt(2);
-[gamma,delta] = uv2lune(u,v);
+[gamma,delta] = rect2lune(v,w);
 [M,lam,U] = TT2CMT(gamma,delta,M0,kappa,theta,sigma);
     
 %==========================================================================
@@ -33,12 +33,13 @@ M0 = rho/sqrt(2);
 
 if 0==1
     % using TT152CMT.m
-    rho = sqrt(2); u = 3*pi/8; v = 0;
+    rho = sqrt(2); v = 0; w = 0; 
     kappa = 320; sigma = 20; h = cos(10*pi/180);
-    M = TT152CMT(rho,u,v,kappa,sigma,h)
-    [rhox,ux,vx,kappax,sigmax,hx] = CMT2TT15(M);
-    disp([rho rhox u ux v vx]);
+    M = TT152CMT(rho,v,w,kappa,sigma,h)
+    [rhox,vx,wx,kappax,sigmax,hx] = CMT2TT15(M);
+    disp([rho rhox v vx w wx]);
     disp([kappa kappax sigma sigmax h hx]);
+    %norm(Mvec2Mmat(M,1))
     
     % using TT2CMT.m
     M0 = 1; gamma = 0; delta = 0;

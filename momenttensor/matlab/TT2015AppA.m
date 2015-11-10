@@ -24,8 +24,11 @@ sigma = -pi/2 * deg;
 h     = 3/4;
 theta = acos(h) * deg;
 
+% w is like lune latitude delta, whereas u is like lune colatitude beta
+w = 3*pi/8 - u;
+
 % lune coordinates
-[gamma,delta] = uv2lune(u,v);
+[gamma,delta] = rect2lune(v,w);
 beta = 90 - delta;
 
 % TWO OPTIONS to compute Lambda, U, M

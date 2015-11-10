@@ -26,7 +26,7 @@ Mref = 1/sqrt(2)*[1 0 -1 0 0 0]';
 if bex1
     % randomly generated uniform full moment tensors
     n = 1e5;
-    [M,u,v,kappa,sigma,h] = uniformMT(n);
+    [M,v,w,kappa,sigma,h] = uniformMT(n);
     %iref = randi(n); Mref = M(:,iref);
     omega = CMT2omega(Mref,M);
     plot_omega(omega);  
@@ -37,15 +37,15 @@ if bex2
     %n = [2 3 5 4 2];
     n = [6 18 18 9 5];
     %n = [6 18 36 18 10];              % 10-degree increments
-    [M,u,v,kappa,sigma,h] = uniformMT(n);
-    ntotal = length(u);
+    [M,v,w,kappa,sigma,h] = uniformMT(n);
+    ntotal = length(v);
 end
 
 if bex3
     % randomly generated uniform double couple moment tensors
     n = 1e5;
     gamma0 = 0; delta0 = 0;     % double couple
-    [M,u,v,kappa,sigma,h] = uniformMT(n,gamma0,delta0);
+    [M,v,w,kappa,sigma,h] = uniformMT(n,gamma0,delta0);
     %iref = randi(n); Mref = M(:,iref);
     omega = CMT2omega(Mref,M);
     plot_omegadc(omega);  
@@ -62,8 +62,8 @@ if bex4
     %n = [0 0 npart npart npart];    % equal number of points for each interval
     %n = [0 0 8 180 100];            % PROBLEMATIC!
     gamma0 = 0; delta0 = 0;     % double couple
-    [M,u,v,kappa,sigma,h] = uniformMT(n,gamma0,delta0);
-    ntotal = length(u);
+    [M,v,w,kappa,sigma,h] = uniformMT(n,gamma0,delta0);
+    ntotal = length(v);
     %iref = randi(ntotal); Mref = M(:,iref);
     omega = CMT2omega(Mref,M);
     plot_omegadc(omega); 
@@ -73,17 +73,18 @@ if bex5
     % randomly generated uniform moment tensors with fixed lune point
     n = 1e5;
     gamma0 = -25; delta0 = 60;     % double couple
-    [M,u,v,kappa,sigma,h] = uniformMT(n,gamma0,delta0);
+    [M,v,w,kappa,sigma,h] = uniformMT(n,gamma0,delta0);
     %iref = randi(n); Mref = M(:,iref);
     omega = CMT2omega(Mref,M);
 end
 
 if bex6
-    %will generate error, since the 0 0 indicates a fixed lune point,
+    %--> THIS WILL GENERATE AN ERROR, since the 0 0 indicates a fixed lune point,
     % but no lune point is specified as the 2nd and 3rd arguments of uniformMT
-    n = [0 0 5 4 2];
-    %n = [1 1 5 4 2];
-    [M,u,v,kappa,sigma,h] = uniformMT(n);
+    n = [0 0 5 4 2];    % error
+    %n = [1 1 5 4 2];    % error
+    %n = [2 2 5 4 2];    % no error
+    [M,v,w,kappa,sigma,h] = uniformMT(n);
 end
 
 % insights into the sin^4(omega) distribution
@@ -149,7 +150,7 @@ disp('plotting various quantities...');
 n = length(kappa);
 M0 = CMT2m0(1,M);
 theta = acos(h)*deg;
-[gamma,delta] = uv2lune(u,v);
+[gamma,delta] = rect2lune(v,w);
 
 % lune longitude, lune latitude, strike, dip, slip
 plotMT_TT(gamma,delta,M0,kappa,theta,sigma);

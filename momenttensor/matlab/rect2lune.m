@@ -1,9 +1,9 @@
-function [gamma,delta] = uv2lune(u,v)
-%UV2LUNE convert u-v coordinates to lune coordinates (gamma, delta)
+function [gamma,delta] = rect2lune(v,w)
+%RECT2LUNE convert v-w coordinates to lune coordinates (gamma, delta)
 %
 % INPUT
-%   u       n x 1 vector (note: u goes with delta)
-%   v       n x 1 vector (note: v goes with gamma)
+%   v       n x 1 vector (like gamma)
+%   w       n x 1 vector (like delta)
 %
 % OUTPUT
 %   gamma   n x 1 vector of gamma angles, degrees
@@ -14,12 +14,13 @@ function [gamma,delta] = uv2lune(u,v)
 % calls v2gamma.m, u2beta.m
 %
 
-disp('entering uv2lune.m');
+disp('entering rect2lune.m');
 
 deg = 180/pi;
 
-u = u(:);
 v = v(:);
+w = w(:);
+u = 3*pi/8 - w;
 
 % output in radians
 gamma = v2gamma(v);
@@ -35,16 +36,15 @@ delta = 90 - beta;
 if 0==1
     clear, clc, close all
     n = 100;
-    u = linspace(0,3*pi/4,n)';
     v = linspace(-1/3,1/3,n)';
-    [gamma,delta] = uv2lune(u,v);
-    beta = 90 - delta;
+    w = linspace(-3*pi/8,3*pi/8,n)';
+    [gamma,delta] = rect2lune(v,w);
     
     figure; nr=2; nc=1;
-    subplot(nr,nc,1); hold on; plot(u,beta,'b.-');
-    ylabel('\beta, degrees'); xlabel('u'); grid on;
-    subplot(nr,nc,2); hold on; plot(v,gamma,'b.-');
+    subplot(nr,nc,1); hold on; plot(v,gamma,'b.-');
     ylabel('\gamma, degrees'); xlabel('v'); grid on;
+    subplot(nr,nc,2); hold on; plot(w,delta,'b.-');
+    ylabel('\delta, degrees'); xlabel('w'); grid on;
 end
 
 %==========================================================================

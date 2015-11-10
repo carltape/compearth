@@ -1,4 +1,4 @@
-function [rho,u,v,kappa,sigma,h,K,N,S,thetadc,lam,U] = CMT2TT15(M,bdisplay)
+function [rho,v,w,kappa,sigma,h,K,N,S,thetadc,lam,U] = CMT2TT15(M,bdisplay)
 %CMT2TT converts a moment tensor to six parameters of TapeTape2015
 %
 % INPUT
@@ -8,8 +8,8 @@ function [rho,u,v,kappa,sigma,h,K,N,S,thetadc,lam,U] = CMT2TT15(M,bdisplay)
 %               
 % OUTPUT
 %   rho         norm of the moment tensor (note: rho = sqrt(2)*M0)
-%   u           coordinate proportional to lune colatitude beta
 %   v           coordinate proportional to lune longitude gamma
+%   w           coordinate proportional to lune latitude delta
 %   kappa       strike angle, degrees: [0,360]
 %   sigma       slip (or rake) angle, degrees
 %   h           cos(dip): [0, 1]
@@ -24,6 +24,10 @@ function [rho,u,v,kappa,sigma,h,K,N,S,thetadc,lam,U] = CMT2TT15(M,bdisplay)
 % Reverse program for TT152CMT.m
 % See WTape and CTape (2015) "A geometric setting for moment tensors"
 %
+% The one modification is that here we return w = 3*pi/8 - u, rather than
+% the u coordinate in TT2015. w is analagous to lune latitude delta,
+% whereas u is analagous to lune colatitude beta
+%
 % Carl Tape, 8/7/2015
 %
 
@@ -32,5 +36,5 @@ if nargin==1, bdisplay=false; end
 [gamma,delta,M0,kappa,theta,sigma,K,N,S,thetadc,lam,U] = CMT2TT(M,bdisplay);
 
 rho = sqrt(2)*M0;
-[u,v] = lune2uv(gamma,delta);
+[v,w] = lune2rect(gamma,delta);
 h = cos(theta*pi/180);
