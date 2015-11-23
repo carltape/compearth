@@ -106,7 +106,7 @@ $dgray = 120;
 @nus = (0.25,0.36);
 
 # PLOTTING OPTIONS
-$iplot = 1;  # =0 (reference lune), =1 (dots from published studies), =2 (reference beachballs)
+$iplot = 1;  # =0 (reference lune), =1 (dots from published studies), =2 (reference beachballs), =3 (catalog of full moment tensors)
 $lplot = 1;  # =1-2: reference MTs on the lune (iplot=2 only)
 $kplot = 1;  # =1-4: orientation of MT at center of lune (iplot=2 only)
 if($iplot==2) {
@@ -373,6 +373,20 @@ if ($iplot==1) {
   $cmtinfo = "-Sm0.45 -L0.5p/0/0/0 -G255/0/0 -N";
   $cmtfile = sprintf("$pdir/beachballs_ipts%i_iref%i_lune_psmeca",$lplot,$kplot);
   print CSH "psmeca $cmtfile $J $R $cmtinfo -K -O -V >> $psfile\n";
+
+} elsif ($iplot==3) {
+  if($k==2) {die("beachball plotting not yet implemented for rectangle plot -- set kmax = 1\n")}
+  # catalog of moment tensors on the lune
+  $cmtfile = "/home/alvizuri/REPOSITORIES/manuscripts/alvizuri/papers/2014fmt/data/utuhalf_P01_V10_R01_S10_lune_fixedmag_psmeca";
+  if (not -f $cmtfile) {die("\n check if cmt file $cmtfile exists\n")}
+  $cptfile = "color.cpt";
+  print CSH "makecpt -Chaxby -T0/3/0.5 -D > $cptfile\n";
+  $cmtinfo = "-Sm0.2 -L0.5p/0/0/0 -N";
+  print CSH "psmeca $cmtfile $J $R $cmtinfo -Z$cptfile -K -O -V >> $psfile\n";
+  $Dscale = "-D3/7/1.5/0.25";
+  $Bscale = "-B1f0.5g0.5:\"Mw\": -Al";
+  print CSH "gmtset TICK_LENGTH 8p\n";
+  print CSH "psscale -C$cptfile $Dscale $Bscale -V -K -O >> $psfile\n";
 } 
 
 #-----------------------------
