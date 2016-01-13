@@ -71,11 +71,15 @@ switch length(n)
             dw = (w2-w1)/nw;
             vvec  = [ (v1+dv/2) : dv : (v2-dv/2) ]';
             wvec  = [ (w1+dw/2) : dw : (w2-dw/2) ]';
+            % this matlab function takes five vectors with different lengths
+            % and returns five vectors, all with length nv*nw*nk*ns*nh
             [v,w,k,s,h] = ndgrid(vvec,wvec,kvec,svec,hvec);
             v = v(:);
             w = w(:);
         else
             % orientation only
+            % this function takes three vectors with different lengths
+            % and returns three vectors, all with length nk*ns*nh
             [k,s,h] = ndgrid(kvec,svec,hvec);
         end
         kappa = k(:);

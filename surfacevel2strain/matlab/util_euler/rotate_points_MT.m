@@ -36,6 +36,7 @@ function [latr,lonr,R,Mout] = rotate_points_MT(lat,lon,lat1,lon1,lat2,lon2,espin
 %
 
 ilon360 = 1;
+bfigure = false;
 
 if ilon360==1
     lon = wrapTo360(lon);
@@ -77,6 +78,7 @@ end
 %         possibility of numerical round-off errors.
 
 % note these will look distorted on a Cartesian grid
+if bfigure
 figure; hold on;
 plot(lon,lat,'k.');
 plot(lon1,lat1,'kp','markersize',14);
@@ -84,6 +86,7 @@ plot(lon_rot,lat_rot,'b.');
 plot(lon2,lat2,'bp','markersize',14);
 plot(lonr,latr,'r.');
 title(sprintf('rotate_points.m (%i points)',n),'interpreter','none');
+end
 
 % check by applying a single rotation to the starting points
 % (red circles should be centered on red dots)
@@ -92,7 +95,7 @@ R = R2*R1;
 Rxyz = R*Bxyz;
 [latc,lonc] = xyz2latlon(Rxyz);
 if ilon360==1, lonc=wrapTo360(lonc); else lonc=wrapTo180(lonc); end
-plot(lonc,latc,'ro');
+if bfigure, plot(lonc,latc,'ro'); end
 
 if nargin==8
     if ischar(arg8)
