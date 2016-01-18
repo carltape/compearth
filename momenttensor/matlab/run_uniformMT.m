@@ -2,6 +2,8 @@
 % run_uniformMT.m
 %
 % run script for uniformMT.m
+% Examples to generate subsets of uniform moment tensors
+% See Tape and Tape, 2015, GJI, "A uniform parameterization of moment tensors"
 %
 % Carl Tape, 7/26/2015
 %
@@ -9,39 +11,64 @@
 clear, clc, close all
 
 deg = 180/pi;
+bprint = true;
 
-% choose examples (see descriptions below)
-bex1 = true;       % random full moment tensor
-bex2 = false;       % regular grid of uniform full moment tensors
-bex3 = false;       % random double couple moment tensors
-bex4 = false;       % regular grid of double couple moment tensors
-bex5 = false;       % random moment tensors with fixed eigenvalues
-bex6 = false;       % will generate error (intentionally)
-banalog = false;    % insights into the sin^4(omega) distribution
+% GET USER INPUT
+stlabs = {  'random full moment tensor',
+            'random deviatoric moment tensors',
+            'random moment tensors with fixed eigenvalues',
+            'random double couple moment tensors',
+            'regular grid of full moment tensors',
+            'regular grid of double couple moment tensors',
+            'will generate error (intentionally)',
+            'insights into the sin^4(omega) distribution' };
+nex = length(stlabs);
+disp('run_uniformMT.m examples:');
+for ii=1:nex, disp(sprintf('   %2i : %s',ii,stlabs{ii})); end
+iex = input(sprintf('Select your example (1-%i), then hit ENTER: ',nex));  
+if ~any(iex==[1:nex])
+    error('iex must be 1-%i',nex);
+else
+    stlab1x = stlabs{iex};
+    disp(sprintf('run_uniformMT.m example %i: %s',iex,stlab1x));
+end
 
 % reference moment tensor for setting omega=0 in the distributions
 % (alternatively you can choose a moment tensor that is in the set)
 Mref = 1/sqrt(2)*[1 0 -1 0 0 0]';
 
-if bex1
+switch iex
+    case 1
     % randomly generated uniform full moment tensors
     n = 1e5;
     [M,v,w,kappa,sigma,h] = uniformMT(n);
     %iref = randi(n); Mref = M(:,iref);
     omega = CMT2omega(Mref,M);
     plot_omega(omega);  
-end
 
-if bex2
-    % regular grid of uniform full moment tensors
-    %n = [2 3 5 4 2];
-    n = [6 18 18 9 5];
-    %n = [6 18 36 18 10];              % 10-degree increments
-    [M,v,w,kappa,sigma,h] = uniformMT(n);
-    ntotal = length(v);
-end
+    case 2
+    % many studies/catalogd constrain moment tensors to be deviatoric
+    % WARNING: One cannot simply draw random points on a line segment
+    %          between two points (v1,w1) and (v2,w2) in the vw plane, and
+    %          then use random orientations. But this does work for the case
+    %          of w = constant [line of latitude].
+    n = 1e5;
+    w0 = 0;  % could be any permissible w value
+             % here we choose it for the deviatoric MTs
+    [~,v,w,kappa,sigma,h] = uniformMT(n);
+    w = w0*ones(size(w));    % reassign w
+    rho = sqrt(2)*ones(n,1);
+    M = TT152CMT(rho,v,w,kappa,sigma,h);
 
-if bex3
+    case 3
+    % randomly generated uniform moment tensors with fixed lune point
+    n = 1e5;
+    gamma0 = -25; delta0 = 60;     % double couple
+    [M,v,w,kappa,sigma,h] = uniformMT(n,gamma0,delta0);
+    %iref = randi(n); Mref = M(:,iref);
+    omega = CMT2omega(Mref,M);
+
+    case 4
     % randomly generated uniform double couple moment tensors
     n = 1e5;
     gamma0 = 0; delta0 = 0;     % double couple
@@ -49,9 +76,16 @@ if bex3
     %iref = randi(n); Mref = M(:,iref);
     omega = CMT2omega(Mref,M);
     plot_omegadc(omega);  
-end
 
-if bex4
+    case 5
+    % regular grid of uniform full moment tensors
+    %n = [2 3 5 4 2];
+    n = [6 18 18 9 5];
+    %n = [6 18 36 18 10];              % 10-degree increments
+    [M,v,w,kappa,sigma,h] = uniformMT(n);
+    ntotal = length(v);
+
+    case 6
     % regular grid of uniform double couple moment tensors
     ntotal = 1e5;
     %ntotal = 46656;                 % number of points for n = [0 0 72 36 18]
@@ -67,28 +101,17 @@ if bex4
     %iref = randi(ntotal); Mref = M(:,iref);
     omega = CMT2omega(Mref,M);
     plot_omegadc(omega); 
-end
 
-if bex5
-    % randomly generated uniform moment tensors with fixed lune point
-    n = 1e5;
-    gamma0 = -25; delta0 = 60;     % double couple
-    [M,v,w,kappa,sigma,h] = uniformMT(n,gamma0,delta0);
-    %iref = randi(n); Mref = M(:,iref);
-    omega = CMT2omega(Mref,M);
-end
-
-if bex6
+    case 7
     %--> THIS WILL GENERATE AN ERROR, since the 0 0 indicates a fixed lune point,
     % but no lune point is specified as the 2nd and 3rd arguments of uniformMT
     n = [0 0 5 4 2];    % error
     %n = [1 1 5 4 2];    % error
     %n = [2 2 5 4 2];    % no error
     [M,v,w,kappa,sigma,h] = uniformMT(n);
-end
 
-% insights into the sin^4(omega) distribution
-if banalog
+    case 8
+    % insights into the sin^4(omega) distribution
     figure; nr=2; nc=1;
 
     % angular distance from a point on a circle (1-sphere) to all other points on a circle
@@ -154,7 +177,27 @@ theta = acos(h)*deg;
 
 % lune longitude, lune latitude, strike, dip, slip
 plotMT_TT(gamma,delta,M0,kappa,theta,sigma);
+if bprint, orient tall; print(gcf,'-dpng',sprintf('run_uniformMT_iex%i_hist1',iex)); end
+% v, w, strike, dip, slip
+plotMT_TT(v,w,M0,kappa,theta,sigma,true);
+if bprint, orient tall; print(gcf,'-dpng',sprintf('run_uniformMT_iex%i_hist2',iex)); end
 
+% plot correlation matrices
+figure; nr=2; nc=1; clims = [-1 1];
+% moment tensor entries
+R = corrcoef(M');
+Mlab = {'Mrr','Mtt','Mpp','Mrt','Mrp','Mtp'};
+subplot(nr,nc,1); imagesc(R); axis equal; axis tight; caxis(clims); colorbar
+set(gca,'xtick',[1:6],'xticklabel',Mlab,'ytick',[1:6],'yticklabel',Mlab);
+title(sprintf('%s (n = %i)',stlab1x,n));
+% TT2015 coordinates
+MTT = [v w kappa sigma h]'; Mlab = {'v','w','kappa','sigma','h'};
+%MTT = [v w kappa sigma theta]'; Mlab = {'v','w','kappa','sigma','theta'};
+RTT = corrcoef(MTT');
+subplot(nr,nc,2); imagesc(RTT); axis equal; axis tight; caxis(clims); colorbar
+set(gca,'xtick',[1:6],'xticklabel',Mlab,'ytick',[1:6],'yticklabel',Mlab);
+if bprint, orient tall; print(gcf,'-dpng',sprintf('run_uniformMT_iex%i_corr',iex)); end
+    
 break
 
 % lune longitude and latitude within latitude bands and longitude bands

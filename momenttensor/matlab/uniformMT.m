@@ -1,4 +1,4 @@
-function [M,v,w,kappa,sigma,h] = uniformMT(n,gamma0,delta0)
+function [M,v,w,kappa,sigma,h,lam] = uniformMT(n,gamma0,delta0)
 %UNIFORMMT generate a grid of uniformly spaced (full) moment tensors
 %
 % INPUT
@@ -6,6 +6,15 @@ function [M,v,w,kappa,sigma,h] = uniformMT(n,gamma0,delta0)
 %           length(5): number of increments in v,w,kappa,sigma,h
 %   gamma0  OPTIONAL: lune longitude, degrees (-30 to 30)
 %   delta0  OPTIONAL: lune latitude, degrees (-90 to 90)
+%
+% OUTPUT
+%   M       6 x n set of moment tensors
+%   v       like lune longitude (see TT2015)
+%   w       like lune latitude (see TT2015)
+%   kappa   strike angle, degrees (0 to 360)
+%   sigma   slip angle, degrees (-90 to 90)
+%   h       cos(dip angle), (0 to 1)
+%   lam     OPTIONAL: eigenvalues
 %
 % See Tape and Tape, 2015, GJI, "A uniform parameterization of moment tensors"
 %
@@ -105,7 +114,11 @@ else
 end
 M0 = 1;
 theta = acos(h) * deg;
-M = TT2CMT(gamma,delta,M0,kappa,theta,sigma);
+if nargout==7
+    [M,lam] = TT2CMT(gamma,delta,M0,kappa,theta,sigma);
+else
+    M = TT2CMT(gamma,delta,M0,kappa,theta,sigma);
+end
 
 if length(n)==5
     disp(sprintf('uniformMT.m: %i points in the regular grid',length(kappa)));
