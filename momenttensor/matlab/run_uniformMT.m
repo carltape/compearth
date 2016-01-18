@@ -11,7 +11,7 @@
 clear, clc, close all
 
 deg = 180/pi;
-bprint = true;
+bprint = false;
 
 % GET USER INPUT
 stlabs = {  'random full moment tensor',
