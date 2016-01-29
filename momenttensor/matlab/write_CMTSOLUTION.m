@@ -22,7 +22,8 @@ function write_CMTSOLUTION(dir0,ione_file,otime,tshift,hdur,lat,lon,dep,M,  eid,
 % INPUT - optional:
 %   eid         event id
 %   elabel      event description
-%   ftag        label for single output file (CMTSOLUTION_ftag)
+%   ftag        ione_file = 1: label for single output file (CMTSOLUTION_ftag)
+%               ione_file = 0: label for eids (eids_ftag)
 %   nspace_between_entries
 %               number of spaces between CMTSOLUTION blocks (0 or 1)
 %               for single output file only

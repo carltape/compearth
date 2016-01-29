@@ -21,7 +21,8 @@ stlabs = {  'random full moment tensor',
             'regular grid of full moment tensors',
             'regular grid of double couple moment tensors',
             'will generate error (intentionally)',
-            'insights into the sin^4(omega) distribution' };
+            'insights into the sin^4(omega) distribution',
+            'insights into random vs uniform grid'};
 nex = length(stlabs);
 disp('run_uniformMT.m examples:');
 for ii=1:nex, disp(sprintf('   %2i : %s',ii,stlabs{ii})); end
@@ -145,6 +146,27 @@ switch iex
     title('distance from any point on the sphere to uniformly distributed points');
     xlabel('angular distance, deg');
     %figure; hold on; plot(xlon,ylat,'.'); plot(xlon(ipick),ylat(ipick),'ro');
+    
+    break
+    
+    case 9
+    % insights into random vs regular grid
+    
+    nb = 16;
+    a1=0; a2=2; b1=0; b2=1;
+    aran = a2-a1; bran = b2-b1;
+    n = nb*(2*nb);
+    ar = 2*rand(n,1); br = rand(n,1);
+    da = sqrt((aran*bran)/n);
+    avec = [(a1+da/2) : da : (2-da/2)]';
+    db = da; bvec = [(b1+db/2) : da : (1-db/2)]';
+    [A,B] = meshgrid(avec,bvec); ag = A(:); bg = B(:);
+    
+    figure; nr=2; nc=1;
+    subplot(nr,nc,1); plot(ar,br,'.'); axis equal, axis([a1 a2 b1 b2]);
+    title(sprintf('%i uniform random points',length(ar)));
+    subplot(nr,nc,2); plot(ag,bg,'.'); axis equal, axis([a1 a2 b1 b2]);
+    title(sprintf('%i uniform grid points',length(ag)));
     
     break
 end
