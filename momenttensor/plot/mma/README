@@ -1,9 +1,15 @@
 README
+Carl Tape, ctape@alaska.edu
 
 some Mathematica notebooks that can be used for 3D plotting of moment tensor space
 References:
 W. Tape and C. Tape (GJI 2012), "A geometric setting for moment tensors"
 W. Tape and C. Tape (GJI 2013), "The classical model for moment tensors"
+http://www.giseis.alaska.edu/input/carl/research/beachball.html
+
+system requirements:
+Mathematica -- we are using 9.0
+If you are using 10.0, then there will be a problem with the function Subdivide, which we define ourselves, but Mathematica uses this name starting in 10.0. (Contact me if you have this issue.)
 
 -----------
 
