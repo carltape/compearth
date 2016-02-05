@@ -37,6 +37,8 @@ FIXEDLAMBDA = false;
 if nargin==3
     FIXEDLAMBDA = true;
     disp(sprintf('uniformMT.m: generate uniform moment tensors for lune point (\\gamma = %.2f, \\delta = %.2f)',gamma0,delta0));
+    if abs(gamma0) > 30, error('gamma must be [-30,30]'); end
+    if abs(delta0) > 90, error('delta must be [-90,90]'); end
 end
 
 % calculate the number of points in the set

@@ -65,6 +65,7 @@ switch iex
     % randomly generated uniform moment tensors with fixed lune point
     n = 1e5;
     gamma0 = -25; delta0 = 60;     % double couple
+    %gamma0 = -75; delta0 = 60;     % will generate error exit
     [M,v,w,kappa,sigma,h] = uniformMT(n,gamma0,delta0);
     %iref = randi(n); Mref = M(:,iref);
     omega = CMT2omega(Mref,M);

@@ -9,6 +9,8 @@ function beta = u2beta(u)
 %
 % From Tape and Tape (2015 GJI) "A uniform parameterization for moment tensors"
 %
+% note: might want to check the input range of u
+%
 
 bdisplayinfo = false;
 
