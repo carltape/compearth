@@ -48,7 +48,7 @@ switch iex
     plot_omega(omega);  
 
     case 2
-    % many studies/catalogd constrain moment tensors to be deviatoric
+    % many studies/catalogs constrain moment tensors to be deviatoric
     % WARNING: One cannot simply draw random points on a line segment
     %          between two points (v1,w1) and (v2,w2) in the vw plane, and
     %          then use random orientations. But this does work for the case
@@ -219,7 +219,14 @@ RTT = corrcoef(MTT');
 subplot(nr,nc,2); imagesc(RTT); axis equal; axis tight; caxis(clims); colorbar
 set(gca,'xtick',[1:6],'xticklabel',Mlab,'ytick',[1:6],'yticklabel',Mlab);
 if bprint, orient tall; print(gcf,'-dpng',sprintf('run_uniformMT_iex%i_corr',iex)); end
-    
+
+% source types
+figure;
+subplot(1,2,1); plot(gamma,delta,'.'); axis equal, axis([-30 30 -90 90])
+xlabel('lune longitude'); ylabel('lune latitude');
+subplot(1,2,2); plot(v,w,'.'); xlabel('v'); ylabel('w');
+axis equal, axis([-1/3 1/3 -3*pi/8 3*pi/8])
+
 break
 
 % lune longitude and latitude within latitude bands and longitude bands

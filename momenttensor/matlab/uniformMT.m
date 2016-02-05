@@ -25,6 +25,10 @@ function [M,v,w,kappa,sigma,h,lam] = uniformMT(n,gamma0,delta0)
 
 deg = 180/pi;
 
+% this option will provide points that are uniform on the lune;
+% however the moment tensors will NOT be uniformly distributed
+UNIFORM_GAMMAB = false;
+
 FIXEDLAMBDA = false;
 if nargin==3
     FIXEDLAMBDA = true;
@@ -48,6 +52,12 @@ w1 = -3*pi/8;   w2 = 3*pi/8;    % similar to lune latitude (ISO)
 k1 = 0;         k2 = 360;       % strike
 s1 = -90;       s2 = 90;        % slip (rake)
 h1 = 0;         h2 = 1;         % cos(dip)
+
+if UNIFORM_GAMMAB
+    v1 = -30; v2 = 30;  % gamma
+    w1 =  -1; w2 =  1;  % b = sin(delta)
+    warning('source types will be uniform on the lune, but moment tensors will NOT be uniform');
+end
 
 switch length(n)
     case 1      % random grid, full moment tensors
@@ -110,7 +120,13 @@ if FIXEDLAMBDA
     v = v0*ones(nq,1);
     w = w0*ones(nq,1);
 else
-    [gamma,delta] = rect2lune(v,w);
+    if UNIFORM_GAMMAB
+        gamma = v;
+        delta = asin(w)*deg;    % here w is b = sin(delta)
+        [v,w] = lune2rect(gamma,delta);
+    else
+        [gamma,delta] = rect2lune(v,w);
+    end
 end
 M0 = 1;
 theta = acos(h) * deg;
