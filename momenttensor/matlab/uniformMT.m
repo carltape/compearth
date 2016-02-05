@@ -4,6 +4,10 @@ function [M,v,w,kappa,sigma,h,lam] = uniformMT(n,gamma0,delta0)
 % INPUT
 %   n       length(1): number of moment tensors, randomly generated
 %           length(5): number of increments in v,w,kappa,sigma,h
+%               note: an odd number will ensure that the midpoint of the
+%               range will be in the grid; this is useful if you want the
+%               double couple (v=0,w=0) to be in the grid or the deviatoric
+%               moment tensors in the grid (w=0)
 %   gamma0  OPTIONAL: lune longitude, degrees (-30 to 30)
 %   delta0  OPTIONAL: lune latitude, degrees (-90 to 90)
 %

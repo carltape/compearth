@@ -81,8 +81,9 @@ switch iex
     case 5
     % regular grid of uniform full moment tensors
     %n = [2 3 5 4 2];
-    n = [6 18 18 9 5];
-    %n = [6 18 36 18 10];              % 10-degree increments
+    %n = [6 18 18 9 5];    % 5-degree increments in strike/dip/rake
+    %n = [6 18 36 18 10];  % 10-degree increments in strike/dip/rake
+    n = [7 7 7 7 7];
     [M,v,w,kappa,sigma,h] = uniformMT(n);
     ntotal = length(v);
 
