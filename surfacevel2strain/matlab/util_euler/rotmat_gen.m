@@ -14,8 +14,14 @@ function U = rotmat_gen(v,xi,bdisplay)
 deg = 180/pi;
 
 % get (phi,theta) for rotation axis
-[vph,ele,rho] = cart2sph(v(1),v(2),v(3));
-vth = pi/2 - ele;
+if 1==1
+    [vph,ele,rho] = cart2sph(v(1),v(2),v(3));
+    vth = pi/2 - ele;
+else
+    rho = sqrt(v(1)^2 + v(2)^2 + v(3)^2);
+    vth = acos(v(3) / rho);
+    vph = atan2(v(2),v(1));
+end
 
 % note: operations from right to left
 R1 = rotmat(-vph*deg,3);
@@ -30,7 +36,7 @@ if nargin==3
     disp('----------------');
     disp('rotmat_gen.m');
     disp(sprintf(' rotation axis is v = (%.3f, %.3f, %.3f)',v(1),v(2),v(3)));
-    disp(sprintf('                  u = (%.3f, %.3f, %.3f)',v(1)/norm(v),v(2)/norm(v),v(3)/norm(v)));
+    disp(sprintf('            v/||v|| = (%.3f, %.3f, %.3f)',v(1)/norm(v),v(2)/norm(v),v(3)/norm(v)));
     disp(sprintf('  polar angle theta = %.3f deg (%.3f rad)',vth*deg,vth));
     disp(sprintf('azimuthal angle phi = %.3f deg (%.3f rad)',vph*deg,vph));
     R1,R2,R3,R4,R5
