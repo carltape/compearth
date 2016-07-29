@@ -23,7 +23,7 @@ function write_CMTSOLUTION(dir0,ione_file,otime,tshift,hdur,lat,lon,dep,M,  eid,
 %   eid         event id
 %   elabel      event description
 %   ftag        ione_file = 1: label for single output file (CMTSOLUTION_ftag)
-%               ione_file = 0: label for eids (eids_ftag)
+%               ione_file = 0: label for eids (eids_ftag) and individual files (CMTSOLUTION_eid_ftag)
 %   nspace_between_entries
 %               number of spaces between CMTSOLUTION blocks (0 or 1)
 %               for single output file only
@@ -72,9 +72,6 @@ if or(nargin==9,nargin==13)
     if isempty(elabel)
         elabel = eid;
         disp('no elabel specified: setting elabel = eid');
-    end
-    if isempty(ftag)
-        ftag = '';
     end
     if isempty(nspace_between_entries)
         nspace_between_entries = 0;
@@ -132,7 +129,18 @@ else            % write to individual files
     disp(sprintf('write_CMTSOLUTION.m: writing %i CMTSOLUTION files',enum));
     disp(sprintf('  output directory: %s',dir0));
     for kk = 1:enum
-        fid = fopen([dir0 'CMTSOLUTION_' eid{kk}],'w');
+        if enum==1
+            eidx = eid;
+        else
+            eidx = eid{kk};
+        end
+        if ~isempty(ftag)
+            ofile = strcat(dir0,'CMTSOLUTION_',eid{kk},'_',ftag);
+        else
+            ofile = strcat(dir0,'CMTSOLUTION_',eid{kk});
+        end
+        whos ofile
+        fid = fopen(ofile,'w');
         m0 = CMT2m0(1,M(:,kk));
         mag = m02mw(1,1e-7*m0);
 
@@ -172,7 +180,12 @@ else            % write to individual files
     if enum > 1
         disp(sprintf('write_CMTSOLUTION.m: writing %i event IDs to file',enum));
         disp(sprintf('  output directory: %s',dir0));
-        fid = fopen(sprintf('%s/eids_%s',dir0,ftag),'w');
+        if ~isempty(ftag)
+            ofile = sprintf('%s/eids_%s',dir0,ftag);
+        else
+            ofile = sprintf('%s/eids',dir0);
+        end
+        fid = fopen(ofile,'w');
         for kk = 1:enum
             fprintf(fid,'%s\n',eid{kk});
         end
