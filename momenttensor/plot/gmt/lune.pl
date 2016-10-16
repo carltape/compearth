@@ -15,12 +15,13 @@
 #  Abbreviations
 #    gCDC = generalized crack-plus-double-couple model (TT2013)
 #
-#  References:
-#  TT2012: W. Tape and C. Tape, "A geometric setting for moment tensors," Geophysical J. International, 2012
-#  TT2013: W. Tape and C. Tape, "The classical model for moment tensors," Geophysical J. International, 2013
-#  TT2015: W. Tape and C. Tape, "A uniform parameterization for seismic moment tensors," Geophysical J. International, 2015
+#  If you use or adapt this script, please consider citing:
+#    TT2012: W. Tape and C. Tape, "A geometric setting for moment tensors," Geophysical J. International, 2012
+#  For additional information, please see:
+#    TT2013: W. Tape and C. Tape, "The classical model for moment tensors," Geophysical J. International, 2013
+#    TT2015: W. Tape and C. Tape, "A uniform parameterization for seismic moment tensors," Geophysical J. International, 2015
 #
-#  Last tested 11-08-2015 with GMT 4.5.3
+#  Last tested 2016-10-16 with GMT 4.5.3
 #  Our psmeca (for plotting beachballs) uses a modified version of utilmeca.c by Doug Dreger.
 #  
 #===================================================================================
@@ -131,7 +132,7 @@ $ilam1 = 1;            # lam1 = 0 arc
 $ipatchgcdc = 0;       # patches for gCDC model (inugcdc > 0)
 $iarcgcdc = 0;         # boundary arcs for gCDC model (inugcdc > 0)
 @nus = (0.25,0.36);    # Poisson values considered for gCDC model
-$inugcdc = 1;          #   =1 for nu=0.25, =2 fo0.36 (ice)
+$inugcdc = 1;          #   =1 for nu=0.25, =2 for nu=0.36 (ice)
 # other options
 $ilegend = 0;          # legend for data points
 $ititle = 0;           # title (see below)
@@ -156,7 +157,8 @@ $msize_data = 6;
 $pdir = "./dfiles/";
 $pdir2 = "/home/carltape/PROJECTS/cmt/figs/bfiles/";
 
-# loop over lune, then vw-rectangle
+# kmax = 1: lune only (default)
+# kmax = 2: loop over lune, then vw-rectangle
 $kmax = 1;
 for ($k = 1; $k <= $kmax; $k++) {
 
@@ -305,20 +307,22 @@ if ($iplot==1) {
 
   # NOTE: NOT ALL OF THESE DATA SETS ARE AVAILABLE HERE;
   #       ONLY THE ONES THAT ARE LISTED IN PUBLICATIONS ARE AVAILABLE (see ./dfiles/README/).
-  @ftags = ("Ford2009","Ford2009nuclear","Ford2009earthquake","Ford2009mine","Foulger2004","Minson2007","Minson2008","Walter2009","Walter2010","Pesicek2012",
-      "Miller1996phd","Baig2010","Sileny2006","Sileny2008","Sileny2009","Dreger2012","Julian2010","Pesicek2012_238Fig14","Ross1996","Ross1996phd",
-      "Vavrycuk2001","Vavrycuk2011","Ortega2014","Alvizuri2015");
+  @ftags = ("Ford2009","Ford2009nuclear","Ford2009earthquake","Ford2009mine","Foulger2004",
+      "Minson2007","Minson2008","Walter2009","Walter2010","Pesicek2012",
+      "Miller1996phd","Baig2010","Sileny2006","Sileny2008","Sileny2009",
+      "Dreger2012","Julian2010","Pesicek2012_238Fig14","Ross1996","Ross1996phd",
+      "Vavrycuk2001","Vavrycuk2011","Ortega2014","Boyd2015","Alvizuri2016");
 
   $csize = $msize_data;  # size of dots
   @csizes = ($csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,
       $csize,$csize/2,$csize,$csize,$csize,$csize/2,$csize,$csize,$csize,$csize,
-      $csize,$csize,$csize,$csize);
+      $csize,$csize,$csize,$csize,$csize);
   @cols = ($lgray,$lred,$lpurple,$green,$orange,$cyan,$blue,$green,$magenta,$lgray,
        $green,$green,$red,$orange,$magenta,$cyan,$cyan,$cyan,$cyan,$dgray,
-       $magenta,$brown,$cyan,$red);
+       $magenta,$brown,$cyan,$white,$red);
 
   @inds = (9,8,1,6,5);            # TapeTape2012 figure 25
-  #@inds = (11,5,22,21,7,6,10,24); # TapeTape2013 figure 14b: mostly volcanic and geothermal
+  #@inds = (11,5,22,21,7,6,10,24,25); # TapeTape2013 figure 14b: mostly volcanic and geothermal
   #@inds = (2..4);                 # TapeTape2013 figure 14c: Ford2009 (nu = 0.25)
   #@inds = (8,9);                  # TapeTape2013 figure 14d: Walter2009,2010 (nu = 0.36)
   #@inds = (12,20,17,13,14,15,4);  # TapeTape2013 figure S14: induced events (lam2 = 0)
@@ -334,7 +338,7 @@ if ($iplot==1) {
           $cz = $csizes[$j-1];
           $fname = sprintf("$pdir/sourcetype_gdvw_%s.dat",$ftags[$j-1]);
           if (not -f $fname) {
-              print "input file $fname does not exist\n";
+              print "input file $fname does not exist -- checking second dir\n";
               # check files in second directory
               $fname = sprintf("$pdir2/sourcetype_gdvw_%s.dat",$ftags[$j-1]);
               if (not -f $fname) {die("\n check if input file $fname exists\n")}
@@ -377,7 +381,7 @@ if ($iplot==1) {
 } elsif ($iplot==3) {
   if($k==2) {die("beachball plotting not yet implemented for rectangle plot -- set kmax = 1\n")}
   # catalog of moment tensors on the lune
-  $cmtfile = "/home/alvizuri/REPOSITORIES/manuscripts/alvizuri/papers/2014fmt/data/utuhalf_P01_V10_R01_S10_lune_fixedmag_psmeca";
+  $cmtfile = "/home/carltape/REPOSITORIES/manuscripts/alvizuri/papers/2014fmt/data/utuhalf_P01_V10_R01_S10_lune_fixedmag_psmeca";
   if (not -f $cmtfile) {die("\n check if cmt file $cmtfile exists\n")}
   $cptfile = "color.cpt";
   print CSH "makecpt -Chaxby -T0/3/0.5 -D > $cptfile\n";
