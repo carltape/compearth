@@ -1,4 +1,4 @@
-function write_psmeca(filename,otime,lat,lon,dep,M,eid,slabel)
+function write_psmeca(filename,otime,lat,lon,dep,M,eid,slabel,slabeltag)
 % WRITE_PSMECA write psmeca file for GMT plotting
 %
 % INPUT
@@ -10,12 +10,13 @@ function write_psmeca(filename,otime,lat,lon,dep,M,eid,slabel)
 %   M           6 x n array of moment tensors in GCMT convention (up-south-east)
 %                   M = [Mrr Mtt Mpp Mrt Mrp Mtp], units N-m
 %   eid         OPTIONAL: event IDs
-%   slabel      OPTIONAL: names for events (e.g., CENTRAL_ALASKA)
+%   slabel      OPTIONAL: custom labels for events
+%   slabeltag   OPTIONAL: file tag for custom text
 %
 % This inputs a set of moment tensors in units of N-m and outputs four
 % different files for plotting in GMT using psmeca, which assumes units of
 % dyne-cm. The output files differ only in what label to use plotting above
-% the beach balls.
+% the beachballs.
 %
 % slabel determines the text label for each moment tensor
 % If slabel is present, then two files are written: (1) no labels (2) slabel
@@ -48,8 +49,8 @@ iexp_all = floor(log10(M0));
 % for labeling the moment magnitude
 Mw = m02mw(1,CMT2m0(1,M*1e-7));   % M0 must be in N-m
 
-% controls the labels for the beach balls
-if nargin < 8
+% controls the labels for the beachballs
+if nargin < 9
     % slabel not provided: write 5 different files
     imin = 1; imax = 5;
     % eid is not provided
@@ -59,13 +60,24 @@ if nargin < 8
 else
     % slabel IS provided: one file with no label (5), one file with slabel (6)
     imin = 5; imax = 6;
-    if length(slabel)~=n, whos slabel otime, error('dimension mismatch (slabel otime)'); end
+    if length(slabel)~=n
+        n, whos slabel otime, error('dimension mismatch (slabel otime)');
+    end
+    if isempty(slabeltag);
+        scustom = 'custom';
+    else
+        scustom = slabeltag;
+    end
 end
 
 % if no origin times are specified, then just plot one output file
 if isempty(otime), imin=5; imax=5; end
 
-if length(eid)~=n, whos eid otime, error('dimension mismatch (eid otime)'); end
+if isempty(eid), eid = strtrim(cellstr(num2str([1:n]'))); end
+
+%if length(eid)~=n
+%    n, whos eid otime, error('dimension mismatch (eid otime)');
+%end
 
 %--------------------
 
@@ -80,7 +92,7 @@ for ilab = imin:imax
     if ilab==3, ext = '_year'; end
     if ilab==4, ext = '_date'; end
     if ilab==5, ext = ''; end 
-    if ilab==6, ext = '_custom'; end 
+    if ilab==6, ext = strcat('_',scustom); end 
     
     disp(['write_psmeca.m : extension is ' ext]);
 
@@ -89,7 +101,7 @@ for ilab = imin:imax
     fid = fopen(file1,'w');
     for ii = 1:n
 
-        % title for beach ball
+        % title for beachball
         switch ilab
             case 1, cmtlabel = char(eid{ii});
             case 2, cmtlabel = sprintf('%.2f',Mw(ii));  
