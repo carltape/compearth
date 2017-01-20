@@ -22,7 +22,7 @@ if 0==1
     % SPECFEM2D: f0 = 1/hdur
     subplot(nr,nc,2); plot(Mw,1./hdur,'b'); grid on;
     xlabel('Moment magnitude, Mw');
-    ylabel('Empirical central frequency, f0, s');
+    ylabel('Empirical central frequency, f0, Hz');
 end
 
 %==========================================================================
