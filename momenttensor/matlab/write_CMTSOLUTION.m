@@ -73,6 +73,10 @@ if or(nargin==9,nargin==13)
         elabel = eid;
         disp('no elabel specified: setting elabel = eid');
     end
+    if length(elabel)==1
+        disp(sprintf('filling all elabel entries with %s',char(elabel)));
+        elabel = repmat(elabel,n,1)
+    end
     if isempty(nspace_between_entries)
         nspace_between_entries = 0;
     end
@@ -139,7 +143,7 @@ else            % write to individual files
         else
             ofile = strcat(dir0,'CMTSOLUTION_',eid{kk});
         end
-        whos ofile
+        %ofile
         fid = fopen(ofile,'w');
         m0 = CMT2m0(1,M(:,kk));
         mag = m02mw(1,1e-7*m0);
