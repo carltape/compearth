@@ -16,3 +16,4 @@ compearth = '../../';
 addpath(strcat(compearth,'surfacevel2strain/matlab/util_basic'));
 addpath(strcat(compearth,'surfacevel2strain/matlab/util_euler'));
 addpath(strcat(compearth,'momenttensor/matlab'));
+addpath(strcat(compearth,'momenttensor/matlab/Vhat'));

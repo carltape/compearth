@@ -17,8 +17,10 @@ deg = 180/pi;
 %==========================
 bplot_all = false;
 bprint = false;
-bdir = '/home/carltape/PROJECTS/cmt/Vhat/';
-pdir = '/home/carltape/latex/notes/cmt/figures_Vhat_scholarworks/';
+
+path_Vhat;
+bdir = Vhatdir_write;
+pdir = Vhatdir_figs;
 xticks = [0:30:180];
 ax0 = [-1/deg 181/deg -0.02 1.1];
 stvres = 'Vhat_{\gamma}(\omega)  -  Vhat_{-\gamma}(\omega)';
@@ -61,6 +63,7 @@ gammavec = gamma_rad_pos;
 nomega = length(omega);
 ngamma = length(gammavec);
 
+% CHANGE THESE INDICES AND USE bplot_all=true TO SEE INDIVIDUAL PLOTS
 kmin = 1; kmax = ngamma;
 %kmin = ngamma; kmax = kmin;
 %kmin = 15; kmax = kmin;

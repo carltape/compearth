@@ -21,13 +21,14 @@ else
     gtag = 'gamman';
 end
 
+path_Vhat;
 if USE_MAT_FILES
     % base directory
-    bdir = '/home/carltape/PROJECTS/cmt/Vhat/data/';
+    bdir = strcat(Vhatdir_write,'/data/');
     atag = 'atol10'; rtag = 'rtol18';
     ddir = sprintf('%s%s_iterated_%s_%s/',bdir,gtag,atag,rtag);
 else
-    bdir = '/home/carltape/PROJECTS/cmt/Vhat/compearth/';
+    bdir = Vhatdir_presaved;
     ddir = sprintf('%sVhat_%s/',bdir,gtag);
 end
 

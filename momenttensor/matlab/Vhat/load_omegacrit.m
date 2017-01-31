@@ -7,7 +7,8 @@ function [omegacrit,gamma_deg] = load_omegacrit
 %
 
 deg = 180/pi;
-bdir = '/home/carltape/PROJECTS/cmt/Vhat/compearth/';
+path_Vhat;
+bdir = Vhatdir_presaved;
 cdir = sprintf('%somega_crit/',bdir);
 ddir = sprintf('%sVhat_gammap/',bdir);
 

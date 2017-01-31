@@ -16,7 +16,8 @@ clc
 clear
 
 deg = 180/pi;
-bdir = '/home/carltape/PROJECTS/cmt/Vhat/';
+path_Vhat;
+bdir = Vhatdir_write;
 ddir = strcat(bdir,'data/temp/');
 pdir = strcat(bdir,'figs/temp/');
 xticks = [0:30:180];

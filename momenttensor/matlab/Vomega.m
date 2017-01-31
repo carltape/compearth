@@ -30,8 +30,13 @@ deg = 180/pi;
 % false: use Vhat(omega) files for gamma < 0, if an input gamma < 0 is specified
 USE_POSITIVE_GAMMA = true;
 
+% value to use for extrapolation for V'(omega)
+% (this might only be useful for the endpoints, which may fall outside the
+% omega values witin the pre-computed library)
 EXTRAPVAL = 0;
 
+% interpolate onto the midpoints, which are most appropriate when
+% considering the V'(omega) curves
 USE_OMEGA_MIDPOINTS = false;
 
 % WRITE_ASCII_FILES
@@ -42,7 +47,8 @@ USE_OMEGA_MIDPOINTS = false;
 %    gamma = -[0:0.5:30]*pi/180; gamma(end) = []; for ii=1:length(gamma), Vomega(gamma(ii),0); end
 %WRITE_ASCII_FILES = false;
 
-bdir = '/home/carltape/PROJECTS/cmt/Vhat/compearth/';
+path_Vhat;
+bdir = Vhatdir_presaved;
 ddir = sprintf('%sVhat_gammap/',bdir);
 %cdir = sprintf('%somega_crit/',bdir);
 
@@ -204,8 +210,8 @@ if 0==1
     axis equal, axis([0 pi 0 pi]); title('');
     
     %% test interpolation with gamma
-    gvec = [26 26.25 26.5]; figure;
-    for xx = 1:length(gvec), plot_Vomega(gvec(xx),0); end;
+    gvec = [26 26.25 26.5];
+    figure; for xx = 1:length(gvec), plot_Vomega(gvec(xx),0); end;
     axis equal, axis([0 pi 0 pi]);
     
     %% densify gamma, use default omega

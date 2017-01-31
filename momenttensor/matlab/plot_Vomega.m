@@ -34,15 +34,12 @@ lwid = 1.5;             % line width for curves
 xlims = [-1 181]/deg;
 
 % this will return the default precomputed Vhat'(omega) curves
+% NOTE: This will allow for interpolation with gamma but NOT interpolation
+%       with omega (for that, just use Vomega.m separately).
 [Vhatp,Vhat,omega_rad,omegacrit] = Vomega(gamma_deg/deg,delta_deg/deg);
-% this will return Vhat'(omega) for the inputted omega
-%[Vhatp,Vhat] = Vomega(gamma_deg/deg,delta_deg/deg,omega_deg/deg);
 
-%Vhatp = Vhatp{1};
-%Vhat = Vhat{1};
-
-Vhatp = real(Vhatp);
-Vhat = real(Vhat);
+%Vhatp = real(Vhatp);
+%Vhat = real(Vhat);
 
 if any([bplotcritpoints bplotcritlines bincludecrit])
     %otemp = omegacrit{1};
