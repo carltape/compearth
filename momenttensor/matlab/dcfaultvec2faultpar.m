@@ -1,9 +1,16 @@
 function Xout = dcfaultvec2faultpar(Xin,itype,idisplay)
 %DCFAULTVEC2FAULTPAR converts between fault vectors and strike/dip/rake
 %
-% This is only meaningful for double couple moment tensors, for which the
-% slip vector is in the fault plane (and therefore the rake angle is meaningful).
-% The basis for all vectors is SOUTH-EAST-UP.
+% This function is more complicated than it needs to be, since only two
+% vectors (slip and normal) are needed. The strike vector can be determined
+% from the slip and normal vector. [FUTURE WORK]
+%
+% Note that the strike/dip/rake angles are the angles for the closest
+% double couple to a moment tensor. The rake angle may not be physically
+% meaningful if the moment tensor has a large non-double-couple component.
+%
+% The basis for all vectors is SOUTH-EAST-UP; see convertv.m to convert
+% vectors among different bases.
 %
 % itype = 1     convert fault vectors to fault parameters
 %  INPUT:
