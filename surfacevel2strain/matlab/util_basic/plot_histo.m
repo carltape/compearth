@@ -11,6 +11,7 @@ function [N,Nplot,centers] = plot_histo(hdat,edges,itype,make_plot)
 % Carl Tape, 1/1/2008
 
 hdat = hdat(:);
+barcolor = [1 1 1]*0.8;
 
 % default is to plot the histogram
 if nargin==3, make_plot=true; end
@@ -41,7 +42,7 @@ if make_plot
     ylabel(sprintf('%s (N=%i)',xlab,Ntotal));
 
     h = findobj(gca,'Type','patch');
-    set(h,'FaceColor',[0 1 1],'EdgeColor','k');
+    set(h,'FaceColor',barcolor,'EdgeColor','k');
 
     if length(hdat) ~= sum(N)
        warning('(plot_histo.m): You may want to extend the histogram edges -->');
