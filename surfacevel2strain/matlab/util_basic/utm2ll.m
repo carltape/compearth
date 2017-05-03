@@ -33,6 +33,8 @@ function [x,y] = utm2ll(xi,yi,s_zone,i_type,ellipsoid)
 % Carl Tape, 10/2010
 %
 
+if isempty(s_zone), error('must specify a utm zone'); end
+    
 utmstruct = defaultm('utm'); 
 utmstruct.zone = s_zone;        % e.g., '11S'
 
