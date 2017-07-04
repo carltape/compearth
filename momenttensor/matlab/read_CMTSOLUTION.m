@@ -97,7 +97,7 @@ for kk = 1:enum
     [j1,Mtp(kk)] = strread(lines{in1+13},'%s%f');
 
     % NOTE: time shift is added to the PDE origin time; thus the stored
-    %       origin time is the origin time used for the CMT inversion
+    %       origin time is the centroid time obtained from the CMT inversion
     otime(kk) = datenum(yr,mo,dy,hr,min, sec + tshift(kk));
     
     elabel{kk} = [char(name1) ' ' char(name2) ' ' char(name3) ...
