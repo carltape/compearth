@@ -1,0 +1,50 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
+PROJECT (compearth)
+ENABLE_LANGUAGE(C)
+
+SET(CMAKE_BUILD_TYPE Release)
+# Add modules for finding requisites
+SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeModules)
+# For testing
+SET(CMAKE_TESTING_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/testing)
+# For binaries
+SET(CMAKE_BINARY_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+# For libraries
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+SET(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+
+IF (COMPEARTH_USE_MKL)
+   MESSAGE("Using MKL")
+   FIND_PACKAGE(MKL REQUIRED)
+ELSE ()
+   MESSAGE("Using BLAS/LAPACK")
+   FIND_PACKAGE(CBLAS REQUIRED)
+   FIND_PACKAGE(LAPACKE REQUIRED)
+ENDIF(COMPEARTH_USE_MKL)
+IF (COMPEARTH_USE_ISCL)
+   MESSAGE("Using ISCL")
+   FIND_PACKAGE(ISCL REQUIRED)
+ENDIF (COMPEARTH_USE_ISCL)
+
+ADD_SUBDIRECTORY(include)
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
+IF (COMPEARTH_USE_MKL)
+   INCLUDE_DIRECTORIES(${MKL_INCLUDE_DIR})
+ENDIF (COMPEARTH_USE_MKL)
+IF (COMPEARTH_USE_ISCL)
+   INCLUDE_DIRECTORIES(${ISCL_INCLUDE_DIR})
+ENDIF (COMPEARTH_USE_ISCL)
+
+SET (SRCS angleMT.c beta2u.c cart2sph.c CMTdecom.c
+          CMT2m0.c CMT2mw.c convertMT.c eulerUtil_rotmat.c
+          eulerUtil_rotmatGen.c gamma2v.c h2theta.c
+          lam2phizeta.c lamsort.c lune2lam.c lune2rect.c
+          m02hdur.c m02mw.c mw2m0.c Mvec2Mmat.c
+          normal2strdip.c normMat.c normMT.c rect2lune.c
+          tape2015Eqn7.c theta2h.c tt2cmt.c u2beta.c
+          v2gamma.c xyz2tp.c
+)
+ADD_LIBRARY(compearth_shared SHARED ${SRCS})
+ADD_LIBRARY(compearth_static STATIC ${SRCS})
+
