@@ -174,6 +174,10 @@ int compearth_tt2cmt(const double gamma,
 /* Converts theta dip angle to h */
 void compearth_theta2h(const int n, const double *__restrict__ theta,
                         double *__restrict__ h);
+/* Ensures det >= 0 for rotation matrices. */
+int compearth_Udetcheck(const int n,
+                        const double *__restrict__ Uin,
+                        double *__restrict__ Uout);
 /* Converts gamma to lune longitude v */
 void compearth_v2gamma(const int n, const double *__restrict__ v,
                        double *__restrict__ gamma);

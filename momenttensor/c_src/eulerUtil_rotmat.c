@@ -4,17 +4,19 @@
 #include "compearth.h"
 
 /*!
- * @brief Computes rotation matrix for given axis and angle
+ * @brief Computes rotation matrix for given axis and angle.
  *
- * @param[in] n        number of matrices
- * @param[in] xdeg     rotation angles (degrees) [n]
- * @param[in] ixyz     if 1 then rotate about x.
- *                     if 2 then rotate about y.
- *                     if 3 then rotate about z.
+ * @param[in] n        Number of matrices.
+ * @param[in] xdeg     Rotation angles (degrees).  This is an array of
+ *                     dimension [n].
+ * @param[in] ixyz     If 1 then rotate about x. \n
+ *                     If 2 then rotate about y. \n
+ *                     If 3 then rotate about z.
  *
- * @param[out] R       rotation matrix in column major format [3 x 3 x n]
+ * @param[out] R       Rotation matrix in column major format.  This is
+ *                     an array of dimension [3 x 3 x n].
  *
- * @result 0 indicates success
+ * @result 0 indicates success.
  *
  * @date 2016 - Ben Baker converted Carl Tape's rotmat.m to C
  *

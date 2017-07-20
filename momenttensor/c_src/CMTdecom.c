@@ -45,7 +45,7 @@ int compearth_CMTdecom(const int nmt, const double *__restrict__ M,
                        double *__restrict__ U)
 {
     const char *fcnm = "compearth_CMTdecom\0";
-    double Lams[3], LamsAbs[3], Mx[9], work[LWORK], *lamsCopy;
+    double Lams[3], LamsAbs[3], Mx[9], Ut[9], work[LWORK], *lamsCopy;
     int perm[3], c, i, ierr, info, r;
     // Error checks
     if (nmt < 1 || M == NULL || lam == NULL || U == NULL)
@@ -103,12 +103,19 @@ int compearth_CMTdecom(const int nmt, const double *__restrict__ M,
             lam[3*i+r] = lamsCopy[perm[r]];
         }
         // Permute columns
-        for (r=0; r<3; r++)
+        for (c=0; c<3; c++)
         {
-            for (c=0; c<3; c++)
+            for (r=0; r<3; r++)
             {
-                U[9*i+3*r+c] = Mx[3*perm[r]+c];
+                Ut[3*c+r] = Mx[3*c+perm[r]];
             }
+        }
+        // Ensure the determinant is > 0
+        ierr = compearth_Udetcheck(1, Ut, &U[9*i]);
+        if (ierr != 0)
+        {
+            printf("%s: Error checking determinan\n", fcnm);
+            return -1;
         }
     }
     return 0;
