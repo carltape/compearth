@@ -38,22 +38,25 @@ IF (COMPEARTH_USE_ISCL)
 ENDIF (COMPEARTH_USE_ISCL)
 
 SET (SRCS angleMT.c beta2u.c cart2sph.c CMTdecom.c
-          CMT2m0.c CMT2mw.c convertMT.c eulerUtil_rotmat.c
-          eulerUtil_rotmatGen.c gamma2v.c h2theta.c
+          CMT2m0.c CMT2mw.c cmt2tt.c convertMT.c eulerUtil_rotmat.c
+          eulerUtil_rotmatGen.c gamma2v.c h2theta.c lam2lune.c
           lam2phizeta.c lamsort.c lune2lam.c lune2rect.c
           m02hdur.c m02mw.c mw2m0.c Mvec2Mmat.c
           normal2strdip.c normMat.c normMT.c rect2lune.c
-          tape2015Eqn7.c theta2h.c tt2cmt.c u2beta.c
+          tape2015Eqn7.c theta2h.c transform_mat.c 
+          tt2cmt.c u2beta.c Udetcheck.c
           v2gamma.c xyz2tp.c
 )
 
 ADD_LIBRARY(compearth_shared SHARED ${SRCS})
 ADD_LIBRARY(compearth_static STATIC ${SRCS})
 ADD_EXECUTABLE(app2015 unit_tests/app2015.c)
+ADD_EXECUTABLE(miscCheck unit_tests/checks.c) 
 
 SET_TARGET_PROPERTIES(compearth_shared PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH})
 SET_TARGET_PROPERTIES(compearth_static PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH})
 SET_TARGET_PROPERTIES(app2015 PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_TESTING_OUTPUT_DIRECTORY}) 
+SET_TARGET_PROPERTIES(miscCheck PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_TESTING_OUTPUT_DIRECTORY})
 
 SET (LINK_LIB_ALL compearth_shared)
 IF (COMPEARTH_USE_ISCL)
@@ -66,8 +69,12 @@ ELSE ()
 ENDIF ()
 
 TARGET_LINK_LIBRARIES(app2015 ${LINK_LIB_ALL})
+TARGET_LINK_LIBRARIES(miscCheck ${LINK_LIB_ALL})
 
 #ADD_TEST(ap2015Test ${CMAKE_TESTING_OUTPUT_DIRECTORY}/app2015)
+ADD_TEST(NAME miscCheckTest
+         WORKING_DIRECTORY ${CMAKE_TESTING_OUTPUT_DIRECTORY}
+         COMMAND miscCheck)
 ADD_TEST(NAME app2015Test
          WORKING_DIRECTORY ${CMAKE_TESTING_OUTPUT_DIRECTORY}
          COMMAND app2015)

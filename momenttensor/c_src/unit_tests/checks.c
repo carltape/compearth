@@ -5,12 +5,18 @@
 #include "compearth.h"
 
 int check_Udetcheck(void);
+int check_lam2lune(void);
 
 int main( )
 {
     int ierr;
     ierr = check_Udetcheck();
     if (ierr != 0){printf("failed Udetcheck\n"); return EXIT_FAILURE;}
+    printf("udetcheck was successful\n");
+
+    ierr = check_lam2lune(); 
+    if (ierr != 0){printf("failed lam2lune\n"); return EXIT_FAILURE;}
+    printf("lam2lune was succesful\n");
     return EXIT_SUCCESS;
 }
 
@@ -47,7 +53,47 @@ int check_Udetcheck(void)
         if (fabs(Un[i] - Un2[i]) > 1.e-12)
         {
             printf("%s: Udetcheck2 failed; %f %f\n", fcnm, Un[i], Un2[i]);
+            return EXIT_FAILURE;
         }
     } 
+    return EXIT_SUCCESS;
+}
+
+int check_CMT2TT(void)
+{
+    const double M[6] = {3.1083, 3.0444, 3.3823, -4.8550, -1.9493, 1.1105};
+
+    return EXIT_SUCCESS;
+}
+
+int check_lam2lune(void)
+{
+    double *gvec, *dvec, *lam, *M00;
+    int ib, ig, indx;
+    const int ng = 100;
+    const int nb = 100;
+    const int nmt = ng*nb;
+    const double dg = (30.0 - -30.0)/(double) (ng - 1);
+    const double db = (89.0 - -89.0)/(double) (nb - 1);
+    gvec = (double *) calloc((size_t) nmt, sizeof(double));
+    dvec = (double *) calloc((size_t) nmt, sizeof(double));
+    M00  = (double *) calloc((size_t) nmt, sizeof(double));
+    lam  = (double *) calloc((size_t) (3*nmt), sizeof(double)); 
+    for (ig=0; ig<ng; ig++)
+    {
+        for (ib=0; ib<nb; ib++)
+        {
+            indx = ig*nb + ib;
+            gvec[indx] =-30.0 + (double) ig*dg;
+            dvec[indx] =-89.0 + (double) ib*db; // use latitude instead of colat
+            M00[indx] = 1.e16;
+        }
+    }
+    compearth_lune2lam(nmt, gvec, dvec, M00, lam); 
+    
+    free(gvec);
+    free(dvec);
+    free(M00);
+    free(lam);
     return EXIT_SUCCESS;
 }

@@ -5,15 +5,18 @@ static void swap(double *a, double *b);
 static void sort3descend(const double *__restrict__ lam3,
                          double *__restrict__ lam3sort);
 /*!
- * @brief Sorts eigenvalues as lam1 >= lam2 >= lam3
+ * @brief Sorts eigenvalues as lam1 >= lam2 >= lam3.
  *
- * @param[in] n         number of eigenvalue triplets
- * @param[in] lam       the eigenvalues to sort [3*n]
+ * @param[in] n         Number of eigenvalue triplets.
+ * @param[in] lam       The eigenvalues to sort.  This is an array
+ *                      of dimension [3 x n] with leading dimension 3.
  *
- * @param[out] lamSort  eigenvalue triplets sorted such that each
- *                      triplet is in descending order [3*n]
+ * @param[out] lamSort  Eigenvalue triplets sorted such that each
+ *                      triplet is in descending order.  This is
+ *                      an array of dimension [3 x n] with leading
+ *                      dimension 3.
  *
- * @result 0 indicates success
+ * @result 0 indicates success.
  *
  * @author Carl Tape and translated to C by Ben Baker
  *
@@ -32,11 +35,13 @@ int compearth_lamsort(const int n, const double *__restrict__ lam,
         if (lamSort == NULL){printf("%s: lamSort is NULL\n", fcnm);}
         return -1;
     }
+/*
     if (n == 3)
     {
         printf("%s: lam is 3x3 make sure each column is a lambda vector\n",
                fcnm);
     }
+*/
     for (i=0; i<n; i++)
     {
         sort3descend(&lam[3*i], &lamSort[3*i]);

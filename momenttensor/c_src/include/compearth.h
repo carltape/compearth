@@ -10,6 +10,12 @@
 #ifndef M_PI_2
 #define M_PI_2 1.57079632679489661923
 #endif
+#ifndef M_SQRT2
+# define M_SQRT2        1.41421356237309504880  /* sqrt(2) */
+#endif
+#ifndef M_SQRT1_2
+# define M_SQRT1_2      0.70710678118654752440 /* 1/sqrt(2) */
+#endif
 #ifndef MAX
 #define MAX(x,y) (((x) > (y)) ? (x) : (y))
 #endif
@@ -101,6 +107,14 @@ void compearth_gamma2v(const int n, const double *__restrict__ gamma,
 int compearth_lam2phizeta(const int n, const double *__restrict__ lam,
                           double *__restrict__ phi,
                           double *__restrict__ zeta);
+/* Converts lambda (eigenvalues) to lune values */
+int compearth_lam2lune(const int nmt, const double *__restrict__ lam,
+                       double *__restrict__ gamma,
+                       double *__restrict__ delta,
+                       double *__restrict__ M0, 
+                       double *__restrict__ thetadc,
+                       double *__restrict__ lamdev,
+                       double *__restrict__ lamiso);
 /* Sorts eigenvalues */
 int compearth_lamsort(const int n, const double *__restrict__ lam,
                       double *__restrict__ lamSort);
@@ -178,6 +192,11 @@ void compearth_theta2h(const int n, const double *__restrict__ theta,
 int compearth_Udetcheck(const int n,
                         const double *__restrict__ Uin,
                         double *__restrict__ Uout);
+/* Transform moment tensor with transformation matrix T */
+int compearth_transform_mat(const int nmt,
+                            const double *__restrict__ T,
+                            const double *__restrict__ Min,
+                            double *__restrict__ Mout);
 /* Converts gamma to lune longitude v */
 void compearth_v2gamma(const int n, const double *__restrict__ v,
                        double *__restrict__ gamma);

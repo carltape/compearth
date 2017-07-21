@@ -7,27 +7,29 @@
  *        tensor, M, from input system defined by i1in to moment tensor,
  *        Mout, to output system defind by i2in
  *
- * @param[in] i1in     coordinate system for M
- *                       = USE (1) -> up, south, east
- *                       = NED (2) -> north, east, down
- *                       = NWU (3) -> north west, up
- *                       = ENU (4) -> east, north, up
- *                       = SEU (5) -> south, east, up
- * @param[in] i2in     coordinate system for Mout
- *                       = USE (1) -> up, south, east
- *                       = NED (2) -> north, east, down
- *                       = NWU (3) -> north west, up
- *                       = ENU (4) -> east, north, up
- *                       = SEU (5) -> south, east, up
- * @param[in] M        input moment tensor in system i1in [6]
- *                     the C indices {0,1,2,3,4,5} correspond to matrix
- *                     indices: {11, 22, 33, 12, 13, 23}
+ * @param[in] i1in     Coordinate system for M: \n
+ *                       = USE (1) -> up, south, east \n
+ *                       = NED (2) -> north, east, down \n
+ *                       = NWU (3) -> north west, up \n
+ *                       = ENU (4) -> east, north, up \n
+ *                       = SEU (5) -> south, east, up \n
+ * @param[in] i2in     Coordinate system for Mout: \n
+ *                       = USE (1) -> up, south, east \n
+ *                       = NED (2) -> north, east, down \n
+ *                       = NWU (3) -> north west, up \n
+ *                       = ENU (4) -> east, north, up \n
+ *                       = SEU (5) -> south, east, up \n
+ * @param[in] M        Input moment tensor in system i1in.  This is an
+ *                     an array of dimension [6].
+ *                     The C indices {0,1,2,3,4,5} correspond to matrix
+ *                     indices: {11, 22, 33, 12, 13, 23}.
  *
- * @param[out] Mout    corresponding moment tensor now in system i2in [6]
+ * @param[out] Mout    Corresponding moment tensor now in system i2in.
+ *                     This is an array of dimension [6].
  *                     the C indices {0,1,2,3,4,5} correspond to matrix
  *                     indices: {11, 22, 33, 12, 13, 23}
  * 
- * @result 0 indicates success
+ * @result 0 indicates success.
  *
  * @date 2016 - Ben Baker converted Carl Tape's convert_MT.m to C
  *

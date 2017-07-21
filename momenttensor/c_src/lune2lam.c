@@ -6,18 +6,23 @@
 
 /*!
  * @brief C translation of Carl Tape's utility for converting lune coordinates
- *        (gamma, delta, M0) to eienvalues
+ *        (gamma, delta, M0) to eigenvalues.
  *
- * @param[in] n        number of points
- * @param[in] gamma    gamma (longitude) angles (degrees) on lune [-30,30] [n]
- * @param[in] delta    delta (latitude) angles (degrees) on lune [-90,90] [n]
- * @param[in] M0in     seismic moment [n].
- *                     if NULL M0 will be set to 1 for all gamma and delta.
+ * @param[in] n        Number of moment tensors.
+ * @param[in] gamma    gamma (longitude) angles (degrees) on lune [-30,30].
+ *                     This is an array of dimension [n].
+ * @param[in] delta    delta (latitude) angles (degrees) on lune [-90,90].
+ *                     This is an array of dimension [n].
+ * @param[in] M0in     Seismic moment.  This is an array of dimension [n].
+ *                     If NULL M0 will be set to 1 for all gamma and delta.
  *
- * @param[out] lam     set of diagonalized moment tensors in GCMT convention
- *                     note: normalized s.t. each MT has moment M0 [3*n]
+ * @param[out] lam     Set of diagonalized moment tensors in GCMT convention
+ *                     note: normalized s.t. each MT has moment M0.  This
+ *                     is an array of dimension [3*n].
  *
- * @date 2016 - Ben Baker converted Carl Tape's lune2lam.m to C
+ * @author Carl Tape and converted to C by Ben Baker.
+ *
+ * @date 2016 - Ben Baker converted Carl Tape's lune2lam.m to C.
  *
  * @copyright MIT
  *
@@ -33,7 +38,7 @@ void compearth_lune2lam(const int n,
     const double pi180 = M_PI/180.0;
     double beta, rho;
     bool lhaveM0;
-    const double sqrt2 = sqrt(2.0);
+    const double sqrt2 = M_SQRT2;
     memset(lam, 0, (size_t) (3*n)*sizeof(double));
     lhaveM0 = true;
     if (M0in == NULL)
