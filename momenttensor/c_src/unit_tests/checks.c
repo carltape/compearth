@@ -58,42 +58,90 @@ int check_Udetcheck(void)
     } 
     return EXIT_SUCCESS;
 }
-
+//============================================================================//
 int check_CMT2TT(void)
 {
     const double M[6] = {3.1083, 3.0444, 3.3823, -4.8550, -1.9493, 1.1105};
 
     return EXIT_SUCCESS;
 }
-
+//============================================================================//
 int check_lam2lune(void)
 {
-    double *gvec, *dvec, *lam, *M00;
-    int ib, ig, indx;
+    const char *fcnm = "check_lam2lune\0";
+    const double lamRef1[6] = {
+        -7.9621992143e+15,-8.2644837610e+15,-8.2644837610e+15,
+        -7.5915701171e+15,-8.4370629711e+15,-8.4370629711e+15};
+    double *gamma0, *gamma, *delta, *delta0, *lam, *M0, *M00;
+    double *thetadc, *lamdev, *lamiso;
+    int i, ib, ierr, ig, indx;
     const int ng = 100;
     const int nb = 100;
-    const int nmt = ng*nb;
+    int nmt = ng*nb;
     const double dg = (30.0 - -30.0)/(double) (ng - 1);
     const double db = (89.0 - -89.0)/(double) (nb - 1);
-    gvec = (double *) calloc((size_t) nmt, sizeof(double));
-    dvec = (double *) calloc((size_t) nmt, sizeof(double));
-    M00  = (double *) calloc((size_t) nmt, sizeof(double));
+    gamma0 = (double *) calloc((size_t) nmt, sizeof(double));
+    delta0 = (double *) calloc((size_t) nmt, sizeof(double));
+    M00    = (double *) calloc((size_t) nmt, sizeof(double));
+    gamma  = (double *) calloc((size_t) nmt, sizeof(double));
+    delta  = (double *) calloc((size_t) nmt, sizeof(double));
+    M0     = (double *) calloc((size_t) nmt, sizeof(double)); 
     lam  = (double *) calloc((size_t) (3*nmt), sizeof(double)); 
     for (ig=0; ig<ng; ig++)
     {
         for (ib=0; ib<nb; ib++)
         {
             indx = ig*nb + ib;
-            gvec[indx] =-30.0 + (double) ig*dg;
-            dvec[indx] =-89.0 + (double) ib*db; // use latitude instead of colat
+            gamma0[indx] =-30.0 + (double) ig*dg;
+            delta0[indx] =-89.0 + (double) ib*db; // use latitude instead of colat
             M00[indx] = 1.e16;
         }
     }
-    compearth_lune2lam(nmt, gvec, dvec, M00, lam); 
-    
-    free(gvec);
-    free(dvec);
+    compearth_lune2lam(nmt, gamma0, delta0, M00, lam);
+    // Verify the first two computations are right
+    for (i=0; i<6; i++)
+    {
+        if (fabs(lam[i] - lamRef1[i])/1.e16 > 1.e-10)
+        {
+            printf("%s: error in lune2lam: %.10e %.10e\n",
+                   fcnm, lam[i], lamRef1[i]);
+            return EXIT_FAILURE;
+        }
+    }
+    // Now perform the inverse operation
+    thetadc = NULL;
+    lamdev = NULL;
+    lamiso = NULL;
+    ierr = compearth_lam2lune(nmt, lam, 
+                              gamma, delta, M0,
+                              thetadc, lamdev, lamiso);
+    if (ierr != 0)
+    {
+        printf("%s: error calling lam2lune\n", fcnm);
+        return EXIT_FAILURE;
+    }
+    // See how close i was
+    for (i=0; i<nmt; i++)
+    {
+        if (fabs(gamma[i] - gamma0[i]) > 1.e-12)
+        {
+            printf("%s: gamma different %e %e\n", fcnm, gamma[i], gamma0[i]);
+        }
+        if (fabs(delta[i] - delta0[i]) > 1.e-12)
+        {
+            printf("%s: delta different %e %e\n", fcnm, delta[i], delta[i]);
+        }
+        if (fabs(M0[i] - M00[i])/1.e15 > 1.e-12)
+        {
+           printf("%s: M0 different %e %e\n", fcnm, M0[i], M00[i]);
+        }
+    }
+    free(gamma0);
+    free(delta0);
     free(M00);
+    free(gamma);
+    free(delta);
+    free(M0);
     free(lam);
     return EXIT_SUCCESS;
 }
