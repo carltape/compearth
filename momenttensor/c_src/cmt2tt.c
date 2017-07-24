@@ -12,8 +12,8 @@
  * @param[in] M             [6 x nmt] array of moment tensors in CMT
  *                          convention (i.e. UP-SOUTH-EAST).  M is packed:
  *                          \f$
- *                           M = \{M_{rr}, M_{\theta \theta}, M_{\phi \phi}
- *                                 M_{r \theta}, M_{r \phi}, M_{\theta \phi}
+ *                           M = \{ M_{rr}, M_{\theta \theta}, M_{\phi \phi}
+ *                                  M_{r \theta}, M_{r \phi}, M_{\theta \phi} \}
  *                          \f$.
  *                          The leading dimension is 6.
  * @param[in] ldisplay      If true then display the results. \n
@@ -21,26 +21,48 @@
  *                          an error is encountered.
  * 
  * @param[out] gamma        Angle from DC meridian to MT point.
- *                          Note that $\f \gamma \in [-30, 30] \f$. 
+ *                          Note that \f$ \gamma \in [-30, 30] \f$. 
  *                          This is an array of dimension [nmt].
  * @param[out] delta        Angle from deviatoric plane to MT point.
  *                          Note that \f$ \delta \in [-90, 90] \f$.
  *                          This is an array of dimension [nmt].
  * @param[out] M0           Seismic moment in N-m.  This is an array of
  *                          dimension [nmt].
+ * @param[out] kappa        Strike angle \f$ \kappa \in [0,360] \f$.
+ *                          This is an array of dimension [nmt].
+ * @param[out] theta        Dip angle \f$ \theta \in [0,90] \f$.
+ *                          This is an array of dimension [nmt].
+ * @param[out] sigma        Slip (or rake) angle \f$ \sigma \in [-90,90] \f$.
+ *                          This is an array of dimension [nmt].
  * @param[out] K            If K is not NULL then it is the strike vector
  *                          (SOUTH-EAST-UP).  In this case K is an array
  *                          of dimension [3 x nmt] with leading dimension 3.
  * @param[out] N            If N is not NULL then it is the normal vector
  *                          (SOUTH-EAST-UP).  In this case N is an array
  *                          of dimension [3 x nmt] with leading dimension 3.
- * @param[out] S
- * @param[out] thetadc
- * @param[out] lam
- * @param[out] U 
+ * @param[out] S            If S Is not NULL then it is the slip vector
+ *                          (SOUTH-EAST-UP).  In this case S is an array
+ *                          of dimension [3 x nmt] with leading dimension 3.
+ * @param[out] thetadc      If thetadc is not NULL then it is angle between 
+ *                          the moment tensor and the double couple where
+ *                          \f$ \theta_{DC} \in [0,90] \f$.
+ *                          In this case thetadc is an array of dimension [nmt].
+ * @param[out] lam          If lam is not NULL then these are the eigenvalues
+ *                          corresponding to the moment tensor.  In this
+ *                          case lam is an array of dimension [3 x nmt] 
+ *                          with leading dimension 3.
+ * @param[out] U            If U is not NULL then this is the basis in 
+ *                          SOUTH-EAST-UP for the moment tensor.  In this
+ *                          case U an array of dimension [3 x 3 x nmt] with
+ *                          leading dimension 9 and the understanding that
+ *                          each 3 x 3 matrix is in column major format.
  *
  * @result 0 indicates success.
  *
+ * @author Carl Tape and translated to C by Ben Baker
+ *
+ * @date July 2017
+ * 
  * @copyright MIT
  * 
  */
@@ -51,10 +73,13 @@ int compearth_cmt2tt(const int nmt, const double *__restrict__ Min,
                      double *__restrict__ M0,
                      double *__restrict__ kappa,
                      double *__restrict__ theta,
-                     double *__restrict__ sigma )
+                     double *__restrict__ sigma,
+                     double *__restrict__ K, double *__restrict__ N,
+                     double *__restrict__ S, double *__restrict__ thetadc,
+                     double *__restrict__ lam, double *__restrict__ U)
 {
     const char *fcnm = "compearth_CMT2TT\0";
-    double lam[3], M[6], U[9];
+    double lamWork[3], M[6], Uwork[9];
     int ierr, imt;
     const int isort = 1;
     ierr = 0;
@@ -86,7 +111,7 @@ int compearth_cmt2tt(const int nmt, const double *__restrict__ Min,
         // PART 1: moment tensor source type (or pattern)
         // Decompose moment tensor into eigenvalues + basis (M = U*lam*U')
         // NOTE: ordering of eigenvalues is important.
-        ierr = compearth_CMTdecom(1, M, isort, lam, U);
+        ierr = compearth_CMTdecom(1, M, isort, lamWork, Uwork);
         if (ierr != 0)
         {
             printf("%s: Error decomposing CMT\n", fcnm);

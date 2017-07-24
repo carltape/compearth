@@ -3,9 +3,8 @@
 #include "compearth.h"
 
 /*!
- * @brief C translation of Carl Tape's utility which converts a moment
- *        tensor, M, from input system defined by i1in to moment tensor,
- *        Mout, to output system defind by i2in
+ * @brief Converts a moment tensor, M, from input system defined by i1in
+ *        to moment tensor, Mout, to output system defind by i2in.
  *
  * @param[in] i1in     Coordinate system for M: \n
  *                       = USE (1) -> up, south, east \n

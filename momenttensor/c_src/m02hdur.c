@@ -6,16 +6,18 @@
  * @brief Empirical formula of Dahlen and Tromp (1999) pg. 178 for converting
  *        seismic moment to half duration.
  *
- * @param[in] nm     number of scalar moments
- * @param[in] M0     scalar moment in Newton-meters [nm]
+ * @param[in] nm     Number of scalar moments
+ * @param[in] M0     Scalar moment in Newton-meters.  This is an array
+ *                   of dimension [nm].
  *
- * @param[out] hdur  half duration in seconds [nm]
+ * @param[out] hdur  Half duration in seconds.  This is an array of
+ *                   dimension [nm].
  *
- * @result 0 indicates success.
- *        -1 indicates invalid inputs.
+ * @result 0 indicates success. \n
+ *        -1 indicates invalid inputs. \n
  *        >0 indicates that some M0's were negative.
  *
- * @author Carl Tape and translated to C by Ben Baker
+ * @author Carl Tape and translated to C by Ben Baker.
  *
  * @copyright MIT
  *
