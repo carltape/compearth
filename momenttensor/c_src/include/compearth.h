@@ -88,7 +88,8 @@ int compearth_CMT2mw(const int nm, const int im0,
                      const double *__restrict__ M,
                      double *__restrict__ Mw);
 /* Converts between moment tensors in different coordinate systems */
-int compearth_convertMT(const enum compearthCoordSystem_enum i1in,
+int compearth_convertMT(const int nmt,
+                        const enum compearthCoordSystem_enum i1in,
                         const enum compearthCoordSystem_enum i2in,
                         const double *__restrict__ M,
                         double *__restrict__ Mout);
@@ -137,6 +138,10 @@ void compearth_matlab_cart2sph(const int n,
                                double *__restrict__ theta,
                                double *__restrict__ phi,
                                double *__restrict__ r);
+/* angle between two vectors */
+double compearth_matlab_fangle(const int n,
+                               const double *__restrict__ va, 
+                               const double *__restrict__ vb);
 /* M0 to half duration */
 int compearth_m02hdur(const int nm, const double *__restrict__ M0,
                       double *__restrict__ hdur);
@@ -211,6 +216,40 @@ void compearth_xyz2tp(const int n,
                       double *__restrict__ ph, 
                       double *__restrict__ th, 
                       double *__restrict__ rho);
+
+#ifdef COMPEARTH_PRIVATE_DET3X3
+inline double det3x3ColumnMajor(const double *__restrict__ A);
+#endif
+#ifdef COMPEARTH_PRIVATE_GEMV3
+inline void gemv3_colMajorNoTrans(const double *__restrict__ A,
+                                  const double *__restrict__ x,
+                                  double *__restrict__ y);
+#endif
+#ifdef COMPEARTH_PRIVATE_GEM3
+inline void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
+                                         const double *__restrict__ B,
+                                         double *__restrict__ C);
+#endif
+#ifdef COMPEARTH_PRIVATE_GEMT3
+inline void gemm3_colMajorNoTransTrans(const double *__restrict__ A,
+                                       const double *__restrict__ B,
+                                       double *__restrict__ C);
+#endif
+#ifdef COMPEARTH_PRIVATE_CROSS3
+inline void cross3(const double *__restrict__ a, 
+                   const double *__restrict__ b,
+                   double *__restrict__ c);
+#endif
+#ifdef COMPEARTH_PRIVATE_DOT3
+inline double dot3(const double *__restrict__ a, const double *__restrict__ b);
+#endif
+#ifdef COMPEARTH_PRIVATE_NORM3
+inline double norm3(const double *__restrict__ a);
+#endif
+#ifdef COMPEARTH_PRIVATE_WRAP360
+inline double wrap360(const double lon);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
