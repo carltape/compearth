@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define COMPEARTH_PRIVATE_DET3X3 1
 #include "compearth.h"
 #ifdef COMPEARTH_USE_MKL
 #include <mkl_cblas.h>
@@ -7,7 +8,7 @@
 #include <cblas.h>
 #endif
 
-static double det3x3ColumnMajor(const double *__restrict__ A);
+//static double det3x3ColumnMajor(const double *__restrict__ A);
 
 /*!
  * @brief Ensure that U is a rotation matrix with det(U) = 1.
@@ -62,7 +63,7 @@ int compearth_Udetcheck(const int n,
     return 0;
 }
 
-
+/*
 static double det3x3ColumnMajor(const double *__restrict__ A)
 {
     double det;
@@ -71,3 +72,4 @@ static double det3x3ColumnMajor(const double *__restrict__ A)
         + A[6]*( A[1]*A[5] - A[2]*A[4]);
     return det;
 }
+*/

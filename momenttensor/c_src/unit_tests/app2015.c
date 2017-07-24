@@ -52,11 +52,11 @@ int main()
     printf("%e %e %e\n", U[1], U[4], U[7]);
     printf("%e %e %e\n", U[2], U[5], U[8]);
     // Finally convert from USE TO NED {xx, yy, zz, xy, xz, yz} for Herrmann's code
-    ierr = compearth_convertMT(USE, NED, M_use, M_ned);
+    ierr = compearth_convertMT(1, USE, NED, M_use, M_ned);
     printf("M_ned\n");
     printf("%e\n%e\n%e\n%e\n%e\n%e\n", M_ned[0], M_ned[1], M_ned[2],
                                        M_ned[3], M_ned[4], M_ned[5]);
-    ierr = compearth_convertMT(NED, USE, M_ned, M_use);
+    ierr = compearth_convertMT(1, NED, USE, M_ned, M_use);
     printf("M_use\n");
     for (i=0; i<6; i++){
         printf("%e %e\n", M_use[i], M_use_ref[i] - M_use[i]);

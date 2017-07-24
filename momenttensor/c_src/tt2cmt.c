@@ -2,26 +2,16 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#define COMPEARTH_PRIVATE_CROSS3 1
+#define COMPEARTH_PRIVATE_GEMV3 1
+#define COMPEARTH_PRIVATE_GEM3 1
+#define COMPEARTH_PRIVATE_GEMT3 1
 #include "compearth.h"
 #ifdef COMPEARTH_USE_MKL
 #include <mkl_cblas.h>
 #else
 #include <cblas.h>
 #endif
-
-static int cross(const int n,
-                 const double *__restrict__ a,
-                 const double *__restrict__ b,
-                 double *__restrict__ c);
-static void gemv3_colMajorNoTrans(const double *__restrict__ A,
-                                  const double *__restrict__ x,
-                                  double *__restrict__ y);
-static void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
-                                         const double *__restrict__ B,
-                                         double *__restrict__ C);
-static void gemm3_colMajorNoTransTrans(const double *__restrict__ A,
-                                       const double *__restrict__ B,
-                                       double *__restrict__ C);
 
 /*!
  * @brief C translation of Carl Tape's utility for converting geometrical
@@ -139,7 +129,7 @@ int compearth_tt2cmt(const double gamma,
 #endif
     // TT2012, Eq 28 (or Proposition 2)
     compearth_eulerUtil_rotmat(1, &neg45, 2, Yrot);
-    ierr = cross(3, N, S, NxS);
+    cross3(N, S, NxS); //ierr = cross(3, N, S, NxS);
     V[0] = S[0]; V[3] = NxS[0]; V[6] = N[0];
     V[1] = S[1]; V[4] = NxS[1]; V[7] = N[1];
     V[2] = S[2]; V[5] = NxS[2]; V[8] = N[2];
@@ -179,7 +169,7 @@ int compearth_tt2cmt(const double gamma,
 
     // convert moment tensor from south-east-up to up-south-east
     // (note: U is still in south-east-up)
-    ierr = compearth_convertMT(SEU, USE, M6, M);
+    ierr = compearth_convertMT(1, SEU, USE, M6, M);
     if (ierr != 0)
     {
         printf("%s: Error converting moment tensor coordinate systems\n",
@@ -192,87 +182,4 @@ int compearth_tt2cmt(const double gamma,
 //printf("%e %e %e\n", U[2], U[5], U[8]);
 ERROR:;  
     return ierr;
-}
-//============================================================================//
-/*!
- * @brief Computes the cross product of a arrays a and b.  Note, a and b 
- *        must both be dimensions 3 x 1
- *
- * @param[in] n        length of a, b, and output array c (must be 3)
- * @param[in] a        vector in c = a x b [length 3]
- * @param[in] b        vector in c = a x b [length 3]
- *
- * @param[out] c       cross product of a and b; c = a x b [length 3]
- *
- * @result cross product of a and b; c = a x b [length 3]
- *
- */
-static int cross(const int n,
-                 const double *__restrict__ a,
-                 const double *__restrict__ b,
-                 double *__restrict__ c)
-{
-    const char *fcnm = "compearth_cross\0";
-    // Error check
-    if (n != 3)
-    {
-        printf("%s: Error all arrays must be length 3\n", fcnm);
-        c[0] = 0.0;
-        c[1] = 0.0;
-        c[2] = 0.0;
-        return 1;
-    }   
-    // Compute cross product
-    c[0] = a[1]*b[2] - a[2]*b[1];
-    c[1] = a[2]*b[0] - a[0]*b[2];
-    c[2] = a[0]*b[1] - a[1]*b[0];
-    return 0;
-}
-//============================================================================//
-static void gemv3_colMajorNoTrans(const double *__restrict__ A,
-                                  const double *__restrict__ x,
-                                  double *__restrict__ y)
-{
-    y[0] = A[0]*x[0] + A[3]*x[1] + A[6]*x[2];
-    y[1] = A[1]*x[0] + A[4]*x[1] + A[7]*x[2];
-    y[2] = A[2]*x[0] + A[5]*x[1] + A[8]*x[2];
-    return;
-}
-
-static void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
-                                         const double *__restrict__ B,
-                                         double *__restrict__ C)
-{
-    // column 1
-    C[0] = A[0]*B[0] + A[3]*B[1] + A[6]*B[2];
-    C[1] = A[1]*B[0] + A[4]*B[1] + A[7]*B[2];
-    C[2] = A[2]*B[0] + A[5]*B[1] + A[8]*B[2];
-    // column 2
-    C[3] = A[0]*B[3] + A[3]*B[4] + A[6]*B[5];
-    C[4] = A[1]*B[3] + A[4]*B[4] + A[7]*B[5];
-    C[5] = A[2]*B[3] + A[5]*B[4] + A[8]*B[5];
-    // column 3
-    C[6] = A[0]*B[6] + A[3]*B[7] + A[6]*B[8];
-    C[7] = A[1]*B[6] + A[4]*B[7] + A[7]*B[8];
-    C[8] = A[2]*B[6] + A[5]*B[7] + A[8]*B[8];
-    return; 
-}
-
-static void gemm3_colMajorNoTransTrans(const double *__restrict__ A,
-                                       const double *__restrict__ B,
-                                       double *__restrict__ C)
-{
-    // column 1
-    C[0] = A[0]*B[0] + A[3]*B[3] + A[6]*B[6];
-    C[1] = A[1]*B[0] + A[4]*B[3] + A[7]*B[6];
-    C[2] = A[2]*B[0] + A[5]*B[3] + A[8]*B[6];
-    // column 2
-    C[3] = A[0]*B[1] + A[3]*B[4] + A[6]*B[7];
-    C[4] = A[1]*B[1] + A[4]*B[4] + A[7]*B[7];
-    C[5] = A[2]*B[1] + A[5]*B[4] + A[8]*B[7];
-    // column 3
-    C[6] = A[0]*B[2] + A[3]*B[5] + A[6]*B[8];
-    C[7] = A[1]*B[2] + A[4]*B[5] + A[7]*B[8];
-    C[8] = A[2]*B[2] + A[5]*B[5] + A[8]*B[8];
-    return;  
 }

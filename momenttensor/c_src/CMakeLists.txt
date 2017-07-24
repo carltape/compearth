@@ -38,7 +38,8 @@ IF (COMPEARTH_USE_ISCL)
 ENDIF (COMPEARTH_USE_ISCL)
 
 SET (SRCS angleMT.c beta2u.c cart2sph.c CMTdecom.c
-          CMT2m0.c CMT2mw.c cmt2tt.c convertMT.c fangle.c eulerUtil_rotmat.c
+          CMT2m0.c CMT2mw.c cmt2tt.c convertMT.c
+          fangle.c eulerUtil_fangleSigned.c eulerUtil_rotmat.c
           eulerUtil_rotmatGen.c gamma2v.c h2theta.c lam2lune.c
           lam2phizeta.c lamsort.c lune2lam.c lune2rect.c
           m02hdur.c m02mw.c mw2m0.c Mvec2Mmat.c

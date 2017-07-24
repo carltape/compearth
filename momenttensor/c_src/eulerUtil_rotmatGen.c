@@ -1,16 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#define COMPEARTH_PRIVATE_GEM3 1
 #include "compearth.h"
 #ifdef COMPEARTH_USE_MKL
 #include <mkl_cblas.h>
 #else
 #include <cblas.h>
 #endif
-
-static void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
-                                         const double *__restrict__ B,
-                                         double *__restrict__ C);
 
 /*!
  * @brief Compute a rotation matrix given an axis and angle
@@ -85,21 +82,3 @@ int compearth_eulerUtil_rotmatGen(const int n,
     return ierr;
 }
 
-static void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
-                                         const double *__restrict__ B,
-                                         double *__restrict__ C)
-{
-    // column 1
-    C[0] = A[0]*B[0] + A[3]*B[1] + A[6]*B[2];
-    C[1] = A[1]*B[0] + A[4]*B[1] + A[7]*B[2];
-    C[2] = A[2]*B[0] + A[5]*B[1] + A[8]*B[2];
-    // column 2
-    C[3] = A[0]*B[3] + A[3]*B[4] + A[6]*B[5];
-    C[4] = A[1]*B[3] + A[4]*B[4] + A[7]*B[5];
-    C[5] = A[2]*B[3] + A[5]*B[4] + A[8]*B[5];
-    // column 3
-    C[6] = A[0]*B[6] + A[3]*B[7] + A[6]*B[8];
-    C[7] = A[1]*B[6] + A[4]*B[7] + A[7]*B[8];
-    C[8] = A[2]*B[6] + A[5]*B[7] + A[8]*B[8];
-    return; 
-}

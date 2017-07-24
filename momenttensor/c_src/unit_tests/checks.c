@@ -8,7 +8,7 @@ int check_Udetcheck(void);
 int check_lam2lune(void);
 int check_CMTdecom(void);
 
-int main( )
+int main(void)
 {
     int ierr;
     ierr = check_Udetcheck();

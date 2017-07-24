@@ -93,6 +93,12 @@ int compearth_convertMT(const int nmt,
                         const enum compearthCoordSystem_enum i2in,
                         const double *__restrict__ M,
                         double *__restrict__ Mout);
+/* Computes the signed angle between two vectors */
+double compearth_eulerUtil_fangleSigned(const int n,
+                                        const double *__restrict__ va, 
+                                        const double *__restrict__ vb, 
+                                        const double *__restrict__ vnor,
+                                        int *ierr);
 /* Computes rotation matrices about axis for given angles */
 int compearth_eulerUtil_rotmat(const int n, const double *__restrict__ xdeg,
                                const int ixyz, double *__restrict__ R);
