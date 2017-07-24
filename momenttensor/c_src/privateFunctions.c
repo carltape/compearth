@@ -10,6 +10,10 @@
 #define COMPEARTH_PRIVATE_WRAP360 1
 #include "compearth.h"
 
+
+/*!
+ * @brief Computes the determinant of a 3 x 3 major in column major order.
+ */
 double det3x3ColumnMajor(const double *__restrict__ A)
 {
     double det;
@@ -18,7 +22,10 @@ double det3x3ColumnMajor(const double *__restrict__ A)
         + A[6]*( A[1]*A[5] - A[2]*A[4]);
     return det;
 };
-
+/*!
+ * @brief Computes C = A*B where A, B, and C are 3 x 3 matrices in column
+ *        major order.
+ */ 
 void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
                                   const double *__restrict__ B,
                                   double *__restrict__ C)
@@ -37,7 +44,10 @@ void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
     C[8] = A[2]*B[6] + A[5]*B[7] + A[8]*B[8];
     return; 
 }
-
+/*!
+ * @brief Computes C = A*B' where A, B, and C are 3 x 3 matrices in column
+ *        major order.
+ */
 void gemm3_colMajorNoTransTrans(const double *__restrict__ A,
                                 const double *__restrict__ B,
                                 double *__restrict__ C)
@@ -56,7 +66,10 @@ void gemm3_colMajorNoTransTrans(const double *__restrict__ A,
     C[8] = A[2]*B[2] + A[5]*B[5] + A[8]*B[8];
     return;  
 }
-
+/*!
+ * @brief Computes y = A*x where A is a 3 x 3 matrix in column major order
+ *        and x and y are length 3 vectors.
+ */
 void gemv3_colMajorNoTrans(const double *__restrict__ A,
                            const double *__restrict__ x,
                            double *__restrict__ y)
@@ -66,7 +79,10 @@ void gemv3_colMajorNoTrans(const double *__restrict__ A,
     y[2] = A[2]*x[0] + A[5]*x[1] + A[8]*x[2];
     return;
 }
-
+/*!
+ * @brief Computes the cross-product, c = a x c, where a, b, and c are 
+ *        length 3 vectors.
+ */
 void cross3(const double *__restrict__ a,  
             const double *__restrict__ b,
             double *__restrict__ c)
@@ -77,12 +93,16 @@ void cross3(const double *__restrict__ a,
     c[2] = a[0]*b[1] - a[1]*b[0];
     return;
 }
-
+/*!
+ * @brief Computes the norm of a vector a which is length 3.
+ */
 double norm3(const double *__restrict__ a)
 {
     return sqrt(a[0]*a[0] + a[1]*a[1] + a[2]*a[2]);
 }
-
+/*!
+ * @brief Computes the dot-product a.b where a and b are length 3 vectors.
+ */
 double dot3(const double *__restrict__ a, const double *__restrict__ b)
 {
     return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];

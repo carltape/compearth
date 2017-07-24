@@ -87,6 +87,18 @@ int compearth_CMT2m0(const int nm, const int im0,
 int compearth_CMT2mw(const int nm, const int im0,
                      const double *__restrict__ M,
                      double *__restrict__ Mw);
+/* CMT to Tape and Tape */
+int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
+                     const bool ldisplay,
+                     double *__restrict__ gamma,
+                     double *__restrict__ delta,
+                     double *__restrict__ M0,
+                     double *__restrict__ kappa,
+                     double *__restrict__ theta,
+                     double *__restrict__ sigma,
+                     double *__restrict__ K, double *__restrict__ N,
+                     double *__restrict__ S, double *__restrict__ thetadc,
+                     double *__restrict__ lam, double *__restrict__ U);
 /* Converts between moment tensors in different coordinate systems */
 int compearth_convertMT(const int nmt,
                         const enum compearthCoordSystem_enum i1in,

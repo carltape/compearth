@@ -6,6 +6,7 @@
 #define COMPEARTH_PRIVATE_CROSS3 1
 #define COMPEARTH_PRIVATE_NORM3 1
 #define COMPEARTH_PRIVATE_DOT3 1
+#define COMPEARTH_PRIVATE_WRAP360 1
 #include "compearth.h"
 #ifdef COMPEARTH_USE_MKL
 #include <mkl_cblas.h>
@@ -16,14 +17,20 @@
 #define MAXMT 64
 
 static void setZero(const int nmt, const double tol, double *__restrict__ X);
-static double wrap360(const double lon);
+static void faultVec2Ang(const double *__restrict__ S,
+                         const double *__restrict__ N,
+                         double *theta, double *sigma,
+                         double *kappa, double *__restrict__ K, int *ierr);
+static int pickP1(const double thetaA, const double sigmaA, const double kappaA,
+                  const double thetaB, const double sigmaB, const double kappaB,
+                  const double tol, const int p1, const int p2);
 
 /*!
  * @brief Converts a moment tensor to six parameters of Tape and Tape 2012.
  *        The reverse program is TT2CMT.c
  *
  * @param[in] nmt           Number of moment tensors.
- * @param[in] M             [6 x nmt] array of moment tensors in CMT
+ * @param[in] Min           [6 x nmt] array of moment tensors in CMT
  *                          convention (i.e. UP-SOUTH-EAST).  M is packed:
  *                          \f$
  *                           M = \{ M_{rr}, M_{\theta \theta}, M_{\phi \phi}
@@ -80,7 +87,7 @@ static double wrap360(const double lon);
  * @copyright MIT
  * 
  */
-int compearth_cmt2tt(const int nmt, const double *__restrict__ Min,
+int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
                      const bool ldisplay,
                      double *__restrict__ gamma,
                      double *__restrict__ delta,
@@ -94,11 +101,11 @@ int compearth_cmt2tt(const int nmt, const double *__restrict__ Min,
 {
     const char *fcnm = "compearth_CMT2TT\0";
     double *lamdev, *lamiso, *lamWork, *Uwork, Vwork[9], Yrot[9], M[6],
-           S1[3], S2[3], S3[3], S4[3], N1[3], N2[3], N3[3], N4[3];
+           Sloc[12], Kloc[12], Nloc[12], kappaL[4], sigmaL[4], thetaL[4];
     double lamSpace[3*MAXMT];
     double uSpace[9*MAXMT];
-    bool lwantLam, lwantU;
-    int ierr, ierrAll, imt, j;
+    bool lwantLam, lwantK, lwantN, lwantS, lwantU;
+    int itemp[4], ierr, ierrAll, match, imt, j, nMatch;
     const int isort = 1;
     const double rotAngle = 45.0;
     const double tol = 1.e-6;
@@ -151,6 +158,13 @@ int compearth_cmt2tt(const int nmt, const double *__restrict__ Min,
             Uwork = (double *) calloc((size_t) (9*nmt), sizeof(double));
         }
     } 
+    // Determine the desired fault vectors
+    lwantK = false;
+    lwantN = false;
+    lwantS = false;
+    if (K != NULL){lwantK = true;}
+    if (N != NULL){lwantN = true;}
+    if (S != NULL){lwantS = true;} 
     // This is the numerically expensive part b/c of eigendecomposition
     ierrAll = 0;
     for (imt=0; imt<nmt; imt++)
@@ -214,11 +228,90 @@ int compearth_cmt2tt(const int nmt, const double *__restrict__ Min,
     {
         for (j=0; j<3; j++)
         {
-            S1[j] = S[3*imt+j]; N1[j] = N[3*imt+j];
-            S2[j] =-S[3*imt+j]; N2[j] =-N[3*imt+j];
-            S3[j] = N[3*imt+j]; N3[j] = S[3*imt+j];
-            S4[j] =-N[3*imt+j]; N4[j] =-S[3*imt+j];
+            Sloc[3*0+j] = S[3*imt+j]; Nloc[3*0+j] = N[3*imt+j];
+            Sloc[3*1+j] =-S[3*imt+j]; Nloc[3*1+j] =-N[3*imt+j];
+            Sloc[3*2+j] = N[3*imt+j]; Nloc[3*2+j] = S[3*imt+j];
+            Sloc[3*3+j] =-N[3*imt+j]; Nloc[3*3+j] =-S[3*imt+j];
         }
+        faultVec2Ang(&Sloc[0], &Nloc[0], &thetaL[0], &sigmaL[0],
+                     &kappaL[0], &Kloc[0], &ierr);
+        faultVec2Ang(&Sloc[3], &Nloc[3], &thetaL[1], &sigmaL[1],
+                     &kappaL[1], &Kloc[3], &ierr);
+        faultVec2Ang(&Sloc[6], &Nloc[6], &thetaL[2], &sigmaL[2],
+                     &kappaL[2], &Kloc[6], &ierr);
+        faultVec2Ang(&Sloc[9], &Nloc[9], &thetaL[3], &sigmaL[3],
+                     &kappaL[3], &Kloc[9], &ierr);
+        // There are four combinations of N and S that represent a double couple
+        // moment tensor, as shown in Figure 15 of TT2012.
+        // From these four combinations, there are two possible fault planes.
+        // We want to isoate the combination that is within the bounding
+        // region shown in Figures 16 and B1.
+        memset(itemp, 0, 4*sizeof(int));
+        nMatch = 0;
+        for (j=0; j<4; j++)
+        {
+            if (thetaL[j] <= 90.0 + tol && fabs(sigmaL[j]) <= 90.0 + tol)
+            { 
+                itemp[nMatch] = j; //bmatch[j] = true;
+                nMatch = nMatch + 1;
+            }
+        }
+        if (nMatch == 1)
+        {
+            match = itemp[0];
+        }
+        else if (nMatch == 2)
+        {
+            match = pickP1(thetaL[itemp[0]], sigmaL[itemp[0]], kappaL[itemp[0]],
+                           thetaL[itemp[1]], sigmaL[itemp[1]], kappaL[itemp[1]],
+                           tol, itemp[0], itemp[1]);
+            if (match < 0)
+            {
+                printf("%s: Failed to pick a fault plane\n", fcnm);
+                ierr = 1;
+                goto ERROR;
+            }
+        }
+        else if (nMatch == 3)
+        {
+            printf("%s: Warning mt on bdry of orientation domain 3 candiates\n",
+                   fcnm);
+            printf("%s: thetas: %e %e %e\n", fcnm, thetaL[0], thetaL[1], thetaL[2]);
+            printf("%s: sigmas: %e %e %e\n", fcnm, sigmaL[0], sigmaL[1], sigmaL[2]);
+            printf("%s: kappas: %e %e %e\n", fcnm, kappaL[0], kappaL[1], kappaL[2]);
+            // Just take the first one
+            match = itemp[0]; 
+        }
+        else if (nMatch == 4)
+        {
+            printf("%s: Error not yet programmed\n", fcnm);
+            ierr = 1;
+            goto ERROR;
+        }
+        else
+        {
+            printf("%s: Error no match\n", fcnm);
+            ierr = 1;
+            goto ERROR;
+        }
+        // Select the angle
+        kappa[imt] = kappaL[match];
+        sigma[imt] = sigmaL[match];
+        theta[imt] = thetaL[match];
+        // Fault vectors
+        if (lwantK)
+        {
+            for (j=0; j<3; j++){K[3*imt+j] = Kloc[3*match+j];}
+        }
+        if (lwantN)
+        {
+            for (j=0; j<3; j++){N[3*imt+j] = Nloc[3*match+j];}
+        }
+        if (lwantS)
+        {
+            for (j=0; j<3; j++){S[3*imt+j] = Sloc[3*match+j];}
+        }
+ 
     }
     // Clean up
 ERROR:;
@@ -226,17 +319,29 @@ ERROR:;
     lamWork = NULL;
     return ierr; 
 }
-
+/*!
+ * @brief Returns fault angles in degrees.  Assumes input vectors are in 
+ *        the South-East-Up basis.
+ *
+ * @author Carl Tape and converted to C by Ben Baker
+ *
+ * @copyright MIT
+ *
+ */
 static void faultVec2Ang(const double *__restrict__ S,
                          const double *__restrict__ N,
-                         double *theta, double *sigma, double *kappa, double *K)
+                         double *theta, double *sigma,
+                         double *kappa, double *__restrict__ K, int *ierr)
 {
     const char *fcnm = "faultVec2Ang\0";
     double v[3], costh, vnorm;
+    int ierr1;
     const double deg = 180.0/M_PI;
     // South-East-Up (as In TT2012)
     const double zenith[3] = {0, 0, 1};
+    const double negZenith[3] = {0, 0, -1};
     const double north[3] = {-1, 0, 0}; 
+    *ierr = 0;
     *kappa = NAN;
     *theta = NAN;
     *sigma = NAN;
@@ -258,14 +363,15 @@ static void faultVec2Ang(const double *__restrict__ S,
         K[2] = v[2]/vnorm;
     }
     // Figure 14
-
+    *kappa = compearth_eulerUtil_fangleSigned(3, north, K, negZenith, &ierr1);
+    if (ierr1 != 0){*ierr = *ierr + 1;}
+    *kappa = wrap360(*kappa);
     // Figure 14
     costh = dot3(N, zenith);
     *theta = acos(costh)*deg;
-
     // Figure 14
-
-    *kappa = wrap360(*kappa);
+    *sigma = compearth_eulerUtil_fangleSigned(3, K, S, N, &ierr1);
+    if (ierr1 != 0){*ierr = *ierr + 1;}
     return;
 }
 
@@ -295,36 +401,32 @@ static void setZero(const int nmt, const double tol, double *__restrict__ X)
    return;
 }
 
-/*
-static void cross3(const double *__restrict__ a, 
-                   const double *__restrict__ b,
-                   double *__restrict__ c)
+static int pickP1(const double thetaA, const double sigmaA, const double kappaA,
+                  const double thetaB, const double sigmaB, const double kappaB,
+                  const double tol, const int p1, const int p2)
 {
-    // Compute cross product
-    c[0] = a[1]*b[2] - a[2]*b[1];
-    c[1] = a[2]*b[0] - a[0]*b[2];
-    c[2] = a[0]*b[1] - a[1]*b[0];
-    return;
+    const char *fcnm = "pickP1";
+    int ipick;
+    ipick =-1;
+    if (fabs(thetaA - 90.0) < tol)
+    {
+        if (kappaA < 180.0){ipick = p1;}
+        if (kappaB < 180.0){ipick = p2;}
+        return ipick;
+    }
+    if (fabs(sigmaA - 90.0) < tol)
+    {
+        if (kappaA < 180.0){ipick = p1;}
+        if (kappaB < 180.0){ipick = p2;}
+        return ipick;
+    }
+    if (fabs(sigmaA + 90.0) < tol)
+    {
+        if (kappaA < 180.0){ipick = p1;}
+        if (kappaB < 180.0){ipick = p2;}
+        return ipick;
+    } 
+    printf("%s: Error no selection criterion was met\n", fcnm);
+    return ipick;
 }
 
-static double norm3(const double *__restrict__ a)
-{
-    return sqrt(a[0]*a[0] + a[1]*a[1] + a[2]*a[2]);
-}
-
-static double dot3(const double *__restrict__ a, const double *__restrict__ b)
-{
-    return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
-}
-*/
-
-static double wrap360(const double lon)
-{
-    double lonw;
-    bool lpos;
-    lpos = false; 
-    if (lon > 0.0){lpos = true;}
-    lonw = fmod(lon, 360.0); 
-    if (lonw == 0.0 && lpos){lonw = 360.0;}
-    return lonw;
-}

@@ -7,7 +7,7 @@
 /*!
  * @brief Returns the signed angle (of rotation) between two vectors.
  *
- * @brief n           Length of vectors.
+ * @param[in] n       Length of vectors.
  * @param[in] va      Initial vector.  This is an array of dimension [n].
  * @param[in] vb      Rotated vector.  This is an array of dimension [n].
  * @param[in] vnor    "Normal of rotation" vector.  This is an array of

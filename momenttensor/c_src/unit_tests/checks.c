@@ -8,6 +8,7 @@ int check_Udetcheck(void);
 int check_lam2lune(void);
 int check_CMTdecom(void);
 int check_fangleSigned(void);
+int check_CMT2TT(void);
 
 int main(void)
 {
@@ -28,7 +29,7 @@ int main(void)
     if (ierr != 0){printf("failed CMTdecom\n"); return EXIT_FAILURE;}
     printf("CMTdecom was successful\n");
 
-
+    ierr = check_CMT2TT();
     return EXIT_SUCCESS;
 }
 
@@ -96,8 +97,27 @@ int check_Udetcheck(void)
 //============================================================================//
 int check_CMT2TT(void)
 {
-    const double M[6] = {3.1083, 3.0444, 3.3823, -4.8550, -1.9493, 1.1105};
-
+    const char *fcnm = "check_CMT2TT\0";
+    const double M[6] = {3.108304932835845, 3.044425632830430,
+                         3.382269434333724,-4.855033301709626,
+                        -1.949280336439431, 1.110527600460120};
+    double U[9], lam[3];
+    bool ldisplay;
+    double gamma, delta, M0, kappa, sigma, theta, thetadc;
+    double K[3], N[3], S[3];
+    int ierr;
+    ldisplay = false;
+    ierr = compearth_CMT2TT(1, M, ldisplay,
+                            &gamma, &delta, &M0, &kappa, &theta, &sigma,
+                            K, N, S, &thetadc,
+                            lam, U);
+    if (ierr != 0)
+    {
+        printf("%s: Error calling CMT2TT test 1\n", fcnm);
+        return EXIT_FAILURE;
+    }
+printf("%e %e %e %e %e %e\n", gamma, delta, M0, kappa, theta, sigma);
+ 
     return EXIT_SUCCESS;
 }
 //============================================================================//

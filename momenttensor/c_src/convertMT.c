@@ -11,6 +11,7 @@
  * @brief Converts a moment tensor, M, from input system defined by i1in
  *        to moment tensor, Mout, to output system defind by i2in.
  *
+ * @param[in] nmt      Number of moment tensors.
  * @param[in] i1in     Coordinate system for M: \n
  *                       = USE (1) -> up, south, east \n
  *                       = NED (2) -> north, east, down \n
@@ -24,12 +25,12 @@
  *                       = ENU (4) -> east, north, up \n
  *                       = SEU (5) -> south, east, up \n
  * @param[in] M        Input moment tensor in system i1in.  This is an
- *                     an array of dimension [6*i+6].
+ *                     an array of dimension [6 x nmt].
  *                     The C indices {0,1,2,3,4,5} correspond to matrix
  *                     indices: {11, 22, 33, 12, 13, 23}.
  *
  * @param[out] Mout    Corresponding moment tensor now in system i2in.
- *                     This is an array of dimension [6*i+6].
+ *                     This is an array of dimension [6 x nmt].
  *                     the C indices {0,1,2,3,4,5} correspond to matrix
  *                     indices: {11, 22, 33, 12, 13, 23}
  * 
