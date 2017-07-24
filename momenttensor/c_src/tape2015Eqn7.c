@@ -8,10 +8,11 @@
  *        multiply in Equation 7 of Tape and Tape 2015 for a given beta,
  *        gamma coordinate on the lune
  *
- * @param[in] beta      colatitude on lune [0,pi]
- * @param[in] gamma     longitude on lune [-pi/6,pi/6]
+ * @param[in] beta      Colatitude on lune \f$\beta \in [0, \pi] \f$.
+ * @param[in] gamma     Longitude on lune \f$\gamma \in [-\pi/6,\pi/6] \f$.
  *
- * @param[out] lam      location Lambda(beta,gamma) on lune 
+ * @param[out] lam      Location \f$ \Lambda(\beta,\gamma) \f$ on lune.  This is
+ *                      an array of dimension [3]. 
  *
  * @author Ben Baker
  *

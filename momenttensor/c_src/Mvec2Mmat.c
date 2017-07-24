@@ -5,22 +5,30 @@
 
 /*!
  * @brief Converts between two representations of a set of moment tensors
- *        (1) 6 x n
- *        (2) 3 x 3 x n
+ *        (1) 6 x n and
+ *        (2) 3 x 3 x n.
  *
- * @param[in] Min     if itype is 1 then this is the moment tensor packed
- *                    [M11 M22 M33 M12 M13 M23] [6*n].
- *                    otherwise this is the moment tensor packed 
- *                    [M11 M12 M13 M21 M22 M23 M31 M32 M33] [9*n]
- * @param[in] itype   if 1 then convert from 6 x n to 3 x 3 x n.
- *                    otherwise convert from 3 x 3 x n to 6 x n.
+ * @param[in] n       Number of moment tensors.
+ * @param[in] Min     If itype is 1 then this is the moment tensor packed
+ *                    [M11 M22 M33 M12 M13 M23].  In this case Min is
+ *                    an array of dimension [6 x n] with leading dimension 6. \n
+ *                    Otherwise this is the moment tensor packed 
+ *                    [M11 M12 M13 M21 M22 M23 M31 M32 M33] and Min is
+ *                    an array of dimension [9 x n] with elading dimension 9.
+ * @param[in] itype   If 1 then convert from 6 x n to 3 x 3 x n. \n
+ *                    Otherwise convert from 3 x 3 x n to 6 x n.
  *
- * @param[out] Mout   if itype is 1 then this is the moment tensor packed
- *                    [M11 M12 M13 M21 M22 M23 M31 M32 M33] [9*n]
- *                    otherwise this is the moment tensor packed
- *                    [M11 M22 M33 M12 M13 M23] [6*n]. 
+ * @param[out] Mout   If itype is 1 then this is the moment tensor packed
+ *                    [M11 M12 M13 M21 M22 M23 M31 M32 M33].  In this case
+ *                    Mout is an array of dimension [9 x n] with leading 
+ *                    dimension 9. \n
+ *                    Otherwise this is the moment tensor packed
+ *                    [M11 M22 M33 M12 M13 M23] and Mout is an array of
+ *                    dimension [6 x n] with leading dimension 6.
  *
- * @date 2016 - Ben Baker converted Carl Tape's Mvec2Mmat.m to C
+ * @author Carl Tape and Converted to C by Ben Baker
+ *
+ * @date 2016
  *
  * @copyright MIT
  *

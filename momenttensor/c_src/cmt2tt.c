@@ -9,7 +9,7 @@
  *        The reverse program is TT2CMT.c
  *
  * @param[in] nmt           Number of moment tensors.
- * @param[in] M             [6 x n] array of moment tensors in CMT
+ * @param[in] M             [6 x nmt] array of moment tensors in CMT
  *                          convention (i.e. UP-SOUTH-EAST).  M is packed:
  *                          \f$
  *                           M = \{M_{rr}, M_{\theta \theta}, M_{\phi \phi}
@@ -28,12 +28,16 @@
  *                          This is an array of dimension [nmt].
  * @param[out] M0           Seismic moment in N-m.  This is an array of
  *                          dimension [nmt].
- * @param[in,out] K
- * @param[in,out] N
- * @param[in,out] S
- * @param[in,out] thetadc
- * @param[in,out] lam
- * @param[in,out] U 
+ * @param[out] K            If K is not NULL then it is the strike vector
+ *                          (SOUTH-EAST-UP).  In this case K is an array
+ *                          of dimension [3 x nmt] with leading dimension 3.
+ * @param[out] N            If N is not NULL then it is the normal vector
+ *                          (SOUTH-EAST-UP).  In this case N is an array
+ *                          of dimension [3 x nmt] with leading dimension 3.
+ * @param[out] S
+ * @param[out] thetadc
+ * @param[out] lam
+ * @param[out] U 
  *
  * @result 0 indicates success.
  *

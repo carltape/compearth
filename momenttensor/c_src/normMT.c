@@ -16,7 +16,7 @@
  *                      NEGATIVE_INFINITY_NORM. \n
  * @param[in] p       If using a p-norm this is the value for p (> 0).
  *
- * @param[out] Mnorm  Matrix norms for each moment tensor.  This is an array
+ * @param[out] mnorm  Matrix norms for each moment tensor.  This is an array
  *                    of dimension [n].
  *
  * @result 0 indicates success.

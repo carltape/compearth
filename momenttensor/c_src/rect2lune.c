@@ -9,18 +9,26 @@
 #endif
 
 /*!
- * @brief Converts v-w coordinates to lune coordinates
+ * @brief Converts v-w coordinates to lune coordinates.
  *
- * @param[in] v       v coordinates s.t. \f$ v \in [-1,3, 1/3] \f$ [nv]
+ * @param[in] nv      Number of v coordinates.
+ * @param[in] v       v coordinates s.t. \f$ v \in [-1,3, 1/3] \f$.  This
+ *                    an array of dimension [nv].
+ * @param[in] nw      Number of w coordinates.
  * @param[in] w       w coordinates (similar to lune latitudes) s.t. 
- *                    \f$ w \in [-3\pi/8, 3/pi/8] \f$ [nw]
+ *                    \f$ w \in [-3\pi/8, 3/pi/8] \f$.  This is an
+ *                    array of dimension [nw].
  *
- * @param[out] gamma  longitude (degrees) \f$ \gamma \in [-30,30] \f$ [nv]
- * @param[out] delta  lune latitude (degrees) \f$ \delta \in [-90,90] \f$ [nw]
+ * @param[out] gamma  Longitude (degrees) \f$ \gamma \in [-30,30] \f$.
+ *                    This is an array of dimension [nv].
+ * @param[out] delta  lune latitude (degrees) \f$ \delta \in [-90,90] \f$.
+ *                    This is an array of dimension [nw].
  *
- * @result 0 indicates success
+ * @result 0 indicates success.
  *
- * @date 2016 - Ben Baker converted Carl Tape's lune2lat.m to C
+ * @author Carl Tape and converted to C by Ben Baker
+ *
+ * @date 2016
  *
  * @copyright MIT
  *

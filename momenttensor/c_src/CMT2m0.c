@@ -9,20 +9,22 @@
 #endif
 
 /*!
- * @brief Convert from moment tnesor to scalar seismic moment
+ * @brief Convert from moment tnesor to scalar seismic moment.
  *
- * @param[in] im0    =1 for Silver and Jordan (1982) formula.
- *                   =2 for GCMT formula.
- *                   =3 for old `Caltech Way'
+ * @param[in] nm     Number of moment tensors.
+ * @param[in] im0    =1 for Silver and Jordan (1982) formula. \n
+ *                   =2 for GCMT formula. \n
+ *                   =3 for old `Caltech Way.'
  * @param[in] M      [nm x 6] array of moment tensors packed
  *                   {M11, M22, M33, M12, M13, M23} with leading
  *                   dimension 6.  The Mij element should be of units
  *                   of Newton-meters (although it should not affect
- *                   the function here)
+ *                   the function here).
  *
- * @param[out] M0    scalar moments with units of Newton-meters [nm]
+ * @param[out] M0    Scalar moments with units of Newton-meters.  This
+ *                   is an array of dimension [nm].
  *
- * @result 0 indicates success
+ * @result 0 indicates success.
  * 
  * @author Carl Tape and translated to C by Ben Baker
  *

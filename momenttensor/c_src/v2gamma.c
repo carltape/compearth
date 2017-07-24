@@ -4,12 +4,16 @@
 #include "compearth.h"
 
 /*!
- * @brief Commputes lune longitude from point v
+ * @brief Commputes lune longitude from point v.
  *
- * @param[in] n       number of points in array
- * @param[in] v       v in rectilinear space s.t. \f$ v \in [-1/3, 1/3] \f$ [n]
+ * @param[in] n       Number of points in array.
+ * @param[in] v       v in rectilinear space s.t.
+ *                    \f$ v \in [-1/3, 1/3] \f$.
+ *                    This is an array of dimension [n].
  *
- * @param[out] gamma  lune longitude \f$ \gamma \in [-\pi/6, \pi/6 \f$  [n]
+ * @param[out] gamma  Lune longitude
+ *                    \f$ \gamma \in [-\pi/6, \pi/6 \f$.
+ *                    This is an array of dimension [n].
  *
  * @date 2016 - Ben Baker converted Carl Tape's v2gamma.m to C
  *
