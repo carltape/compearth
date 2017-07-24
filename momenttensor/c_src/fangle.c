@@ -34,6 +34,6 @@ double compearth_matlab_fangle(const int n,
     magVb = cblas_dnrm2(n, vb, 1);
     xden = magVa*magVb;
     angle = NAN;
-    if (xden > 0.0){xden = acos(xnum/xden)*deg;}
+    if (xden > 0.0){angle = acos(xnum/xden)*deg;}
     return angle;
 }
