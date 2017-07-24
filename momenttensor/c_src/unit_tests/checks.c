@@ -7,10 +7,15 @@
 int check_Udetcheck(void);
 int check_lam2lune(void);
 int check_CMTdecom(void);
+int check_fangleSigned(void);
 
 int main(void)
 {
     int ierr;
+    ierr = check_fangleSigned();
+    if (ierr != 0){printf("failed fangleSigned\n"); return EXIT_FAILURE;}
+    printf("fangleSigned was successful\n");
+
     ierr = check_Udetcheck();
     if (ierr != 0){printf("failed Udetcheck\n"); return EXIT_FAILURE;}
     printf("udetcheck was successful\n");
@@ -27,6 +32,29 @@ int main(void)
     return EXIT_SUCCESS;
 }
 
+int check_fangleSigned(void)
+{
+    const char *fcnm = "check_fangleSigned\0"; 
+    const double va[3] = {1, 0, 0};
+    const double vb[3] = {0, 0, 3};
+    const double vnor[3] = {0, -2, 0};
+    int ierr;
+    double stheta;
+    stheta = compearth_eulerUtil_fangleSigned(3, va,vb,vnor, &ierr);
+    if (fabs(stheta - 90.0) > 1.e-14 || ierr != 0)
+    {
+        printf("%s: failed test 1 %f %d\n", fcnm, stheta, ierr);
+        return EXIT_FAILURE;
+    }
+    const double vnor2[3] =  {0, 2, 0};
+    stheta = compearth_eulerUtil_fangleSigned(3, va,vb,vnor2, &ierr);
+    if (fabs(stheta + 90.0) > 1.e-14 || ierr != 0)
+    {
+        printf("%s: failed test 2 %f %d\n", fcnm, stheta, ierr);
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
 int check_Udetcheck(void)
 {
     const char *fcnm = "check_Udetcheck\0";

@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
+#define COMPEARTH_PRIVATE_WRAP360 1
 #include "compearth.h"
 
-static double wrap360(const double lon);
 /*!
  * @brief Converts a fault normal vector to strike/dip
  *
@@ -89,25 +89,3 @@ void compearth_normal2strdip(const int n,
     return;
 }
 
-/*!
- * @brief Wraps angle in degrees to [0,360]
- *
- * @param[in] lon   angle to wrap (degrees)
- *
- * @result wrapped angle in range [0,360]
- *
- * @author Carl Tape translated to C by Ben Baker
- *
- * @copyright MIT
- *
- */
-static double wrap360(const double lon)
-{
-    double lonw;
-    bool lpos;
-    lpos = false; 
-    if (lon > 0.0){lpos = true;}
-    lonw = fmod(lon, 360.0); 
-    if (lonw == 0.0 && lpos){lonw = 360.0;}
-    return lonw;
-}

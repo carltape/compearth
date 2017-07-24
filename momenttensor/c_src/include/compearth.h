@@ -224,35 +224,59 @@ void compearth_xyz2tp(const int n,
                       double *__restrict__ rho);
 
 #ifdef COMPEARTH_PRIVATE_DET3X3
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline double det3x3ColumnMajor(const double *__restrict__ A);
 #endif
 #ifdef COMPEARTH_PRIVATE_GEMV3
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline void gemv3_colMajorNoTrans(const double *__restrict__ A,
                                   const double *__restrict__ x,
                                   double *__restrict__ y);
 #endif
 #ifdef COMPEARTH_PRIVATE_GEM3
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
                                          const double *__restrict__ B,
                                          double *__restrict__ C);
 #endif
 #ifdef COMPEARTH_PRIVATE_GEMT3
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline void gemm3_colMajorNoTransTrans(const double *__restrict__ A,
                                        const double *__restrict__ B,
                                        double *__restrict__ C);
 #endif
 #ifdef COMPEARTH_PRIVATE_CROSS3
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline void cross3(const double *__restrict__ a, 
                    const double *__restrict__ b,
                    double *__restrict__ c);
 #endif
 #ifdef COMPEARTH_PRIVATE_DOT3
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline double dot3(const double *__restrict__ a, const double *__restrict__ b);
 #endif
 #ifdef COMPEARTH_PRIVATE_NORM3
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline double norm3(const double *__restrict__ a);
 #endif
 #ifdef COMPEARTH_PRIVATE_WRAP360
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline double wrap360(const double lon);
 #endif
 
