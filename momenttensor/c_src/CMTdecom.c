@@ -64,7 +64,9 @@ int compearth_CMTdecom(const int nmt, const double *__restrict__ M,
     // Decompose the moment tensors
     for (i=0; i<nmt; i++)
     {
+        // Create the symmetric moment tensor matrix from the 6x1 vector
         compearth_Mvec2Mmat(1, M, 1, Mx);
+        // Compute eigenvalues in ascending order
         ierr = LAPACKE_dsyev_work(LAPACK_COL_MAJOR, 'V', 'L', 3, Mx, 3,
                                   Lams, work, LWORK);
         if (ierr != 0)
@@ -72,6 +74,7 @@ int compearth_CMTdecom(const int nmt, const double *__restrict__ M,
             printf("%s: Error computing eigenvalues\n", fcnm);
             return -1;
         }
+        // Descending
         if (isort == 1)
         {
             argsort3_upDown(Lams, false, perm); 
@@ -95,7 +98,7 @@ int compearth_CMTdecom(const int nmt, const double *__restrict__ M,
             {
                 argsort3_upDown(LamsAbs, true, perm);
             }
-            lamsCopy = LamsAbs;
+            lamsCopy = Lams;
         }
         // And permute and save
         for (r=0; r<3; r++)
@@ -107,7 +110,7 @@ int compearth_CMTdecom(const int nmt, const double *__restrict__ M,
         {
             for (r=0; r<3; r++)
             {
-                Ut[3*c+r] = Mx[3*c+perm[r]];
+                Ut[3*c+r] = Mx[3*perm[c]+r];
             }
         }
         // Ensure the determinant is > 0
@@ -128,14 +131,14 @@ static int argsort3_upDown(const double *__restrict__ x,
     int ipermt[3], ierr;
     if (lascend)
     {
+        ierr = argsort3(x, iperm);
+    }
+    else
+    {
         ierr = argsort3(x, ipermt);
         iperm[0] = ipermt[2];
         iperm[1] = ipermt[1];
         iperm[2] = ipermt[0];
-    }
-    else
-    {
-        ierr = argsort3(x, iperm); 
     }
     return ierr;
 }

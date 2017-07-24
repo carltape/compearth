@@ -58,6 +58,15 @@ int compearth_lam2lune(const int nmt, const double *__restrict__ lam,
     const double sqrt3 = sqrt(3.0);
     const double deg = 180.0/M_PI;
     const double third = 1.0/3.0;
+    // Error checks
+    if (nmt < 1 || lam == NULL || gamma == NULL || delta == NULL)
+    {
+        if (nmt < 1){printf("%s: No moment tensors\n", fcnm);}
+        if (lam == NULL){printf("%s: lam is NULL\n", fcnm);}
+        if (gamma == NULL){printf("%s: gamma is NULL\n", fcnm);}
+        if (delta == NULL){printf("%s: delta is NULL\n", fcnm);}
+        return -1;
+    }
     // Set the workspace
     if (nmt > MAXMT) 
     {
