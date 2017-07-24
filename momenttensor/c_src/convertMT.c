@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "compearth.h"
+#ifdef COMPEARTH_USE_MKL
+#include <mkl_cblas.h>
+#else
+#include <cblas.h>
+#endif
 
 /*!
  * @brief Converts a moment tensor, M, from input system defined by i1in
@@ -19,12 +24,12 @@
  *                       = ENU (4) -> east, north, up \n
  *                       = SEU (5) -> south, east, up \n
  * @param[in] M        Input moment tensor in system i1in.  This is an
- *                     an array of dimension [6].
+ *                     an array of dimension [6*i+6].
  *                     The C indices {0,1,2,3,4,5} correspond to matrix
  *                     indices: {11, 22, 33, 12, 13, 23}.
  *
  * @param[out] Mout    Corresponding moment tensor now in system i2in.
- *                     This is an array of dimension [6].
+ *                     This is an array of dimension [6*i+6].
  *                     the C indices {0,1,2,3,4,5} correspond to matrix
  *                     indices: {11, 22, 33, 12, 13, 23}
  * 
@@ -35,19 +40,23 @@
  * @copyright MIT
  *
  */
-int compearth_convertMT(const enum compearthCoordSystem_enum i1in,
+int compearth_convertMT(const int nmt,
+                        const enum compearthCoordSystem_enum i1in,
                         const enum compearthCoordSystem_enum i2in,
                         const double *__restrict__ M,
                         double *__restrict__ Mout)
 {
     const char *fcnm = "compearth_convertMT\0";
-    int i1, i2;
-    Mout[0] = 0.0;
-    Mout[1] = 0.0;
-    Mout[2] = 0.0;
-    Mout[3] = 0.0;
-    Mout[4] = 0.0;
-    Mout[5] = 0.0;
+    int i, i1, i2;
+    // Check the inputs to avoid seg faults
+    if (nmt < 1 || M == NULL || Mout == NULL)
+    {
+        if (nmt < 1){printf("%s: No moment tensors\n", fcnm);}
+        if (M == NULL){printf("%s: Error M is NULL\n", fcnm);}
+        if (Mout == NULL){printf("%s: Error Mout is NULL\n", fcnm);}
+        return -1;
+    }
+    for (i=0; i<6*nmt; i++){Mout[i] = 0.0;}
     // Quick checks
     i1 = (int) i1in;
     i2 = (int) i2in;
@@ -64,12 +73,7 @@ int compearth_convertMT(const enum compearthCoordSystem_enum i1in,
     // Base case
     if (i1 == i2)
     {
-        Mout[0] = M[0];
-        Mout[1] = M[1];
-        Mout[2] = M[2];
-        Mout[3] = M[3];
-        Mout[4] = M[4];
-        Mout[5] = M[5];
+        cblas_dcopy(6*nmt, M, 1, Mout, 1);
         return 0;
     }
     // Convert
@@ -79,42 +83,54 @@ int compearth_convertMT(const enum compearthCoordSystem_enum i1in,
         // (AR, 1980, p. 118)
         if (i2 == 2)
         {
-            Mout[0] = M[1]; //  tt -> xx
-            Mout[1] = M[2]; //  pp -> yy
-            Mout[2] = M[0]; //  rr -> zz
-            Mout[3] =-M[5]; // -tp -> xy
-            Mout[4] = M[3]; //  rt -> xz
-            Mout[5] =-M[4]; // -rp -> yz
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+1]; //  tt -> xx
+                Mout[6*i+1] = M[6*i+2]; //  pp -> yy
+                Mout[6*i+2] = M[6*i+0]; //  rr -> zz
+                Mout[6*i+3] =-M[6*i+5]; // -tp -> xy
+                Mout[6*i+4] = M[6*i+3]; //  rt -> xz
+                Mout[6*i+5] =-M[6*i+4]; // -rp -> yz
+            }
        }
        // up-south-east (GCMT) to north-west-up
        else if (i2 == 3)
        {
-            Mout[0] = M[1];
-            Mout[1] = M[2];
-            Mout[2] = M[0];
-            Mout[3] = M[5];
-            Mout[4] =-M[3];
-            Mout[5] =-M[4];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+1];
+                Mout[6*i+1] = M[6*i+2];
+                Mout[6*i+2] = M[6*i+0];
+                Mout[6*i+3] = M[6*i+5];
+                Mout[6*i+4] =-M[6*i+3];
+                Mout[6*i+5] =-M[6*i+4];
+            }
        }
        // up-south-east (GCMT) to east-north-up
        else if (i2 == 4)
        {
-            Mout[0] = M[2];
-            Mout[1] = M[1];
-            Mout[2] = M[0];
-            Mout[3] =-M[5];
-            Mout[4] = M[4];
-            Mout[5] =-M[3];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+2];
+                Mout[6*i+1] = M[6*i+1];
+                Mout[6*i+2] = M[6*i+0];
+                Mout[6*i+3] =-M[6*i+5];
+                Mout[6*i+4] = M[6*i+4];
+                Mout[6*i+5] =-M[6*i+3];
+            }
        }
        // up-south-east (GCMT) to south-east-up
        else if (i2 == 5)
        {
-            Mout[0] = M[1];
-            Mout[1] = M[2];
-            Mout[2] = M[0];
-            Mout[3] = M[5];
-            Mout[4] = M[3];
-            Mout[5] = M[4];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+1];
+                Mout[6*i+1] = M[6*i+2];
+                Mout[6*i+2] = M[6*i+0];
+                Mout[6*i+3] = M[6*i+5];
+                Mout[6*i+4] = M[6*i+3];
+                Mout[6*i+5] = M[6*i+4];
+            }
         }
     }
     else if (i1 == 2)
@@ -123,42 +139,54 @@ int compearth_convertMT(const enum compearthCoordSystem_enum i1in,
         // (AR, 1980, p. 118)
         if (i2 == 1)
         {
-            Mout[0] = M[2]; //  zz -> rr
-            Mout[1] = M[0]; //  xx -> tt
-            Mout[2] = M[1]; //  yy -> pp 
-            Mout[3] = M[4]; //  xz -> rt 
-            Mout[4] =-M[5]; // -yz -> rp
-            Mout[5] =-M[3]; // -xy -> tp
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+2]; //  zz -> rr
+                Mout[6*i+1] = M[6*i+0]; //  xx -> tt
+                Mout[6*i+2] = M[6*i+1]; //  yy -> pp 
+                Mout[6*i+3] = M[6*i+4]; //  xz -> rt 
+                Mout[6*i+4] =-M[6*i+5]; // -yz -> rp
+                Mout[6*i+5] =-M[6*i+3]; // -xy -> tp
+            }
         }
         // north-east-down (AkiRichards) to north-west-up
         else if (i2 == 3)
         {
-            Mout[0] = M[0];
-            Mout[1] = M[1];
-            Mout[2] = M[2];
-            Mout[3] =-M[3];
-            Mout[4] =-M[4];
-            Mout[5] = M[5];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+0];
+                Mout[6*i+1] = M[6*i+1];
+                Mout[6*i+2] = M[6*i+2];
+                Mout[6*i+3] =-M[6*i+3];
+                Mout[6*i+4] =-M[6*i+4];
+                Mout[6*i+5] = M[6*i+5];
+            }
         }
         // north-east-down (AkiRichards) to east-north-up
         else if (i2 == 4)
         {
-            Mout[0] = M[1];
-            Mout[1] = M[0];
-            Mout[2] = M[2];
-            Mout[3] = M[3];
-            Mout[4] =-M[5];
-            Mout[5] =-M[4];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+1];
+                Mout[6*i+1] = M[6*i+0];
+                Mout[6*i+2] = M[6*i+2];
+                Mout[6*i+3] = M[6*i+3];
+                Mout[6*i+4] =-M[6*i+5];
+                Mout[6*i+5] =-M[6*i+4];
+            }
         }
         // north-east-down (AkiRichards) to south-east-up
         else if (i2 == 5)
         {
-            Mout[0] = M[0];
-            Mout[1] = M[1];
-            Mout[2] = M[2];
-            Mout[3] =-M[3];
-            Mout[4] = M[4];
-            Mout[5] =-M[5];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+0];
+                Mout[6*i+1] = M[6*i+1];
+                Mout[6*i+2] = M[6*i+2];
+                Mout[6*i+3] =-M[6*i+3];
+                Mout[6*i+4] = M[6*i+4];
+                Mout[6*i+5] =-M[6*i+5];
+            }
         }
     }
     else if (i1 == 3)
@@ -166,42 +194,54 @@ int compearth_convertMT(const enum compearthCoordSystem_enum i1in,
         // north-west-up to up-south-east (GCMT)
         if (i2 == 1)
         {
-            Mout[0] = M[2];
-            Mout[1] = M[0];
-            Mout[2] = M[1];
-            Mout[3] =-M[4];
-            Mout[4] =-M[5];
-            Mout[5] = M[3];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+2];
+                Mout[6*i+1] = M[6*i+0];
+                Mout[6*i+2] = M[6*i+1];
+                Mout[6*i+3] =-M[6*i+4];
+                Mout[6*i+4] =-M[6*i+5];
+                Mout[6*i+5] = M[6*i+3];
+            }
         }
         // north-west-up to north-east-down (AkiRichards)
         else if (i2 == 2)
         {
-            Mout[0] = M[0];
-            Mout[1] = M[1];
-            Mout[2] = M[2];
-            Mout[3] =-M[3];
-            Mout[4] =-M[4];
-            Mout[5] = M[5];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+0];
+                Mout[6*i+1] = M[6*i+1];
+                Mout[6*i+2] = M[6*i+2];
+                Mout[6*i+3] =-M[6*i+3];
+                Mout[6*i+4] =-M[6*i+4];
+                Mout[6*i+5] = M[6*i+5];
+            }
         }
         // north-west-up to east-north-up
         else if (i2 == 4)
         {
-            Mout[0] = M[1];
-            Mout[1] = M[0];
-            Mout[2] = M[2];
-            Mout[3] =-M[3];
-            Mout[4] =-M[5];
-            Mout[5] = M[4];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+1];
+                Mout[6*i+1] = M[6*i+0];
+                Mout[6*i+2] = M[6*i+2];
+                Mout[6*i+3] =-M[6*i+3];
+                Mout[6*i+4] =-M[6*i+5];
+                Mout[6*i+5] = M[6*i+4];
+            }
         }
         // north-west-up to south-east-up
         else if (i2 == 5)
         {
-            Mout[0] = M[0];
-            Mout[1] = M[1];
-            Mout[2] = M[2];
-            Mout[3] = M[3];
-            Mout[4] =-M[4];
-            Mout[5] =-M[5];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+0];
+                Mout[6*i+1] = M[6*i+1];
+                Mout[6*i+2] = M[6*i+2];
+                Mout[6*i+3] = M[6*i+3];
+                Mout[6*i+4] =-M[6*i+4];
+                Mout[6*i+5] =-M[6*i+5];
+            }
         }
     }
     else if (i1 == 4)
@@ -209,42 +249,54 @@ int compearth_convertMT(const enum compearthCoordSystem_enum i1in,
         // east-north-up to up-south-east (GCMT)
         if (i2 == 1)
         {
-            Mout[0] = M[2];
-            Mout[1] = M[1];
-            Mout[2] = M[0];
-            Mout[3] =-M[5];
-            Mout[4] = M[4];
-            Mout[5] =-M[3];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+2];
+                Mout[6*i+1] = M[6*i+1];
+                Mout[6*i+2] = M[6*i+0];
+                Mout[6*i+3] =-M[6*i+5];
+                Mout[6*i+4] = M[6*i+4];
+                Mout[6*i+5] =-M[6*i+3];
+            }
         }
         // east-north-up to north-east-down (AkiRichards)
         else if (i2 == 2)
         {
-            Mout[0] = M[1];
-            Mout[1] = M[0];
-            Mout[2] = M[2];
-            Mout[3] = M[3];
-            Mout[4] =-M[5];
-            Mout[5] =-M[4];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+1];
+                Mout[6*i+1] = M[6*i+0];
+                Mout[6*i+2] = M[6*i+2];
+                Mout[6*i+3] = M[6*i+3];
+                Mout[6*i+4] =-M[6*i+5];
+                Mout[6*i+5] =-M[6*i+4];
+            }
         }
         // east-north-up to north-west-up
         else if (i2 == 3)
         {
-            Mout[0] = M[1];
-            Mout[1] = M[0];
-            Mout[2] = M[2];
-            Mout[3] =-M[3];
-            Mout[4] = M[5];
-            Mout[5] =-M[4];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+1];
+                Mout[6*i+1] = M[6*i+0];
+                Mout[6*i+2] = M[6*i+2];
+                Mout[6*i+3] =-M[6*i+3];
+                Mout[6*i+4] = M[6*i+5];
+                Mout[6*i+5] =-M[6*i+4];
+            }
         }
         // east-north-up to south-east-up
         else if (i2 == 5)
         {
-            Mout[0] = M[1];
-            Mout[1] = M[0];
-            Mout[2] = M[2];
-            Mout[3] =-M[3];
-            Mout[4] =-M[5];
-            Mout[5] = M[4];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+1];
+                Mout[6*i+1] = M[6*i+0];
+                Mout[6*i+2] = M[6*i+2];
+                Mout[6*i+3] =-M[6*i+3];
+                Mout[6*i+4] =-M[6*i+5];
+                Mout[6*i+5] = M[6*i+4];
+            }
         }
     }
     else if (i1 == 5)
@@ -252,42 +304,54 @@ int compearth_convertMT(const enum compearthCoordSystem_enum i1in,
         // south-east-up to up-south-east (GCMT)
         if (i2 == 1)
         {
-            Mout[0] = M[2];
-            Mout[1] = M[0];
-            Mout[2] = M[1];
-            Mout[3] = M[4];
-            Mout[4] = M[5];
-            Mout[5] = M[3];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+2];
+                Mout[6*i+1] = M[6*i+0];
+                Mout[6*i+2] = M[6*i+1];
+                Mout[6*i+3] = M[6*i+4];
+                Mout[6*i+4] = M[6*i+5];
+                Mout[6*i+5] = M[6*i+3];
+            }
         }
         // south-east-up to north-east-down (AkiRichards)
         else if (i2 == 2)
         {
-            Mout[0] = M[0];
-            Mout[1] = M[1];
-            Mout[2] = M[2];
-            Mout[3] =-M[3];
-            Mout[4] = M[4];
-            Mout[5] =-M[5];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+0];
+                Mout[6*i+1] = M[6*i+1];
+                Mout[6*i+2] = M[6*i+2];
+                Mout[6*i+3] =-M[6*i+3];
+                Mout[6*i+4] = M[6*i+4];
+                Mout[6*i+5] =-M[6*i+5];
+            }
         }
         // south-east-up to north-west-up
         else if (i2 == 3)
         {
-            Mout[0] = M[0];
-            Mout[1] = M[1];
-            Mout[2] = M[2];
-            Mout[3] = M[3];
-            Mout[4] =-M[4];
-            Mout[5] =-M[5];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+0];
+                Mout[6*i+1] = M[6*i+1];
+                Mout[6*i+2] = M[6*i+2];
+                Mout[6*i+3] = M[6*i+3];
+                Mout[6*i+4] =-M[6*i+4];
+                Mout[6*i+5] =-M[6*i+5];
+            }
         }
         // south-east-up to east-north-up
         else if (i2 == 4)
         {
-            Mout[0] = M[1];
-            Mout[1] = M[0];
-            Mout[2] = M[2];
-            Mout[3] =-M[3];
-            Mout[4] = M[5];
-            Mout[5] =-M[4];
+            for (i=0; i<nmt; i++)
+            {
+                Mout[6*i+0] = M[6*i+1];
+                Mout[6*i+1] = M[6*i+0];
+                Mout[6*i+2] = M[6*i+2];
+                Mout[6*i+3] =-M[6*i+3];
+                Mout[6*i+4] = M[6*i+5];
+                Mout[6*i+5] =-M[6*i+4];
+            }
         }
     }
     return 0;
