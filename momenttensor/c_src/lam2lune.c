@@ -118,7 +118,7 @@ int compearth_lam2lune(const int nmt, const double *__restrict__ lam,
         // Extra output; compute seismic moment
         if (lwantM0){M0[i] = lammag*M_SQRT1_2;} 
         // Compute thetadc -- the angle between the DC and the lune point
-        if (lwantThetaDC){thetadc[i] = acos((lam1 - lam3)/(M_SQRT2*lammag));}
+        if (lwantThetaDC){thetadc[i] = acos((lam1 - lam3)/(M_SQRT2*lammag))*deg;}
         // Isotropic component of moment tensor
         third_lamsum = third*lamsum;
         if (lwantLamIso)
