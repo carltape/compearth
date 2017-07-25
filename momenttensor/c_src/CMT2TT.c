@@ -274,11 +274,14 @@ int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
         }
         else if (nMatch == 3)
         {
-            printf("%s: Warning mt on bdry of orientation domain 3 candiates\n",
+            printf("%s: Warning mt on bdry of orientation domain 3 candidates\n",
                    fcnm);
-            printf("%s: thetas: %e %e %e\n", fcnm, thetaL[0], thetaL[1], thetaL[2]);
-            printf("%s: sigmas: %e %e %e\n", fcnm, sigmaL[0], sigmaL[1], sigmaL[2]);
-            printf("%s: kappas: %e %e %e\n", fcnm, kappaL[0], kappaL[1], kappaL[2]);
+            printf("%s: thetas: %e %e %e\n", fcnm,
+                   thetaL[0], thetaL[1], thetaL[2]);
+            printf("%s: sigmas: %e %e %e\n", fcnm,
+                   sigmaL[0], sigmaL[1], sigmaL[2]);
+            printf("%s: kappas: %e %e %e\n", fcnm,
+                   kappaL[0], kappaL[1], kappaL[2]);
             // Just take the first one
             match = itemp[0]; 
         }

@@ -30,6 +30,9 @@ int main(void)
     printf("CMTdecom was successful\n");
 
     ierr = check_CMT2TT();
+    if (ierr != 0){printf("failed CMT2TT\n"); return EXIT_FAILURE;}
+    printf("CMT2TT was successful\n");
+
     return EXIT_SUCCESS;
 }
 
@@ -95,6 +98,13 @@ int check_Udetcheck(void)
     return EXIT_SUCCESS;
 }
 //============================================================================//
+#define CHKERR(t1, t2, tol, name, str)\
+{\
+   if (fabs(t1-t2) > tol){\
+       printf("%s: %s %e %e\n", name, str, t1, t2);\
+       return EXIT_FAILURE;\
+   }\
+}
 int check_CMT2TT(void)
 {
     const char *fcnm = "check_CMT2TT\0";
@@ -105,7 +115,35 @@ int check_CMT2TT(void)
     bool ldisplay;
     double gamma, delta, M0, kappa, sigma, theta, thetadc;
     double K[3], N[3], S[3];
-    int ierr;
+    const double gamma1 = -5.519441015228609;
+    const double delta1 = 36.032871051674995;
+    const double M01 = 6.617343160211657;
+    const double kappa1 = 69.492561954605137;
+    const double theta1 = 88.144957350922951;
+    const double sigma1 = -79.788954797632840;
+    const double thetadc1 = 36.396475670817210;
+    const double KR1[3] = {-0.350328975576259, 0.936626718000127, 0};
+    const double NR1[3] = {0.936135854045508, 0.350145376429380, 0.032370945856051};
+    const double SR1[3] = {-0.032265105849630, 0.177200864349715, -0.983645676358224};
+    const double lam1[3] = {8.802000000000000, 2.584000000000003, -1.851000000000001};
+    const double UR1[9] = {-0.639133135365464,-0.372890102888132, 0.672652812709492,
+                            0.350155145207092,-0.919781533321278,-0.177181560118875,
+                            0.684762885649414, 0.122290237260530, 0.718432243365964};
+    // Test 2; problem child of horizontal fault
+    const double M2[6] = {0, 0, 0, -sqrt(3)/2., .5, 0};
+    const double gamma2 = 0.0; const double delta2 = 0.0;
+    const double M02 = 1.0; const double kappa2 = 300.0;
+    const double theta2 = 90.0; const double sigma2 = 90.0;
+    const double thetadc2 = 1.207418269725733e-06;
+    const double KR2[3] = {-0.500000000000000, -0.866025403784439, 0};
+    const double NR2[3] = {-0.866025403784439, 0.500000000000000,  0};
+    const double SR2[3] = {0, 0, 1};
+    const double lam2[3] = {1, 0, -1};
+    const double UR2[9] = {-0.612372435695794,0.353553390593274,0.707106781186547,
+                            0.500000000000000,0.866025403784439,0,
+                           -0.612372435695794,0.353553390593274,-0.707106781186547};
+    
+    int i, ierr;
     ldisplay = false;
     ierr = compearth_CMT2TT(1, M, ldisplay,
                             &gamma, &delta, &M0, &kappa, &theta, &sigma,
@@ -116,8 +154,92 @@ int check_CMT2TT(void)
         printf("%s: Error calling CMT2TT test 1\n", fcnm);
         return EXIT_FAILURE;
     }
-printf("%e %e %e %e %e %e\n", gamma, delta, M0, kappa, theta, sigma);
- 
+    CHKERR(gamma, gamma1, 1.e-10, fcnm, "error computing gamma 1"); 
+    CHKERR(delta, delta1, 1.e-10, fcnm, "error computing delta 1");
+    CHKERR(M0, M01, 1.e-10, fcnm, "error computing M0 1");
+    CHKERR(kappa, kappa1, 1.e-10, fcnm, "error computing kappa 1");
+    CHKERR(theta, theta1, 1.e-10, fcnm, "error computing theta 1");
+    CHKERR(sigma, sigma1, 1.e-10, fcnm, "error computing sigma 1");
+    CHKERR(thetadc, thetadc1, 1.e-10, fcnm, "error computing thetadc 1");
+    for (i=0; i<3; i++)
+    {
+        if (fabs(KR1[i] - K[i]) > 1.e-10)
+        {
+            printf("%s: Error computing K 1\n", fcnm);
+            return EXIT_FAILURE;
+        }
+        if (fabs(NR1[i] - N[i]) > 1.e-10)
+        {
+            printf("%s: Error computing N 1\n", fcnm);
+            return EXIT_FAILURE;
+        }
+        if (fabs(SR1[i] - S[i]) > 1.e-10)
+        {
+            printf("%s: Error computing S 1\n", fcnm);
+            return EXIT_FAILURE;
+        }
+        if (fabs(lam1[i] - lam[i]) > 1.e-10)
+        {
+            printf("%s: Error computing lam 1\n", fcnm);
+            return EXIT_FAILURE;
+        }
+    }
+    for (i=0; i<9; i++)
+    {
+        if (fabs(U[i] - UR1[i]) > 1.e-10)
+        {
+            printf("%s: Error computing U 1\n", fcnm);
+            return EXIT_FAILURE;
+        }
+    }
+
+    ierr = compearth_CMT2TT(1, M2, ldisplay,
+                            &gamma, &delta, &M0, &kappa, &theta, &sigma,
+                            K, N, S, &thetadc,
+                            lam, U);
+    if (ierr != 0)
+    {
+        printf("%s: Error calling CMT2TT horizontal fault\n", fcnm);
+        return EXIT_FAILURE;
+    }
+    CHKERR(gamma, gamma2, 1.e-10, fcnm, "error computing gamma 2"); 
+    CHKERR(delta, delta2, 1.e-10, fcnm, "error computing delta 2");
+    CHKERR(M0, M02, 1.e-10, fcnm, "error computing M0 2");
+    CHKERR(kappa, kappa2, 1.e-10, fcnm, "error computing kappa 2");
+    CHKERR(theta, theta2, 1.e-10, fcnm, "error computing theta 2");
+    CHKERR(sigma, sigma2, 1.e-10, fcnm, "error computing sigma 2");
+    CHKERR(thetadc, thetadc2, 1.e-10, fcnm, "error computing thetadc 2");
+    for (i=0; i<3; i++)
+    {   
+        if (fabs(KR2[i] - K[i]) > 1.e-10)
+        {
+            printf("%s: Error computing K 2\n", fcnm);
+            return EXIT_FAILURE;
+        }
+        if (fabs(NR2[i] - N[i]) > 1.e-10)
+        {
+            printf("%s: Error computing N 2\n", fcnm);
+            return EXIT_FAILURE;
+        }
+        if (fabs(SR2[i] - S[i]) > 1.e-10)
+        {
+            printf("%s: Error computing S 2\n", fcnm);
+            return EXIT_FAILURE;
+        }
+        if (fabs(lam2[i] - lam[i]) > 1.e-10)
+        {
+            printf("%s: Error computing lam 2\n", fcnm);
+            return EXIT_FAILURE;
+        }
+    }
+    for (i=0; i<9; i++)
+    {
+        if (fabs(U[i] - UR2[i]) > 1.e-10)
+        {
+            printf("%s: Error computing U 2\n", fcnm);
+            return EXIT_FAILURE;
+        }
+    }
     return EXIT_SUCCESS;
 }
 //============================================================================//
