@@ -126,7 +126,7 @@ double wrap360(const double lon)
     bool lpos;
     lpos = false; 
     if (lon > 0.0){lpos = true;}
-    lonw = fmod(lon, 360.0); 
+    lonw = lon - floor(lon/360.0)*360.0; //lonw = fmod(lon, 360.0); 
     if (lonw == 0.0 && lpos){lonw = 360.0;}
     return lonw;
 }
