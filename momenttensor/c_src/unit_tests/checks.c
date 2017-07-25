@@ -3,7 +3,21 @@
 #include <string.h>
 #include <math.h>
 #include "compearth.h"
+#ifdef COMPEARTH_USE_MKL
+#include <mkl_cblas.h>
+#else
+#include <cblas.h>
+#endif
 
+#define CHKERR(t1, t2, tol, name, str)\
+{\
+   if (fabs(t1-t2) > tol){\
+       printf("%s: %s %e %e\n", name, str, t1, t2);\
+       return EXIT_FAILURE;\
+   }\
+}
+
+int check_lam2nualpha(void);
 int check_Udetcheck(void);
 int check_lam2lune(void);
 int check_CMTdecom(void);
@@ -13,6 +27,11 @@ int check_CMT2TT(void);
 int main(void)
 {
     int ierr;
+
+    ierr = check_lam2nualpha();
+    if (ierr != 0){printf("failed lam2nualpha\n"); return EXIT_FAILURE;}
+    printf("lam2nualpha was successful\n");
+
     ierr = check_fangleSigned();
     if (ierr != 0){printf("failed fangleSigned\n"); return EXIT_FAILURE;}
     printf("fangleSigned was successful\n");
@@ -35,7 +54,7 @@ int main(void)
 
     return EXIT_SUCCESS;
 }
-
+//============================================================================//
 int check_fangleSigned(void)
 {
     const char *fcnm = "check_fangleSigned\0"; 
@@ -59,6 +78,7 @@ int check_fangleSigned(void)
     }
     return EXIT_SUCCESS;
 }
+//============================================================================//
 int check_Udetcheck(void)
 {
     const char *fcnm = "check_Udetcheck\0";
@@ -98,13 +118,40 @@ int check_Udetcheck(void)
     return EXIT_SUCCESS;
 }
 //============================================================================//
-#define CHKERR(t1, t2, tol, name, str)\
-{\
-   if (fabs(t1-t2) > tol){\
-       printf("%s: %s %e %e\n", name, str, t1, t2);\
-       return EXIT_FAILURE;\
-   }\
+int check_lam2nualpha(void)
+{ 
+    const char *fcnm = "check_lam2nualpha\0";
+    // example from TT2013, App A.
+    double lam[3] = { 8.802, 2.584, -1.851};
+    double lamcheck[3], nu, alpha, mag; 
+    const double nu1 = 0.371745072651417;
+    const double alpha1 = 80.365019327257144;
+    int ierr;
+    ierr = compearth_lam2nualpha(1, lam, &nu, &alpha);
+    if (ierr != 0)
+    {
+        printf("%s: error calling lam2nualpha\n", fcnm);
+        return EXIT_FAILURE;
+    }
+    CHKERR(nu, nu1, 1.e-10, fcnm, "error computing nu 1");
+    CHKERR(alpha, alpha1, 1.e-10, fcnm, "error computing alpha 1"); 
+    ierr = compearth_nualpha2lam(1, &nu, &alpha, lamcheck);
+    if (ierr != 0)
+    {
+        printf("%s: error caling nualpha2lam\n", fcnm);
+        return EXIT_FAILURE;
+    } 
+    mag = cblas_dnrm2(3, lam, 1);
+    lam[0] = lam[0]/mag;
+    lam[1] = lam[1]/mag;
+    lam[2] = lam[2]/mag;
+    CHKERR(lam[0], lamcheck[0], 1.e-10, fcnm, "error computing lam 1");
+    CHKERR(lam[1], lamcheck[1], 1.e-10, fcnm, "error computing lam 2");
+    CHKERR(lam[2], lamcheck[2], 1.e-10, fcnm, "error computing lam 3");
+    //lam / norm(lam)
+    return EXIT_SUCCESS;
 }
+//============================================================================//
 int check_CMT2TT(void)
 {
     const char *fcnm = "check_CMT2TT\0";
