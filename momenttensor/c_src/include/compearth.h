@@ -122,6 +122,9 @@ int compearth_eulerUtil_rotmatGen(const int n,
 /* Converts lune longitude gamma to v */
 void compearth_gamma2v(const int n, const double *__restrict__ gamma,
                        double *__restrict__ v);
+/* Converts eigenvalues to nu and alpha */
+int compearth_lam2nualpha(const int n, const double *__restrict__ lam,
+                          double *__restrict__ nu, double *__restrict__ alpha);
 /* Converts eigenvalues to phi and zeta */
 int compearth_lam2phizeta(const int n, const double *__restrict__ lam,
                           double *__restrict__ phi,
@@ -192,6 +195,11 @@ int compearth_normMT(const int n,
                      const enum normType_enum Lnorm,
                      const double p,
                      double *mnorm);
+/* Converts (nu,alpha) to unit lambda vector */
+int compearth_nualpha2lam(const int n,
+                          const double *__restrict__ nu,
+                          const double *__restrict__ alpha,
+                          double *__restrict__ lam);
 /* Converts (v,w) rect coordinates to lune coordinates */
 int compearth_rect2lune(const int nv, const double *__restrict__ v,
                         const int nw, const double *__restrict__ w,
