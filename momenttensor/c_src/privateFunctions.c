@@ -127,6 +127,7 @@ double wrap360(const double lon)
     lpos = false; 
     if (lon > 0.0){lpos = true;}
     lonw = lon - floor(lon/360.0)*360.0; //lonw = fmod(lon, 360.0); 
+    if (lon == 360.){lonw = 360.0;} // matlab convention
     if (lonw == 0.0 && lpos){lonw = 360.0;}
     return lonw;
 }
