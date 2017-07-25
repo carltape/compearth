@@ -67,7 +67,7 @@ int compearth_CMTdecom(const int nmt, const double *__restrict__ M,
         // Create the symmetric moment tensor matrix from the 6x1 vector
         compearth_Mvec2Mmat(1, M, 1, Mx);
         // Compute eigenvalues in ascending order
-        ierr = LAPACKE_dsyev_work(LAPACK_COL_MAJOR, 'V', 'L', 3, Mx, 3,
+        ierr = LAPACKE_dsyev_work(LAPACK_COL_MAJOR, 'V', 'U', 3, Mx, 3,
                                   Lams, work, LWORK);
         if (ierr != 0)
         {
