@@ -20,7 +20,7 @@ Lune.nb
   see Lune.pdf for example output
 
 -----------
-For more plotting features, run the following two notebooks (in order):
+For other notebooks, you must first open and evaluate these two notebooks, in order:
   common_funs.nb
   common_MTfuns.nb
 
@@ -40,5 +40,9 @@ FaultBlockPicture.nb
 
 BrickCode.nb
   fold-up box of strike-dip-rake -- insights for plotting misfit function for DC moment tensors
+
+BBcodeExplanation.nb
+  a technical explanation of how the beachballs are plotted
+  (not apt to be of interest to most people)
 
 -----------
