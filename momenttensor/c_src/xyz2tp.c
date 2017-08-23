@@ -41,7 +41,7 @@ void compearth_xyz2tp(const int n,
     // convert to latitude
     for (i=0; i<n; i++)
     {
-        th[i] = M_PI_2 - th[i];
+        ph[i] = M_PI_2 - ph[i];
     }
     return;
 }
