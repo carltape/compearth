@@ -28,16 +28,18 @@ int compearth_nualpha2lam(const int n,
                           const double *__restrict__ alpha,
                           double *__restrict__ lam)
 {
-    const char *fcnm = "compearth_nualpha2lam\0";
     double cos_1p2n, cosa, lam1, lam2, lam3, mag;
     int i;
     const double rad = M_PI/180.0;
     if (n < 1 || lam == NULL || alpha == NULL || nu == NULL)
     {   
-        if (n < 1){printf("%s: Error no moment tensors\n", fcnm);}
-        if (lam == NULL){printf("%s: Error lam is NULL\n", fcnm);}
-        if (alpha == NULL){printf("%s: Error alpha is NULL\n", fcnm);}
-        if (nu == NULL){printf("%s: Error nu is NULL\n", fcnm);} 
+        if (n < 1){fprintf(stderr, "%s: Error no moment tensors\n", __func__);}
+        if (lam == NULL){fprintf(stderr, "%s: Error lam is NULL\n", __func__);}
+        if (alpha == NULL)
+        {
+            fprintf(stderr, "%s: Error alpha is NULL\n", __func__);
+        }
+        if (nu == NULL){fprintf(stderr, "%s: Error nu is NULL\n", __func__);} 
         return -1;
     }
     for (i=0; i<n; i++)

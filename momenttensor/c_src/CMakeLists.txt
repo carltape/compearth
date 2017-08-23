@@ -37,7 +37,7 @@ IF (COMPEARTH_USE_ISCL)
    INCLUDE_DIRECTORIES(${ISCL_INCLUDE_DIR})
 ENDIF (COMPEARTH_USE_ISCL)
 
-SET (SRCS angleMT.c beta2u.c cart2sph.c CMTdecom.c
+SET (SRCS angleMT.c beta2u.c cart2sph.c CMTdecom.c CMTdecomIso.c CMT2faultpar.c
           CMT2m0.c CMT2mw.c CMT2TT.c convertMT.c
           fangle.c eulerUtil_fangleSigned.c eulerUtil_rotmat.c
           eulerUtil_rotmatGen.c gamma2v.c h2theta.c lam2lune.c

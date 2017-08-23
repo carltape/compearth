@@ -26,7 +26,6 @@
 int compearth_eulerUtil_rotmat(const int n, const double *__restrict__ xdeg,
                                const int ixyz, double *__restrict__ R)
 {
-    const char *fcnm = "compearth_eulerUtil_rotmat\0";
     double cosx, sinx;
     const double pi180 = M_PI/180.0;
     int i;
@@ -83,7 +82,8 @@ int compearth_eulerUtil_rotmat(const int n, const double *__restrict__ xdeg,
     }
     else
     {
-        printf("%s: Invalid rotation %d; only 1, 2, or 3\n", fcnm, ixyz);
+        fprintf(stderr, "%s: Invalid rotation %d; only 1, 2, or 3\n",
+                 __func__, ixyz);
         return -1;
     }    
     return 0;

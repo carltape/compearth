@@ -28,19 +28,19 @@ int compearth_normMT(const int n,
                      const double p,
                      double *mnorm)
 {
-    const char *fcnm = "compearth_normMT\0";
     double Mn[9];
-    int i, ierr;
+    int i, ierr, ierr1;
     ierr = 0;
     for (i=0; i<n; i++)
     {
         // Transform to 3 x 3 matrix
         compearth_Mvec2Mmat(1, &M[6*i], 1, Mn);
         // Compute norm
-        ierr = compearth_normMat(1, Mn, Lnorm, p, &mnorm[i]);
-        if (ierr != 0)
+        ierr1 = compearth_normMat(1, Mn, Lnorm, p, &mnorm[i]);
+        if (ierr1 != 0)
         {
-            printf("%s: Error computing matrix norm!\n", fcnm);
+            ierr = ierr + 1;
+            fprintf(stderr, "%s: Error computing matrix norm!\n", __func__);
         }
     }
     return ierr;

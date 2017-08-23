@@ -29,7 +29,7 @@ int compearth_transform_mat(const int nmt,
                             double *__restrict__ Mout)
 {
     double TM[9];
-    int i, imt, j;
+    int imt; //i, j
     // Compute T*Min*T'
     for (imt=0; imt<nmt; imt++)
     {

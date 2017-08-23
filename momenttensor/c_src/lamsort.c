@@ -26,20 +26,22 @@ static void sort3descend(const double *__restrict__ lam3,
 int compearth_lamsort(const int n, const double *__restrict__ lam,
                       double *__restrict__ lamSort)
 {
-    const char *fcnm = "compearth_lamsort\0";
     int i;
     if (n < 1 || lam == NULL || lamSort == NULL)
     {
-        if (n < 1){printf("%s: No eigentriples\n", fcnm);}
-        if (lam == NULL){printf("%s: lam is NULL\n", fcnm);}
-        if (lamSort == NULL){printf("%s: lamSort is NULL\n", fcnm);}
+        if (n < 1){fprintf(stderr, "%s: No eigentriples\n", __func__);}
+        if (lam == NULL){fprintf(stderr, "%s: lam is NULL\n", __func__);}
+        if (lamSort == NULL)
+        {
+            fprintf(stderr, "%s: lamSort is NULL\n", __func__);
+        }
         return -1;
     }
 /*
     if (n == 3)
     {
-        printf("%s: lam is 3x3 make sure each column is a lambda vector\n",
-               fcnm);
+        fprintf(stderr, "%s: lam is 3x3 make sure each column is a lambda vector\n",
+               __func__);
     }
 */
     for (i=0; i<n; i++)

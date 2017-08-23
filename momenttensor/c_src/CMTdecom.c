@@ -44,21 +44,20 @@ int compearth_CMTdecom(const int nmt, const double *__restrict__ M,
                        double *__restrict__ lam,
                        double *__restrict__ U)
 {
-    const char *fcnm = "compearth_CMTdecom\0";
     double Lams[3], LamsAbs[3], Mx[9], Ut[9], work[LWORK], *lamsCopy;
     int perm[3], c, i, ierr, info, r;
     // Error checks
     if (nmt < 1 || M == NULL || lam == NULL || U == NULL)
     {
-        if (nmt < 1){printf("%s: Error no mts\n", fcnm);}
-        if (M == NULL){printf("%s: Error M is NULL\n", fcnm);}
-        if (lam == NULL){printf("%s: Error lam is NULL\n", fcnm);}
-        if (U == NULL){printf("%s: Error U is NULL\n", fcnm);}
+        if (nmt < 1){fprintf(stderr, "%s: Error no mts\n", __func__);}
+        if (M == NULL){fprintf(stderr, "%s: Error M is NULL\n", __func__);}
+        if (lam == NULL){fprintf(stderr, "%s: Error lam is NULL\n", __func__);}
+        if (U == NULL){fprintf(stderr, "%s: Error U is NULL\n", __func__);}
         return -1;
     }
     if (isort < 1 || isort > 4)
     {
-        printf("%s: Error isort=%d is invalid\n", fcnm, isort);
+        fprintf(stderr, "%s: Error isort=%d is invalid\n", __func__, isort);
         return -1;
     }
     // Decompose the moment tensors
@@ -67,11 +66,11 @@ int compearth_CMTdecom(const int nmt, const double *__restrict__ M,
         // Create the symmetric moment tensor matrix from the 6x1 vector
         compearth_Mvec2Mmat(1, M, 1, Mx);
         // Compute eigenvalues in ascending order
-        ierr = LAPACKE_dsyev_work(LAPACK_COL_MAJOR, 'V', 'U', 3, Mx, 3,
+        info = LAPACKE_dsyev_work(LAPACK_COL_MAJOR, 'V', 'U', 3, Mx, 3,
                                   Lams, work, LWORK);
-        if (ierr != 0)
+        if (info != 0)
         {
-            printf("%s: Error computing eigenvalues\n", fcnm);
+            fprintf(stderr, "%s: Error computing eigenvalues\n", __func__);
             return -1;
         }
         // Descending
@@ -117,7 +116,7 @@ int compearth_CMTdecom(const int nmt, const double *__restrict__ M,
         ierr = compearth_Udetcheck(1, Ut, &U[9*i]);
         if (ierr != 0)
         {
-            printf("%s: Error checking determinan\n", fcnm);
+            fprintf(stderr, "%s: Error checking determinant\n", __func__);
             return -1;
         }
     }
@@ -145,7 +144,6 @@ static int argsort3_upDown(const double *__restrict__ x,
 
 static int argsort3(const double *__restrict__ x, int *__restrict__ iperm)
 {
-    const char *fcnm = "argsort3\0";
     int i, temp;
     const int a = 0; 
     const int b = 1; 
@@ -178,7 +176,8 @@ static int argsort3(const double *__restrict__ x, int *__restrict__ iperm)
     {
         if (x[iperm[i-1]] > x[iperm[i]])
         {
-            printf("%s: Failed to sort numbers in ascending order\n", fcnm);
+            fprintf(stderr, "%s: Failed to sort numbers in ascending order\n",
+                     __func__);
             return -1;
         }
     }

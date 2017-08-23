@@ -29,7 +29,6 @@ int compearth_angleMT(const int n,
                       const double *__restrict__ M2in,
                       double *__restrict__ theta)
 {
-    const char *fcnm = "compearth_angleMT\0";
     double M1[9], M2[9], arg, M1_mag, M2_mag, xnum, xden;
     int i, ierr;
     ierr = 0;
@@ -44,7 +43,7 @@ int compearth_angleMT(const int n,
         xden = M1_mag*M2_mag;
         if (fabs(xden) < 1.e-15) //xden == 0.0)
         {
-            printf("%s: Division by zero!\n", fcnm);
+            fprintf(stderr, "%s: Division by zero!\n", __func__);
             ierr = 1;
             break;
         }
@@ -52,8 +51,8 @@ int compearth_angleMT(const int n,
         arg = xnum/xden;
         if (arg <-1.0 || arg > 1.0)
         {
-            printf("%s: Invalid argument to acos %f %f %f!\n",
-                   fcnm, arg, xnum, xden);
+            fprintf(stderr, "%s: Invalid argument to acos %f %f %f!\n",
+                    __func__, arg, xnum, xden);
             ierr = 1;
             break;
         }

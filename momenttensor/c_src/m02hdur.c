@@ -25,13 +25,12 @@
 int compearth_m02hdur(const int nm, const double *__restrict__ M0,
                       double *__restrict__ hdur)
 {
-    const char *fcnm = "compearth_m02hdur\0";
     int i, ierr;
     if (nm < 1 || M0 == NULL || hdur == NULL)
     {
-        if (nm < 1){printf("%s: No scalar moments\n", fcnm);}
-        if (M0 == NULL){printf("%s: M0 is NULL\n", fcnm);}
-        if (hdur == NULL){printf("%s: hdur is NULL\n", fcnm);}
+        if (nm < 1){fprintf(stderr, "%s: No scalar moments\n", __func__);}
+        if (M0 == NULL){fprintf(stderr, "%s: M0 is NULL\n", __func__);}
+        if (hdur == NULL){fprintf(stderr, "%s: hdur is NULL\n", __func__);}
         return -1;
     }
     ierr = 0;
@@ -42,8 +41,8 @@ int compearth_m02hdur(const int nm, const double *__restrict__ M0,
     }
     if (ierr != 0)
     {
-        printf("%s: %dscalar moments were negative - hdurs are zero\n",
-               fcnm, ierr);
+        fprintf(stderr, "%s: %d scalar moments were negative; hdurs are zero\n",
+                __func__, ierr);
     }
     return ierr;
 }

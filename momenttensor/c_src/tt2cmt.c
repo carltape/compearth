@@ -45,7 +45,6 @@ int compearth_tt2cmt(const double gamma,
                      const double sigmaIn, 
                      double M[6], double lam[3], double U[9])
 {
-    const char *fcnm = "tape2015_tt2cmt\0";
     double M9[9], R[9], Yrot[9], V[9], Ux[9], Uxd[9], M6[6],
            north[3], zenith[3], K[3], N[3], S[3], NxS[3], phi, sigma;
     const double neg45 =-45.0;
@@ -56,12 +55,14 @@ int compearth_tt2cmt(const double gamma,
     ierr = 1;
     if (gamma <-30.0 || gamma > 30.0)
     {
-        printf("%s: gamma=%f is out of range [-30,30]\n", fcnm, gamma);
+        fprintf(stderr, "%s: gamma=%f is out of range [-30,30]\n",
+                 __func__, gamma);
         goto ERROR;
     }
     if (delta <-90.0 || delta > 90.0)
     {
-        printf("%s: delta=%f is out of range [-90,90]\n", fcnm, delta);
+        fprintf(stderr, "%s: delta=%f is out of range [-90,90]\n",
+                __func__, delta);
         goto ERROR;
     }
     // warnings
@@ -70,9 +71,10 @@ int compearth_tt2cmt(const double gamma,
     //if (theta == 0.0 && fabs(sigma) < 1.e-14)
     if (fabs(theta) < 1.e-15 && fabs(sigma) < 1.e-14)
     {
-        printf("%s: Input fault is horizontal; strike angle %f is undefined\n",
-               fcnm, kappa);
-        printf("%s: Resetting slip angle to 0\n", fcnm);
+        fprintf(stdout,
+                "%s: Input fault is horizontal; strike angle %f is undefined\n",
+                __func__, kappa);
+        fprintf(stdout, "%s: Resetting slip angle to 0\n", __func__);
         sigma = 0.0;
     }
     // moment tensor source type (or pattern)
@@ -122,7 +124,7 @@ int compearth_tt2cmt(const double gamma,
             fabs(N3[k] - N[k]) > 1.e-14 ||
             fabs(S3[k] - S[k]) > 1.e-14)
         {
-            printf("%s: Failed gemv\n", fcnm);
+            fprintf(stderr, "%s: Failed gemv\n", __func__);
             ierr = ierr + 1;
         }
     }
@@ -154,8 +156,8 @@ int compearth_tt2cmt(const double gamma,
         if (fabs(Ux[k] - Uxref[k]) > 1.e-14 ||
             fabs(M9[k] - Mref[k])/M0 > 1.e-14)
         {
-            printf("%s: Failed gemm %f %f %f %f\n", fcnm,
-                   Ux[k], Uxref[k], M9[k], Mref[k]);
+            fprintf(stderr, "%s: Failed gemm %f %f %f %f\n", __func__,
+                    Ux[k], Uxref[k], M9[k], Mref[k]);
             ierr = ierr  + 1;
         }
     }
@@ -172,8 +174,9 @@ int compearth_tt2cmt(const double gamma,
     ierr = compearth_convertMT(1, SEU, USE, M6, M);
     if (ierr != 0)
     {
-        printf("%s: Error converting moment tensor coordinate systems\n",
-               fcnm);
+        fprintf(stderr,
+                "%s: Error converting moment tensor coordinate systems\n",
+                __func__);
     }
 //printf("%e\n%e\n%e\n%e\n%e\n%e\n",M[0],M[1],M[2],M[3],M[4],M[5]);
 //printf("U:\n");

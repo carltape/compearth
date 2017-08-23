@@ -31,7 +31,6 @@ int compearth_eulerUtil_rotmatGen(const int n,
                                   const double *xi,
                                   double *__restrict__ U)
 {
-    const char *fcnm = "compearth_eulerUtil_rotmatGen\0";
     double R1[9], R2[9], R3[9], R4[9], R5[9], R54[9], R543[9], R5432[9];
     double ele, nvph_deg, nvth_deg, rho, vph, vth, vph_deg, vth_deg;
     int i, ierr;
@@ -53,7 +52,8 @@ int compearth_eulerUtil_rotmatGen(const int n,
         ierr = ierr + compearth_eulerUtil_rotmat(1, &vph_deg,  3, R5);
         if (ierr != 0)
         {
-            printf("%s: Error computing rotation matrices %d\n", fcnm, i);
+            fprintf(stderr, "%s: Error computing rotation matrices %d\n",
+                    __func__, i);
         }
         gemm3_colMajorNoTransNoTrans(R5, R4, R54);
         gemm3_colMajorNoTransNoTrans(R54, R3, R543);

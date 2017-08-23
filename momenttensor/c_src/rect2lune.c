@@ -39,7 +39,6 @@ int compearth_rect2lune(const int nv, const double *__restrict__ v,
                         double *__restrict__ delta) 
                          
 {
-    const char *fcnm = "compearth_rect2lune\0";
     double *u;
     int i, ierr, nu;
     const int maxit = 20;
@@ -70,7 +69,7 @@ int compearth_rect2lune(const int nv, const double *__restrict__ v,
     ierr = compearth_u2beta(nu, maxit, useHalley, u, tol, delta);
     if (ierr != 0)
     {
-        printf("%s: Computing u2beta\n", fcnm);
+        fprintf(stderr, "%s: Computing u2beta\n", __func__);
     }
     free(u); 
     // convert to gamma to degrees

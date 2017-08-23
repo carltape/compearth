@@ -7,7 +7,6 @@ int compearth_lam2phizeta(const int n, const double *__restrict__ lam,
                           double *__restrict__ phi,
                           double *__restrict__ zeta)
 {
-    const char *fcnm = "compearth_lam2phizeta\0";
     double *lamSort, lam1, lam2, lam3, rho;
     int i, ierr;
     const double sqrt2 = sqrt(2.0);
@@ -16,7 +15,7 @@ int compearth_lam2phizeta(const int n, const double *__restrict__ lam,
     ierr = compearth_lamsort(n, lam, lamSort); 
     if (ierr != 0)
     {
-        printf("%s: Error sorting eigentriples\n", fcnm);
+        fprintf(stderr, "%s: Error sorting eigentriples\n", __func__);
         free(lamSort);
         return -1;
     }

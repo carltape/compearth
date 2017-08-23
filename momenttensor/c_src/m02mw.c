@@ -25,7 +25,6 @@ int compearth_m02mw(const int nm, const enum magType_enum imag,
                     const double *__restrict__ M0,
                     double *__restrict__ Mw)
 {
-    const char *fcnm = "compearth_m02mw\0";
     double m0dcm;
     int i;
     const double A = 2.0/(3.0*log(10.0));
@@ -49,8 +48,9 @@ int compearth_m02mw(const int nm, const enum magType_enum imag,
     }
     else
     {
-        printf("%s: Invalid magnitude type\n", fcnm);
+        fprintf(stderr, "%s: Invalid magnitude type\n", __func__);
         for (i=0; i<nm; i++){Mw[i] = 0.0;}
+        return -1;
     }
     return 0;
 } 

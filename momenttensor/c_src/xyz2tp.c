@@ -33,7 +33,6 @@ void compearth_xyz2tp(const int n,
                       double *__restrict__ th,
                       double *__restrict__ rho)
 {
-    const double pi2 = M_PI/2.0;
     int i;
     // compute the colatitude, longitude, and radius from the
     // x,y,z coordinates

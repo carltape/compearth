@@ -47,14 +47,16 @@ int compearth_convertMT(const int nmt,
                         const double *__restrict__ M,
                         double *__restrict__ Mout)
 {
-    const char *fcnm = "compearth_convertMT\0";
     int i, i1, i2;
     // Check the inputs to avoid seg faults
     if (nmt < 1 || M == NULL || Mout == NULL)
     {
-        if (nmt < 1){printf("%s: No moment tensors\n", fcnm);}
-        if (M == NULL){printf("%s: Error M is NULL\n", fcnm);}
-        if (Mout == NULL){printf("%s: Error Mout is NULL\n", fcnm);}
+        if (nmt < 1){fprintf(stderr, "%s: No moment tensors\n", __func__);}
+        if (M == NULL){fprintf(stderr, "%s: Error M is NULL\n", __func__);}
+        if (Mout == NULL)
+        {
+            fprintf(stderr, "%s: Error Mout is NULL\n", __func__);
+        }
         return -1;
     }
     for (i=0; i<6*nmt; i++){Mout[i] = 0.0;}
@@ -63,12 +65,14 @@ int compearth_convertMT(const int nmt,
     i2 = (int) i2in;
     if (i1 < 1 || i1 > 5)
     {
-        printf("%s: Error unknown input coordinate system %d\n", fcnm, i1);
+        fprintf(stderr, "%s: Error unknown input coordinate system %d\n",
+                __func__, i1);
         return -1;
     }
     if (i2 < 1 || i2 > 5)
     {
-        printf("%s: Error unkonwn output coordinate system %d\n", fcnm, i2);
+        fprintf(stderr, "%s: Error unkonwn output coordinate system %d\n",
+                __func__, i2);
         return -1;
     }
     // Base case

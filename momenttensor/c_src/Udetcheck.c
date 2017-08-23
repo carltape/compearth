@@ -32,7 +32,6 @@ int compearth_Udetcheck(const int n,
                         const double *__restrict__ Uin,
                         double *__restrict__ Uout)
 {
-    const char *fcnm = "compearth_Udetcheck\0";
     double det;
     int i, imt;
     // Copy Uin to Uout
@@ -56,7 +55,7 @@ int compearth_Udetcheck(const int n,
         det = det3x3ColumnMajor(&Uout[9*imt]);
         if (det < 0.0)
         {
-            printf("%s: Error det(u) < 0\n", fcnm);
+            fprintf(stderr, "%s: Error det(u) < 0\n", __func__);
             return -1;
         }
     }

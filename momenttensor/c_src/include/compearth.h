@@ -79,6 +79,19 @@ int compearth_CMTdecom(const int nmt, const double *__restrict__ M,
                        const int isort,
                        double *__restrict__ lam,
                        double *__restrict__ U);
+/* Decompose moment tensor into deviatori and isotropic parts */
+int compearth_CMTdecomIso(const int n, const double *__restrict__ M,
+                          double *__restrict__ Miso,
+                          double *__restrict__ Mdev,
+                          double *__restrict__ trM);
+/* Get unit normals to fault planes from moment tensor M */
+int compearth_CMT2faultpar(const int nmt,
+                          const double *__restrict__ M,
+                          double *__restrict__ nu,
+                          double *__restrict__ alpha,
+                          double *__restrict__ N1,
+                          double *__restrict__ N2,
+                          double *__restrict__ lam);
 /* Compute M0 from CMT */
 int compearth_CMT2m0(const int nm, const int im0,
                      const double *__restrict__ M,

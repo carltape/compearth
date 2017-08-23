@@ -29,7 +29,6 @@ int compearth_CMT2mw(const int nm, const int im0,
                      const double *__restrict__ M,
                      double *__restrict__ Mw)
 {
-    const char *fcnm = "compearth_CMT2mw\0";
     int ierr;
     double *M0, M064[64];
     if (nm > 64)
@@ -43,14 +42,14 @@ int compearth_CMT2mw(const int nm, const int im0,
     ierr = compearth_CMT2m0(nm, im0, M, M0);
     if (ierr != 0)
     {
-        printf("%s: Error computing m0\n", fcnm);
+        fprintf(stderr, "%s: Error computing m0\n", __func__);
         if (nm > 64){free(M0);}
         return -1;
     }
     ierr = compearth_m02mw(nm, KANAMORI_1978, M0, Mw);
     if (ierr != 0)
     {
-        printf("%s: Error computing Mw\n", fcnm);
+        fprintf(stderr, "%s: Error computing Mw\n", __func__);
         return -1;
     }
     if (nm > 64){free(M0);}

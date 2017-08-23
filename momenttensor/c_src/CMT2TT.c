@@ -99,7 +99,6 @@ int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
                      double *__restrict__ S, double *__restrict__ thetadc,
                      double *__restrict__ lam, double *__restrict__ U)
 {
-    const char *fcnm = "compearth_CMT2TT\0";
     double *lamdev, *lamiso, *lamWork, *Uwork, Vwork[9], Yrot[9], M[6],
            Sloc[12], Kloc[12], Nloc[12], kappaL[4], sigmaL[4], thetaL[4];
     double lamSpace[3*MAXMT];
@@ -113,14 +112,14 @@ int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
     if (nmt < 1 || Min == NULL || gamma == NULL || delta == NULL ||
         M0 == NULL || kappa == NULL || theta == NULL || sigma == NULL)
     {
-        if (nmt < 1){printf("%s: No moment tensors\n", fcnm);}
-        if (Min == NULL){printf("%s: Min is NULL\n", fcnm);}
-        if (gamma == NULL){printf("%s: gamma is NULL\n", fcnm);}
-        if (delta == NULL){printf("%s: delta is NULL\n", fcnm);}
-        if (M0 == NULL){printf("%s: M0 is NULL\n", fcnm);}
-        if (kappa == NULL){printf("%s: kappa is NULL\n", fcnm);}
-        if (theta == NULL){printf("%s: theta is NULL\n", fcnm);}
-        if (sigma == NULL){printf("%s: sigma is NULL\n", fcnm);}
+        if (nmt < 1){fprintf(stderr, "%s: No moment tensors\n", __func__);}
+        if (Min == NULL){fprintf(stderr, "%s: Min is NULL\n", __func__);}
+        if (gamma == NULL){fprintf(stderr, "%s: gamma is NULL\n", __func__);}
+        if (delta == NULL){fprintf(stderr, "%s: delta is NULL\n", __func__);}
+        if (M0 == NULL){fprintf(stderr, "%s: M0 is NULL\n", __func__);}
+        if (kappa == NULL){fprintf(stderr, "%s: kappa is NULL\n", __func__);}
+        if (theta == NULL){fprintf(stderr, "%s: theta is NULL\n", __func__);}
+        if (sigma == NULL){fprintf(stderr, "%s: sigma is NULL\n", __func__);}
         return -1; 
     }
     // Pair up pointers
@@ -176,7 +175,7 @@ int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
         ierr = compearth_convertMT(1, USE, SEU, &Min[6*imt], M);
         if (ierr != 0)
         {
-            printf("%s: Error switching basis\n", fcnm);
+            fprintf(stderr, "%s: Error switching basis\n", __func__);
             ierrAll = ierrAll + 1; //break;
         }
         // PART 1: moment tensor source type (or pattern)
@@ -185,13 +184,13 @@ int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
         ierr = compearth_CMTdecom(1, M, isort, &lamWork[3*imt], &Uwork[9*imt]);
         if (ierr != 0)
         {
-            printf("%s: Error decomposing CMT\n", fcnm);
+            fprintf(stderr, "%s: Error decomposing CMT\n", __func__);
             ierrAll = ierrAll + 1; //break;
         }
     }
     if (ierrAll != 0)
     {
-        printf("%s: Error during eigendecomposition\n", fcnm);
+        fprintf(stderr, "%s: Error during eigendecomposition\n", __func__);
         ierr = 1;
         goto ERROR;
     }
@@ -204,7 +203,7 @@ int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
     ierr = compearth_eulerUtil_rotmat(1, &rotAngle, 2, Yrot);
     if (ierr != 0)
     {
-        printf("%s: Error computing rotation matrix\n", fcnm);
+        fprintf(stderr, "%s: Error computing rotation matrix\n", __func__);
         return -1;
     }
     // Compute candidate fault vectors
@@ -267,33 +266,34 @@ int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
                            tol, itemp[0], itemp[1]);
             if (match < 0)
             {
-                printf("%s: Failed to pick a fault plane\n", fcnm);
+                fprintf(stderr, "%s: Failed to pick a fault plane\n", __func__);
                 ierr = 1;
                 goto ERROR;
             }
         }
         else if (nMatch == 3)
         {
-            printf("%s: Warning mt on bdry of orientation domain 3 candidates\n",
-                   fcnm);
-            printf("%s: thetas: %e %e %e\n", fcnm,
-                   thetaL[0], thetaL[1], thetaL[2]);
-            printf("%s: sigmas: %e %e %e\n", fcnm,
+            fprintf(stdout,
+                  "%s: Warning mt on bdry of orientation domain 3 candidates\n",
+                  __func__);
+            fprintf(stdout, "%s: thetas: %e %e %e\n", __func__,
+                    thetaL[0], thetaL[1], thetaL[2]);
+            fprintf(stdout, "%s: sigmas: %e %e %e\n", __func__,
                    sigmaL[0], sigmaL[1], sigmaL[2]);
-            printf("%s: kappas: %e %e %e\n", fcnm,
-                   kappaL[0], kappaL[1], kappaL[2]);
+            fprintf(stdout, "%s: kappas: %e %e %e\n", __func__,
+                    kappaL[0], kappaL[1], kappaL[2]);
             // Just take the first one
             match = itemp[0]; 
         }
         else if (nMatch == 4)
         {
-            printf("%s: Error not yet programmed\n", fcnm);
+            fprintf(stderr, "%s: Error not yet programmed\n", __func__);
             ierr = 1;
             goto ERROR;
         }
         else
         {
-            printf("%s: Error no match\n", fcnm);
+            fprintf(stderr, "%s: Error no match\n", __func__);
             ierr = 1;
             goto ERROR;
         }
@@ -336,7 +336,6 @@ static void faultVec2Ang(const double *__restrict__ S,
                          double *theta, double *sigma,
                          double *kappa, double *__restrict__ K, int *ierr)
 {
-    const char *fcnm = "faultVec2Ang\0";
     double v[3], costh, vnorm;
     int ierr1;
     const double deg = 180.0/M_PI;
@@ -353,8 +352,9 @@ static void faultVec2Ang(const double *__restrict__ S,
     vnorm = norm3(v);
     if (vnorm < DBL_EPSILON) //== 0.0)
     {
-        printf("%s: Horizontal fault -- strike vector is same as slip vector\n",
-               fcnm);
+        fprintf(stderr,
+              "%s: Horizontal fault -- strike vector is same as slip vector\n",
+                __func__);
         K[0] = S[0];
         K[1] = S[1];
         K[2] = S[2];
@@ -380,7 +380,7 @@ static void faultVec2Ang(const double *__restrict__ S,
 
 static void setZero(const int nmt, const double tol, double *__restrict__ X)
 {
-   double absX[3], dmax;
+   double dmax;
    int i, idmax;
    // Compute the largest element of abs(X)
    idmax = cblas_idamax(3*nmt, X, 1); 
@@ -408,7 +408,6 @@ static int pickP1(const double thetaA, const double sigmaA, const double kappaA,
                   const double thetaB, const double sigmaB, const double kappaB,
                   const double tol, const int p1, const int p2)
 {
-    const char *fcnm = "pickP1";
     int ipick;
     ipick =-1;
     if (fabs(thetaA - 90.0) < tol)
@@ -429,7 +428,7 @@ static int pickP1(const double thetaA, const double sigmaA, const double kappaA,
         if (kappaB < 180.0){ipick = p2;}
         return ipick;
     } 
-    printf("%s: Error no selection criterion was met\n", fcnm);
+    fprintf(stderr, "%s: Error no selection criterion was met\n", __func__);
     return ipick;
 }
 

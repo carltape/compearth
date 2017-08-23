@@ -27,7 +27,7 @@ void compearth_normal2strdip(const int n,
                              double *__restrict__ Xout)
 {
     double *x, *y, *z, *n1th, *n1ph, *rho;
-    double n1th64[64], n2ph64[64], rho64[64], x64[64], y64[64], z64[64],
+    double n1th64[64], n1ph64[64], rho64[64], x64[64], y64[64], z64[64],
            kap1, theta1;
     int i;
     const double deg = 180.0/M_PI;
@@ -38,7 +38,7 @@ void compearth_normal2strdip(const int n,
         y = y64;
         z = z64;
         n1th = n1th64;
-        n1th = n1th64;
+        n1ph = n1ph64;
         rho = rho64;
     }
     else

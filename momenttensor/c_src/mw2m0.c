@@ -25,7 +25,6 @@ int compearth_mw2m0(const int nm, const enum magType_enum imag,
                     const double *__restrict__ Mw, 
                     double *__restrict__ M0) 
 {
-    const char *fcnm = "compearth_m02mw\0";
     const double threeOverTwo = 3.0/2.0;
     const double eleven8_m_log10_5em5 =  11.8 - log10(5e-5);
     int i;
@@ -45,7 +44,7 @@ int compearth_mw2m0(const int nm, const enum magType_enum imag,
     }
     else
     {
-        printf("%s: imag must be 1 or 2\n", fcnm);
+        fprintf(stderr, "%s: imag must be 1 or 2\n", __func__);
         return -1;
     }
     // Formulas are designed for units of dyne-cm, not N-m

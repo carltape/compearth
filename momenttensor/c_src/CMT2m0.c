@@ -35,7 +35,6 @@ int compearth_CMT2m0(const int nm, const int im0,
                      const double *__restrict__ M,
                      double *__restrict__ M0)
 {
-    const char *fcnm = "compearth_CMT2m0\0";
     double Mt9[9], lams[3], work[100], M11, M22, M33, M12, M13, M23;
     const double sqrt2i = 1.0/sqrt(2.0);
     const int lwork = 100;
@@ -49,8 +48,7 @@ int compearth_CMT2m0(const int nm, const int im0,
                                       Mt9, 3, lams, work, lwork);
             if (info != 0)
             {
-                printf("%s: Error computing eigenvalues\n", fcnm);
-                ierr = 1;
+                fprintf(stderr, "%s: Error computing eigenvalues\n", __func__);
                 return -1;
             }
             // GCMT double couple formulation
@@ -82,9 +80,9 @@ int compearth_CMT2m0(const int nm, const int im0,
     }
     else
     {
-        printf("%s: Invalid magnitude type %d\n", fcnm, im0); 
+        fprintf(stderr, "%s: Invalid magnitude type %d\n", __func__, im0); 
         for (i=0; i<nm; i++){M0[i] = 0.0;}
         return -1;
     }
-    return 0; 
+    return ierr; 
 }

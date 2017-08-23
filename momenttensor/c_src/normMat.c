@@ -39,7 +39,6 @@ int compearth_normMat(const int n,
                       const double p,
                       double *__restrict__ mnorm)
 {
-    const char *fcnm = "compearth_normMat\0";
     int i, ierr;
     ierr = 0;
     for (i=0; i<n; i++)
@@ -47,7 +46,7 @@ int compearth_normMat(const int n,
         mnorm[i] = array_norm64f(9, &M[9*i], Lnorm, p, &ierr);
         if (ierr != 0)
         {
-            printf("%s: Error computing matrix norm!\n", fcnm);
+            fprintf(stderr, "%s: Error computing matrix norm!\n", __func__);
             mnorm[i] = 0.0;
             break;
         }
@@ -60,15 +59,14 @@ static double array_norm64f(const int n, const double *__restrict__ x,
                             const enum normType_enum norm,
                             const double p, int *ierr)
 {
-    const char *fcnm = "array_norm64f\0";
     double xnorm;
     int i;
     *ierr = 0;
     xnorm = 0.0;
     if (n < 1 || x == NULL)
     {
-        if (n < 1){printf("%s: Error no data\n", fcnm);}
-        if (x == NULL){printf("%s: Error x is NULL\n", fcnm);}
+        if (n < 1){fprintf(stderr, "%s: Error no data\n", __func__);}
+        if (x == NULL){fprintf(stderr, "%s: Error x is NULL\n", __func__);}
         *ierr = 1;
         return xnorm;
     }
@@ -87,7 +85,7 @@ static double array_norm64f(const int n, const double *__restrict__ x,
     {
         if (p <= 0.0)
         {
-            printf("%s: Invalid p value %f\n", fcnm, p);
+            fprintf(stderr, "%s: Invalid p value %f\n", __func__, p);
             *ierr = 1;
             return xnorm;
         }
@@ -116,7 +114,7 @@ static double array_norm64f(const int n, const double *__restrict__ x,
     // not sure - default to 2-norm
     else
     {
-        printf("%s: Defaulting to 2-norm\n", fcnm);
+        fprintf(stderr, "%s: Defaulting to 2-norm\n", __func__);
         xnorm = cblas_dnrm2(n, x, 1);
     }
     return xnorm;

@@ -47,24 +47,22 @@ int compearth_lam2lune(const int nmt, const double *__restrict__ lam,
                        double *__restrict__ lamdev,
                        double *__restrict__ lamiso)
 {
-    const char *fcnm = "compearth_lam2lune\0";
     double *lamW, bdot, lam1, lam2, lam3, lammag, lamsum, third_lamsum,
            xnum, xden;
     double lamTemp[3*MAXMT] __attribute__((aligned(64)));
     int i, ierr;
     bool lwantLamDev, lwantLamIso, lwantM0, lwantThetaDC;
     size_t nbytes;
-    const double sqrt2i = 1.0/M_SQRT2;
     const double sqrt3 = sqrt(3.0);
     const double deg = 180.0/M_PI;
     const double third = 1.0/3.0;
     // Error checks
     if (nmt < 1 || lam == NULL || gamma == NULL || delta == NULL)
     {
-        if (nmt < 1){printf("%s: No moment tensors\n", fcnm);}
-        if (lam == NULL){printf("%s: lam is NULL\n", fcnm);}
-        if (gamma == NULL){printf("%s: gamma is NULL\n", fcnm);}
-        if (delta == NULL){printf("%s: delta is NULL\n", fcnm);}
+        if (nmt < 1){fprintf(stderr, "%s: No moment tensors\n", __func__);}
+        if (lam == NULL){fprintf(stderr, "%s: lam is NULL\n", __func__);}
+        if (gamma == NULL){fprintf(stderr, "%s: gamma is NULL\n", __func__);}
+        if (delta == NULL){fprintf(stderr, "%s: delta is NULL\n", __func__);}
         return -1;
     }
     // Set the workspace
@@ -94,7 +92,7 @@ int compearth_lam2lune(const int nmt, const double *__restrict__ lam,
     ierr = compearth_lamsort(nmt, lam, lamW);
     if (ierr != 0)
     {
-        printf("%s: Error sorting eigenvalues\n", fcnm);
+        fprintf(stderr, "%s: Error sorting eigenvalues\n", __func__);
         goto ERROR;
     }
     for (i=0; i<nmt; i++)

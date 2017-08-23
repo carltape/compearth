@@ -33,7 +33,6 @@ int compearth_u2beta(const int n,
                      const double tol,
                      double *__restrict__ beta)
 {
-    const char *fcnm = "compearth_u2beta\0";
     const int nb = 16;
     const double betas[16] = {0.0000000000, 0.1682996064, 0.3365992129,
                               0.5048988193, 0.6731984258, 0.8414980322,
@@ -62,7 +61,7 @@ int compearth_u2beta(const int n,
   firstprivate(betaWork), \
   private (betaNew, c, cos2b, cos4b, den, dfdx, dfdx2,  \
            f, i, indx, k, lconv, sin2b, sin4b)  \
-  shared (beta, betas, fcnm, lowerBound, u, upperBound ) \
+  shared (beta, betas, lowerBound, u, upperBound ) \
   reduction (max:ierr) \
   default (none)
 #endif
@@ -106,7 +105,7 @@ int compearth_u2beta(const int n,
         }
         else
         {
-            printf("%s: Failed to bracket solution %d\n", fcnm, i);
+            fprintf(stderr, "%s: Failed to bracket solution %d\n", __func__, i);
             betaWork = 0.5*(upperBound + lowerBound);
         }
         // Begin Newton-Rhapson iteration
@@ -131,7 +130,7 @@ int compearth_u2beta(const int n,
                 // Avoid a breakdown in Newton Rhapson
                 if (fabs(dfdx) < 1.e-15)
                 {
-                    printf("%s: Division by zero\n", fcnm);
+                    fprintf(stderr, "%s: Division by zero\n", __func__);
                     lconv = false;
                     break;
                 }
@@ -168,7 +167,7 @@ int compearth_u2beta(const int n,
                 den = 2.0*dfdx*dfdx - f*dfdx2;
                 if (fabs(den) < 1.e-15)
                 {
-                    printf("%s: Division by zero\n", fcnm);
+                    fprintf(stderr, "%s: Division by zero\n", __func__);
                     lconv = false;
                     break;
                 }
@@ -195,8 +194,9 @@ int compearth_u2beta(const int n,
         if (!lconv)
         {
             compearth_beta2u(1, &betaWork, &f);
-            printf("%s: Failure to converge after %d iterations %d %f %f\n",
-                   fcnm, maxit, i, f, u[i]);
+            fprintf(stderr,
+                    "%s: Failure to converge after %d iterations %d %f %f\n",
+                    __func__, maxit, i, f, u[i]);
             ierr = 1;
             beta[i] = 0.0;
         }
