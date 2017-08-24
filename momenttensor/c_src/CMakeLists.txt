@@ -33,15 +33,14 @@ ENDIF (COMPEARTH_USE_MKL)
 SET (SRCS angleMT.c auxiliaryPlane.c beta2u.c cart2sph.c
           CMTdecom.c CMTdecomIso.c CMT2faultpar.c
           CMT2m0.c CMT2mw.c CMT2TT.c
-          convertMT.c dcfaultvec2faultpar.c
-          fangle.c eulerUtil_fangleSigned.c eulerUtil_rotmat.c
+          convertMT.c fangle.c eulerUtil_fangleSigned.c eulerUtil_rotmat.c
           eulerUtil_rotmatGen.c gamma2v.c h2theta.c lam2lune.c
           lam2nualpha.c lam2phizeta.c lamsort.c lune2lam.c lune2rect.c
           m02hdur.c m02mw.c mw2m0.c Mvec2Mmat.c
           normal2strdip.c normMat.c normMT.c nualpha2lam.c
           privateFunctions.c rect2lune.c
           tape2015Eqn7.c theta2h.c transform_mat.c 
-          tt2cmt.c u2beta.c U2pa.c Udetcheck.c
+          tt2cmt.c u2beta.c U2pa.c Udetcheck.c Uorth.c
           v2gamma.c xyz2latlon.c xyz2tp.c
 )
 

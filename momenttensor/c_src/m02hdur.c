@@ -6,7 +6,7 @@
  * @brief Empirical formula of Dahlen and Tromp (1999) pg. 178 for converting
  *        seismic moment to half duration.
  *
- * @param[in] nm     Number of scalar moments
+ * @param[in] nm     Number of scalar moments.
  * @param[in] M0     Scalar moment in Newton-meters.  This is an array
  *                   of dimension [nm].
  *

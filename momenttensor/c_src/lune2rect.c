@@ -3,17 +3,21 @@
 #include "compearth.h"
 
 /*!
- * @brief Converts lune coordinates (gamma, delta) to (v,w)
+ * @brief Converts lune coordinates (gamma, delta) to (v, w) coordinates.
  *
- * @param[in] ng     number of longitudes.
- * @param[in] gamma  longitude angles (degrees) 
- *                   s.t. \f$ \gamma \in [-30,30] \f$ [ng].
- * @param[in] nd     number of latitudes 
- * @param[in] delta  latitude angles (degrees) s.t. 
- *                   s.t. \f$ \delta \in [-90,90] \f$ [nd].
+ * @param[in] ng     Number of longitudes.
+ * @param[in] gamma  Longitude angles (degrees) such that
+ *                   \f$ \gamma \in [-30,30] \f$.  This is an array
+ *                   of dimension [ng].
+ * @param[in] nd     Number of latitudes.
+ * @param[in] delta  latitude angles (degrees) such that
+ *                   \f$ \delta \in [-90,90] \f$.  This is an array
+ *                   of dimension [nd].
  *
- * @param[out] v     v coordinates s.t. \f$ v \in [-1/3, 1/3] \f$ [ng].
- * @param[out] w     w coordinates s.t. \f$ v \in [-3\pi/8, 3\pi/8] \f$ [nd].
+ * @param[out] v     v coordinates such that \f$ v \in [-1/3, 1/3] \f$.
+ *                   This is an array of dimension [ng].
+ * @param[out] w     w coordinates s.t. \f$ w \in [-3\pi/8, 3\pi/8] \f$.
+ *                   This is an array of dimension [nd].
  * 
  * @date 2016 - Ben Baker converted Carl Tape's lune2rect.m to C
  *

@@ -9,9 +9,11 @@
  *        (gamma, delta, M0) to eigenvalues.
  *
  * @param[in] n        Number of moment tensors.
- * @param[in] gamma    gamma (longitude) angles (degrees) on lune [-30,30].
+ * @param[in] gamma    gamma (longitude) angles (degrees) on lune
+ *                     such that \f$ \gamma \in [-30,30] \f$.
  *                     This is an array of dimension [n].
- * @param[in] delta    delta (latitude) angles (degrees) on lune [-90,90].
+ * @param[in] delta    delta (latitude) angles (degrees) on lune 
+ *                     such that \f$ \delta \in [-90,90] \f$.
  *                     This is an array of dimension [n].
  * @param[in] M0in     Seismic moment.  This is an array of dimension [n].
  *                     If NULL M0 will be set to 1 for all gamma and delta.
