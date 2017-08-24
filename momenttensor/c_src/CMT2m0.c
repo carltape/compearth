@@ -44,6 +44,19 @@ int compearth_CMT2m0(const int nm, const int im0,
     {
         for (i=0; i<nm; i++)
         {
+            // Fill upper-triangle; column 1
+            Mt9[0] = M[6*i];
+            Mt9[1] = 0.0;
+            Mt9[2] = 0.0;
+            // column 2 
+            Mt9[3] = M[6*i+3];
+            Mt9[4] = M[6*i+1];
+            Mt9[5] = 0.0;
+            // column 3
+            Mt9[6] = M[6*i+4];
+            Mt9[7] = M[6*i+5];
+            Mt9[8] = M[6*i+2];
+            // get eigenvalues in ascending order
             info = LAPACKE_dsyev_work(LAPACK_COL_MAJOR, 'N', 'U', 3,
                                       Mt9, 3, lams, work, lwork);
             if (info != 0)

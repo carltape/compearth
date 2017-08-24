@@ -7,7 +7,7 @@
 #include "compearth.h"
 
 /*!
- * @brief Convert from basis in Up, South, East to plunge/azimuth of
+ * @brief Convert from basis in South, East, Up to plunge/azimuth of
  *        three basis vectors.
  *
  * @param[in] nnt    Number of bases. 
@@ -32,9 +32,6 @@
  *
  * @copyright MIT
  *
- * @bug I think the original Matlab documentation should read USE instead
- *      of SEU because that's what seems to work.
- * 
  */
 int compearth_U2pa(const int nmt, const double *__restrict__ U,
                    double *__restrict__ pl1,

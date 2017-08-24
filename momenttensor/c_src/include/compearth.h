@@ -365,6 +365,20 @@ inline void antipode(const double latIn, const double lonIn,
                      double *latOut, double *lonOut, const bool isDeg);
 #endif
 
+#ifdef COMPEARTH_PRIVATE_UPDOWN_ARGSORT3
+inline int argsort3_upDown(const double *__restrict__ x,
+                           const bool lascend,
+                           int *__restrict__ perm);
+#endif
+#ifdef COMPEARTH_PRIVATE_UPDOWN_ABS_ARGSORT3
+inline int argsort3_absUpDown(const double *__restrict__ x,
+                              const bool lascend,
+                              int *__restrict__ perm);
+#endif
+#ifdef COMPEARTH_PRIVATE_ARGSORT3
+inline int argsort3(const double *__restrict__ x, int *__restrict__ perm);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

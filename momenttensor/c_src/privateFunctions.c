@@ -10,6 +10,9 @@
 #define COMPEARTH_PRIVATE_WRAP360 1
 #define COMPEARTH_PRIVATE_MOD 1
 #define COMPEARTH_PRIVATE_ANTIPODE 1
+#define COMPEARTH_PRIVATE_UPDOWN_ABS_ARGSORT3 1
+#define COMPEARTH_PRIVATE_UPDOWN_ARGSORT3 1
+#define COMPEARTH_PRIVATE_ARGSORT3 1
 #include "compearth.h"
 
 
@@ -188,4 +191,127 @@ void antipode(const double lat, const double lon,
         *lonOut = M_PI - mod(-lon, 2.0*M_PI);
     }
     return;
+}
+
+/*!
+ * @brief Argsort a length 3 vector in increasing or decreasing order.
+ *
+ * @param[in] x         Length 3 array to argsort.
+ * @param[in] lascend   If true then sort in ascending order. \n
+ *                      Otherwise, sort in descending order.
+ *
+ * @param[out] perm     Permutation such that x(perm) is in ascending
+ *                      or descending order.
+ *
+ * @result 0 indicates success.
+ * 
+ * @author Ben Baker, ISTI
+ *
+ * @copyright MIT
+ *
+ */
+int argsort3_upDown(const double *__restrict__ x,
+                    const bool lascend,
+                    int *__restrict__ perm)
+{
+    int permt[3], ierr;
+    if (lascend)
+    {
+        ierr = argsort3(x, perm);
+    }
+    else
+    {
+        ierr = argsort3(x, permt);
+        perm[0] = permt[2];
+        perm[1] = permt[1];
+        perm[2] = permt[0];
+    }
+    return ierr;
+}
+//============================================================================//
+/*!
+ * @brief Argsort a length 3 vector in increasing or decreasing order 
+ *        of absolute value.
+ *
+ * @param[in] x         Length 3 array to argsort.
+ * @param[in] lascend   If true then sort in ascending order. \n
+ *                      Otherwise, sort in descending order.
+ *
+ * @param[out] perm     Permutation such that |x(perm)| is in ascending
+ *                      or descending order.
+ *
+ * @result 0 indicates success.
+ * 
+ * @author Ben Baker, ISTI
+ *
+ * @copyright MIT
+ *
+ */
+int argsort3_absUpDown(const double *__restrict__ x,
+                       const bool lascend,
+                       int *__restrict__ perm)
+{
+    double xa[3];
+    int ierr;
+    xa[0] = fabs(x[0]);
+    xa[1] = fabs(x[1]);
+    xa[2] = fabs(x[2]);
+    ierr = argsort3_upDown(xa, lascend, perm);
+    return ierr;
+}
+//============================================================================//
+/*!
+ * @brief Argsorts a length 3 array in ascending order.
+ *
+ * @param[in] x      Length 3 array to argsort.
+ *
+ * @param[out] perm  Permutation such that x(perm) is in ascending order.
+ * 
+ * @result 0 indicates success.
+ *
+ * @author Ben Baker, ISTI
+ *
+ * @copyright MIT
+ *
+ */ 
+int argsort3(const double *__restrict__ x, int *__restrict__ perm)
+{
+    int i, temp;
+    const int a = 0;
+    const int b = 1;
+    const int c = 2;
+    // Copy
+    perm[a] = a;
+    perm[b] = b;
+    perm[c] = c;
+    if (x[perm[a]] > x[perm[c]])
+    {
+        temp = perm[c];
+        perm[c] = perm[a];
+        perm[a] = temp;
+    }
+    if (x[perm[a]] > x[perm[b]])
+    {
+        temp = perm[b];
+        perm[b] = perm[a];
+        perm[a] = temp;
+    }
+    //Now the smallest element is the first one. Just check the 2-nd and 3-rd
+    if (x[perm[b]] > x[perm[c]])
+    {
+        temp = perm[c];
+        perm[c] = perm[b];
+        perm[b] = temp;
+    }
+    // Verify
+    for (i=1; i<3; i++)
+    {
+        if (x[perm[i-1]] > x[perm[i]])
+        {
+            fprintf(stderr, "%s: Failed to sort numbers in ascending order\n",
+                     __func__);
+            return -1;
+        }
+    }
+    return 0;
 }

@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#define COMPEARTH_PRIVATE_UPDOWN_ARGSORT3 1
+#define COMPEARTH_PRIVATE_UPDOWN_ABS_ARGSORT3 1
 #include "compearth.h"
 #ifdef COMPEARTH_USE_MKL
 #include <mkl_lapacke.h>
@@ -8,10 +10,12 @@
 #include <lapacke.h>
 #endif
 
+/*
 static int argsort3_upDown(const double *__restrict__ x,
                            const bool lascend,
                            int *__restrict__ iperm);
 static int argsort3(const double *__restrict__ x, int *__restrict__ iperm);
+*/
 
 #define LWORK 102 //(NB+2)*N hence NB=32; must be atleast 3*N-1 which is 8
 
@@ -38,13 +42,14 @@ static int argsort3(const double *__restrict__ x, int *__restrict__ iperm);
  * 
  * @copyright MIT
  *
+ * @bug The
  */
 int compearth_CMTdecom(const int nmt, const double *__restrict__ M,
                        const int isort,
                        double *__restrict__ lam,
                        double *__restrict__ U)
 {
-    double Lams[3], LamsAbs[3], Mx[9], Ut[9], work[LWORK], *lamsCopy;
+    double Lams[3], Mx[9], Ut[9], work[LWORK];
     int perm[3], c, i, ierr, info, r;
     // Error checks
     if (nmt < 1 || M == NULL || lam == NULL || U == NULL)
@@ -77,32 +82,24 @@ int compearth_CMTdecom(const int nmt, const double *__restrict__ M,
         if (isort == 1)
         {
             argsort3_upDown(Lams, false, perm); 
-            lamsCopy = Lams;
         }
         else if (isort == 2)
         {
             argsort3_upDown(Lams, true, perm);
-            lamsCopy = Lams; 
         }
-        else if (isort == 3 || isort == 4)
+        // Descending on absolute value
+        else if (isort == 3)
         {
-            LamsAbs[0] = fabs(Lams[0]);
-            LamsAbs[1] = fabs(Lams[1]);
-            LamsAbs[2] = fabs(Lams[2]);
-            if (isort == 3)
-            {
-                argsort3_upDown(LamsAbs, false, perm);
-            }
-            else
-            {
-                argsort3_upDown(LamsAbs, true, perm);
-            }
-            lamsCopy = Lams;
+            argsort3_absUpDown(Lams, false, perm);
+        }
+        else //if (isort == 4)
+        {
+            argsort3_absUpDown(Lams, true,  perm);
         }
         // And permute and save
         for (r=0; r<3; r++)
         {
-            lam[3*i+r] = lamsCopy[perm[r]];
+            lam[3*i+r] = Lams[perm[r]];
         }
         // Permute columns
         for (c=0; c<3; c++)
@@ -123,6 +120,7 @@ int compearth_CMTdecom(const int nmt, const double *__restrict__ M,
     return 0;
 }
 
+/*
 static int argsort3_upDown(const double *__restrict__ x,
                            const bool lascend,
                            int *__restrict__ iperm)
@@ -183,3 +181,4 @@ static int argsort3(const double *__restrict__ x, int *__restrict__ iperm)
     }
     return 0;
 }
+*/
