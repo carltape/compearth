@@ -6,14 +6,14 @@
 /*!
  * @brief Converts (x,y,z) to spherical coordiantes (r,theta,phi)
  *
- * @param[in] n      number of points in arrays
- * @param[in] x      x cartesian ordinates [n]
- * @param[in] y      y cartesian ordinates [n]
- * @param[in] z      z cartesian ordinates [n]
+ * @param[in] n      Number of points in arrays.
+ * @param[in] x      x cartesian ordinates. This is an array of dimension [n].
+ * @param[in] y      y cartesian ordinates. This is an array of dimension [n].
+ * @param[in] z      z cartesian ordinates. This is an array of dimension [n].
  *
- * @param[in] theta  colatitude (radians) [n]
- * @param[in] phi    longitude (radians) [n] 
- * @param[in] r      radius [n]
+ * @param[in] theta  Colatitude (radians). This is an array of dimension [n].
+ * @param[in] phi    Longitude (radians). This is an array of dimension [n].
+ * @param[in] r      Radius. This is an array of dimension [n].
  *
  * @author Ben Baker
  *

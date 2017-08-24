@@ -6,8 +6,8 @@
  * @brief Convert Mw to M0 using published formulas.
  *
  * @param[in] nm      Number of moment magnitudes.
- * @param[in] imag    KANAMORI_1978 (1) for Kanaomori 1977/1978 formula.
- *                    HARVARD_CMT (2) for GCMT formula.
+ * @param[in] imag    CE_KANAMORI_1978 (1) for Kanaomori 1977/1978 formula. \n
+ *                    CE_HARVARD_CMT (2) for GCMT formula.
  * @param[in] Mw      Array of moment magnitudes.  This is an array 
  *                    of dimension [nm].
  *
@@ -28,14 +28,14 @@ int compearth_mw2m0(const int nm, const enum magType_enum imag,
     const double threeOverTwo = 3.0/2.0;
     const double eleven8_m_log10_5em5 =  11.8 - log10(5e-5);
     int i;
-    if (imag == KANAMORI_1978)
+    if (imag == CE_KANAMORI_1978)
     {
         for (i=0; i<nm; i++)
         {
             M0[i] = pow(10., threeOverTwo*Mw[i] + eleven8_m_log10_5em5);
         }
     }
-    else if (imag == HARVARD_CMT)
+    else if (imag == CE_HARVARD_CMT)
     {
         for (i=0; i<nm; i++)
         {

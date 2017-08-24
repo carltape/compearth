@@ -52,11 +52,11 @@ int main()
     printf("%e %e %e\n", U[1], U[4], U[7]);
     printf("%e %e %e\n", U[2], U[5], U[8]);
     // Finally convert from USE TO NED {xx, yy, zz, xy, xz, yz} for Herrmann's code
-    ierr = compearth_convertMT(1, USE, NED, M_use, M_ned);
+    ierr = compearth_convertMT(1, CE_USE, CE_NED, M_use, M_ned);
     printf("M_ned\n");
     printf("%e\n%e\n%e\n%e\n%e\n%e\n", M_ned[0], M_ned[1], M_ned[2],
                                        M_ned[3], M_ned[4], M_ned[5]);
-    ierr = compearth_convertMT(1, NED, USE, M_ned, M_use);
+    ierr = compearth_convertMT(1, CE_NED, CE_USE, M_ned, M_use);
     printf("M_use\n");
     for (i=0; i<6; i++){
         printf("%e %e\n", M_use[i], M_use_ref[i] - M_use[i]);
@@ -67,7 +67,7 @@ int main()
     M_temp[1] = M_temp[1]*0.25;
     M_temp[2] = M_temp[2]*0.2;
     M_temp[3] = M_temp[3]*0.1;
-    ierr = compearth_normMT(1, M_temp, TWO_NORM, 2.0, &xnorm);
+    ierr = compearth_normMT(1, M_temp, CE_TWO_NORM, 2.0, &xnorm);
     printf("xnorm: %f\n", xnorm);
     ierr = compearth_angleMT(1, M_temp, M_use, &angle);
     printf("angle: %f\n", angle);

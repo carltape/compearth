@@ -8,6 +8,8 @@
 #define COMPEARTH_PRIVATE_NORM3 1
 #define COMPEARTH_PRIVATE_DOT3 1
 #define COMPEARTH_PRIVATE_WRAP360 1
+#define COMPEARTH_PRIVATE_MOD 1
+#define COMPEARTH_PRIVATE_ANTIPODE 1
 #include "compearth.h"
 
 
@@ -130,4 +132,38 @@ double wrap360(const double lon)
     if (lon == 360.){lonw = 360.0;} // matlab convention
     if (lonw == 0.0 && lpos){lonw = 360.0;}
     return lonw;
+}
+
+/*!
+ * @brief Modulus after division.
+ *
+ */
+double mod(const double x, const double y)
+{
+    double xmod;
+    if (y == 0.0){return x;}
+    if (x == y){return 0.0;}
+    xmod = x - floor(x/y)*y;
+    // 3rd convention
+    if (fabs(x - y) < 1.e-15 && y < 1.e-15) 
+    {
+        if (y < 0.0){xmod =-xmod;}
+        if (y > 0.0){xmod =+xmod;}
+    }
+    return xmod; 
+}
+
+void antipode(const double lat, const double lon,
+              double *latOut, double *lonOut, const bool isDeg)
+{
+    *latOut =-lat;
+    if (isDeg)
+    {
+        *lonOut = 180.0 - mod(-lon, 360.0);
+    }
+    else
+    {
+        *lonOut = M_PI - mod(-lon, 2.0*M_PI);
+    }
+    return;
 }

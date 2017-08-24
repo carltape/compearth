@@ -22,7 +22,9 @@ int check_Udetcheck(void);
 int check_lam2lune(void);
 int check_CMTdecom(void);
 int check_fangleSigned(void);
+int check_CMT2faultpar(void);
 int check_CMT2TT(void);
+int check_normal2strdip(void);
 
 int main(void)
 {
@@ -51,6 +53,14 @@ int main(void)
     ierr = check_CMT2TT();
     if (ierr != 0){printf("failed CMT2TT\n"); return EXIT_FAILURE;}
     printf("CMT2TT was successful\n");
+
+    ierr = check_CMT2faultpar();
+    if (ierr != 0){printf("failed CMT2faultpar\n"); return EXIT_FAILURE;}
+    printf("CMT2faultpar was successful\n");
+
+    ierr = check_normal2strdip();
+    if (ierr != 0){printf("failed noraml2strdip\n"); return EXIT_FAILURE;}
+    printf("normal2strdip was successful\n");
 
     return EXIT_SUCCESS;
 }
@@ -149,6 +159,39 @@ int check_lam2nualpha(void)
     CHKERR(lam[1], lamcheck[1], 1.e-10, fcnm, "error computing lam 2");
     CHKERR(lam[2], lamcheck[2], 1.e-10, fcnm, "error computing lam 3");
     //lam / norm(lam)
+    return EXIT_SUCCESS;
+}
+//============================================================================//
+int check_CMT2faultpar(void)
+{
+    const double M[6] = {3.108304932835845, 3.044425632830430, 3.382269434333724,
+                     -4.855033301709626,-1.949280336439431, 1.110527600460120};
+    double nu, alpha, N1[3], N2[3], lam[3];
+    const double nuRef = 0.371745072651417;
+    const double alphaRef = 80.365019327257144;
+    const double N1ref[3] = {-0.050351975426048, 0.930119048707825, 0.363790095799137};
+    const double N2ref[3] = {-0.977452142939121, 0.046467470073259, 0.205980781843140};
+    const double lamref[3] = { 8.802000000000001, 2.584000000000001, -1.851000000000002};
+    int ierr;
+    int nmt = 1;
+    ierr = compearth_CMT2faultpar(nmt, M, 
+                                  &nu, &alpha, N1, N2, lam);
+    if (ierr != 0)
+    {
+        fprintf(stderr, "Error calling CMT2faultpar\n");
+        return EXIT_FAILURE;
+    }
+    CHKERR(nu,    nuRef,    1.e-10, __func__, "error computing nu");
+    CHKERR(alpha, alphaRef, 1.e-10, __func__, "error computing alpha");
+    CHKERR(N1[0], N1ref[0], 1.e-10, __func__, "error checking N1[0]");
+    CHKERR(N1[1], N1ref[1], 1.e-10, __func__, "error checking N1[1]");
+    CHKERR(N1[2], N1ref[2], 1.e-10, __func__, "error checking N1[2]");
+    CHKERR(N2[0], N2ref[0], 1.e-10, __func__, "error checking N2[0]");
+    CHKERR(N2[1], N2ref[1], 1.e-10, __func__, "error checking N2[1]");
+    CHKERR(N2[2], N2ref[2], 1.e-10, __func__, "error checking N2[2]");
+    CHKERR(lam[0], lamref[0], 1.e-10, __func__, "error checking lam[0]");
+    CHKERR(lam[1], lamref[1], 1.e-10, __func__, "error checking lam[1]");
+    CHKERR(lam[2], lamref[2], 1.e-10, __func__, "error checking lam[2]");
     return EXIT_SUCCESS;
 }
 //============================================================================//
@@ -481,5 +524,16 @@ int check_lam2lune(void)
     free(delta);
     free(M0);
     free(lam);
+    return EXIT_SUCCESS;
+}
+
+int check_normal2strdip(void)
+{
+    const double Xin[3] = {-0.171010071662835, 0.969846310392954,
+                            0.173648177666930};
+    double Xout[2];
+    compearth_normal2strdip(1, Xin, Xout);
+    CHKERR(Xout[0], 350.0, 1.e-10, __func__, "error computing Xout[0]"); 
+    CHKERR(Xout[1], 80.0,  1.e-10, __func__, "error computing Xout[1]");
     return EXIT_SUCCESS;
 }

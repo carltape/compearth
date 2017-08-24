@@ -8,13 +8,9 @@
 #include <cblas.h>
 #endif
 
-#ifndef COMPEARTH_USE_ISCL
-static double array_norm64f(const int n, const double *__restrict__ x,
-                            const enum normType_enum norm,
-                            const double p, int *ierr);
-#else
-#include "iscl/array/array.h"
-#endif
+static double compearth_norm64f(const int n, const double *__restrict__ x,
+                                const enum ceNormType_enum norm,
+                                const double p, int *ierr);
 /*!
  * @brief Computes the matrix (Frobenius) norm for a matrix
  *
@@ -35,7 +31,7 @@ static double array_norm64f(const int n, const double *__restrict__ x,
  */
 int compearth_normMat(const int n,
                       const double *__restrict__ M,
-                      const enum normType_enum Lnorm,
+                      const enum ceNormType_enum Lnorm,
                       const double p,
                       double *__restrict__ mnorm)
 {
@@ -43,7 +39,7 @@ int compearth_normMat(const int n,
     ierr = 0;
     for (i=0; i<n; i++)
     {
-        mnorm[i] = array_norm64f(9, &M[9*i], Lnorm, p, &ierr);
+        mnorm[i] = compearth_norm64f(9, &M[9*i], Lnorm, p, &ierr);
         if (ierr != 0)
         {
             fprintf(stderr, "%s: Error computing matrix norm!\n", __func__);
@@ -54,10 +50,29 @@ int compearth_normMat(const int n,
     return ierr;
 }
 
-#ifndef COMPEARTH_USE_ISCL
-static double array_norm64f(const int n, const double *__restrict__ x,
-                            const enum normType_enum norm,
-                            const double p, int *ierr)
+/*!
+ * @brief Computes the norm of a vector.  This is from ISTI's ISCL.
+ *
+ * @param[in] n      Length of array x.
+ * @param[in] x      Array of dimension [n] of which to compute norm.
+ * @param[in] norm   Type of norm to compute.
+ * @param[in] p      If performing a P norm then this must be defined to
+ *                   a real number greater than or equal to 1.  Otherwise,
+ *                   it will not be accessed.
+ *
+ * @param[out] ierr  0 indicates success
+ *
+ * @result P-norm of array x.
+ *
+ * @author Ben Baker
+ *
+ * @date August 2017 - redefined variables so that this may exist in 
+ *       compearth without collisions with ISCL.
+ * 
+ */
+static double compearth_norm64f(const int n, const double *__restrict__ x,
+                                const enum ceNormType_enum norm,
+                                const double p, int *ierr)
 {
     double xnorm;
     int i;
@@ -71,17 +86,17 @@ static double array_norm64f(const int n, const double *__restrict__ x,
         return xnorm;
     }
     // 2 norm
-    if (norm == TWO_NORM)
+    if (norm == CE_TWO_NORM)
     {
         xnorm = cblas_dnrm2(n, x, 1);
     // 1 norm
     }
-    else if (norm == ONE_NORM)
+    else if (norm == CE_ONE_NORM)
     {
         xnorm = cblas_dasum(n, x, 1);
     }
     // p norm
-    else if (norm == P_NORM)
+    else if (norm == CE_P_NORM)
     {
         if (p <= 0.0)
         {
@@ -97,12 +112,12 @@ static double array_norm64f(const int n, const double *__restrict__ x,
         xnorm = pow(xnorm, 1./p);
     }
     // infinity norm
-    else if (norm == INFINITY_NORM)
+    else if (norm == CE_INFINITY_NORM)
     {
         xnorm = fabs(x[cblas_idamax(n, x, 1)]);
     }
     // negative infinity norm
-    else if (norm == NEGATIVE_INFINITY_NORM)
+    else if (norm == CE_NEGATIVE_INFINITY_NORM)
     {
         xnorm = fabs(x[0]);
         #pragma omp simd reduction(min:xnorm)
@@ -119,4 +134,3 @@ static double array_norm64f(const int n, const double *__restrict__ x,
     }
     return xnorm;
 }
-#endif

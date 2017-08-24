@@ -9,11 +9,11 @@
  *                    This is an array of dimension [n x 6] with leading
  *                    dimension 6.
  * @param[in] Lnorm   Matrix norm: \n
- *                      TWO_NORM (2). \n
- *                      ONE_NORM (1). \n
- *                      P_NORM (in this case must set p). \n
- *                      INFINITY_NORM. \n
- *                      NEGATIVE_INFINITY_NORM. \n
+ *                      CE_TWO_NORM (2). \n
+ *                      CE_ONE_NORM (1). \n
+ *                      CE_P_NORM (in this case must set p). \n
+ *                      CE_INFINITY_NORM. \n
+ *                      CE_NEGATIVE_INFINITY_NORM. \n
  * @param[in] p       If using a p-norm this is the value for p (> 0).
  *
  * @param[out] mnorm  Matrix norms for each moment tensor.  This is an array
@@ -24,7 +24,7 @@
  */
 int compearth_normMT(const int n,
                      const double *M,
-                     const enum normType_enum Lnorm,
+                     const enum ceNormType_enum Lnorm,
                      const double p,
                      double *mnorm)
 {

@@ -12,7 +12,8 @@
  *                   is 6.
  * @param[out] Mdev  [6 x n] deviatoric moment tensors.  The leading dimension
  *                   is 6.
- * @param[out] trM   trace(M).  This is an array of dimension [n].
+ * @param[out] trM   If NULL then this will not be accessed.  Otherwise, this
+ *                   is the trace(M) and is an array of dimension [n].
  *
  * @result 0 indicates success.
  *
@@ -24,9 +25,11 @@ int compearth_CMTdecomIso(const int n, const double *__restrict__ M,
                           double *__restrict__ Mdev,
                           double *__restrict__ trM)
 {
-    const double third = 1.0/3.0;
+    double traceM;
     int i;
-    if (n < 1 || M == NULL || Miso == NULL || Mdev == NULL || trM == NULL)
+    bool lwantTrM;
+    const double third = 1.0/3.0;
+    if (n < 1 || M == NULL || Miso == NULL || Mdev == NULL)
     {
         if (n < 1){fprintf(stderr, "%s: No moment tensors\n", __func__);}
         if (M == NULL){fprintf(stderr, "%s: M is NULL\n", __func__);}
@@ -35,15 +38,18 @@ int compearth_CMTdecomIso(const int n, const double *__restrict__ M,
         if (trM == NULL){fprintf(stderr, "%s: trM is NULL\n", __func__);}
         return -1;
     }
+    lwantTrM = false;
+    if (trM != NULL){lwantTrM = true;} 
     for (i=0; i<n; i++)
     {
-        trM[i] = M[6*i] + M[6*i+1] + M[6*i+2];
-        Miso[6*i+0] = third*trM[i];
-        Miso[6*i+1] = third*trM[i];
-        Miso[6*i+2] = third*trM[i];
+        traceM = M[6*i] + M[6*i+1] + M[6*i+2];
+        Miso[6*i+0] = third*traceM; //trM[i];
+        Miso[6*i+1] = third*traceM; //trM[i];
+        Miso[6*i+2] = third*traceM; //trM[i];
         Miso[6*i+3] = 0.0;
         Miso[6*i+4] = 0.0;
         Miso[6*i+5] = 0.0;
+        if (lwantTrM){trM[i] = traceM;}
     }
     for (i=0; i<6*n; i++)
     {

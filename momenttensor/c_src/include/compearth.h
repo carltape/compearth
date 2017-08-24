@@ -25,34 +25,30 @@
 
 enum compearthCoordSystem_enum
 {
-    USE = 1,    /*!< Up, south, east (G-CMT) */
-    NED = 2,    /*!< North, east, down (Aki and Richards, 1980 pg 118) */
-    NWU = 3,    /*!< North, west, up */
-    ENU = 4,    /*!< East, north, up */
-    SEU = 5     /*!< South, east, up */
+    CE_USE = 1,    /*!< Up, south, east (G-CMT) */
+    CE_NED = 2,    /*!< North, east, down (Aki and Richards, 1980 pg 118) */
+    CE_NWU = 3,    /*!< North, west, up */
+    CE_ENU = 4,    /*!< East, north, up */
+    CE_SEU = 5     /*!< South, east, up */
 };
 
 enum magType_enum
 {
-    KANAMORI_1978 = 1, /*!< Mw frrom Kanamori Mw = (2/3)*log10(M0) + k; */
-    HARVARD_CMT = 2    /*!< Mw from Harvard CMT: (2/3)*(log10(M0) - 16.1) */
+    CE_KANAMORI_1978 = 1, /*!< Mw frrom Kanamori Mw = (2/3)*log10(M0) + k; */
+    CE_HARVARD_CMT = 2    /*!< Mw from Harvard CMT: (2/3)*(log10(M0) - 16.1) */
 };
 
-#ifdef COMPEARTH_USE_ISCL
-#include "iscl/array/array.h"
-#else
-enum normType_enum
+enum ceNormType_enum
 {
-    TWO_NORM = 2,              /*!< \$ L_2 = \sqrt{\sum_i x_i^2} \$ norm */
-    ONE_NORM = 1,              /*!< \$ L_1 = \sum_i |x_i| \$ norm */
-    P_NORM = 3,                /*!< \$ L_p 
+    CE_TWO_NORM = 2,              /*!< \$ L_2 = \sqrt{\sum_i x_i^2} \$ norm */
+    CE_ONE_NORM = 1,              /*!< \$ L_1 = \sum_i |x_i| \$ norm */
+    CE_P_NORM = 3,                /*!< \$ L_p 
                                     = \left (
                                         \sum_i |x_i|^p \right )^{1/p}
                                       \right ) \$ norm */
-    INFINITY_NORM = 4,          /*!< \$ L_\infty = max |x| \$ */
-    NEGATIVE_INFINITY_NORM = 5  /*!< \$ L_{-\infty} = min |x| \$ */
+    CE_INFINITY_NORM = 4,          /*!< \$ L_\infty = max |x| \$ */
+    CE_NEGATIVE_INFINITY_NORM = 5  /*!< \$ L_{-\infty} = min |x| \$ */
 };
-#endif
 
 #ifdef __cplusplus
 extern "C"
@@ -64,6 +60,14 @@ int compearth_angleMT(const int n,
                       const double *__restrict__ M1in,
                       const double *__restrict__ M2in,
                       double *__restrict__ theta);
+/* Auxiliary plane */
+int compearth_auxiliaryPlane(const int nmt,
+                             const double *__restrict__ s1, 
+                             const double *__restrict__ d1, 
+                             const double *__restrict__ r1, 
+                             double *__restrict__ s2, 
+                             double *__restrict__ d2, 
+                             double *__restrict__ r2);
 /* Converts u to lune colatitude beta */
 int compearth_u2beta(const int n,
                      const int maxit,
@@ -199,13 +203,13 @@ void compearth_normal2strdip(const int n,
 /* Norm of matrix stored as an array */
 int compearth_normMat(const int n,
                       const double *M, 
-                      const enum normType_enum Lnorm,
+                      const enum ceNormType_enum Lnorm,
                       const double p,
                       double *mnorm);
 /* Norm of a moment tensor */
 int compearth_normMT(const int n,
                      const double *M, 
-                     const enum normType_enum Lnorm,
+                     const enum ceNormType_enum Lnorm,
                      const double p,
                      double *mnorm);
 /* Converts (nu,alpha) to unit lambda vector */
@@ -232,6 +236,14 @@ int compearth_tt2cmt(const double gamma,
 /* Converts theta dip angle to h */
 void compearth_theta2h(const int n, const double *__restrict__ theta,
                         double *__restrict__ h);
+/* U to plunge and azimuth */
+int compearth_U2pa(const int nmt, const double *__restrict__ U,
+                   double *__restrict__ pl1,
+                   double *__restrict__ az1,
+                   double *__restrict__ pl2,
+                   double *__restrict__ az2,
+                   double *__restrict__ pl3,
+                   double *__restrict__ az3);
 /* Ensures det >= 0 for rotation matrices. */
 int compearth_Udetcheck(const int n,
                         const double *__restrict__ Uin,
@@ -255,6 +267,13 @@ void compearth_xyz2tp(const int n,
                       double *__restrict__ ph, 
                       double *__restrict__ th, 
                       double *__restrict__ rho);
+/* xyz to lat lon */
+void compearth_xyz2latlon(const int n,
+                          const double *__restrict__ x,
+                          const double *__restrict__ y,
+                          const double *__restrict__ z,
+                          double *__restrict__ lat,
+                          double *__restrict__ lon); 
 
 #ifdef COMPEARTH_PRIVATE_DET3X3
 #ifdef _OPENMP
@@ -311,6 +330,22 @@ inline double norm3(const double *__restrict__ a);
 #pragma omp declare simd
 #endif
 inline double wrap360(const double lon);
+#endif
+
+
+#ifdef COMPEARTH_PRIVATE_MOD
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
+inline double mod(const double x, const double y);
+#endif
+
+#ifdef COMPEARTH_PRIVATE_ANTIPODE
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
+inline void antipode(const double latIn, const double lonIn,
+                     double *latOut, double *lonOut, const bool isDeg);
 #endif
 
 #ifdef __cplusplus

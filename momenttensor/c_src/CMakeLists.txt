@@ -22,10 +22,6 @@ ELSE ()
    FIND_PACKAGE(CBLAS REQUIRED)
    FIND_PACKAGE(LAPACKE REQUIRED)
 ENDIF(COMPEARTH_USE_MKL)
-IF (COMPEARTH_USE_ISCL)
-   MESSAGE("Using ISCL")
-   FIND_PACKAGE(ISCL REQUIRED)
-ENDIF (COMPEARTH_USE_ISCL)
 
 ADD_SUBDIRECTORY(include)
 
@@ -33,12 +29,11 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
 IF (COMPEARTH_USE_MKL)
    INCLUDE_DIRECTORIES(${MKL_INCLUDE_DIR})
 ENDIF (COMPEARTH_USE_MKL)
-IF (COMPEARTH_USE_ISCL)
-   INCLUDE_DIRECTORIES(${ISCL_INCLUDE_DIR})
-ENDIF (COMPEARTH_USE_ISCL)
 
-SET (SRCS angleMT.c beta2u.c cart2sph.c CMTdecom.c CMTdecomIso.c CMT2faultpar.c
-          CMT2m0.c CMT2mw.c CMT2TT.c convertMT.c
+SET (SRCS angleMT.c auxiliaryPlane.c beta2u.c cart2sph.c
+          CMTdecom.c CMTdecomIso.c CMT2faultpar.c
+          CMT2m0.c CMT2mw.c CMT2TT.c
+          convertMT.c dcfaultvec2faultpar.c
           fangle.c eulerUtil_fangleSigned.c eulerUtil_rotmat.c
           eulerUtil_rotmatGen.c gamma2v.c h2theta.c lam2lune.c
           lam2nualpha.c lam2phizeta.c lamsort.c lune2lam.c lune2rect.c
@@ -46,14 +41,15 @@ SET (SRCS angleMT.c beta2u.c cart2sph.c CMTdecom.c CMTdecomIso.c CMT2faultpar.c
           normal2strdip.c normMat.c normMT.c nualpha2lam.c
           privateFunctions.c rect2lune.c
           tape2015Eqn7.c theta2h.c transform_mat.c 
-          tt2cmt.c u2beta.c Udetcheck.c
-          v2gamma.c xyz2tp.c
+          tt2cmt.c u2beta.c U2pa.c Udetcheck.c
+          v2gamma.c xyz2latlon.c xyz2tp.c
 )
 
 ADD_LIBRARY(compearth_shared SHARED ${SRCS})
 ADD_LIBRARY(compearth_static STATIC ${SRCS})
 ADD_EXECUTABLE(app2015 unit_tests/app2015.c)
 ADD_EXECUTABLE(miscCheck unit_tests/checks.c) 
+ADD_EXECUTABLE(xdecomp unit_tests/decompose.c)
 
 SET_TARGET_PROPERTIES(compearth_shared PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH})
 SET_TARGET_PROPERTIES(compearth_static PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH})
@@ -61,9 +57,6 @@ SET_TARGET_PROPERTIES(app2015 PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_TESTIN
 SET_TARGET_PROPERTIES(miscCheck PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_TESTING_OUTPUT_DIRECTORY})
 
 SET (LINK_LIB_ALL compearth_shared)
-IF (COMPEARTH_USE_ISCL)
-   SET (LINK_LIB_ALL ${LINK_LIB_ALL} ${ISCL_LIBRARY})
-ENDIF ()
 IF (COMPEARTH_USE_MKL)
    SET (LINK_LIB_ALL ${LINK_LIB_ALL} ${MKL_LIBRARY}) 
 ELSE ()
@@ -72,6 +65,7 @@ ENDIF ()
 
 TARGET_LINK_LIBRARIES(app2015 ${LINK_LIB_ALL})
 TARGET_LINK_LIBRARIES(miscCheck ${LINK_LIB_ALL})
+TARGET_LINK_LIBRARIES(xdecomp ${LINK_LIB_ALL})
 
 #ADD_TEST(ap2015Test ${CMAKE_TESTING_OUTPUT_DIRECTORY}/app2015)
 ADD_TEST(NAME miscCheckTest
@@ -80,4 +74,7 @@ ADD_TEST(NAME miscCheckTest
 ADD_TEST(NAME app2015Test
          WORKING_DIRECTORY ${CMAKE_TESTING_OUTPUT_DIRECTORY}
          COMMAND app2015)
+ADD_TEST(NAME decompositionTest
+         WORKING_DIRECTORY ${CMAKE_TESTING_OUTPUT_DIRECTORY}
+         COMMAND xdecomp)
 

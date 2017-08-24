@@ -7,8 +7,8 @@
  * @brief Converts from scalar seismic moment to moment magnitude.
  *
  * @param[in] nm      Number of scalar moments.
- * @param[in] imag    KANAMORI_1978 (1) for Kanaomori 1977/1978 formula.
- *                    HARVARD_CMT (2) for GCMT formula.
+ * @param[in] imag    CE_KANAMORI_1978 (1) for Kanaomori 1977/1978 formula.
+ *                    CE_HARVARD_CMT (2) for GCMT formula.
  * @param[in] M0      Scalar moments in N-m (not dyne-cm).  This is an array
  *                    of dimension [nm].
  *
@@ -30,7 +30,7 @@ int compearth_m02mw(const int nm, const enum magType_enum imag,
     const double A = 2.0/(3.0*log(10.0));
     const double K = 0.2*pow(10.0, 16.8);
     const double two_third = 2.0/3.0;
-    if (imag == KANAMORI_1978)
+    if (imag == CE_KANAMORI_1978)
     {
         for (i=0; i<nm; i++)
         {
@@ -38,7 +38,7 @@ int compearth_m02mw(const int nm, const enum magType_enum imag,
             Mw[i] = A*log(m0dcm/K);
         }
     }
-    else if (imag == HARVARD_CMT)
+    else if (imag == CE_HARVARD_CMT)
     {
         for (i=0; i<nm; i++)
         {

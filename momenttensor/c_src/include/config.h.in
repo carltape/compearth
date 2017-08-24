@@ -1,7 +1,7 @@
 #ifndef COMPEARTH_CONFIG_H__
 #define COMPEARTH_CONFIG_H__ 1
 
-#cmakedefine COMPEARTH_USE_ISCL
 #cmakedefine COMPEARTH_USE_MKL
+#define CE_CHUNKSIZE 64
 
 #endif

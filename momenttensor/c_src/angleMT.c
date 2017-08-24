@@ -38,8 +38,8 @@ int compearth_angleMT(const int n,
         compearth_Mvec2Mmat(1, &M1in[6*i], 1, M1);
         compearth_Mvec2Mmat(1, &M2in[6*i], 1, M2);
         // Compute norms
-        ierr = compearth_normMat(1, M1, TWO_NORM, 2.0, &M1_mag);
-        ierr = compearth_normMat(1, M2, TWO_NORM, 2.0, &M2_mag);
+        ierr = compearth_normMat(1, M1, CE_TWO_NORM, 2.0, &M1_mag);
+        ierr = compearth_normMat(1, M2, CE_TWO_NORM, 2.0, &M2_mag);
         xden = M1_mag*M2_mag;
         if (fabs(xden) < 1.e-15) //xden == 0.0)
         {

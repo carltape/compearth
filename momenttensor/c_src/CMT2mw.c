@@ -46,7 +46,7 @@ int compearth_CMT2mw(const int nm, const int im0,
         if (nm > 64){free(M0);}
         return -1;
     }
-    ierr = compearth_m02mw(nm, KANAMORI_1978, M0, Mw);
+    ierr = compearth_m02mw(nm, CE_KANAMORI_1978, M0, Mw);
     if (ierr != 0)
     {
         fprintf(stderr, "%s: Error computing Mw\n", __func__);

@@ -171,8 +171,8 @@ int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
         // KEY: Convert M into another basis.
         // YOU MUST ALSO CHANGE north AND zenith IN fault2vecang BELOW
         // --> U will be with respect to this basis (from CMTdecom.m)
-        // ierr = compearth_convertMT(1, USE, NWU, &Min[6*imt], M);
-        ierr = compearth_convertMT(1, USE, SEU, &Min[6*imt], M);
+        // ierr = compearth_convertMT(1, CE_USE, CE_NWU, &Min[6*imt], M);
+        ierr = compearth_convertMT(1, CE_USE, CE_SEU, &Min[6*imt], M);
         if (ierr != 0)
         {
             fprintf(stderr, "%s: Error switching basis\n", __func__);
@@ -427,8 +427,10 @@ static int pickP1(const double thetaA, const double sigmaA, const double kappaA,
         if (kappaA < 180.0){ipick = p1;}
         if (kappaB < 180.0){ipick = p2;}
         return ipick;
-    } 
+    }
     fprintf(stderr, "%s: Error no selection criterion was met\n", __func__);
+    fprintf(stderr, "thetaA,sigmaA,kappaA=%f,%f,%f\n", thetaA, sigmaA, kappaA);
+    fprintf(stderr, "thetaB,sigmaB,kappaB=%f,%f,%f\n", thetaB, sigmaB, kappaB);
     return ipick;
 }
 

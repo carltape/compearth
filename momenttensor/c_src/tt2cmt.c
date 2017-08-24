@@ -171,7 +171,7 @@ int compearth_tt2cmt(const double gamma,
 
     // convert moment tensor from south-east-up to up-south-east
     // (note: U is still in south-east-up)
-    ierr = compearth_convertMT(1, SEU, USE, M6, M);
+    ierr = compearth_convertMT(1, CE_SEU, CE_USE, M6, M);
     if (ierr != 0)
     {
         fprintf(stderr,
