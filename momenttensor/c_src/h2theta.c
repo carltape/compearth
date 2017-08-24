@@ -3,12 +3,18 @@
 #include <math.h>
 #include "compearth.h"
 /*!
- * @brief Computes dip angle from point h
+ * @brief Computes dip angle from h.
  *
- * @param[in] n       number of points in arrays
- * @param[in] h       h in rectilinear space s.t. \f$ h \in [0,1] \f$ [n]
+ * @param[in] n       Number of points in arrays.
+ * @param[in] h       h in rectilinear space such that
+ *                       \f$ h \in [0,1] \f$.
+ *                    This is an array of dimension [n].
  *
- * @param[out] theta  dip angle \f$ \theta \in [0, \pi/2] \f$ [n]
+ * @param[out] theta  Dip angle (radians) such that
+ *                      \f$ \theta \in [0, \pi/2] \f$.
+ *                    This is an array of dimension [n].
+ *
+ * @author Ben Baker, ISTI
  *
  * @copyright MIT
  *
