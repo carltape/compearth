@@ -25,6 +25,7 @@
 
 enum compearthCoordSystem_enum
 {
+    CE_UNKOWN_COORDS = 0, /*!< Unkown coordinate system. */
     CE_USE = 1,    /*!< Up, south, east (G-CMT) */
     CE_NED = 2,    /*!< North, east, down (Aki and Richards, 1980 pg 118) */
     CE_NWU = 3,    /*!< North, west, up */
@@ -34,12 +35,14 @@ enum compearthCoordSystem_enum
 
 enum magType_enum
 {
+    CE_UNKNOWN_MW = 0,    /*!< Unknown Mw scale. */
     CE_KANAMORI_1978 = 1, /*!< Mw frrom Kanamori Mw = (2/3)*log10(M0) + k; */
     CE_HARVARD_CMT = 2    /*!< Mw from Harvard CMT: (2/3)*(log10(M0) - 16.1) */
 };
 
 enum ceNormType_enum
 {
+    CE_UNKNOWN_NORM = 0,          /*!< Unknown norm. */
     CE_TWO_NORM = 2,              /*!< \$ L_2 = \sqrt{\sum_i x_i^2} \$ norm */
     CE_ONE_NORM = 1,              /*!< \$ L_1 = \sum_i |x_i| \$ norm */
     CE_P_NORM = 3,                /*!< \$ L_p 
@@ -48,6 +51,14 @@ enum ceNormType_enum
                                       \right ) \$ norm */
     CE_INFINITY_NORM = 4,          /*!< \$ L_\infty = max |x| \$ */
     CE_NEGATIVE_INFINITY_NORM = 5  /*!< \$ L_{-\infty} = min |x| \$ */
+};
+
+enum ceOrthoType_enum
+{
+    CE_NO_ORTH = 0,   /*!< Don't perform a reorthgonalization. */
+    CE_ORTH_SVD = 1,       /*!< Orthgonalizes with SVD. */
+    CE_ORTH_TAPE2012 = 2,  /*!< Orthgonalizes with Tape and Tape 2012c Appendix E. */
+    CE_ORTH_QUAT = 3,      /*!< Orthoganlizes with quaternions. */
 };
 
 #ifdef __cplusplus
@@ -248,6 +259,12 @@ int compearth_U2pa(const int nmt, const double *__restrict__ U,
 int compearth_Udetcheck(const int n,
                         const double *__restrict__ Uin,
                         double *__restrict__ Uout);
+/* Orthogonalizes a 3 x 3 matrix. */
+int compearth_Uorth(const int n, const enum ceOrthoType_enum itype,
+                    const double *__restrict__ Uin,
+                    double *__restrict__ Uout,
+                    double *__restrict__ dtUin,
+                    double *__restrict__ dtUout);
 /* Transform moment tensor with transformation matrix T */
 int compearth_transform_mat(const int nmt,
                             const double *__restrict__ T,

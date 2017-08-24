@@ -7,7 +7,7 @@
 #include "compearth.h"
 
 /*!
- * @brief Convert from basis U in South, East, Up to plunge/azimuth of
+ * @brief Convert from basis in Up, South, East to plunge/azimuth of
  *        three basis vectors.
  *
  * @param[in] nnt    Number of bases. 
@@ -32,9 +32,9 @@
  *
  * @copyright MIT
  *
- * @bug Need numerical orthogonalizer - Uorth.  Additionally, I'm not sure
- *      the Matlab documentation is right.  
- *
+ * @bug I think the original Matlab documentation should read USE instead
+ *      of SEU because that's what seems to work.
+ * 
  */
 int compearth_U2pa(const int nmt, const double *__restrict__ U,
                    double *__restrict__ pl1,
@@ -50,7 +50,8 @@ int compearth_U2pa(const int nmt, const double *__restrict__ U,
     ierr = 0; 
     for (i=0; i<nmt; i++)
     {
-        memcpy(Ut, &U[9*i], 9*sizeof(double)); 
+        //memcpy(Ut, &U[9*i], 9*sizeof(double)); 
+        ierr = compearth_Uorth(1, CE_ORTH_SVD, &U[9*i], Ut, NULL, NULL);
         ierr = compearth_Udetcheck(1, Ut, Uin);
         // Extract column vectors and convert to lat/lon
         //printf("p1: %f %f %f\n", Uin[0], Uin[1], Uin[2]);

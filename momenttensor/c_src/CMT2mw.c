@@ -29,30 +29,24 @@ int compearth_CMT2mw(const int nm, const int im0,
                      const double *__restrict__ M,
                      double *__restrict__ Mw)
 {
-    int ierr;
-    double *M0, M064[64];
-    if (nm > 64)
+    double M0[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    int i, ierr, nmLoc;
+    // Loop on moment tensor chunks
+    for (i=0; i<nm; i=i+CE_CHUNKSIZE)
     {
-        M0 = (double *) calloc((size_t) nm, sizeof(double));
-    }
-    else
-    {
-        M0 = M064;
-    }
-    ierr = compearth_CMT2m0(nm, im0, M, M0);
-    if (ierr != 0)
-    {
-        fprintf(stderr, "%s: Error computing m0\n", __func__);
-        if (nm > 64){free(M0);}
-        return -1;
-    }
-    ierr = compearth_m02mw(nm, CE_KANAMORI_1978, M0, Mw);
-    if (ierr != 0)
-    {
-        fprintf(stderr, "%s: Error computing Mw\n", __func__);
-        return -1;
-    }
-    if (nm > 64){free(M0);}
-    M0 = NULL;
+        nmLoc = MIN(CE_CHUNKSIZE, nm-i);
+        ierr = compearth_CMT2m0(nmLoc, im0, &M[i], M0);
+        if (ierr != 0)
+        {
+            fprintf(stderr, "%s: Error computing m0\n", __func__);
+            return -1;
+        }
+        ierr = compearth_m02mw(nmLoc, CE_KANAMORI_1978, M0, &Mw[i]);
+        if (ierr != 0)
+        {
+            fprintf(stderr, "%s: Error computing Mw\n", __func__);
+            return -1;
+        }
+    } // Loop on chunks
     return 0;
 }
