@@ -135,21 +135,43 @@ double wrap360(const double lon)
 }
 
 /*!
- * @brief Modulus after division.
+ * @brief Emulation of Matlab's modulus after division.
+ *
+ * @author Ben Baker
+ *
+ * @copyright MIT
  *
  */
 double mod(const double x, const double y)
 {
     double xmod;
+    bool xisnty;
+    xmod = 0.0; // Convention 1 - if y == 0.0
+    // This will avoid division by 0
+    if (fabs(y) > 0.0)
+    {
+        xmod = x - floor(x/y)*y;
+        // Convention 2 - mod(x, x) is 0
+        xisnty = false;
+        if (x != y){xisnty = true;}
+        if (!xisnty){xmod = 0.0;} //if (x == y){xmod = 0.0;}
+        // Convention 3 - if x ~= y and y~=0 then mod has the same
+        // sign as y.  Note y~= 0 is true b/c fabs(y) > 0.
+        if (xisnty && y < 0.0 && xmod > 0.0){xmod =-xmod;}
+        if (xisnty && y > 0.0 && xmod < 0.0){xmod =+xmod;}
+    }
+/*
+    // Original code
     if (y == 0.0){return x;}
     if (x == y){return 0.0;}
     xmod = x - floor(x/y)*y;
-    // 3rd convention
-    if (fabs(x - y) < 1.e-15 && y < 1.e-15) 
+    // 3rd convention - for x ~= y and y ~= 0 mod has same sign as y
+    if (x != y && y != 0.0)
     {
         if (y < 0.0){xmod =-xmod;}
         if (y > 0.0){xmod =+xmod;}
     }
+*/
     return xmod; 
 }
 
