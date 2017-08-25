@@ -31,12 +31,12 @@ The purpose of CMake is to generate valid Makefiles in a cross-platform way.  Un
 Alternatively, to configure with MKL and the Intel C and Fortran compilers I would do something like:
 
     #!/bin/bash
-    /usr/bin/cmake ./ -DCMAKE_BUILD_TYPE=DEBUG \
+    /usr/bin/cmake ./ -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=./ \
     -DCMAKE_C_COMPILER=icc \
     -DCMAKE_Fortran_COMPILER=ifort \
     -DCOMPEARTH_MAKE_FINTER=TRUE \
-    -DCMAKE_C_FLAGS="-g3 -O2 -qopenmp -Wall -Wextra -Wcomment -Wcheck" \
+    -DCMAKE_C_FLAGS="-g3 -xHOST -O3 -ipo -qopenmp -Wall -Wextra -Wcomment -Wcheck" \
     -DCMAKE_Fortran_FLAGS="-g2 -O2" \
     -DCOMPEARTH_USE_MKL=TRUE \
     -DMKL_LIBRARY="/opt/intel/mkl/lib/intel64_lin/libmkl_intel_lp64.so;/opt/intel/mkl/lib/intel64_lin/libmkl_sequential.so;/opt/intel/mkl/lib/intel64_lin/libmkl_core.so" \
