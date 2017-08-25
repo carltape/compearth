@@ -6,7 +6,7 @@ IF (COMPEARTH_MAKE_FINTER)
 ENDIF()
 ENABLE_TESTING()
 
-SET(CMAKE_BUILD_TYPE Release)
+#SET(CMAKE_BUILD_TYPE Release)
 # Add modules for finding requisites
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeModules)
 # For testing
@@ -29,6 +29,13 @@ ELSE ()
    FIND_PACKAGE(LAPACKE REQUIRED)
 ENDIF(COMPEARTH_USE_MKL)
 
+IF (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+    message("debug mode")
+    SET(COMPEARTH_DEBUG_SRC 1)
+ELSE ()
+    SET(COMPEARTH_DEBUG_SRC 0)
+ENDIF ()
+
 ADD_SUBDIRECTORY(include)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -45,7 +52,7 @@ SET (SRCS angleMT.c auxiliaryPlane.c beta2u.c cart2sph.c
           lam2nualpha.c lam2phizeta.c lamsort.c lune2lam.c lune2rect.c
           m02hdur.c m02mw.c mw2m0.c Mvec2Mmat.c
           normal2strdip.c normMat.c normMT.c nualpha2lam.c
-          privateFunctions.c rect2lune.c
+          privateFunctions.c rect2lune.c standardDecomposition.c
           tape2015Eqn7.c theta2h.c transform_mat.c 
           tt2cmt.c u2beta.c U2pa.c Udetcheck.c Uorth.c
           v2gamma.c xyz2latlon.c xyz2tp.c
@@ -58,7 +65,7 @@ ADD_LIBRARY(compearth_shared SHARED ${SRCS})
 ADD_LIBRARY(compearth_static STATIC ${SRCS})
 ADD_EXECUTABLE(app2015 unit_tests/app2015.c)
 ADD_EXECUTABLE(miscCheck unit_tests/checks.c) 
-ADD_EXECUTABLE(xdecomp unit_tests/decompose.c)
+ADD_EXECUTABLE(xdecomp unit_tests/decompose.c unit_tests/cmopad.c)
 
 SET_TARGET_PROPERTIES(compearth_shared PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH})
 SET_TARGET_PROPERTIES(compearth_static PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH})

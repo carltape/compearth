@@ -308,8 +308,10 @@ int argsort3(const double *__restrict__ x, int *__restrict__ perm)
     {
         if (x[perm[i-1]] > x[perm[i]])
         {
+#ifdef COMPEARTH_DEBUG_SRC
             fprintf(stderr, "%s: Failed to sort numbers in ascending order\n",
                      __func__);
+#endif
             return -1;
         }
     }
