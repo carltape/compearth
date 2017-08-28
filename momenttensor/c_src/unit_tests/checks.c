@@ -19,6 +19,7 @@
 
 int check_lam2nualpha(void);
 int check_Udetcheck(void);
+int check_Uorth(void);
 int check_lam2lune(void);
 int check_CMTdecom(void);
 int check_fangleSigned(void);
@@ -41,6 +42,10 @@ int main(void)
     ierr = check_Udetcheck();
     if (ierr != 0){printf("failed Udetcheck\n"); return EXIT_FAILURE;}
     printf("udetcheck was successful\n");
+
+    ierr = check_Uorth();
+    if (ierr != 0){printf("failed Uorth\n"); return EXIT_FAILURE;}
+    printf("Uorth was successful\n");
 
     ierr = check_lam2lune(); 
     if (ierr != 0){printf("failed lam2lune\n"); return EXIT_FAILURE;}
@@ -535,5 +540,40 @@ int check_normal2strdip(void)
     compearth_normal2strdip(1, Xin, Xout);
     CHKERR(Xout[0], 350.0, 1.e-10, __func__, "error computing Xout[0]"); 
     CHKERR(Xout[1], 80.0,  1.e-10, __func__, "error computing Xout[1]");
+    return EXIT_SUCCESS;
+}
+
+int check_Uorth(void)
+{
+    const double T[9] = {0.998800000000000, 0.047900000000000, 0.017300000000000,
+             -0.048200000000000, 0.998800000000000, 0.015900000000000, 
+             -0.016500000000000,-0.016700000000000, 0.999800000000000};
+    const double Tref[9] = { 0.998702105045258, 0.047907730990670, 0.017290306229078,
+             -0.048183355871821, 0.998712063377127, 0.015892724182219,
+             -0.016506653055635, -0.016705202073855,  0.999724195280165};
+    const double detInRef1 = 1.000261915677000;
+    const double detOutRef1 = 1.0;
+    double Tout[9], detIn, detOut;
+    int i, j, ierr;
+    ierr = compearth_Uorth(1, CE_ORTH_SVD, T, Tout, &detIn, &detOut);
+    if (ierr != 0)
+    {
+        fprintf(stderr, "%s: Error calling Uorth_svd\n", __func__);
+        return EXIT_FAILURE;
+    }
+    for (i=0; i<3; i++)
+    {
+        for (j=0; j<3; j++)
+        {
+            if (fabs(Tout[3*j+i] - Tref[3*j+i]) > 1.e-14)
+            {
+                printf("%s: Failed calculating T(%d,%d)=%f ",
+                       __func__, i+1,j+1, Tout[3*j+i] - Tref[3*j+i]);
+                return EXIT_FAILURE;
+            }
+        }
+    }
+    CHKERR(detIn, detInRef1, 1.e-10, __func__, "error computing detIn1");
+    CHKERR(detOut, detOutRef1, 1.e-10, __func__, "error computing detOUt1");
     return EXIT_SUCCESS;
 }

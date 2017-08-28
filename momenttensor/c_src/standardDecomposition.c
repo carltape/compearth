@@ -11,29 +11,70 @@
 #endif
 
 /*!
- * @brief A utility for calculating the `standard' decomposition of a moment 
- *        tensor.  This is based on cmopad's standard decomposition but
- *        uses compearth's functionality.
+ * @brief A utility for calculating the `standard' isotropic/double couple/CLVD
+ *        decomposition of a moment tensor.  This is based on cmopad's standard
+ *        decomposition but uses compearth's functionality.
  *
- * @param[in] nmt     Number of moment tensors
- * @param[in] M       Moment tensors to decompose.  This is an array
- *                    of dimension [6 x nmt] with leading dimension 6.
- *                    The bases are given by basis.  Each moment tensor
- *                    is packed \f$ {m_{11}, m_{22}, m_{33},
- *                                   m_{12}, m_{13}, m_{23} \} \f$.
- * @param[in] basis   Basis of input moment tensors. 
+ * @param[in] nmt       Number of moment tensors
+ * @param[in] M         Moment tensors to decompose.  This is an array
+ *                      of dimension [6 x nmt] with leading dimension 6.
+ *                      The bases are given by basis.  Each moment tensor
+ *                      is packed \f$ {m_{11}, m_{22}, m_{33},
+ *                                     m_{12}, m_{13}, m_{23} \} \f$.
+ *                      The momen tensor terms have units of (N-m).
+ * @param[in] basis     Basis of input moment tensors. 
+ * @param[out] M0       Scalar moment (N-m) of moment tensors.  This is an array
+ *                      of dimension [nmt].
+ * @param[out] Mw       Moment magnitudes computed with the Harvard CMT
+ *                      convention:
+ *                      \f$ 
+ *                         M_w
+ *                       = \frac{2}{3} \left ( \log_10(M0) - 16.1 \right )
+ *                      \f$.
+ *                      This is an array of dimension [nmt].
+ * @param[out] fp1      Strike, dip, and rake (respectively) of fault plane 1.
+ *                      This is an array of dimension [3 x nmt] with leading
+ *                      dimension 3.
+ * @param[out] fp2      Strike, dip, and rake (respectively) of fault plane 2.
+ *                      This is an array of dimension [3 x nmt] with leading
+ *                      dimension 3.
+ * @param[out] pAxis    This is the plunge (degrees), azimuth (degrees), and
+ *                      length (N-m) of the pressure axis.  This is an array
+ *                      of dimension [3 x nmt] with leading dimension 3.
+ * @param[out] bAxis    This is the plunge (degrees), azimuth (degrees), and
+ *                      length (N-m) of the null axis.  This is an array 
+ *                      of dimension [3 x nmt] with leading dimension 3.
+ * @param[out] tAxis    This is the plunge (degrees), azimuth (degrees), and
+ *                      length (N-m) of the tension axis.  This is an array
+ *                      of dimension [3 x nmt] with leading dimension 3. 
+ * @param[out] isoPct   This is the isotropic percent in range [0,100]
+ *                      of the input moment tensors.  This is an array
+ *                      of dimension [nmt].
+ * @param[out] devPct   This is the deviatoric percent in range [0,100]
+ *                      of the input moment tensors. Note, devPct + isoPct
+ *                      should equal 100.  This is an array of dimension
+ *                      [nmt]. 
+ * @param[out] dcPct    This is the double couple percent in range [0,100]
+ *                      of the input moment tensors.  This is an array
+ *                      of dimension [nmt].
+ * @param[out] clvdPct  This is the compensated linear vector dipole [0,100]
+ *                      of the input moment tensors.  This is an array
+ *                      of dimension [nmt].
  *
  */
 int compearth_standardDecomposition(const int nmt,
                                     const double *__restrict__ M,
                                     enum compearthCoordSystem_enum basis,
                                     double *__restrict__ M0,
+                                    double *__restrict__ Mw,
+                                    double *__restrict__ fp1,
+                                    double *__restrict__ fp2,
                                     double *__restrict__ pAxis,
                                     double *__restrict__ bAxis,
                                     double *__restrict__ tAxis,
                                     double *__restrict__ isoPct,
-                                    double *__restrict__ dcPct,
                                     double *__restrict__ devPct,
+                                    double *__restrict__ dcPct,
                                     double *__restrict__ clvdPct)
 {
     double Muse[6*CE_CHUNKSIZE] __attribute__((aligned(64)));
@@ -62,6 +103,7 @@ int compearth_standardDecomposition(const int nmt,
     double *thetadc = NULL; //[CE_CHUNKSIZE];
     double lamT[3], F;
     int perm[3], i, ierr, imt, nmtLoc;
+    const enum magType_enum imag = CE_HARVARD_CMT;
     //const int isort = 1; // sort in descending order
     const double epsilon = 100.0*DBL_EPSILON;
     if (nmt < 1 || M == NULL)
@@ -118,8 +160,6 @@ int compearth_standardDecomposition(const int nmt,
             fprintf(stderr, "%s: CMT2TT failed\n", __func__);
             return -1;
         }
-        // TODO remove this line
-        //ierr = compearth_CMTdecom(nmtLoc, Muse, isort, lam, U);
         // Compute the deviatoric eigenvalues from the full eignevalues and
         // get the isotropic scalar moment.
         for (i=0; i<nmtLoc; i++)
@@ -161,37 +201,35 @@ int compearth_standardDecomposition(const int nmt,
             lamDevI[3*i+2] = lam[3*i + perm[i+2]];
         }
 */
-double p[3], b[3], t[3];
         // Represent eigenbasis as plunge/azimuth.
-        // TODO: An SVD lurks in here - I should probably make the
-        // orthogonalization style optional b/c it' probably not worth it.
         ierr = compearth_U2pa(nmtLoc, U,
-                              pl1, az1, pl2, az2, pl3, az3); //&p[2], &p[1], &b[2], &b[1], &t[2], &t[1]);
+                              pl1, az1, pl2, az2, pl3, az3);
         if (ierr != 0)
         {   
             fprintf(stderr, "%s: Error converting u to plunge/azimuth\n", 
                     __func__);
             return -1;
         }
-        // Extract the plunge, null, and tension vectors
+        // Extract the pressure, null, and tension vectors.
         for (i=0; i<nmtLoc; i++)
         {
-            pAxis[3*i+0] = pl1[i];
-            pAxis[3*i+1] = az1[i]; 
-            pAxis[3*i+1] = lam[3*i];
-
-            bAxis[3*i+0] = pl2[i];
-            bAxis[3*i+1] = az2[i]; 
-            bAxis[3*i+1] = lam[3*i+1];
- 
-            tAxis[3*i+0] = pl3[i];
-            tAxis[3*i+1] = az3[i]; 
-            tAxis[3*i+1] = lam[3*i+2];
+            // Eigenvalues are sorted highest to lowest
+            lamT[0] = lam[3*i+0] - M0iso[i];
+            lamT[1] = lam[3*i+1] - M0iso[i];
+            lamT[2] = lam[3*i+2] - M0iso[i];
+            // The first eigenvector will go to positive eigenvalue (tension)
+            tAxis[3*i+0] = az1[i]; 
+            tAxis[3*i+1] = pl1[i];
+            tAxis[3*i+2] = lamT[0];
+            // The second eigenvector will be null/neutral (intermediate) 
+            bAxis[3*i+0] = az2[i];
+            bAxis[3*i+1] = pl2[i];
+            bAxis[3*i+2] = lamT[1];
+            // The third eigenvector will go to negative eigenvalue (pressure)
+            pAxis[3*i+0] = az3[i];
+            pAxis[3*i+1] = pl3[i]; 
+            pAxis[3*i+2] = lamT[2];
         }
-        // Fill in the eigenvalues.  They were sorted in descending order. 
-        cblas_dcopy(nmtLoc, &lam[0], 3, p, 3); // p[0] = lam[0];
-        cblas_dcopy(nmtLoc, &lam[1], 3, b, 3); // b[0] = lam[1];
-        cblas_dcopy(nmtLoc, &lam[2], 3, t, 3); // t[0] = lam[2];
         // Compute the auxiliary fault plane
         ierr = compearth_auxiliaryPlane(nmtLoc,
                                         kappa1, theta1, sigma1,
@@ -206,11 +244,27 @@ double p[3], b[3], t[3];
         // gets to be plane 1.
         for (i=0; i<nmtLoc; i++)
         {
-
+            if (kappa1[i] < kappa2[i])
+            {
+                fp1[3*(imt+i)+0] = kappa1[i];
+                fp1[3*(imt+i)+1] = theta1[i];
+                fp1[3*(imt+i)+2] = sigma1[i]; 
+                fp2[3*(imt+i)+0] = kappa2[i];
+                fp2[3*(imt+i)+1] = theta2[i];
+                fp2[3*(imt+i)+2] = sigma2[i];
+            }
+            else
+            {
+                fp1[3*(imt+i)+0] = kappa2[i];
+                fp1[3*(imt+i)+1] = theta2[i];
+                fp1[3*(imt+i)+2] = sigma2[i];            
+                fp2[3*(imt+i)+0] = kappa1[i];
+                fp2[3*(imt+i)+1] = theta1[i];
+                fp2[3*(imt+i)+2] = sigma1[i];
+            } 
         }
-    printf("sdr 1: %f %f %f\n", kappa1[0], theta1[0], sigma1[0]);
-    printf("sdr 2: %f %f %f\n", kappa2[0], theta2[0], sigma2[0]);
-
+        //printf("sdr 1: %f %f %f\n", kappa1[0], theta1[0], sigma1[0]);
+        //printf("sdr 2: %f %f %f\n", kappa2[0], theta2[0], sigma2[0]);
         // Compute the magnitude (Jost and Herrmann Eqn 19)
         for (i=0; i<nmtLoc; i++)
         {
@@ -225,6 +279,13 @@ double p[3], b[3], t[3];
             dcPct[imt+i] = (1.0 - 2.0*fabs(F))*(1.0 - 0.01*isoPct[i])*100.0;
             devPct[imt+i] = 100.0 - isoPct[imt+i];
             clvdPct[imt+i] = 100.0 - isoPct[imt+i] - dcPct[imt+i];
+        }
+        // Compute the moment magnitude
+        ierr = compearth_m02mw(nmtLoc, imag, M0, Mw);
+        if (ierr != 0)
+        {
+            fprintf(stderr, "%s: m02mw failed\n", __func__);
+            return -1;
         }
 
  
