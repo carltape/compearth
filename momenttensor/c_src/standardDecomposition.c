@@ -19,8 +19,8 @@
  * @param[in] M         Moment tensors to decompose.  This is an array
  *                      of dimension [6 x nmt] with leading dimension 6.
  *                      The bases are given by basis.  Each moment tensor
- *                      is packed \f$ {m_{11}, m_{22}, m_{33},
- *                                     m_{12}, m_{13}, m_{23} \} \f$.
+ *                      is packed \f$ \{m_{11}, m_{22}, m_{33},
+ *                                      m_{12}, m_{13}, m_{23} \} \f$.
  *                      The momen tensor terms have units of (N-m).
  * @param[in] basis     Basis of input moment tensors. 
  *
@@ -245,8 +245,6 @@ int compearth_standardDecomposition(const int nmt,
                 fp2[3*(imt+i)+2] = sigma1[i];
             } 
         }
-        //printf("sdr 1: %f %f %f\n", kappa1[0], theta1[0], sigma1[0]);
-        //printf("sdr 2: %f %f %f\n", kappa2[0], theta2[0], sigma2[0]);
         // Compute the magnitude (Jost and Herrmann Eqn 19)
         for (i=0; i<nmtLoc; i++)
         {
