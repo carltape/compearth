@@ -33,19 +33,19 @@
  *                       = \frac{2}{3} \left ( \log_10(M0) - 16.1 \right )
  *                      \f$.
  *                      This is an array of dimension [nmt].
- * @param[out] fp1      Strike, dip, and rake (respectively) of fault plane 1.
- *                      This is an array of dimension [3 x nmt] with leading
- *                      dimension 3.
- * @param[out] fp2      Strike, dip, and rake (respectively) of fault plane 2.
- *                      This is an array of dimension [3 x nmt] with leading
- *                      dimension 3.
- * @param[out] pAxis    This is the plunge (degrees), azimuth (degrees), and
+ * @param[out] fp1      Strike, dip, and rake (respectively) in degrees 
+ *                      of fault plane 1.  This is an array of dimension
+ *                      [3 x nmt] with leading dimension 3.
+ * @param[out] fp2      Strike, dip, and rake (respectively) in degrees
+ *                      of fault plane 2.  This is an array of dimension
+ *                      [3 x nmt] with leading dimension 3.
+ * @param[out] pAxis    This is the azimuth (degrees), plunge (degrees), and
  *                      length (N-m) of the pressure axis.  This is an array
  *                      of dimension [3 x nmt] with leading dimension 3.
- * @param[out] bAxis    This is the plunge (degrees), azimuth (degrees), and
+ * @param[out] bAxis    This is the azimuth (degrees), plunge (degrees), and
  *                      length (N-m) of the null axis.  This is an array 
  *                      of dimension [3 x nmt] with leading dimension 3.
- * @param[out] tAxis    This is the plunge (degrees), azimuth (degrees), and
+ * @param[out] tAxis    This is the azimuth (degrees), plunge (degrees), and
  *                      length (N-m) of the tension axis.  This is an array
  *                      of dimension [3 x nmt] with leading dimension 3. 
  * @param[out] isoPct   This is the isotropic percent in range [0,100]
@@ -200,7 +200,7 @@ int compearth_standardDecomposition(const int nmt,
             lamT[1] = lam[3*i+1] - M0iso[i];
             lamT[2] = lam[3*i+2] - M0iso[i];
             // The first eigenvector will go to positive eigenvalue (tension)
-            tAxis[3*(imt+i)+0] = az1[i]; 
+            tAxis[3*(imt+i)+0] = az1[i];
             tAxis[3*(imt+i)+1] = pl1[i];
             tAxis[3*(imt+i)+2] = lamT[0];
             // The second eigenvector will be null/neutral (intermediate) 
@@ -209,7 +209,7 @@ int compearth_standardDecomposition(const int nmt,
             bAxis[3*(imt+i)+2] = lamT[1];
             // The third eigenvector will go to negative eigenvalue (pressure)
             pAxis[3*(imt+i)+0] = az3[i];
-            pAxis[3*(imt+i)+1] = pl3[i]; 
+            pAxis[3*(imt+i)+1] = pl3[i];
             pAxis[3*(imt+i)+2] = lamT[2];
         }
         // Compute the auxiliary fault plane
@@ -230,7 +230,7 @@ int compearth_standardDecomposition(const int nmt,
             {
                 fp1[3*(imt+i)+0] = kappa1[i];
                 fp1[3*(imt+i)+1] = theta1[i];
-                fp1[3*(imt+i)+2] = sigma1[i]; 
+                fp1[3*(imt+i)+2] = sigma1[i];
                 fp2[3*(imt+i)+0] = kappa2[i];
                 fp2[3*(imt+i)+1] = theta2[i];
                 fp2[3*(imt+i)+2] = sigma2[i];
@@ -239,7 +239,7 @@ int compearth_standardDecomposition(const int nmt,
             {
                 fp1[3*(imt+i)+0] = kappa2[i];
                 fp1[3*(imt+i)+1] = theta2[i];
-                fp1[3*(imt+i)+2] = sigma2[i];            
+                fp1[3*(imt+i)+2] = sigma2[i];
                 fp2[3*(imt+i)+0] = kappa1[i];
                 fp2[3*(imt+i)+1] = theta1[i];
                 fp2[3*(imt+i)+2] = sigma1[i];
