@@ -23,6 +23,7 @@
  *                                     m_{12}, m_{13}, m_{23} \} \f$.
  *                      The momen tensor terms have units of (N-m).
  * @param[in] basis     Basis of input moment tensors. 
+ *
  * @param[out] M0       Scalar moment (N-m) of moment tensors.  This is an array
  *                      of dimension [nmt].
  * @param[out] Mw       Moment magnitudes computed with the Harvard CMT
@@ -61,6 +62,12 @@
  *                      of the input moment tensors.  This is an array
  *                      of dimension [nmt].
  *
+ * @result 0 indicates success.
+ *
+ * @author Ben Baker, ISTI
+ *
+ * @copyright MIT
+ *
  */
 int compearth_standardDecomposition(const int nmt,
                                     const double *__restrict__ M,
@@ -80,21 +87,20 @@ int compearth_standardDecomposition(const int nmt,
     double Muse[6*CE_CHUNKSIZE] __attribute__((aligned(64)));
     double MisoW[6*CE_CHUNKSIZE] __attribute__((aligned(64)));
     double MdevW[6*CE_CHUNKSIZE] __attribute__((aligned(64)));
-    //double MdevUSE[6*CE_CHUNKSIZE] __attribute__((aligned(64)));
     double M0iso[CE_CHUNKSIZE] __attribute__((aligned(64)));
     double M0devi[CE_CHUNKSIZE] __attribute__((aligned(64)));
     double U[9*CE_CHUNKSIZE] __attribute__((aligned(64)));
     double lam[3*CE_CHUNKSIZE] __attribute__((aligned(64)));
     double lamDevI[3*CE_CHUNKSIZE] __attribute__((aligned(64)));
-    double gamma[CE_CHUNKSIZE];
-    double delta[CE_CHUNKSIZE];
-    double M0work[CE_CHUNKSIZE];
-    double kappa1[CE_CHUNKSIZE];
-    double theta1[CE_CHUNKSIZE];
-    double sigma1[CE_CHUNKSIZE]; 
-    double kappa2[CE_CHUNKSIZE];
-    double theta2[CE_CHUNKSIZE];
-    double sigma2[CE_CHUNKSIZE];
+    double gamma[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double delta[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double M0work[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double kappa1[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double theta1[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double sigma1[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double kappa2[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double theta2[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double sigma2[CE_CHUNKSIZE] __attribute__((aligned(64)));
     double pl1[CE_CHUNKSIZE], pl2[CE_CHUNKSIZE], pl3[CE_CHUNKSIZE];
     double az1[CE_CHUNKSIZE], az2[CE_CHUNKSIZE], az3[CE_CHUNKSIZE];
     double K[3*CE_CHUNKSIZE];
@@ -177,30 +183,6 @@ int compearth_standardDecomposition(const int nmt,
             lamDevI[3*i+1] = lamT[perm[i+1]];
             lamDevI[3*i+2] = lamT[perm[i+2]];
         }
-/*
-        // Compute the isotropic magnitude: 1/3*trace(M_{iso}).  However,
-        // M_{iso} has constant diagonal so it is sufficient to simply grab
-        // an element instead of sum the digonal and divide by 3. 
-        //cblas_dcopy(nmtLoc, MisoW, 3, M0iso, 1); 
-        // The computation proceeds with the deviatoric moment tensor in SEU 
-        // coordinates
-        ierr = compearth_convertMT(nmtLoc, basis, CE_SEU, MdevW, MdevUSE);
-        if (ierr != 0)
-        {
-            fprintf(stderr, "%s: Failed to convert MT basis\n", __func__);
-            return -1;
-        }
-        // Decompose the deviatoric moment tensor
-        ierr = compearth_CMTdecom(nmtLoc, MdevUSE, isort, lam, U);
-        // Sort the eigenvalues in descending order of absolute value
-        for (i=0; i<nmtLoc; i++)
-        {
-            argsort3_absUpDown(&lam[3*i], true, perm);
-            lamDevI[3*i]   = lam[3*i + perm[i]];
-            lamDevI[3*i+1] = lam[3*i + perm[i+1]];
-            lamDevI[3*i+2] = lam[3*i + perm[i+2]];
-        }
-*/
         // Represent eigenbasis as plunge/azimuth.
         ierr = compearth_U2pa(nmtLoc, U,
                               pl1, az1, pl2, az2, pl3, az3);
@@ -218,17 +200,17 @@ int compearth_standardDecomposition(const int nmt,
             lamT[1] = lam[3*i+1] - M0iso[i];
             lamT[2] = lam[3*i+2] - M0iso[i];
             // The first eigenvector will go to positive eigenvalue (tension)
-            tAxis[3*i+0] = az1[i]; 
-            tAxis[3*i+1] = pl1[i];
-            tAxis[3*i+2] = lamT[0];
+            tAxis[3*(imt+i)+0] = az1[i]; 
+            tAxis[3*(imt+i)+1] = pl1[i];
+            tAxis[3*(imt+i)+2] = lamT[0];
             // The second eigenvector will be null/neutral (intermediate) 
-            bAxis[3*i+0] = az2[i];
-            bAxis[3*i+1] = pl2[i];
-            bAxis[3*i+2] = lamT[1];
+            bAxis[3*(imt+i)+0] = az2[i];
+            bAxis[3*(imt+i)+1] = pl2[i];
+            bAxis[3*(imt+i)+2] = lamT[1];
             // The third eigenvector will go to negative eigenvalue (pressure)
-            pAxis[3*i+0] = az3[i];
-            pAxis[3*i+1] = pl3[i]; 
-            pAxis[3*i+2] = lamT[2];
+            pAxis[3*(imt+i)+0] = az3[i];
+            pAxis[3*(imt+i)+1] = pl3[i]; 
+            pAxis[3*(imt+i)+2] = lamT[2];
         }
         // Compute the auxiliary fault plane
         ierr = compearth_auxiliaryPlane(nmtLoc,
@@ -287,8 +269,6 @@ int compearth_standardDecomposition(const int nmt,
             fprintf(stderr, "%s: m02mw failed\n", __func__);
             return -1;
         }
-
- 
-    }
+    } // Loop on MT chunks
     return 0;
 }
