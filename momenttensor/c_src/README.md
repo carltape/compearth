@@ -4,7 +4,7 @@ This is a C translation of some of Carl Tape's compearth Matlab scripts.  These 
 
 # Prerequisites
 
-An effort was made to make this library largely free of many dependencies.  However, some there still remain some dependencies which are detailed in the following list
+An effort was made to make this library largely free of many dependencies.  However, there still remain some required items which are detailed in the following list
 
 * [CMake](https://cmake.org/) v2.6 or greater.
 * A valid C11 compiler
