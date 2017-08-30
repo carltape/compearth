@@ -25,7 +25,7 @@
 
 enum compearthCoordSystem_enum
 {
-    CE_UNKOWN_COORDS = 0, /*!< Unkown coordinate system. */
+    CE_UNKNOWN_COORDS = 0, /*!< Unkown coordinate system. */
     CE_USE = 1,    /*!< Up, south, east (G-CMT) */
     CE_NED = 2,    /*!< North, east, down (Aki and Richards, 1980 pg 118) */
     CE_NWU = 3,    /*!< North, west, up */
@@ -58,7 +58,7 @@ enum ceOrthoType_enum
     CE_NO_ORTH = 0,   /*!< Don't perform a reorthgonalization. */
     CE_ORTH_SVD = 1,       /*!< Orthgonalizes with SVD. */
     CE_ORTH_TAPE2012 = 2,  /*!< Orthgonalizes with Tape and Tape 2012c Appendix E. */
-    CE_ORTH_QUAT = 3,      /*!< Orthoganlizes with quaternions. */
+    CE_ORTH_QUAT = 3       /*!< Orthoganlizes with quaternions. */
 };
 
 #ifdef __cplusplus
