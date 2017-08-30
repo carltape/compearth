@@ -47,12 +47,10 @@ int compearth_lam2lune(const int nmt, const double *__restrict__ lam,
                        double *__restrict__ lamdev,
                        double *__restrict__ lamiso)
 {
-    double *lamW, bdot, lam1, lam2, lam3, lammag, lamsum, third_lamsum,
-           xnum, xden;
-    double lamTemp[3*MAXMT] __attribute__((aligned(64)));
-    int i, ierr;
+    double lamW[3*CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double bdot, lam1, lam2, lam3, lammag, lamsum, third_lamsum, xnum, xden;
+    int i, ierr, imt, nmtLoc;
     bool lwantLamDev, lwantLamIso, lwantM0, lwantThetaDC;
-    size_t nbytes;
     const double sqrt3 = sqrt(3.0);
     const double deg = 180.0/M_PI;
     const double third = 1.0/3.0;
@@ -65,20 +63,6 @@ int compearth_lam2lune(const int nmt, const double *__restrict__ lam,
         if (delta == NULL){fprintf(stderr, "%s: delta is NULL\n", __func__);}
         return -1;
     }
-    // Set the workspace
-    if (nmt > MAXMT) 
-    {
-        nbytes = 3*(size_t) nmt*sizeof(double);
-#ifdef USE_POSIX
-        posix_memalign((void **) &lamW, 64, nbytes);
-#else
-        lamW = (double *) aligned_alloc(64, nbytes); 
-#endif
-    }
-    else
-    { 
-        lamW = lamTemp;
-    }
     // Figure out the things that I want
     lwantM0 = false;
     if (M0 != NULL){lwantM0 = true;}
@@ -88,53 +72,58 @@ int compearth_lam2lune(const int nmt, const double *__restrict__ lam,
     if (lamiso != NULL){lwantLamIso = true;}
     lwantLamDev = false;
     if (lamdev != NULL){lwantLamDev = true;}
-    // Sort the eigenvalues 
-    ierr = compearth_lamsort(nmt, lam, lamW);
-    if (ierr != 0)
+    for (imt=0; imt<nmt; imt=imt+CE_CHUNKSIZE)
     {
-        fprintf(stderr, "%s: Error sorting eigenvalues\n", __func__);
-        goto ERROR;
-    }
-    for (i=0; i<nmt; i++)
-    {
-        lam1 = lamW[3*i];
-        lam2 = lamW[3*i+1];
-        lam3 = lamW[3*i+2];
-        lamsum = lam1 + lam2 + lam3;
-        lammag = sqrt(lam1*lam1 + lam2*lam2 + lam3*lam3);
-        // Compute Tape and Tape 2012a, Eq 21 (and 23)
-        bdot = (lamW[3*i] + lamW[3*i+1] + lamW[3*i+2])/(sqrt3*lammag);
-        // Numerical safety 2: is abs(bdot) > 1 -> adjust bdoet to +1 or -1
-        bdot = fmax(-1.0, fmin(bdot, 1.0));
-        delta[i] = 0.0;
-        // Numerical safety 1: if trace(M) == 0 then delta = 0
-        if (lamsum != 0.0){delta[i] = 90.0 - acos(bdot)*deg;}
-        // Tape and Tape 2012a, Eqn 21a
-        xnum =-lamW[3*i] + 2.0*lamW[3*i+1] - lamW[3*i+2]; 
-        xden = sqrt3*(lamW[3*i] - lamW[3*i+2]);
-        gamma[i] = atan2(xnum, xden)*deg; // N.B. Carl uses atan
-        // Extra output; compute seismic moment
-        if (lwantM0){M0[i] = lammag*M_SQRT1_2;} 
-        // Compute thetadc -- the angle between the DC and the lune point
-        if (lwantThetaDC){thetadc[i] = acos((lam1 - lam3)/(M_SQRT2*lammag))*deg;}
-        // Isotropic component of moment tensor
-        third_lamsum = third*lamsum;
-        if (lwantLamIso)
+        nmtLoc = MIN(CE_CHUNKSIZE, nmt - imt); 
+        // Sort the eigenvalues 
+        ierr = compearth_lamsort(nmtLoc, &lam[imt], lamW);
+        if (ierr != 0)
         {
-            lamiso[3*i+0] = third_lamsum;
-            lamiso[3*i+1] = third_lamsum;
-            lamiso[3*i+2] = third_lamsum;
+            fprintf(stderr, "%s: Error sorting eigenvalues\n", __func__);
+            goto ERROR;
         }
-        if (lwantLamDev)
+        for (i=0; i<nmtLoc; i++)
         {
-            lamdev[3*i+0] = lamW[3*i+0] - third_lamsum;
-            lamdev[3*i+1] = lamW[3*i+1] - third_lamsum;
-            lamdev[3*i+2] = lamW[3*i+2] - third_lamsum;
+            lam1 = lamW[3*i];
+            lam2 = lamW[3*i+1];
+            lam3 = lamW[3*i+2];
+            lamsum = lam1 + lam2 + lam3;
+            lammag = sqrt(lam1*lam1 + lam2*lam2 + lam3*lam3);
+            // Compute Tape and Tape 2012a, Eq 21 (and 23)
+            bdot = (lamW[3*i] + lamW[3*i+1] + lamW[3*i+2])/(sqrt3*lammag);
+            // Numerical safety 2: is abs(bdot) > 1 -> adjust bdoet to +1 or -1
+            bdot = fmax(-1.0, fmin(bdot, 1.0));
+            delta[imt+i] = 0.0;
+            // Numerical safety 1: if trace(M) == 0 then delta = 0
+            if (lamsum != 0.0){delta[imt+i] = 90.0 - acos(bdot)*deg;}
+            // Tape and Tape 2012a, Eqn 21a
+            xnum =-lamW[3*i] + 2.0*lamW[3*i+1] - lamW[3*i+2]; 
+            xden = sqrt3*(lamW[3*i] - lamW[3*i+2]);
+            gamma[imt+i] = atan2(xnum, xden)*deg; // N.B. Carl uses atan
+            // Extra output; compute seismic moment
+            if (lwantM0){M0[imt+i] = lammag*M_SQRT1_2;} 
+            // Compute thetadc -- the angle between the DC and the lune point
+            if (lwantThetaDC)
+            {
+                thetadc[imt+i] = acos((lam1 - lam3)/(M_SQRT2*lammag))*deg;
+            }
+            // Isotropic component of moment tensor
+            third_lamsum = third*lamsum;
+            if (lwantLamIso)
+            {
+                lamiso[3*(imt+i)+0] = third_lamsum;
+                lamiso[3*(imt+i)+1] = third_lamsum;
+                lamiso[3*(imt+i)+2] = third_lamsum;
+            }
+            if (lwantLamDev)
+            {
+                lamdev[3*(imt+i)+0] = lamW[3*i+0] - third_lamsum;
+                lamdev[3*(imt+i)+1] = lamW[3*i+1] - third_lamsum;
+                lamdev[3*(imt+i)+2] = lamW[3*i+2] - third_lamsum;
+            }
         }
-    }
+    } // Loop on MT chunks
 ERROR:;
-    if (nmt > MAXMT){free(lamW);}
-    lamW = NULL;
     return ierr;
 }
                        
