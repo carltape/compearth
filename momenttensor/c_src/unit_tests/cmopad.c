@@ -4,7 +4,7 @@
 #include <string.h>
 #include <math.h>
 #include "compearth.h"
-#ifdef COMPEARTH_USE_INTEL
+#ifdef COMPEARTH_USE_MKL
 #include <mkl_lapacke.h>
 #include <mkl_cblas.h>
 #else
