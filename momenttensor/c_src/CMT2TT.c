@@ -99,12 +99,17 @@ int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
                      double *__restrict__ S, double *__restrict__ thetadc,
                      double *__restrict__ lam, double *__restrict__ U)
 {
-    double *lamdev, *lamiso, *lamWork, *Uwork, Vwork[9], Yrot[9], M[6],
+    double *lamdev, *lamiso, Vwork[9], Yrot[9], M[6],
            Sloc[12], Kloc[12], Nloc[12], kappaL[4], sigmaL[4], thetaL[4];
-    double lamSpace[3*MAXMT];
-    double uSpace[9*MAXMT];
+    double *thetadcWork;
+    double Uwork[9*CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double lamWork[3*CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double Nwork[3*CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double Swork[3*CE_CHUNKSIZE] __attribute__((aligned(64)));
+    //double lamSpace[3*MAXMT];
+    //double uSpace[9*MAXMT];
     bool lwantLam, lwantK, lwantN, lwantS, lwantU;
-    int itemp[4], ierr, ierrAll, match, imt, j, nMatch;
+    int itemp[4], ierr, ierrAll, match, imt, j, jmt, nmtLoc, nMatch;
     const int isort = 1;
     const double rotAngle = 45.0;
     const double tol = 1.e-6;
@@ -122,41 +127,11 @@ int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
         if (sigma == NULL){fprintf(stderr, "%s: sigma is NULL\n", __func__);}
         return -1; 
     }
-    // Pair up pointers
+    // Determine if eigenvalue/eigenvector decomposition is requested
     lwantLam = false;
     if (lam != NULL){lwantLam = true;}
-    if (lwantLam)
-    {
-        lamWork = lam;
-    }
-    else
-    {
-        if (nmt <= MAXMT)
-        {
-            lamWork = lamSpace;
-        }
-        else
-        {
-            lamWork = (double *) calloc((size_t) (3*nmt), sizeof(double)); 
-        } 
-    }
     lwantU = false;
     if (U != NULL){lwantU = true;}
-    if (lwantU)
-    {
-        Uwork = U;
-    }
-    else
-    {
-        if (nmt <= MAXMT)
-        {
-            Uwork = uSpace;
-        }
-        else
-        {
-            Uwork = (double *) calloc((size_t) (9*nmt), sizeof(double));
-        }
-    } 
     // Determine the desired fault vectors
     lwantK = false;
     lwantN = false;
@@ -164,162 +139,175 @@ int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
     if (K != NULL){lwantK = true;}
     if (N != NULL){lwantN = true;}
     if (S != NULL){lwantS = true;} 
-    // This is the numerically expensive part b/c of eigendecomposition
-    ierrAll = 0;
-    for (imt=0; imt<nmt; imt++)
+    // Loop on moment tensor chunks
+    for (jmt=0; jmt<nmt; jmt=jmt+CE_CHUNKSIZE)
     {
-        // KEY: Convert M into another basis.
-        // YOU MUST ALSO CHANGE north AND zenith IN fault2vecang BELOW
-        // --> U will be with respect to this basis (from CMTdecom.m)
-        // ierr = compearth_convertMT(1, CE_USE, CE_NWU, &Min[6*imt], M);
-        ierr = compearth_convertMT(1, CE_USE, CE_SEU, &Min[6*imt], M);
-        if (ierr != 0)
+        nmtLoc = MIN(CE_CHUNKSIZE, nmt - jmt);
+        // This is the numerically expensive part b/c of eigendecomposition
+        ierrAll = 0;
+        for (imt=0; imt<nmtLoc; imt++)
         {
-            fprintf(stderr, "%s: Error switching basis\n", __func__);
-            ierrAll = ierrAll + 1; //break;
-        }
-        // PART 1: moment tensor source type (or pattern)
-        // Decompose moment tensor into eigenvalues + basis (M = U*lam*U')
-        // NOTE: ordering of eigenvalues is important.
-        ierr = compearth_CMTdecom(1, M, isort, &lamWork[3*imt], &Uwork[9*imt]);
-        if (ierr != 0)
-        {
-            fprintf(stderr, "%s: Error decomposing CMT\n", __func__);
-            ierrAll = ierrAll + 1; //break;
-        }
-    }
-    if (ierrAll != 0)
-    {
-        fprintf(stderr, "%s: Error during eigendecomposition\n", __func__);
-        ierr = 1;
-        goto ERROR;
-    }
-    // Compute the lune coordinates and magnitude from eigenvalues
-    lamdev = NULL;
-    lamiso = NULL;
-    ierr = compearth_lam2lune(nmt, lamWork, gamma, delta, M0, thetadc,
-                              lamdev, lamiso);
-    // Part 2: moment tensor orientation; TT2012, Section 6.3
-    ierr = compearth_eulerUtil_rotmat(1, &rotAngle, 2, Yrot);
-    if (ierr != 0)
-    {
-        fprintf(stderr, "%s: Error computing rotation matrix\n", __func__);
-        return -1;
-    }
-    // Compute candidate fault vectors
-    for (imt=0; imt<nmt; imt++)
-    {
-        cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans,
-                    3, 3, 3, 1.0, &Uwork[9*imt], 3, Yrot, 3,
-                    0.0, Vwork, 3); // V = U*Yrot (TT2012, p. 487)
-        S[3*imt+0] = Vwork[0];
-        S[3*imt+1] = Vwork[1];
-        S[3*imt+2] = Vwork[2];
-        N[3*imt+0] = Vwork[6];
-        N[3*imt+1] = Vwork[7];
-        N[3*imt+2] = Vwork[8];
-    }
-    // Reassign ~0 elements to 0; ~1 elements to 1, and ~-1 elements to -1.
-    setZero(nmt, tol, S);
-    setZero(nmt, tol, N);
-    // Compute fault angles for four possible combinations (TT2012 Figure 15)
-    for (imt=0; imt<nmt; imt++)
-    {
-        for (j=0; j<3; j++)
-        {
-            Sloc[3*0+j] = S[3*imt+j]; Nloc[3*0+j] = N[3*imt+j];
-            Sloc[3*1+j] =-S[3*imt+j]; Nloc[3*1+j] =-N[3*imt+j];
-            Sloc[3*2+j] = N[3*imt+j]; Nloc[3*2+j] = S[3*imt+j];
-            Sloc[3*3+j] =-N[3*imt+j]; Nloc[3*3+j] =-S[3*imt+j];
-        }
-        faultVec2Ang(&Sloc[0], &Nloc[0], &thetaL[0], &sigmaL[0],
-                     &kappaL[0], &Kloc[0], &ierr);
-        faultVec2Ang(&Sloc[3], &Nloc[3], &thetaL[1], &sigmaL[1],
-                     &kappaL[1], &Kloc[3], &ierr);
-        faultVec2Ang(&Sloc[6], &Nloc[6], &thetaL[2], &sigmaL[2],
-                     &kappaL[2], &Kloc[6], &ierr);
-        faultVec2Ang(&Sloc[9], &Nloc[9], &thetaL[3], &sigmaL[3],
-                     &kappaL[3], &Kloc[9], &ierr);
-        // There are four combinations of N and S that represent a double couple
-        // moment tensor, as shown in Figure 15 of TT2012.
-        // From these four combinations, there are two possible fault planes.
-        // We want to isoate the combination that is within the bounding
-        // region shown in Figures 16 and B1.
-        memset(itemp, 0, 4*sizeof(int));
-        nMatch = 0;
-        for (j=0; j<4; j++)
-        {
-            if (thetaL[j] <= 90.0 + tol && fabs(sigmaL[j]) <= 90.0 + tol)
-            { 
-                itemp[nMatch] = j; //bmatch[j] = true;
-                nMatch = nMatch + 1;
+            // KEY: Convert M into another basis.
+            // YOU MUST ALSO CHANGE north AND zenith IN fault2vecang BELOW
+            // --> U will be with respect to this basis (from CMTdecom.m)
+            // ierr = compearth_convertMT(1, CE_USE, CE_NWU, &Min[6*imt], M);
+            ierr = compearth_convertMT(1, CE_USE, CE_SEU, &Min[6*jmt], M);
+            if (ierr != 0)
+            {
+                fprintf(stderr, "%s: Error switching basis\n", __func__);
+                ierrAll = ierrAll + 1; //break;
+            }
+            // PART 1: moment tensor source type (or pattern)
+            // Decompose moment tensor into eigenvalues + basis (M = U*lam*U')
+            // NOTE: ordering of eigenvalues is important.
+            ierr = compearth_CMTdecom(1, M, isort, &lamWork[3*imt], &Uwork[9*imt]);
+            if (ierr != 0)
+            {
+                fprintf(stderr, "%s: Error decomposing CMT\n", __func__);
+                ierrAll = ierrAll + 1; //break;
             }
         }
-        if (nMatch == 1)
+        if (ierrAll != 0)
         {
-            match = itemp[0];
+            fprintf(stderr, "%s: Error during eigendecomposition\n", __func__);
+            ierr = 1;
+            goto ERROR;
         }
-        else if (nMatch == 2)
+        // Compute the lune coordinates and magnitude from eigenvalues
+        lamdev = NULL;
+        lamiso = NULL;
+        thetadcWork = NULL;
+        if (thetadc != NULL){thetadcWork = &thetadc[jmt];}
+        ierr = compearth_lam2lune(nmtLoc, lamWork, &gamma[jmt], &delta[jmt],
+                                  &M0[jmt], thetadcWork,
+                                  lamdev, lamiso);
+        // Part 2: moment tensor orientation; TT2012, Section 6.3
+        ierr = compearth_eulerUtil_rotmat(1, &rotAngle, 2, Yrot);
+        if (ierr != 0)
         {
-            match = pickP1(thetaL[itemp[0]], sigmaL[itemp[0]], kappaL[itemp[0]],
-                           thetaL[itemp[1]], sigmaL[itemp[1]], kappaL[itemp[1]],
-                           tol, itemp[0], itemp[1]);
-            if (match < 0)
+            fprintf(stderr, "%s: Error computing rotation matrix\n", __func__);
+            return -1;
+        }
+        // Compute candidate fault vectors
+        for (imt=0; imt<nmtLoc; imt++)
+        {
+            cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans,
+                        3, 3, 3, 1.0, &Uwork[9*imt], 3, Yrot, 3,
+                        0.0, Vwork, 3); // V = U*Yrot (TT2012, p. 487)
+            Swork[3*imt+0] = Vwork[0];
+            Swork[3*imt+1] = Vwork[1];
+            Swork[3*imt+2] = Vwork[2];
+            Nwork[3*imt+0] = Vwork[6];
+            Nwork[3*imt+1] = Vwork[7];
+            Nwork[3*imt+2] = Vwork[8];
+        }
+        // Save lambda and U
+        if (lwantLam){cblas_dcopy(3*nmtLoc, lamWork, 1, &lam[3*jmt], 1);}
+        if (lwantU){cblas_dcopy(9*nmtLoc, Uwork, 1, &U[9*jmt], 1);}
+        // Reassign ~0 elements to 0; ~1 elements to 1, and ~-1 elements to -1.
+        setZero(nmtLoc, tol, Swork);
+        setZero(nmtLoc, tol, Nwork);
+        // Compute fault angles for four possible combinations (TT2012 Fig 15)
+        for (imt=0; imt<nmtLoc; imt++)
+        {
+            for (j=0; j<3; j++)
             {
-                fprintf(stderr, "%s: Failed to pick a fault plane\n", __func__);
+                Sloc[3*0+j] = Swork[3*imt+j]; Nloc[3*0+j] = Nwork[3*imt+j];
+                Sloc[3*1+j] =-Swork[3*imt+j]; Nloc[3*1+j] =-Nwork[3*imt+j];
+                Sloc[3*2+j] = Nwork[3*imt+j]; Nloc[3*2+j] = Swork[3*imt+j];
+                Sloc[3*3+j] =-Nwork[3*imt+j]; Nloc[3*3+j] =-Swork[3*imt+j];
+            }
+            faultVec2Ang(&Sloc[0], &Nloc[0], &thetaL[0], &sigmaL[0],
+                         &kappaL[0], &Kloc[0], &ierr);
+            faultVec2Ang(&Sloc[3], &Nloc[3], &thetaL[1], &sigmaL[1],
+                         &kappaL[1], &Kloc[3], &ierr);
+            faultVec2Ang(&Sloc[6], &Nloc[6], &thetaL[2], &sigmaL[2],
+                         &kappaL[2], &Kloc[6], &ierr);
+            faultVec2Ang(&Sloc[9], &Nloc[9], &thetaL[3], &sigmaL[3],
+                         &kappaL[3], &Kloc[9], &ierr);
+            // There are four combinations of N and S that represent a double
+            // copule moment tensor, as shown in Figure 15 of TT2012.
+            // From these four combinations, there are two possible fault
+            // planes.  We want to isoate the combination that is within the
+            // boundingregion shown in Figures 16 and B1.
+            memset(itemp, 0, 4*sizeof(int));
+            nMatch = 0;
+            for (j=0; j<4; j++)
+            {
+                if (thetaL[j] <= 90.0 + tol && fabs(sigmaL[j]) <= 90.0 + tol)
+                { 
+                    itemp[nMatch] = j; //bmatch[j] = true;
+                    nMatch = nMatch + 1;
+                }
+            }
+            if (nMatch == 1)
+            {
+                match = itemp[0];
+            }
+            else if (nMatch == 2)
+            {
+                match = pickP1(thetaL[itemp[0]], sigmaL[itemp[0]], kappaL[itemp[0]],
+                               thetaL[itemp[1]], sigmaL[itemp[1]], kappaL[itemp[1]],
+                               tol, itemp[0], itemp[1]);
+                if (match < 0)
+                {
+                    fprintf(stderr, "%s: Failed to pick a fault plane\n",
+                             __func__);
+                    ierr = 1;
+                    goto ERROR;
+                }
+            }
+            else if (nMatch == 3)
+            {
+                fprintf(stdout,
+                  "%s: Warning mt on bdry of orientation domain 3 candidates\n",
+                  __func__);
+                fprintf(stdout, "%s: thetas: %e %e %e\n", __func__,
+                        thetaL[0], thetaL[1], thetaL[2]);
+                fprintf(stdout, "%s: sigmas: %e %e %e\n", __func__,
+                        sigmaL[0], sigmaL[1], sigmaL[2]);
+                fprintf(stdout, "%s: kappas: %e %e %e\n", __func__,
+                        kappaL[0], kappaL[1], kappaL[2]);
+                // Just take the first one
+                match = itemp[0]; 
+            }
+            else if (nMatch == 4)
+            {
+                fprintf(stderr, "%s: Error not yet programmed\n", __func__);
                 ierr = 1;
                 goto ERROR;
             }
+            else
+            {
+                fprintf(stderr, "%s: Error no match\n", __func__);
+                ierr = 1;
+                goto ERROR;
+            }
+            // Select the angle
+            kappa[jmt+imt] = kappaL[match];
+            sigma[jmt+imt] = sigmaL[match];
+            theta[jmt+imt] = thetaL[match];
+            // Fault vectors
+            if (lwantK)
+            {
+                for (j=0; j<3; j++){K[3*(jmt+imt)+j] = Kloc[3*match+j];}
+            }
+            if (lwantN)
+            {
+                for (j=0; j<3; j++){N[3*(jmt+imt)+j] = Nloc[3*match+j];}
+            }
+            if (lwantS)
+            {
+                for (j=0; j<3; j++){S[3*(jmt+imt)+j] = Sloc[3*match+j];}
+            }
         }
-        else if (nMatch == 3)
-        {
-            fprintf(stdout,
-                  "%s: Warning mt on bdry of orientation domain 3 candidates\n",
-                  __func__);
-            fprintf(stdout, "%s: thetas: %e %e %e\n", __func__,
-                    thetaL[0], thetaL[1], thetaL[2]);
-            fprintf(stdout, "%s: sigmas: %e %e %e\n", __func__,
-                   sigmaL[0], sigmaL[1], sigmaL[2]);
-            fprintf(stdout, "%s: kappas: %e %e %e\n", __func__,
-                    kappaL[0], kappaL[1], kappaL[2]);
-            // Just take the first one
-            match = itemp[0]; 
-        }
-        else if (nMatch == 4)
-        {
-            fprintf(stderr, "%s: Error not yet programmed\n", __func__);
-            ierr = 1;
-            goto ERROR;
-        }
-        else
-        {
-            fprintf(stderr, "%s: Error no match\n", __func__);
-            ierr = 1;
-            goto ERROR;
-        }
-        // Select the angle
-        kappa[imt] = kappaL[match];
-        sigma[imt] = sigmaL[match];
-        theta[imt] = thetaL[match];
-        // Fault vectors
-        if (lwantK)
-        {
-            for (j=0; j<3; j++){K[3*imt+j] = Kloc[3*match+j];}
-        }
-        if (lwantN)
-        {
-            for (j=0; j<3; j++){N[3*imt+j] = Nloc[3*match+j];}
-        }
-        if (lwantS)
-        {
-            for (j=0; j<3; j++){S[3*imt+j] = Sloc[3*match+j];}
-        }
- 
-    }
+    } // Loop on moment tensor chunks
     // Clean up
 ERROR:;
+/*
     Uwork = NULL;
     lamWork = NULL;
+*/
     return ierr; 
 }
 /*!

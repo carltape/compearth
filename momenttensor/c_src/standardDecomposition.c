@@ -171,11 +171,11 @@ int compearth_standardDecomposition(const int nmt,
         for (i=0; i<nmtLoc; i++)
         {
             // Gather isotropic scalar moment
-            M0iso[i] = MisoW[6*i];
+            M0iso[i] = fabs(MisoW[6*i]);
             // Compute deviatoric eigenvalues by removing isotropic part 
-            lamT[0] = lam[3*i+0] - M0iso[i];
-            lamT[1] = lam[3*i+1] - M0iso[i];
-            lamT[2] = lam[3*i+2] - M0iso[i];
+            lamT[0] = lam[3*i+0] - MisoW[6*i];
+            lamT[1] = lam[3*i+1] - MisoW[6*i];
+            lamT[2] = lam[3*i+2] - MisoW[6*i];
             // Sort deviatoric in ascending order based on absolute value
             argsort3_absUpDown(lamT, true, perm);
             // Apply the argsort
@@ -196,9 +196,9 @@ int compearth_standardDecomposition(const int nmt,
         for (i=0; i<nmtLoc; i++)
         {
             // Eigenvalues are sorted highest to lowest
-            lamT[0] = lam[3*i+0] - M0iso[i];
-            lamT[1] = lam[3*i+1] - M0iso[i];
-            lamT[2] = lam[3*i+2] - M0iso[i];
+            lamT[0] = lam[3*i+0] - MisoW[6*i];
+            lamT[1] = lam[3*i+1] - MisoW[6*i];
+            lamT[2] = lam[3*i+2] - MisoW[6*i];
             // The first eigenvector will go to positive eigenvalue (tension)
             tAxis[3*(imt+i)+0] = az1[i];
             tAxis[3*(imt+i)+1] = pl1[i];

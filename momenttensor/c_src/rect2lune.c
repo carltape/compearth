@@ -39,8 +39,8 @@ int compearth_rect2lune(const int nv, const double *__restrict__ v,
                         double *__restrict__ delta) 
                          
 {
-    double *u;
-    int i, ierr, nu;
+    double u[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    int i, j, ierr, nuLoc;
     const int maxit = 20;
     const int useHalley = 2;
     const double tol = 1.e-12;
@@ -49,34 +49,26 @@ int compearth_rect2lune(const int nv, const double *__restrict__ v,
     // convert v -> gamma 
     compearth_v2gamma(nv, v, gamma);
     // convert latitude to colatitude
-    nu = nw;
-#if __STDC_VERSION__ >= 201112L 
-    size_t nbytes;
-    nbytes = (size_t) nu*sizeof(double);
-#ifdef USE_POSIX
-    posix_memalign((void **) &u, 64, nbytes);
-#else
-    u = (double *) aligned_alloc(64, nbytes);
-#endif
-#else
-    u = (double *) calloc((size_t) nu, sizeof(double));
-#endif
-    for (i=0; i<nw; i++)
+    for (i=0; i<nw; i=i+CE_CHUNKSIZE)
     {
-        u[i] = pi38 - w[i];
+        nuLoc = MIN(CE_CHUNKSIZE, nw - i);
+        for (j=0; j<nuLoc; j++)
+        {
+            u[j] = pi38 - w[i+j];
+        }
+        // convert u -> beta
+        ierr = compearth_u2beta(nuLoc, maxit, useHalley, u, tol, &delta[i]);
+        if (ierr != 0)
+        {
+            fprintf(stderr, "%s: Computing u2beta\n", __func__);
+            return -1;
+        }
     }
-    // convert u -> beta
-    ierr = compearth_u2beta(nu, maxit, useHalley, u, tol, delta);
-    if (ierr != 0)
-    {
-        fprintf(stderr, "%s: Computing u2beta\n", __func__);
-    }
-    free(u); 
     // convert to gamma to degrees
     cblas_dscal(nv, pi180i, gamma, 1);
     // convert delta from colatitude to latitude and radians to degrees
     #pragma omp simd
-    for (i=0; i<nu; i++)
+    for (i=0; i<nw; i++)
     {
         delta[i] = 90.0 - pi180i*delta[i];
     }

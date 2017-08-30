@@ -13,7 +13,7 @@ However,
 * Alternatively, BLAS, CBLAS, LAPACK, LAPACKE, and the requisite header files are available at no cost in Intel's [MKL](https://software.intel.com/en-us/mkl).
 * Doxygen.  This is only required if you wish to generate the API documentation.
   
-The purpose of CMake is to generate valid Makefiles in a cross-platform way.  Unfortunately, I find it infuriating to use.  To mitigate some of the frustration I usually create a compilation script.  To configure with clang 
+The purpose of CMake is to serve as a cross-platform Makefile generator.  CMake, however, can be difficult to use.  I usually find the most expedient strategy is to create configuration scripts.  For eample, to configure with clang
 
 
     #!/bin/bash

@@ -29,42 +29,34 @@ void compearth_lune2rect(const int ng, double *__restrict__ gamma,
                          double *__restrict__ v,
                          double *__restrict__ w)
 {
-    double *betaRad, *gammaRad;
-    int i;
+    double betaRad[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double gammaRad[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    int i, j, ndLoc, ngLoc;
     const double pi38 = 3.0*M_PI/8.0;
     const double pi180 = M_PI/180.0;
-#if __STDC_VERSION__ >= 201112L 
-    size_t nbytes;
-#ifdef USE_POSIX
-    nbytes = (size_t) ng*sizeof(double);
-    posix_memalign((void **) &gammaRad, 64, nbytes);
-    nbytes = (size_t) nd*sizeof(double);
-    posix_memalign((void **) &betaRad, 64, nbytes);
-#else
-    nbytes = (size_t) ng*sizeof(double);
-    gammaRad = (double *) aligned_alloc(64, nbytes);
-    nbytes = (size_t) nd*sizeof(double);
-    betaRad  = (double *) aligned_alloc(64, nbytes);
-#endif
-#else
-    gammaRad = (double *) calloc((size_t) ng, sizeof(double));
-    betaRad  = (double *) calloc((size_t) nd, sizeof(double));
-#endif
-    for (i=0; i<ng; i++)
+    // Compute v from gamma
+    for (i=0; i<ng; i=CE_CHUNKSIZE)
     {
-        gammaRad[i] = pi180*gamma[i];
+        ngLoc = MIN(CE_CHUNKSIZE, ng - i); 
+        for (j=0; j<ngLoc; j++)
+        {
+            gammaRad[j] = pi180*gamma[i+j];
+        }
+        compearth_gamma2v(ngLoc, gammaRad, &v[i]);
     }
-    for (i=0; i<nd; i++)
+    // Compute w from beta
+    for (i=0; i<nd; i=i+CE_CHUNKSIZE)
     {
-        betaRad[i] = pi180*delta[i];
+        ndLoc = MIN(CE_CHUNKSIZE, nd - i); 
+        for (j=0; j<ndLoc; j++)
+        {
+            betaRad[j] = pi180*delta[i+j];
+        }
+        compearth_beta2u(ndLoc, betaRad, &w[i]);
+        for (j=0; j<ndLoc; j++)
+        {
+            w[i+j] = pi38 - w[i+j];
+        }
     }
-    compearth_gamma2v(ng, gammaRad, v);
-    compearth_beta2u(nd, betaRad, w);
-    for (i=0; i<nd; i++)
-    {
-        w[i] = pi38 - w[i];
-    }
-    free(gammaRad);
-    free(betaRad);
     return;
 }
