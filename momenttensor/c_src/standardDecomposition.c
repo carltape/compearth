@@ -179,9 +179,9 @@ int compearth_standardDecomposition(const int nmt,
             // Sort deviatoric in ascending order based on absolute value
             argsort3_absUpDown(lamT, true, perm);
             // Apply the argsort
-            lamDevI[3*i]   = lamT[perm[i]];
-            lamDevI[3*i+1] = lamT[perm[i+1]];
-            lamDevI[3*i+2] = lamT[perm[i+2]];
+            lamDevI[3*i]   = lamT[perm[0]];
+            lamDevI[3*i+1] = lamT[perm[1]];
+            lamDevI[3*i+2] = lamT[perm[2]];
         }
         // Represent eigenbasis as plunge/azimuth.
         ierr = compearth_U2pa(nmtLoc, U,
@@ -253,15 +253,15 @@ int compearth_standardDecomposition(const int nmt,
         for (i=0; i<nmtLoc; i++)
         {
             M0[imt+i] = M0iso[i] + M0devi[i]; // scalar moment Bowers and Hudson
-            isoPct[imt+i] = M0iso[i]/M0[imt+i]*100.0;
+            isoPct[imt+i] = (M0iso[i]/M0[imt+i])*100.0;
             F = 0.5;
             if (M0devi[i] > epsilon){F =-lamDevI[3*i+0]/lamDevI[3*i+2];}
-            dcPct[imt+i] = (1.0 - 2.0*fabs(F))*(1.0 - 0.01*isoPct[i])*100.0;
+            dcPct[imt+i] = (1.0 - 2.0*fabs(F))*(1.0 - 0.01*isoPct[imt+i])*100.0;
             devPct[imt+i] = 100.0 - isoPct[imt+i];
             clvdPct[imt+i] = 100.0 - isoPct[imt+i] - dcPct[imt+i];
         }
         // Compute the moment magnitude
-        ierr = compearth_m02mw(nmtLoc, imag, M0, Mw);
+        ierr = compearth_m02mw(nmtLoc, imag, &M0[imt], Mw);
         if (ierr != 0)
         {
             fprintf(stderr, "%s: m02mw failed\n", __func__);

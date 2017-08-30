@@ -37,18 +37,18 @@ int compearth_standardDecomposition(const int nmt,
                                     double *__restrict__ dcPct,
                                     double *__restrict__ clvdPct);
 
-int decompose(const double mtUSE[6])
+int decompose(const int nmt, const double mtUSE[6])
 {
     //double K[3], N[3], S[3], lam[3], U[9], Uuse[9], b[3], p[3], t[3], 
     //double gamma, delta, M0, kappa, theta, sigma, thetadc,
     //       k2, d2, s2;
-    double M0;
     struct cmopad_struct src;
     const char *fcnm = "decompose\0";
     enum cmopad_basis_enum cin, cloc;
     double M[3][3], pax[3], bax[3], tax[3];
-    int ierr;
+    int i, ierr;
     const int iverb = 0;
+/*
     //------------------------------------------------------------------------//
     //                       Do the cMoPaD decomposition                      //
     //------------------------------------------------------------------------//
@@ -68,14 +68,14 @@ int decompose(const double mtUSE[6])
     if (ierr != 0)
     {
         printf("%s: Error in decomposition!\n", fcnm);
-        return -1;
+        return EXIT_FAILURE;
     }
     // Compute the princple axes with corresponding strikes, dips, and rakes 
     ierr = cmopad_MT2PrincipalAxisSystem(iverb, &src);
     if (ierr != 0)
     {
         printf("%s: Error computing principal axis\n",fcnm);
-        return -1;
+        return EXIT_FAILURE;
     }
     // Compute the pressure, null, and, tension principal axes as len,az,plunge
     cin = NED; //MoPaD is in north, east, down 
@@ -84,22 +84,22 @@ int decompose(const double mtUSE[6])
     if (ierr != 0)
     {
         printf("%s: Error converting pax\n",fcnm);
-        return -1;
+        return EXIT_FAILURE;
     }
     ierr = cmopad_Eigenvector2PrincipalAxis(cin, src.eig_pnt[1],
                                             src.null_axis, bax);
     if (ierr != 0){
         printf("%s: Error converting bax\n",fcnm);
-        return -1;
+        return EXIT_FAILURE;
     }
     ierr = cmopad_Eigenvector2PrincipalAxis(cin, src.eig_pnt[2],
                                             src.t_axis,    tax);
     if (ierr != 0)
     {
         printf("%s: Error converting tax\n",fcnm);
-        return -1;
+        return EXIT_FAILURE;
     }
-
+*/
     //printf("%f %f %f %f %f %f\n",
     //       mtUSE[0], mtUSE[1], mtUSE[2], mtUSE[3], mtUSE[4], mtUSE[5]);
     //ierr = compearth_CMT2TT(1, mtUSE, false,
@@ -110,7 +110,7 @@ int decompose(const double mtUSE[6])
     //if (ierr != 0)
     //{
     //    fprintf(stderr, "%s: CMT2TT failed\n", __func__);
-    //    return -1;
+    //    return EXIT_FAILURE;
     //}
     /*
     // Need to switch from SEU to USE.  This requires computing
@@ -146,7 +146,7 @@ printf("%f %f %f\n%f %f %f\n%f %f %f\n",
     //{
     //    fprintf(stderr, "%s: Error converting u to plunge/azimuth\n", 
     //            __func__);
-    //    return -1;
+    //    return EXIT_FAILURE;
     //}
     //// Fill in the eigenvalues
     //p[0] = lam[0];
@@ -164,153 +164,248 @@ printf("%f %f %f\n%f %f %f\n%f %f %f\n",
     //------------------------------------------------------------------------//
     //                         do the standard decomposition                  //
     //------------------------------------------------------------------------//
-double pAxis[3], bAxis[3], tAxis[3], fp1[3], fp2[3], isoPct, dcPct, devPct, clvdPct, Mw;
-    ierr = compearth_standardDecomposition(1, mtUSE, CE_USE, 
-                                           &M0, &Mw, fp1, fp2,
+    //double pAxis[3], bAxis[3], tAxis[3], fp1[3], fp2[3], isoPct, dcPct, devPct, clvdPct, Mw;
+    double *pAxis, *bAxis, *tAxis, *fp1, *fp2, *isoPct, *dcPct, *devPct, *clvdPct, *Mw, *M0;
+    M0 = (double *) calloc((size_t) nmt, sizeof(double));
+    Mw = (double *) calloc((size_t) nmt, sizeof(double));
+    fp1 = (double *) calloc((size_t) (3*nmt), sizeof(double));
+    fp2 = (double *) calloc((size_t) (3*nmt), sizeof(double));
+    pAxis = (double *) calloc((size_t) (3*nmt), sizeof(double));
+    bAxis = (double *) calloc((size_t) (3*nmt), sizeof(double));
+    tAxis = (double *) calloc((size_t) (3*nmt), sizeof(double));
+    isoPct = (double *) calloc((size_t) nmt, sizeof(double));
+    devPct = (double *) calloc((size_t) nmt, sizeof(double));
+    dcPct = (double *) calloc((size_t) nmt, sizeof(double));
+    clvdPct = (double *) calloc((size_t) nmt, sizeof(double));
+    ierr = compearth_standardDecomposition(nmt, mtUSE, CE_USE, 
+                                           M0, Mw, fp1, fp2,
                                            pAxis, bAxis, tAxis,
-                                           &isoPct, &devPct, &dcPct, &clvdPct);
+                                           isoPct, devPct, dcPct, clvdPct);
     if (ierr != 0)
     {
         fprintf(stderr, "Failed to compute standard decomposition\n");
         return EXIT_FAILURE;
     }
-    if (fabs(M0 - src.seismic_moment)/src.seismic_moment > 1.e-10)
+    for (i=0; i<nmt; i++)
     {
-        fprintf(stderr, "failed M0 %f %f %e\n", M0, src.seismic_moment,
-                         fabs(M0 - src.seismic_moment)/src.seismic_moment);
-        return EXIT_FAILURE;
+        //--------------------------------------------------------------------//
+        //                       Do the cMoPaD decomposition                  //
+        //--------------------------------------------------------------------//
+        // Copy moment tensor
+        M[0][0] = mtUSE[6*i+0];           //Mrr
+        M[1][1] = mtUSE[6*i+1];           //Mtt
+        M[2][2] = mtUSE[6*i+2];           //Mpp
+        M[0][1] = M[1][0] = mtUSE[6*i+3]; //Mrt
+        M[0][2] = M[2][0] = mtUSE[6*i+4]; //Mrp
+        M[1][2] = M[2][1] = mtUSE[6*i+5]; //Mtp
+        // Mopad works in North, East, Down
+        cin = USE;
+        cloc = NED;
+        cmopad_basis_transformMatrixM33(M, cin, cloc); //USE -> NED
+        // Compute the isotropic, CLVD, DC decomposition 
+        ierr = cmopad_standardDecomposition(M, &src);
+        if (ierr != 0)
+        {   
+            printf("%s: Error in decomposition!\n", fcnm);
+            return EXIT_FAILURE; 
+        }   
+        // Compute the princple axes and strikes, dips, and rakes 
+        ierr = cmopad_MT2PrincipalAxisSystem(iverb, &src);
+        if (ierr != 0)
+        {   
+            printf("%s: Error computing principal axis\n",fcnm);
+            return EXIT_FAILURE; 
+        }   
+        // Compute the pressure, null, and, tension principal axes as
+        // len,az,plunge
+        cin = NED; //MoPaD is in north, east, down 
+        ierr = cmopad_Eigenvector2PrincipalAxis(cin, src.eig_pnt[0],
+                                                src.p_axis,    pax);
+        if (ierr != 0)
+        {   
+            printf("%s: Error converting pax\n",fcnm);
+            return EXIT_FAILURE; 
+        }   
+        ierr = cmopad_Eigenvector2PrincipalAxis(cin, src.eig_pnt[1],
+                                                src.null_axis, bax);
+        if (ierr != 0)
+        { 
+            printf("%s: Error converting bax\n",fcnm);
+            return EXIT_FAILURE; 
+        }   
+        ierr = cmopad_Eigenvector2PrincipalAxis(cin, src.eig_pnt[2],
+                                                src.t_axis,    tax);
+        if (ierr != 0)
+        {   
+            printf("%s: Error converting tax\n",fcnm);
+            return EXIT_FAILURE; 
+        }
+        // Check it
+        if (fabs(M0[i] - src.seismic_moment)/src.seismic_moment > 1.e-10)
+        {
+            fprintf(stderr, "failed M0 %f %f %e %d\n", M0[i], src.seismic_moment,
+                    fabs(M0[i] - src.seismic_moment)/src.seismic_moment, i);
+            return EXIT_FAILURE;
+        }
+        if (fabs(Mw[i] - src.moment_magnitude) > 1.e-10)
+        {
+            fprintf(stderr, "failed Mw %f %f\n", Mw[i], src.moment_magnitude);
+            return EXIT_FAILURE;
+        }
+        if (fabs(isoPct[i] - src.ISO_percentage) > 1.e-10)
+        {   
+            fprintf(stderr, "Failed iso pct %f %f\n",
+                    isoPct[i], src.ISO_percentage);
+            return EXIT_FAILURE;
+        }
+        if (fabs(dcPct[i] - src.DC_percentage) > 1.e-10)
+        {
+            fprintf(stderr, "Failed DC pct %f %f %d\n",
+                    dcPct[i], src.DC_percentage, i);
+            return EXIT_FAILURE;
+        }
+        if (fabs(devPct[i] - src.DEV_percentage) > 1.e-10)
+        {
+            fprintf(stderr, "Failed dev pct %f %f\n",
+                    devPct[i], src.DEV_percentage);
+            return EXIT_FAILURE;
+        }
+        if (fabs(clvdPct[i] - src.CLVD_percentage) > 1.e-10)
+        {
+            fprintf(stderr, "Failed clvd pct %f %f\n",
+                    devPct[i], src.CLVD_percentage);
+            return EXIT_FAILURE;
+        }
+        // Swap fault planes
+        if (fabs(fp1[3*i+0] - src.fp1[0]) > 1.e-10)
+        {
+            if (fabs(fp1[3*i+0] - src.fp2[0]) > 1.e-10)
+            {
+                fprintf(stderr, "Failed strike 1 %f %f\n", fp1[3*i+0], src.fp2[0]);
+                return EXIT_FAILURE;
+            }
+            if (fabs(fp1[3*i+1] - src.fp2[1]) > 1.e-10)
+            {
+                fprintf(stderr, "Failed dip 1 %f %f\n", fp1[3*i+1], src.fp2[1]);
+                return EXIT_FAILURE;
+            }
+            if (fabs(fp1[3*i+2] - src.fp2[2]) > 1.e-10)
+            {
+               fprintf(stderr, "Failed rake 1 %f %f\n", fp1[3*i+2], src.fp2[2]);
+               return EXIT_FAILURE;
+            }
+            if (fabs(fp2[3*i+0] - src.fp1[0]) > 1.e-10)
+            {
+                fprintf(stderr, "Failed strike 2 %f %f\n", fp2[3*i+0], src.fp1[0]);
+                return EXIT_FAILURE;
+            }
+            if (fabs(fp2[3*i+1] - src.fp1[1]) > 1.e-10)
+            {
+                fprintf(stderr, "Failed dip 2 %f %f\n", fp2[3*i+1], src.fp1[1]);
+                return EXIT_FAILURE;
+            }
+            if (fabs(fp2[3*i+2] - src.fp1[2]) > 1.e-10)
+            {
+                fprintf(stderr, "Failed rake 2 %f %f\n", fp2[3*i+2], src.fp1[2]);
+                return EXIT_FAILURE;
+            }
+        }
+        else
+        {
+            if (fabs(fp1[3*i+0] - src.fp1[0]) > 1.e-10)
+            {
+                fprintf(stderr, "Failed strike 1 %f %f\n",
+                        fp1[3*i+0], src.fp1[0]);
+                return EXIT_FAILURE;
+            }
+            if (fabs(fp1[3*i+1] - src.fp1[1]) > 1.e-10)
+            {
+                fprintf(stderr, "Failed dip 1 %f %f\n",
+                        fp1[3*i+1], src.fp1[1]);
+                return EXIT_FAILURE;
+            }
+            if (fabs(fp1[3*i+2] - src.fp1[2]) > 1.e-10)
+            {
+                fprintf(stderr, "Failed rake 1 %f %f\n",
+                        fp1[3*i+2], src.fp1[2]);
+                return EXIT_FAILURE;
+            }
+            if (fabs(fp2[3*i+0] - src.fp2[0]) > 1.e-10)
+            {
+                fprintf(stderr, "Failed strike 2 %f %f\n",
+                       fp2[3*i+0], src.fp2[0]);
+                return EXIT_FAILURE;
+            }
+            if (fabs(fp2[3*i+1] - src.fp2[1]) > 1.e-10)
+            {
+                fprintf(stderr, "Failed dip 2 %f %f\n",
+                        fp2[3*i+1], src.fp2[1]);
+                return EXIT_FAILURE;
+            }
+            if (fabs(fp2[3*i+2] - src.fp2[2]) > 1.e-10)
+            {
+                fprintf(stderr, "Failed rake 2 %f %f\n",
+                        fp2[3*i+2], src.fp2[2]);
+                return EXIT_FAILURE;
+            }
+        }
+        if (fabs(pAxis[3*i+0] - pax[0]) > 1.e-10 ||
+            fabs(pAxis[3*i+1] - pax[1]) > 1.e-10 ||
+            fabs((pAxis[3*i+2] - pax[2])/pax[2]) > 1.e-10)
+        {
+            fprintf(stderr, "failed pressure axix: %f %f %f %f %f %f\n",
+                    pAxis[0], pAxis[1], pAxis[2], pax[0], pax[1], pax[2]);
+            return EXIT_FAILURE;
+        }
+        if (fabs(bAxis[3*i+0] - bax[0]) > 1.e-10 ||
+            fabs(bAxis[3*i+1] - bax[1]) > 1.e-10 ||
+            fabs((bAxis[3*i+2] - bax[2])/bax[2]) > 1.e-10)
+        {
+            fprintf(stderr, "Failed null axis: %f %f %f %f %f %f\n",
+                    bAxis[0], bAxis[1], bAxis[2], bax[0], bax[1], bax[2]);
+            return EXIT_FAILURE;
+        }
+        if (fabs(tAxis[3*i+0] - tax[0]) > 1.e-10 ||
+            fabs(tAxis[3*i+1] - tax[1]) > 1.e-10 ||
+            fabs((tAxis[3*i+2] - tax[2])/tax[2]) > 1.e-10)
+        {
+            fprintf(stderr, "Failed tension axis %f %f %f %f %f %f\n",
+                    tAxis[0], tAxis[1], tAxis[2], tax[0], tax[1], tax[2]);
+            return EXIT_FAILURE;
+        }
+        if (nmt == 1)
+        {
+            printf("Summary:\n");
+            printf("Mw: %f\n", Mw[i]);
+            printf("(strike,dip,rake): (%f,%f,%f)\n",
+                   fp1[3*i+0], fp1[3*i+1], fp1[3*i+2]);
+            printf("(strike,dip,rake): (%f,%f,%f)\n",
+                   fp2[3*i+0], fp2[3*i+1], fp2[3*i+2]);
+            printf("iso pct: %f\n", isoPct[i]);
+            printf("dc pct: %f\n", dcPct[i]);
+            printf("dev pct: %f\n", devPct[i]); 
+            printf("clvd pct: %f\n", clvdPct[i]);
+            printf("\n");
+        }
     }
-    if (fabs(Mw - src.moment_magnitude) > 1.e-10)
-    {
-        fprintf(stderr, "failed Mw %f %f\n", Mw, src.moment_magnitude);
-        return EXIT_FAILURE;
-    }
-    if (fabs(dcPct - src.DC_percentage) > 1.e-10)
-    {
-        fprintf(stderr, "Failed DC pct %f %f\n", dcPct, src.DC_percentage);
-        return EXIT_FAILURE;
-    }
-    if (fabs(devPct - src.DEV_percentage) > 1.e-10)
-    {
-        fprintf(stderr, "Failed dev pct %f %f\n", devPct, src.DEV_percentage);
-        return EXIT_FAILURE;
-    }
-    if (fabs(clvdPct - src.CLVD_percentage) > 1.e-10)
-    {
-        fprintf(stderr, "Failed clvd pct %f %f\n", devPct, src.CLVD_percentage);
-        return EXIT_FAILURE;
-    }
-    if (fabs(isoPct - src.ISO_percentage) > 1.e-10)
-    {
-        fprintf(stderr, "Failed iso pct %f %f\n", isoPct, src.ISO_percentage);
-        return EXIT_FAILURE;
-    }
-    // Swap fault planes
-    if (fabs(fp1[0] - src.fp1[0]) > 1.e-10)
-    {
-        if (fabs(fp1[0] - src.fp2[0]) > 1.e-10)
-        {
-            fprintf(stderr, "Failed strike 1 %f %f\n", fp1[0], src.fp2[0]);
-            return EXIT_FAILURE;
-        }
-        if (fabs(fp1[1] - src.fp2[1]) > 1.e-10)
-        {
-            fprintf(stderr, "Failed dip 1 %f %f\n", fp1[1], src.fp2[1]);
-            return EXIT_FAILURE;
-        }
-        if (fabs(fp1[2] - src.fp2[2]) > 1.e-10)
-        {
-            fprintf(stderr, "Failed rake 1 %f %f\n", fp1[2], src.fp2[2]);
-            return EXIT_FAILURE;
-        }
-        if (fabs(fp2[0] - src.fp1[0]) > 1.e-10)
-        {
-            fprintf(stderr, "Failed strike 2 %f %f\n", fp2[0], src.fp1[0]);
-            return EXIT_FAILURE;
-        }
-        if (fabs(fp2[1] - src.fp1[1]) > 1.e-10)
-        {
-            fprintf(stderr, "Failed dip 2 %f %f\n", fp2[1], src.fp1[1]);
-            return EXIT_FAILURE;
-        }
-        if (fabs(fp2[2] - src.fp1[2]) > 1.e-10)
-        {
-            fprintf(stderr, "Failed rake 2 %f %f\n", fp2[2], src.fp1[2]);
-            return EXIT_FAILURE;
-        }
-    }
-    else
-    {
-        if (fabs(fp1[0] - src.fp1[0]) > 1.e-10)
-        {
-            fprintf(stderr, "Failed strike 1 %f %f\n", fp1[0], src.fp1[0]);
-            return EXIT_FAILURE;
-        }
-        if (fabs(fp1[1] - src.fp1[1]) > 1.e-10)
-        {
-            fprintf(stderr, "Failed dip 1 %f %f\n", fp1[1], src.fp1[1]);
-            return EXIT_FAILURE;
-        }
-        if (fabs(fp1[2] - src.fp1[2]) > 1.e-10)
-        {
-            fprintf(stderr, "Failed rake 1 %f %f\n", fp1[2], src.fp1[2]);
-            return EXIT_FAILURE;
-        }
-        if (fabs(fp2[0] - src.fp2[0]) > 1.e-10)
-        {
-            fprintf(stderr, "Failed strike 2 %f %f\n", fp2[0], src.fp2[0]);
-            return EXIT_FAILURE;
-        }
-        if (fabs(fp2[1] - src.fp2[1]) > 1.e-10)
-        {
-            fprintf(stderr, "Failed dip 2 %f %f\n", fp2[1], src.fp2[1]);
-            return EXIT_FAILURE;
-        }
-        if (fabs(fp2[2] - src.fp2[2]) > 1.e-10)
-        {
-            fprintf(stderr, "Failed rake 2 %f %f\n", fp2[2], src.fp2[2]);
-            return EXIT_FAILURE;
-        }
-    }
-    if (fabs(pAxis[0] - pax[0]) > 1.e-10 ||
-        fabs(pAxis[1] - pax[1]) > 1.e-10 ||
-        fabs((pAxis[2] - pax[2])/pax[2]) > 1.e-10)
-    {
-        fprintf(stderr, "failed pressure axix: %f %f %f %f %f %f\n",
-                pAxis[0], pAxis[1], pAxis[2], pax[0], pax[1], pax[2]);
-        return EXIT_FAILURE;
-    }
-    if (fabs(bAxis[0] - bax[0]) > 1.e-10 ||
-        fabs(bAxis[1] - bax[1]) > 1.e-10 ||
-        fabs((bAxis[2] - bax[2])/bax[2]) > 1.e-10)
-    {
-        fprintf(stderr, "Failed null axis: %f %f %f %f %f %f\n",
-                bAxis[0], bAxis[1], bAxis[2], bax[0], bax[1], bax[2]);
-        return EXIT_FAILURE;
-    }
-    if (fabs(tAxis[0] - tax[0]) > 1.e-10 ||
-        fabs(tAxis[1] - tax[1]) > 1.e-10 ||
-        fabs((tAxis[2] - tax[2])/tax[2]) > 1.e-10)
-    {
-        fprintf(stderr, "Failed tension axis %f %f %f %f %f %f\n",
-                tAxis[0], tAxis[1], tAxis[2], tax[0], tax[1], tax[2]);
-        return EXIT_FAILURE;
-    }
-    printf("Summary:\n");
-    printf("Mw: %f\n", Mw);
-    printf("(strike,dip,rake): (%f,%f,%f)\n", fp1[0], fp1[1], fp1[2]);
-    printf("(strike,dip,rake): (%f,%f,%f)\n", fp2[0], fp2[1], fp2[2]);
-    printf("iso pct: %f\n", isoPct);
-    printf("dc pct: %f\n", dcPct);
-    printf("dev pct: %f\n", devPct); 
-    printf("clvd pct: %f\n", clvdPct);
-    printf("\n");
+    free(M0);
+    free(Mw);
+    free(fp1);
+    free(fp2);
+    free(pAxis);
+    free(bAxis);
+    free(tAxis);
+    free(isoPct);
+    free(devPct);
+    free(dcPct);
+    free(clvdPct);
     return EXIT_SUCCESS;
 } 
 
 int main()
 {
     struct mt_struct mt;
+    double mtTest[2*6*CE_CHUNKSIZE];
     double xscal;
     int ierr;
     const int n6 = 6;
@@ -341,8 +436,9 @@ int main()
     mt.pax[2] = 61.0;
     xscal = pow(10.0, mt.exp);
     cblas_dscal(n6, xscal, mt.mt, incx);
+    cblas_dcopy(n6, mt.mt, 1, &mtTest[0], 1);
     // Perform decomposition
-    ierr = decompose(mt.mt);
+    ierr = decompose(1, mt.mt);
     if (ierr != EXIT_SUCCESS)
     {
         fprintf(stderr, "Error decomposiing 1\n");
@@ -374,8 +470,9 @@ int main()
     mt.pax[2] =137.0;
     xscal = pow(10.0,mt.exp);
     cblas_dscal(n6, xscal, mt.mt, incx);
+    cblas_dcopy(n6, mt.mt, 1, &mtTest[6], 1);
     // Perform decomposition
-    ierr = decompose(mt.mt);
+    ierr = decompose(1, mt.mt);
     if (ierr != EXIT_SUCCESS)
     {   
         fprintf(stderr, "Error decomposiing 1\n");
@@ -407,7 +504,8 @@ int main()
     mt.pax[2] =165.0;
     xscal = pow(10.0,mt.exp);
     cblas_dscal(n6, xscal, mt.mt, incx);
-    ierr = decompose(mt.mt);
+    cblas_dcopy(n6, mt.mt, 1, &mtTest[12], 1);
+    ierr = decompose(1, mt.mt);
     if (ierr != EXIT_SUCCESS)
     {
         fprintf(stderr, "Error decomposing 3\n");
@@ -439,7 +537,8 @@ int main()
     mt.pax[2] =253.0;
     xscal = pow(10.0,mt.exp);
     cblas_dscal(n6, xscal, mt.mt, incx);
-    ierr = decompose(mt.mt);
+    cblas_dcopy(n6, mt.mt, 1, &mtTest[18], 1);
+    ierr = decompose(1, mt.mt);
     if (ierr != EXIT_SUCCESS)
     {
         fprintf(stderr, "Error dcomposing 4\n");
@@ -471,7 +570,8 @@ int main()
     mt.pax[2] = 74.0;
     xscal = pow(10.0,mt.exp);
     cblas_dscal(n6, xscal, mt.mt, incx);
-    ierr = decompose(mt.mt);
+    cblas_dcopy(n6, mt.mt, 1, &mtTest[24], 1);
+    ierr = decompose(1, mt.mt);
     if (ierr != EXIT_SUCCESS)
     {
         fprintf(stderr, "Error decomposing 5\n");
@@ -503,7 +603,8 @@ int main()
     mt.pax[2] = 206.;
     xscal = pow(10.0,mt.exp);
     cblas_dscal(n6, xscal, mt.mt, incx);
-    ierr = decompose(mt.mt);
+    cblas_dcopy(n6, mt.mt, 1, &mtTest[30], 1);
+    ierr = decompose(1, mt.mt);
     if (ierr != EXIT_SUCCESS)
     {
         fprintf(stderr, "Error decomposing 6\n");
@@ -535,7 +636,8 @@ int main()
     mt.pax[2] = 147.0;
     xscal = pow(10.0,mt.exp);
     cblas_dscal(n6, xscal, mt.mt, incx);
-    ierr = decompose(mt.mt);
+    cblas_dcopy(n6, mt.mt, 1, &mtTest[36], 1);
+    ierr = decompose(1, mt.mt);
     if (ierr != EXIT_SUCCESS)
     {
         fprintf(stderr, "Error decomposing 7\n");
@@ -567,7 +669,8 @@ int main()
     mt.pax[2] = 69.0;
     xscal = pow(10.0,mt.exp);
     cblas_dscal(n6, xscal, mt.mt, incx);
-    ierr = decompose(mt.mt);
+    cblas_dcopy(n6, mt.mt, 1, &mtTest[42], 1);
+    ierr = decompose(1, mt.mt);
     if (ierr != EXIT_SUCCESS)
     {
         fprintf(stderr, "Error decomposing 8\n");
@@ -599,10 +702,18 @@ int main()
     mt.pax[2] = 58.0;
     xscal = pow(10.0,mt.exp);
     cblas_dscal(n6, xscal, mt.mt, incx);
-    ierr = decompose(mt.mt);
+    cblas_dcopy(n6, mt.mt, 1, &mtTest[48], 1);
+    ierr = decompose(1, mt.mt);
     if (ierr != EXIT_SUCCESS)
     {
         fprintf(stderr, "Error decompsoing 9\n");
+        return EXIT_FAILURE;
+    }
+    //-----------------------------Test 'em all-------------------------------//
+    ierr = decompose(9, mtTest);
+    if (ierr != EXIT_SUCCESS)
+    {
+        fprintf(stderr, "Error in bulk decomposition\n");
         return EXIT_FAILURE;
     }
     fprintf(stdout, "Success!\n");

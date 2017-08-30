@@ -151,7 +151,8 @@ int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
             // YOU MUST ALSO CHANGE north AND zenith IN fault2vecang BELOW
             // --> U will be with respect to this basis (from CMTdecom.m)
             // ierr = compearth_convertMT(1, CE_USE, CE_NWU, &Min[6*imt], M);
-            ierr = compearth_convertMT(1, CE_USE, CE_SEU, &Min[6*jmt], M);
+            ierr = compearth_convertMT(1, CE_USE, CE_SEU,
+                                       &Min[6*(jmt+imt)], M);
             if (ierr != 0)
             {
                 fprintf(stderr, "%s: Error switching basis\n", __func__);
@@ -160,7 +161,8 @@ int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
             // PART 1: moment tensor source type (or pattern)
             // Decompose moment tensor into eigenvalues + basis (M = U*lam*U')
             // NOTE: ordering of eigenvalues is important.
-            ierr = compearth_CMTdecom(1, M, isort, &lamWork[3*imt], &Uwork[9*imt]);
+            ierr = compearth_CMTdecom(1, M, isort, &lamWork[3*imt],
+                                      &Uwork[9*imt]);
             if (ierr != 0)
             {
                 fprintf(stderr, "%s: Error decomposing CMT\n", __func__);
