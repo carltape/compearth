@@ -33,6 +33,5 @@ int compearth_lam2phizeta(const int n, const double *__restrict__ lam,
             zeta[i+j] = acos( sqrt(2.0*(lam1 - lam2)*(lam2 - lam3))/rho )*deg;
         }
     }
-    free(lamSort);
     return 0;
 }

@@ -46,6 +46,7 @@ int compearth_rect2lune(const int nv, const double *__restrict__ v,
     const double tol = 1.e-12;
     const double pi38 = 3.0*M_PI/8.0;
     const double pi180i = 180.0/M_PI;
+    ierr = 0;
     // convert v -> gamma 
     compearth_v2gamma(nv, v, gamma);
     // convert latitude to colatitude
