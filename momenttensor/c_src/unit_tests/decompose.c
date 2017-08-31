@@ -241,6 +241,7 @@ printf("%f %f %f\n%f %f %f\n%f %f %f\n",
             return EXIT_FAILURE; 
         }
         // Check it
+        //printf("%d %d %e\n", i, i%9, Mw[i]);
         if (fabs(M0[i] - src.seismic_moment)/src.seismic_moment > 1.e-10)
         {
             fprintf(stderr, "failed M0 %f %f %e %d\n", M0[i], src.seismic_moment,
@@ -249,7 +250,7 @@ printf("%f %f %f\n%f %f %f\n%f %f %f\n",
         }
         if (fabs(Mw[i] - src.moment_magnitude) > 1.e-10)
         {
-            fprintf(stderr, "failed Mw %f %f\n", Mw[i], src.moment_magnitude);
+            fprintf(stderr, "failed Mw %f %f %d\n", Mw[i], src.moment_magnitude, i);
             return EXIT_FAILURE;
         }
         if (fabs(isoPct[i] - src.ISO_percentage) > 1.e-10)
@@ -405,9 +406,11 @@ printf("%f %f %f\n%f %f %f\n%f %f %f\n",
 int main()
 {
     struct mt_struct mt;
-    double mtTest[2*6*CE_CHUNKSIZE];
+    const int nmt = 21*CE_CHUNKSIZE - 1;
+    double *mtTest = (double *) calloc((size_t) (6*nmt), sizeof(double));
+             //mtTest[2*6*CE_CHUNKSIZE];
     double xscal;
-    int ierr;
+    int ierr, jmt;
     const int n6 = 6;
     const int incx = 1;
     //-----------------------------------1------------------------------------//
@@ -703,6 +706,11 @@ int main()
     xscal = pow(10.0,mt.exp);
     cblas_dscal(n6, xscal, mt.mt, incx);
     cblas_dcopy(n6, mt.mt, 1, &mtTest[48], 1);
+    // now copy this
+    for (jmt=9; jmt<nmt; jmt++)
+    {
+        cblas_dcopy(n6, &mtTest[6*((jmt-9)%9)], 1, &mtTest[6*jmt], 1);
+    }
     ierr = decompose(1, mt.mt);
     if (ierr != EXIT_SUCCESS)
     {
@@ -710,13 +718,14 @@ int main()
         return EXIT_FAILURE;
     }
     //-----------------------------Test 'em all-------------------------------//
-    ierr = decompose(9, mtTest);
+    ierr = decompose(nmt, mtTest);
     if (ierr != EXIT_SUCCESS)
     {
         fprintf(stderr, "Error in bulk decomposition\n");
         return EXIT_FAILURE;
     }
     fprintf(stdout, "Success!\n");
+    free(mtTest);
     return EXIT_SUCCESS;
 }
 

@@ -261,7 +261,7 @@ int compearth_standardDecomposition(const int nmt,
             clvdPct[imt+i] = 100.0 - isoPct[imt+i] - dcPct[imt+i];
         }
         // Compute the moment magnitude
-        ierr = compearth_m02mw(nmtLoc, imag, &M0[imt], Mw);
+        ierr = compearth_m02mw(nmtLoc, imag, &M0[imt], &Mw[imt]);
         if (ierr != 0)
         {
             fprintf(stderr, "%s: m02mw failed\n", __func__);
