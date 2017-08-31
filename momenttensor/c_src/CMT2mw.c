@@ -34,7 +34,7 @@ int compearth_CMT2mw(const int nm, const int im0,
     // Loop on moment tensor chunks
     for (i=0; i<nm; i=i+CE_CHUNKSIZE)
     {
-        nmLoc = MIN(CE_CHUNKSIZE, nm-i);
+        nmLoc = MIN(CE_CHUNKSIZE, nm - i);
         ierr = compearth_CMT2m0(nmLoc, im0, &M[i], M0);
         if (ierr != 0)
         {

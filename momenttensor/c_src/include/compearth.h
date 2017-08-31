@@ -40,6 +40,11 @@ enum magType_enum
     CE_HARVARD_CMT = 2    /*!< Mw from Harvard CMT: (2/3)*(log10(M0) - 16.1) */
 };
 
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
+#endif
 enum ceNormType_enum
 {
     CE_UNKNOWN_NORM = 0,          /*!< Unknown norm. */
@@ -52,6 +57,9 @@ enum ceNormType_enum
     CE_INFINITY_NORM = 4,          /*!< \$ L_\infty = max |x| \$ */
     CE_NEGATIVE_INFINITY_NORM = 5  /*!< \$ L_{-\infty} = min |x| \$ */
 };
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 enum ceOrthoType_enum
 {
