@@ -304,7 +304,10 @@ int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
             }
         }
     } // Loop on moment tensor chunks
-    // Clean up
+    if (ldisplay)
+    {
+        fprintf(stderr, "%s: ldisply not yet supported\n", __func__);
+    }
 ERROR:;
 /*
     Uwork = NULL;
