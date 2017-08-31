@@ -292,6 +292,23 @@ void compearth_xyz2latlon(const int n,
                           double *__restrict__ lat,
                           double *__restrict__ lon); 
 
+
+/*! Standard decomposition */
+int compearth_standardDecomposition(const int nmt,
+                                    const double *__restrict__ M,
+                                    enum compearthCoordSystem_enum basis,
+                                    double *__restrict__ M0,
+                                    double *__restrict__ Mw,
+                                    double *__restrict__ fp1,
+                                    double *__restrict__ fp2,
+                                    double *__restrict__ pAxis,
+                                    double *__restrict__ bAxis,
+                                    double *__restrict__ tAxis,
+                                    double *__restrict__ isoPct,
+                                    double *__restrict__ devPct,
+                                    double *__restrict__ dcPct,
+                                    double *__restrict__ clvdPct);
+
 #ifdef COMPEARTH_PRIVATE_DET3X3
 #ifdef _OPENMP
 #pragma omp declare simd
