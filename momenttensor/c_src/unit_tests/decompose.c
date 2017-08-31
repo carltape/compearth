@@ -22,6 +22,7 @@ struct mt_struct
     double exp;
 };
 
+/*
 int compearth_standardDecomposition(const int nmt,
                                     const double *__restrict__ M,
                                     enum compearthCoordSystem_enum basis,
@@ -36,6 +37,7 @@ int compearth_standardDecomposition(const int nmt,
                                     double *__restrict__ devPct,
                                     double *__restrict__ dcPct,
                                     double *__restrict__ clvdPct);
+*/
 
 int decompose(const int nmt, const double mtUSE[6])
 {
