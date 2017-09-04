@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "compearth.h"
 
 #pragma omp declare simd
 static void strikeDip(const double nRad, const double eRad, const double uRad,
