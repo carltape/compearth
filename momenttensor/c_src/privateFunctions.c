@@ -19,7 +19,7 @@
 /*!
  * @brief Computes the determinant of a 3 x 3 major in column major order.
  */
-double det3x3ColumnMajor(const double *__restrict__ A)
+inline double det3x3ColumnMajor(const double *__restrict__ A)
 {
     double det;
     det = A[0]*( A[4]*A[8] - A[5]*A[7]) 
@@ -31,9 +31,9 @@ double det3x3ColumnMajor(const double *__restrict__ A)
  * @brief Computes C = A*B where A, B, and C are 3 x 3 matrices in column
  *        major order.
  */ 
-void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
-                                  const double *__restrict__ B,
-                                  double *__restrict__ C)
+inline void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
+                                         const double *__restrict__ B,
+                                         double *__restrict__ C)
 {
     // column 1
     C[0] = A[0]*B[0] + A[3]*B[1] + A[6]*B[2];
@@ -53,9 +53,9 @@ void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
  * @brief Computes C = A*B' where A, B, and C are 3 x 3 matrices in column
  *        major order.
  */
-void gemm3_colMajorNoTransTrans(const double *__restrict__ A,
-                                const double *__restrict__ B,
-                                double *__restrict__ C)
+inline void gemm3_colMajorNoTransTrans(const double *__restrict__ A,
+                                       const double *__restrict__ B,
+                                       double *__restrict__ C)
 {
     // column 1
     C[0] = A[0]*B[0] + A[3]*B[3] + A[6]*B[6];
@@ -75,9 +75,9 @@ void gemm3_colMajorNoTransTrans(const double *__restrict__ A,
  * @brief Computes y = A*x where A is a 3 x 3 matrix in column major order
  *        and x and y are length 3 vectors.
  */
-void gemv3_colMajorNoTrans(const double *__restrict__ A,
-                           const double *__restrict__ x,
-                           double *__restrict__ y)
+inline void gemv3_colMajorNoTrans(const double *__restrict__ A,
+                                  const double *__restrict__ x,
+                                  double *__restrict__ y)
 {
     y[0] = A[0]*x[0] + A[3]*x[1] + A[6]*x[2];
     y[1] = A[1]*x[0] + A[4]*x[1] + A[7]*x[2];
@@ -88,9 +88,9 @@ void gemv3_colMajorNoTrans(const double *__restrict__ A,
  * @brief Computes the cross-product, c = a x c, where a, b, and c are 
  *        length 3 vectors.
  */
-void cross3(const double *__restrict__ a,  
-            const double *__restrict__ b,
-            double *__restrict__ c)
+inline void cross3(const double *__restrict__ a,  
+                   const double *__restrict__ b,
+                   double *__restrict__ c)
 {
     // Compute cross product
     c[0] = a[1]*b[2] - a[2]*b[1];
@@ -101,14 +101,14 @@ void cross3(const double *__restrict__ a,
 /*!
  * @brief Computes the norm of a vector a which is length 3.
  */
-double norm3(const double *__restrict__ a)
+inline double norm3(const double *__restrict__ a)
 {
     return sqrt(a[0]*a[0] + a[1]*a[1] + a[2]*a[2]);
 }
 /*!
  * @brief Computes the dot-product a.b where a and b are length 3 vectors.
  */
-double dot3(const double *__restrict__ a, const double *__restrict__ b)
+inline double dot3(const double *__restrict__ a, const double *__restrict__ b)
 {
     return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
 }
@@ -125,7 +125,7 @@ double dot3(const double *__restrict__ a, const double *__restrict__ b)
  * @copyright MIT
  *
  */
-double wrap360(const double lon)
+inline double wrap360(const double lon)
 {
     double lonw;
     bool lpos;
@@ -145,7 +145,7 @@ double wrap360(const double lon)
  * @copyright MIT
  *
  */
-double mod(const double x, const double y)
+inline double mod(const double x, const double y)
 {
     double xmod;
     bool xisnty;
@@ -178,8 +178,8 @@ double mod(const double x, const double y)
     return xmod; 
 }
 
-void antipode(const double lat, const double lon,
-              double *latOut, double *lonOut, const bool isDeg)
+inline void antipode(const double lat, const double lon,
+                     double *latOut, double *lonOut, const bool isDeg)
 {
     *latOut =-lat;
     if (isDeg)
@@ -210,9 +210,9 @@ void antipode(const double lat, const double lon,
  * @copyright MIT
  *
  */
-int argsort3_upDown(const double *__restrict__ x,
-                    const bool lascend,
-                    int *__restrict__ perm)
+inline int argsort3_upDown(const double *__restrict__ x,
+                           const bool lascend,
+                           int *__restrict__ perm)
 {
     int permt[3], ierr;
     if (lascend)
@@ -247,9 +247,9 @@ int argsort3_upDown(const double *__restrict__ x,
  * @copyright MIT
  *
  */
-int argsort3_absUpDown(const double *__restrict__ x,
-                       const bool lascend,
-                       int *__restrict__ perm)
+inline int argsort3_absUpDown(const double *__restrict__ x,
+                              const bool lascend,
+                              int *__restrict__ perm)
 {
     double xa[3];
     int ierr;
@@ -274,7 +274,7 @@ int argsort3_absUpDown(const double *__restrict__ x,
  * @copyright MIT
  *
  */ 
-int argsort3(const double *__restrict__ x, int *__restrict__ perm)
+inline int argsort3(const double *__restrict__ x, int *__restrict__ perm)
 {
     int i, temp;
     const int a = 0;

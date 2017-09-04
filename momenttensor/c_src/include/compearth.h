@@ -321,13 +321,13 @@ int compearth_standardDecomposition(const int nmt,
 #ifdef _OPENMP
 #pragma omp declare simd
 #endif
-inline double det3x3ColumnMajor(const double *__restrict__ A);
+extern double det3x3ColumnMajor(const double *__restrict__ A);
 #endif
 #ifdef COMPEARTH_PRIVATE_GEMV3
 #ifdef _OPENMP
 #pragma omp declare simd
 #endif
-inline void gemv3_colMajorNoTrans(const double *__restrict__ A,
+extern void gemv3_colMajorNoTrans(const double *__restrict__ A,
                                   const double *__restrict__ x,
                                   double *__restrict__ y);
 #endif
@@ -335,7 +335,7 @@ inline void gemv3_colMajorNoTrans(const double *__restrict__ A,
 #ifdef _OPENMP
 #pragma omp declare simd
 #endif
-inline void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
+extern void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
                                          const double *__restrict__ B,
                                          double *__restrict__ C);
 #endif
@@ -343,7 +343,7 @@ inline void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
 #ifdef _OPENMP
 #pragma omp declare simd
 #endif
-inline void gemm3_colMajorNoTransTrans(const double *__restrict__ A,
+extern void gemm3_colMajorNoTransTrans(const double *__restrict__ A,
                                        const double *__restrict__ B,
                                        double *__restrict__ C);
 #endif
@@ -351,7 +351,7 @@ inline void gemm3_colMajorNoTransTrans(const double *__restrict__ A,
 #ifdef _OPENMP
 #pragma omp declare simd
 #endif
-inline void cross3(const double *__restrict__ a, 
+extern void cross3(const double *__restrict__ a, 
                    const double *__restrict__ b,
                    double *__restrict__ c);
 #endif
@@ -359,19 +359,19 @@ inline void cross3(const double *__restrict__ a,
 #ifdef _OPENMP
 #pragma omp declare simd
 #endif
-inline double dot3(const double *__restrict__ a, const double *__restrict__ b);
+extern double dot3(const double *__restrict__ a, const double *__restrict__ b);
 #endif
 #ifdef COMPEARTH_PRIVATE_NORM3
 #ifdef _OPENMP
 #pragma omp declare simd
 #endif
-inline double norm3(const double *__restrict__ a);
+extern double norm3(const double *__restrict__ a);
 #endif
 #ifdef COMPEARTH_PRIVATE_WRAP360
 #ifdef _OPENMP
 #pragma omp declare simd
 #endif
-inline double wrap360(const double lon);
+extern double wrap360(const double lon);
 #endif
 
 
@@ -379,29 +379,29 @@ inline double wrap360(const double lon);
 #ifdef _OPENMP
 #pragma omp declare simd
 #endif
-inline double mod(const double x, const double y);
+extern double mod(const double x, const double y);
 #endif
 
 #ifdef COMPEARTH_PRIVATE_ANTIPODE
 #ifdef _OPENMP
 #pragma omp declare simd
 #endif
-inline void antipode(const double latIn, const double lonIn,
+extern void antipode(const double latIn, const double lonIn,
                      double *latOut, double *lonOut, const bool isDeg);
 #endif
 
 #ifdef COMPEARTH_PRIVATE_UPDOWN_ARGSORT3
-inline int argsort3_upDown(const double *__restrict__ x,
+extern int argsort3_upDown(const double *__restrict__ x,
                            const bool lascend,
                            int *__restrict__ perm);
 #endif
 #ifdef COMPEARTH_PRIVATE_UPDOWN_ABS_ARGSORT3
-inline int argsort3_absUpDown(const double *__restrict__ x,
+extern int argsort3_absUpDown(const double *__restrict__ x,
                               const bool lascend,
                               int *__restrict__ perm);
 #endif
 #ifdef COMPEARTH_PRIVATE_ARGSORT3
-inline int argsort3(const double *__restrict__ x, int *__restrict__ perm);
+extern int argsort3(const double *__restrict__ x, int *__restrict__ perm);
 #endif
 
 #ifdef __cplusplus
