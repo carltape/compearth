@@ -34,10 +34,9 @@ n = length(lat);
 [M,n1] = Mdim(M);
 
 % check input argument dimensions
-if n1~=n, whos M lat, error('dimension mismatch (M otime)'); end
-if length(lat)~=n, whos lat otime, error('dimension mismatch (lat otime)'); end
-if length(lon)~=n, whos lon otime, error('dimension mismatch (lon otime)'); end
-if length(dep)~=n, whos dep otime, error('dimension mismatch (dep otime)'); end
+if n1~=n, whos M lat, error('dimension mismatch (M lat)'); end
+if length(lon)~=n, whos lon lat, error('dimension mismatch (lon lat)'); end
+if length(dep)~=n, whos dep lat, error('dimension mismatch (dep lat)'); end
 
 % convert moment tensor from N-m to dyne-cm
 M = 1e7 * M;
@@ -61,7 +60,7 @@ else
     % slabel IS provided: one file with no label (5), one file with slabel (6)
     imin = 5; imax = 6;
     if length(slabel)~=n
-        n, whos slabel otime, error('dimension mismatch (slabel otime)');
+        n, whos slabel lat, error('dimension mismatch (slabel lat)');
     end
     if isempty(slabeltag);
         scustom = 'custom';
@@ -71,7 +70,7 @@ else
 end
 
 % if no origin times are specified, then just plot one output file
-if isempty(otime), imin=5; imax=5; end
+%if isempty(otime), imin=5; imax=5; end
 
 if isempty(eid), eid = strtrim(cellstr(num2str([1:n]'))); end
 
@@ -89,8 +88,8 @@ for ilab = imin:imax
     if ilab==0, ext = ''; end
     if ilab==1, ext = '_eid'; end
     if ilab==2, ext = '_Mw'; end
-    if ilab==3, ext = '_year'; end
-    if ilab==4, ext = '_date'; end
+    if and(ilab==3,~isempty(otime)) ext = '_year'; end
+    if and(ilab==4,~isempty(otime)) ext = '_date'; end
     if ilab==5, ext = ''; end 
     if ilab==6, ext = strcat('_',scustom); end 
     
