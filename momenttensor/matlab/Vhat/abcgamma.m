@@ -1,10 +1,15 @@
 function [a,b,c] = abcgamma(phi,sigma,gamma)
-% 
+%ABCGAMMA functions needed for calculating Vhat_gamma(omega) curves
 %
 % INPUT
 %   phi     in radians
 %   sigma   in radians
 %   gamma   in radians
+%
+% W. Tape and C. Tape, 2017, GJI
+% Volume in moment tensor space in terms of distance
+%
+% called by ZWgamma.m
 %
 
 cosphi2 = cos(phi).^2;
@@ -18,6 +23,7 @@ sin2sig = sin(2*sigma);
 cos2gam = cos(2*gamma);
 sin2gam = sin(2*gamma);
 
+% Tape and Tape (2017), Eqs A1a, A1b, A1c
 a = 1/2 * ( ...
       sinphi2 + sinsig2 + 2*cosphi2 .* cossig2 ...
     + (cosphi2 + cossig2 - sinphi2 .* sinsig2 ) .* cos2gam ...

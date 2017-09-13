@@ -12,6 +12,9 @@ function [Vhatp,Vhat] = Vomega_point(gamma_deg,delta_deg,omega_deg,atol)
 %
 % See examples in run_Vomega.m
 %
+% W. Tape and C. Tape, 2017, GJI
+% Volume in moment tensor space in terms of distance
+%
 % calls Vgammaomega.m
 %
 
@@ -58,9 +61,9 @@ end
 function V = Vx(gamma,delta,omega,atol)
 
 beta = pi/2 - delta;
-% Tape and Tape (2016), Eq 44
+% Tape and Tape (2016), Eq 44 // Tape and Tape (2017), Eq 16
 omegadev = 2 * asin( sin(omega/2) / sin(beta) );
-% Tape and Tape (2016), Eq 45
+% Tape and Tape (2016), Eq 45 // Tape and Tape (2017), Eq 15a
 V = Vgammaomega(gamma,omegadev,atol);
 
 %==========================================================================

@@ -5,8 +5,8 @@
 % distribution of moment tensors for a fixed source type (i.e., fixed lune
 % point or fixed eigenvalues).
 %
-% W. Tape and C. Tape, GJI 2016
-% A confidence parameter for seismic moment tensors.
+% W. Tape and C. Tape, 2017, GJI
+% Volume in moment tensor space in terms of distance
 %
 
 close all

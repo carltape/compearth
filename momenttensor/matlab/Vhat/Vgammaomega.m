@@ -2,20 +2,23 @@ function [V,tocv,Vp,Vn,tocvp,tocvn] = Vgammaomega(gamma,omega,atol)
 %VGAMMAOMEGA fractional volume as a function of lune longitude and omega
 %
 % INPUT
-%   gamma   in radians
-%   omega   in radians
-%   atol    absolute tolerance for integral2
+%   gamma   n x 1 (or 1 x 1) vector of angles, in radians
+%   omega   n x 1 (or 1 x 1) vector of angles, in radians
+%   atol    optional: absolute tolerance for integral2
 %
 % OUTPUT
-%   V       
-%   tocv    
-%   Vp      
-%   Vn      
-%   tocvp   
-%   tocvn   
+%   V       n x 1 vector of Vhat_gamma(omega)
+%   tocv    n x 1 vector of time to calculate each Vhat_gamma(omega), in seconds
+%   Vp      n x 1 vector of positive integrand in Vhat_gamma(omega)
+%   Vn      n x 1 vector of negative integrand in Vhat_gamma(omega)
+%   tocvp   n x 1 vector of time to calculate positive integrand in Vhat_gamma(omega)
+%   tocvn   n x 1 vector of time to calculate negative integrand in Vhat_gamma(omega)
+%
+% W. Tape and C. Tape, 2017, GJI
+% Volume in moment tensor space in terms of distance
 %
 % calls zhatpgammaomega.m, zhatngammaomega.m
-% called by Vgammaomega.m, run_Vhat.m
+% called by Vgammaomega.m
 %
 
 % LOWER-THAN-DEFAULT TOLERANCES ARE CRITICAL
@@ -55,7 +58,7 @@ if ndims(gamma) > 2, error('gamma and omega must have dimension <= 2'); end
 gamma = gamma(:);
 omega = omega(:);
 
-% Tape and Tape, 2016, Eq 46b
+% Tape and Tape, 2016, Eq 46b // Tape and Tape, 2017, Eq 38
 % integration is most efficient when using positive gamma
 %gamma = abs(gamma);
 
@@ -73,6 +76,7 @@ tocvp = NaN(n,1);
 tocvn = NaN(n,1);
 for ii=1:n
     % define functions
+    % Tape and Tape (2017), Eqs 25a and 25b
     Vposint = @(phi,sigma) ( 1 - zhatpgammaomega(phi,sigma,gamma(ii),omega(ii)) );
     Vnegint = @(phi,sigma) ( 1 + zhatngammaomega(phi,sigma,gamma(ii),omega(ii)) );
 

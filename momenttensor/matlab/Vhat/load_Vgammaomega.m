@@ -1,6 +1,8 @@
 function [VVp,Wp,Gp,VV,W,G] = load_Vgammaomega(USE_POSITIVE_GAMMA)
 %LOAD_VGAMMAOMEGA load pre-saved library of V_gamma(omega) calculations
 %
+% W. Tape and C. Tape, 2017, GJI
+% Volume in moment tensor space in terms of distance
 %
 
 % USE_MAT_FILES
@@ -49,7 +51,7 @@ gamma_deg = temp(:,1);
 gamma_rad = gamma_deg/deg;
 ngamma = length(gamma_rad);
 
-% Tape and Tape, 2016, Eq 46b
+% Tape and Tape, 2016, Eq 46b // Tape and Tape, 2017, Eq 38
 % we only need to consider positive gamma and positive delta
 %gamma_rad = abs(gamma_rad);
 %delta_rad = abs(delta_rad);

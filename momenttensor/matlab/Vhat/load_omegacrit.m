@@ -4,6 +4,8 @@ function [omegacrit,gamma_deg] = load_omegacrit
 % Load pre-computed values of Vhat(omegac) where omegac is a critical
 % value for the deviatoric points on the lune.
 %
+% W. Tape and C. Tape, 2017, GJI
+% Volume in moment tensor space in terms of distance
 %
 
 deg = 180/pi;
@@ -19,7 +21,7 @@ temp = load(fname);
 gamma_deg = temp(:,1);
 ngamma = length(gamma_deg);
 
-% Tape and Tape, 2016, Eq 46b
+% Tape and Tape, 2016, Eq 46b // Tape and Tape, 2017, Eq 38
 % we only need to consider positive gamma and positive delta
 %gamma_rad = abs(gamma_rad);
 %delta_rad = abs(delta_rad);
