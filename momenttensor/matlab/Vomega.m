@@ -84,6 +84,8 @@ omegalibp_rad = Wp(1,:);
 
 [omegacritdev,gamma_deg_crit] = load_omegacrit;
 
+disp(sprintf('nlune = %i, nomega = %i',nlune,nomega));
+
 Vhatp = NaN(nlune,nomega);
 Vhat  = NaN(nlune,nomega);
 omegacrit = cell(nlune,1);
@@ -108,10 +110,10 @@ for kk=1:nlune
     % Tape and Tape (2016), Eqs 44, 45, 49
     otemp = omegacritdev{imin};
     ocritdev_rad = otemp(:,1)/deg;
-    ocrit_rad = omegadev2omega(delta_rad,ocritdev_rad);
+    ocrit_rad = omegadev2omega(delta,ocritdev_rad);
     otemp(:,1) = ocrit_rad*deg;
     otemp(:,2) = otemp(:,2) .* cos(ocrit_rad/2) ./ ...
-            sqrt( sin(pi/2-delta_rad(kk)).^2 - sin(ocrit_rad/2).^2 );
+            sqrt( sin(pi/2-delta).^2 - sin(ocrit_rad/2).^2 );
     otemp(1,2:3)   = [0 0];
     otemp(end,2:3) = [0 1];
     omegacrit{kk} = otemp;
