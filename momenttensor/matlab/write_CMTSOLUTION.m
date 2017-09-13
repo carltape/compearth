@@ -47,7 +47,10 @@ if isempty(tshift)
     tshift = zeros(enum,1);
 end
 if isempty(hdur)
-    hdur = zeros(enum,1);   % we could compute hdur from M0 rather than list zero as default
+    %hdur = zeros(enum,1);      % safest for simulations, whereby the
+                                %source duration is applied in post-processing
+    M0 = CMT2m0(1,M);
+    hdur = m02hdur(M0);
 end
 
 % check dimensions of input variables
