@@ -19,6 +19,9 @@
 /*!
  * @brief Computes the determinant of a 3 x 3 major in column major order.
  */
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline double det3x3ColumnMajor(const double *__restrict__ A)
 {
     double det;
@@ -31,6 +34,9 @@ inline double det3x3ColumnMajor(const double *__restrict__ A)
  * @brief Computes C = A*B where A, B, and C are 3 x 3 matrices in column
  *        major order.
  */ 
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
                                          const double *__restrict__ B,
                                          double *__restrict__ C)
@@ -53,6 +59,9 @@ inline void gemm3_colMajorNoTransNoTrans(const double *__restrict__ A,
  * @brief Computes C = A*B' where A, B, and C are 3 x 3 matrices in column
  *        major order.
  */
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline void gemm3_colMajorNoTransTrans(const double *__restrict__ A,
                                        const double *__restrict__ B,
                                        double *__restrict__ C)
@@ -75,6 +84,9 @@ inline void gemm3_colMajorNoTransTrans(const double *__restrict__ A,
  * @brief Computes y = A*x where A is a 3 x 3 matrix in column major order
  *        and x and y are length 3 vectors.
  */
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline void gemv3_colMajorNoTrans(const double *__restrict__ A,
                                   const double *__restrict__ x,
                                   double *__restrict__ y)
@@ -88,6 +100,9 @@ inline void gemv3_colMajorNoTrans(const double *__restrict__ A,
  * @brief Computes the cross-product, c = a x c, where a, b, and c are 
  *        length 3 vectors.
  */
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline void cross3(const double *__restrict__ a,  
                    const double *__restrict__ b,
                    double *__restrict__ c)
@@ -101,6 +116,9 @@ inline void cross3(const double *__restrict__ a,
 /*!
  * @brief Computes the norm of a vector a which is length 3.
  */
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline double norm3(const double *__restrict__ a)
 {
     return sqrt(a[0]*a[0] + a[1]*a[1] + a[2]*a[2]);
@@ -108,6 +126,9 @@ inline double norm3(const double *__restrict__ a)
 /*!
  * @brief Computes the dot-product a.b where a and b are length 3 vectors.
  */
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline double dot3(const double *__restrict__ a, const double *__restrict__ b)
 {
     return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
@@ -125,6 +146,9 @@ inline double dot3(const double *__restrict__ a, const double *__restrict__ b)
  * @copyright MIT
  *
  */
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline double wrap360(const double lon)
 {
     double lonw;
@@ -145,6 +169,9 @@ inline double wrap360(const double lon)
  * @copyright MIT
  *
  */
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline double mod(const double x, const double y)
 {
     double xmod;
@@ -178,6 +205,9 @@ inline double mod(const double x, const double y)
     return xmod; 
 }
 
+#ifdef _OPENMP
+#pragma omp declare simd
+#endif
 inline void antipode(const double lat, const double lon,
                      double *latOut, double *lonOut, const bool isDeg)
 {
