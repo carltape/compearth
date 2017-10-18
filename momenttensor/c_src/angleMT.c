@@ -13,15 +13,22 @@
  *        Equation 15 of Tape and Tape 2016 - A confidence parameter for 
  *        seismic moment tensors
  *
- * @param[in] n       number of moment tensors
- * @param[in] M1in    first moment tensor packed {m11, m22, m33, m12, m13, m23}
- *                    [6*n]
- * @param[in] M2in    second moment tensor packed {m11, m22, m33, m12, m13, m23}
- *                    [6*n]
+ * @param[in] n       Number of moment tensors.
+ * @param[in] M1in    First moment tensor packed {m11, m22, m33, m12, m13, m23}.
+ *                    This is an array of dimension [6 x n] with leading
+ *                    dimension 6.
+ * @param[in] M2in    Second moment tensor packed {m11, m22, m33, m12, m13, m23}.
+ *                    This is an array of dimension [6 x n] with leading
+ *                    dimension 6.
  *
- * @param[out] theta  angle between moment tensors M1 and M2 (radians) [n]
+ * @param[out] theta  Angle between moment tensors M1 and M2 in radians. 
+ *                    This is an array of dimension [n].
  *
- * @result 0 indicates success
+ * @result 0 indicates success.
+ *
+ * @author Carl Tape and translated to C by Ben Baker.
+ *
+ * @copyright MIT
  *
  */
 int compearth_angleMT(const int n,
