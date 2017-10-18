@@ -89,7 +89,7 @@ int compearth_CMT2omega(const int nmt1, const double *__restrict__ M1,
                 for (imt=0; imt<nmt2; imt=imt+CE_CHUNKSIZE)
                 {
                     nmtLoc = MIN(CE_CHUNKSIZE, nmt2 - imt);
-                    ierr = compearth_angleMT(nmtLoc, Mwork, &M2[imt],
+                    ierr = compearth_angleMT(nmtLoc, Mwork, &M2[6*imt],
                                              &omega[imt]); 
                     if (ierr != 0)
                     {   
@@ -111,7 +111,7 @@ int compearth_CMT2omega(const int nmt1, const double *__restrict__ M1,
                 for (imt=0; imt<nmt1; imt=imt+CE_CHUNKSIZE)
                 {
                     nmtLoc = MIN(CE_CHUNKSIZE, nmt1 - imt);
-                    ierr = compearth_angleMT(nmtLoc, &M1[imt], Mwork,
+                    ierr = compearth_angleMT(nmtLoc, &M1[6*imt], Mwork,
                                              &omega[imt]); 
                     if (ierr != 0)
                     {

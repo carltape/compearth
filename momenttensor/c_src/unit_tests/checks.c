@@ -26,6 +26,7 @@ int check_fangleSigned(void);
 int check_CMT2faultpar(void);
 int check_CMT2TT(void);
 int check_normal2strdip(void);
+int check_CMT2omega(void);
 
 int main(void)
 {
@@ -66,6 +67,10 @@ int main(void)
     ierr = check_normal2strdip();
     if (ierr != 0){printf("failed noraml2strdip\n"); return EXIT_FAILURE;}
     printf("normal2strdip was successful\n");
+
+    ierr = check_CMT2omega();
+    if (ierr != 0){printf("failed CMT2Omega\n"); return EXIT_FAILURE;}
+    printf("CMT2Omega was successful\n");
 
     return EXIT_SUCCESS;
 }
@@ -539,6 +544,84 @@ int check_lam2lune(void)
     free(lam);
     return EXIT_SUCCESS;
 }
+
+int check_CMT2omega(void)
+{
+    const double M1[6] = {1, 0, -1, 0, 0, 0};
+    const double M2[6] = {1, 2,  3, 4, 5, 6};
+    double *Mvec1, *Mvec2, *omega, *refOmega, om1;
+    const double omRef1 = 96.263952719927232;
+    int i, ierr, j, nmt1, nmt2;
+    ierr = compearth_CMT2omega(1, M1, 1, M2, &om1);
+    if (ierr != 0)
+    {
+        fprintf(stderr, "%s: Error calling CMT2omega 1\n", __func__);
+        return EXIT_FAILURE;
+    }
+    CHKERR(om1, omRef1, 1.e-10, __func__, "error computing CMT2Omega1");
+    nmt2 = 80;
+    Mvec1 = (double *) calloc((size_t) (6*nmt2), sizeof(double));
+    Mvec2 = (double *) calloc((size_t) (6*nmt2), sizeof(double));
+    omega = (double *) calloc((size_t) nmt2, sizeof(double));
+    refOmega = (double *) calloc((size_t) nmt2, sizeof(double));
+    for (i=0; i<nmt2; i++)
+    {
+        cblas_dcopy(6, M2, 1, &Mvec2[6*i], 1); 
+    }
+    // one to many
+    ierr = compearth_CMT2omega(1, M1, nmt2, Mvec2, omega);
+    if (ierr != 0)
+    {
+        fprintf(stderr, "%s: Error calling CMT2omega 2\n", __func__);
+        return EXIT_FAILURE;
+    }
+    for (i=0; i<nmt2; i++)
+    {
+         CHKERR(omega[i], omRef1, 1.e-10, __func__,
+                "error computing CMT2Omega2");
+    } 
+    // flip roles
+    ierr = compearth_CMT2omega(nmt2, Mvec2, 1, M1, omega);
+    if (ierr != 0)
+    {   
+        fprintf(stderr, "%s: Error calling CMT2omega 3\n", __func__);
+        return EXIT_FAILURE;
+    }
+    for (i=0; i<nmt2; i++)
+    {   
+         CHKERR(omega[i], omRef1, 1.e-10, __func__,
+                "error computing CMT2Omega3");
+    }
+    // many to many
+    nmt1 = nmt2;
+    srand(4093);
+    for (i=0; i<nmt1; i++)
+    {
+        for (j=0; j<6; j++)
+        {
+            Mvec1[6*i+j] = ((double) rand()/RAND_MAX - 0.5)*2.0;
+            Mvec2[6*i+j] = ((double) rand()/RAND_MAX - 0.5)*2.0;
+        }
+        compearth_CMT2omega(1, &Mvec1[6*i], 1, &Mvec2[6*i], &refOmega[i]);
+    }
+    ierr = compearth_CMT2omega(nmt1, Mvec1, nmt2, Mvec2, omega); 
+    if (ierr != 0)
+    {   
+        fprintf(stderr, "%s: Error calling CMT2omega 4\n", __func__);
+        return EXIT_FAILURE;
+    }   
+    for (i=0; i<nmt2; i++)
+    {
+         CHKERR(omega[i], refOmega[i], 1.e-10, __func__,
+                "error computing CMT2Omega4");
+    } 
+
+    free(Mvec1);
+    free(Mvec2); 
+    free(omega);
+    free(refOmega);
+    return EXIT_SUCCESS;
+} 
 
 int check_normal2strdip(void)
 {
