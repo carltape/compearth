@@ -123,6 +123,10 @@ int compearth_CMT2m0(const int nm, const int im0,
 int compearth_CMT2mw(const int nm, const int im0,
                      const double *__restrict__ M,
                      double *__restrict__ Mw);
+/* Compute angle between moment tensors */
+int compearth_CMT2omega(const int nmt1, const double *__restrict__ M1, 
+                        const int nmt2, const double *__restrict__ M2, 
+                        double *__restrict__ omega);
 /* CMT to Tape and Tape */
 int compearth_CMT2TT(const int nmt, const double *__restrict__ Min,
                      const bool ldisplay,
