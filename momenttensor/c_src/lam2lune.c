@@ -76,7 +76,7 @@ int compearth_lam2lune(const int nmt, const double *__restrict__ lam,
     {
         nmtLoc = MIN(CE_CHUNKSIZE, nmt - imt); 
         // Sort the eigenvalues 
-        ierr = compearth_lamsort(nmtLoc, &lam[imt], lamW);
+        ierr = compearth_lamsort(nmtLoc, &lam[3*imt], lamW);
         if (ierr != 0)
         {
             fprintf(stderr, "%s: Error sorting eigenvalues\n", __func__);

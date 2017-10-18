@@ -498,7 +498,7 @@ int check_lam2lune(void)
     thetadc = NULL;
     lamdev = NULL;
     lamiso = NULL;
-    ierr = compearth_lam2lune(nmt, lam, 
+    ierr = compearth_lam2lune(nmt, lam,
                               gamma, delta, M0,
                               thetadc, lamdev, lamiso);
     if (ierr != 0)
@@ -511,15 +511,23 @@ int check_lam2lune(void)
     {
         if (fabs(gamma[i] - gamma0[i]) > 1.e-12)
         {
-            printf("%s: gamma different %e %e\n", fcnm, gamma[i], gamma0[i]);
+            printf("%s: gamma[%d] different %e %e %e\n",
+                   __func__, i, gamma[i], gamma0[i],
+                   fabs(gamma[i] - gamma0[i]));
+            return EXIT_FAILURE;
         }
         if (fabs(delta[i] - delta0[i]) > 1.e-12)
         {
-            printf("%s: delta different %e %e\n", fcnm, delta[i], delta[i]);
+            printf("%s: delta[%d] different %e %e %e\n",
+                   __func__, i, delta[i], delta0[i],
+                   fabs(delta[i] - delta0[i]));
+            return EXIT_FAILURE;
         }
         if (fabs(M0[i] - M00[i])/1.e15 > 1.e-12)
         {
-           printf("%s: M0 different %e %e\n", fcnm, M0[i], M00[i]);
+            printf("%s: M0[%d] different %e %e %e\n",
+                   __func__, i, M0[i], M00[i], fabs(M0[i] - M00[i]));
+           return EXIT_FAILURE;
         }
     }
     free(gamma0);

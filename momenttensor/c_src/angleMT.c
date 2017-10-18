@@ -36,9 +36,12 @@ int compearth_angleMT(const int n,
                       const double *__restrict__ M2in,
                       double *__restrict__ theta)
 {
-    double M1[9], M2[9], arg, M1_mag, M2_mag, xnum, xden;
+    double M1[9] __attribute__((aligned(64)));
+    double M2[9] __attribute__((aligned(64)));
+    double arg, M1_mag, M2_mag, xnum, xden;
     int i, ierr;
     ierr = 0;
+printf("yes\n");
     for (i=0; i<n; i++)
     {
         // Convert to 3x3 matrices
