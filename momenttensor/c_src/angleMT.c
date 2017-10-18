@@ -36,50 +36,65 @@ int compearth_angleMT(const int n,
                       const double *__restrict__ M2in,
                       double *__restrict__ theta)
 {
-    double M1[9] __attribute__((aligned(64)));
-    double M2[9] __attribute__((aligned(64)));
-    double arg, M1_mag, M2_mag, xnum, xden;
-    int i, ierr;
+    double M1[9*CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double M2[9*CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double M1_mag[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double M2_mag[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double xden[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double arg[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    double xnum[CE_CHUNKSIZE] __attribute__((aligned(64)));
+    int i, ierr, imt, nmtLoc;
     ierr = 0;
-    for (i=0; i<n; i++)
+    for (imt=0; imt<n; imt=imt+CE_CHUNKSIZE)
     {
+        nmtLoc = MIN(CE_CHUNKSIZE, n - imt);
         // Convert to 3x3 matrices
-        compearth_Mvec2Mmat(1, &M1in[6*i], 1, M1);
-        compearth_Mvec2Mmat(1, &M2in[6*i], 1, M2);
+        compearth_Mvec2Mmat(nmtLoc, &M1in[6*imt], 1, M1);
+        compearth_Mvec2Mmat(nmtLoc, &M2in[6*imt], 1, M2);
         // Compute norms
-        ierr = compearth_normMat(1, M1, CE_TWO_NORM, 2.0, &M1_mag);
-        ierr = compearth_normMat(1, M2, CE_TWO_NORM, 2.0, &M2_mag);
-        xden = M1_mag*M2_mag;
-        if (fabs(xden) < 1.e-15) //xden == 0.0)
+        ierr = compearth_normMat(nmtLoc, M1, CE_TWO_NORM, 2.0, M1_mag);
+        ierr = compearth_normMat(nmtLoc, M2, CE_TWO_NORM, 2.0, M2_mag);
+        // Compute the denomimators
+        for (i=0; i<nmtLoc; i++)
         {
-            fprintf(stderr, "%s: Division by zero!\n", __func__);
-            ierr = 1;
-            break;
+            xden[i] = M1_mag[i]*M2_mag[i];
         }
-        xnum = cblas_ddot(9, M1, 1, M2, 1);
-        arg = xnum/xden;
-        // Correct for numerical errors
-        if (arg <-1.0)
+        // Compute the numerators
+        for (i=0; i<nmtLoc; i++)
         {
-            fprintf(stdout, "%s: Warning arg is %f setting to -1\n",
-                     __func__, arg); 
-            arg =-1.0;
+            xnum[i] = cblas_ddot(9, &M1[9*i], 1, &M2[9*i], 1);
         }
-        if (arg > 1.0)
+        // Compute argument and do all checks
+        for (i=0; i<nmtLoc; i++)
         {
-            fprintf(stdout, "%s: Warning arg is %f setting to +1\n",
-                    __func__, arg);
+            // Can't divide by zero - force this to work b/c M1 or M2 is
+            // equivalently 0.
+            if (xden[i] == 0.0)
+            {
+                xnum[i] = 0.0;
+                xden[i] = 1.0;
+                fprintf(stderr, "%s: Denominator is 0\n", __func__);
+            }
+            arg[i] = xnum[i]/xden[i];
+            // Correct for numerical errors
+            if (arg[i] <-1.0)
+            {
+                fprintf(stdout, "%s: Warning arg is %f setting to -1\n",
+                         __func__, arg[i]); 
+                arg[i] =-1.0;
+            }
+            if (arg[i] > 1.0)
+            {
+                fprintf(stdout, "%s: Warning arg is %f setting to +1\n",
+                        __func__, arg[i]);
+                arg[i] = 1.0;
+            }
         }
-        theta[i] = arg; //acos(xnum/xden);
-    }
-    // Now compute the acos of the argument.
-    if (ierr == 0)
-    {
-        for (i=0; i<n; i++){theta[i] = acos(theta[i]);}
-    }
-    else
-    {
-        for (i=0; i<n; i++){theta[i] = 0.0;}
+        // Finally compute the angle
+        for (i=0; i<nmtLoc; i++)
+        {
+            theta[imt+i] = acos(arg[i]);
+        }
     }
     return ierr;
 }
