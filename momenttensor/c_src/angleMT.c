@@ -41,7 +41,6 @@ int compearth_angleMT(const int n,
     double arg, M1_mag, M2_mag, xnum, xden;
     int i, ierr;
     ierr = 0;
-printf("yes\n");
     for (i=0; i<n; i++)
     {
         // Convert to 3x3 matrices
@@ -59,14 +58,28 @@ printf("yes\n");
         }
         xnum = cblas_ddot(9, M1, 1, M2, 1);
         arg = xnum/xden;
-        if (arg <-1.0 || arg > 1.0)
+        // Correct for numerical errors
+        if (arg <-1.0)
         {
-            fprintf(stderr, "%s: Invalid argument to acos %f %f %f!\n",
-                    __func__, arg, xnum, xden);
-            ierr = 1;
-            break;
+            fprintf(stdout, "%s: Warning arg is %f setting to -1\n",
+                     __func__, arg); 
+            arg =-1.0;
         }
-        theta[i] = acos(xnum/xden);
+        if (arg > 1.0)
+        {
+            fprintf(stdout, "%s: Warning arg is %f setting to +1\n",
+                    __func__, arg);
+        }
+        theta[i] = arg; //acos(xnum/xden);
+    }
+    // Now compute the acos of the argument.
+    if (ierr == 0)
+    {
+        for (i=0; i<n; i++){theta[i] = acos(theta[i]);}
+    }
+    else
+    {
+        for (i=0; i<n; i++){theta[i] = 0.0;}
     }
     return ierr;
 }
