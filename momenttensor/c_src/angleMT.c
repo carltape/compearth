@@ -26,7 +26,7 @@
  *
  * @result 0 indicates success.
  *
- * @author Carl Tape and translated to C by Ben Baker.
+ * @author Ben Baker
  *
  * @copyright MIT
  *
