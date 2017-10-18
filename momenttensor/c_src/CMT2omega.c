@@ -13,13 +13,15 @@
  * @brief Computes the omega angles between two moment tensors.
  *
  * @param[in] nmt1    Number of moment tensors in M1.  This can be 1 otherwise
- *                    it must be equal to nmt2.
- * @param[in] M2      First array of moment tensors.  M1 is packed
+ *                    it must be equal to nmt2.  If it is 1 then the angle will
+ *                    be between M1 and all the moment tensors in M2.
+ * @param[in] M1      First array of moment tensors.  M1 is packed
  *                    \f$ M = \{M_{11} M_{22} M_{33} M_{12} M_{13} M_{23}\} \f$.
  *                    This is an array of dimension [6 x nmt1] with leading
  *                    dimension 6.
  * @param[in] nmt2    Number of moment tensors in M2.  This can be 1 otherwise
- *                    it must be equal to nmt1.
+ *                    it must be equal to nmt1.  If it is 1 then the angle will
+ *                    be between M2 and all the moment tensors in M1.
  * @param[in] M2      Second array of moment tensors.  M2 is packed
  *                    \f$ M = \{M_{11} M_{22} M_{33} M_{12} M_{13} M_{23}\} \f$.
  *                    This is an array of dimension [6 x nmt2] with leading
