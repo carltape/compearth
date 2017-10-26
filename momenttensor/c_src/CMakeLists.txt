@@ -98,3 +98,15 @@ ADD_TEST(NAME decompositionTest
          WORKING_DIRECTORY ${CMAKE_TESTING_OUTPUT_DIRECTORY}
          COMMAND xdecomp)
 
+IF (BUILD_PYTHON_MODULE)
+    FIND_PACKAGE(SWIG REQUIRED)
+    INCLUDE(${SWIG_USE_FILE})
+
+    FIND_PACKAGE(PythonLibs)
+    INCLUDE_DIRECTORIES(${PYTHON INCLUDE_DIRS})
+
+    swig_add_module(compearth_py python ${CMAKE_SOURCE_DIR}/swig-controller.i)
+    swig_link_libraries(compearth_py compearth_shared)
+    swig_link_libraries(compearth_py ${PYTHON_LIBRARIES})
+ENDIF (BUILD_PYTHON_MODULE)
+
