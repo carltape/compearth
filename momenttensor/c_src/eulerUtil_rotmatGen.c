@@ -12,14 +12,17 @@
 /*!
  * @brief Compute a rotation matrix given an axis and angle
  *
- * @param[in] n     number of matrices to generate
- * @param[in] v     rotation axis [3*n]
- * @param[in] xi    rotation angles (degrees) [n]
+ * @param[in] n     Number of matrices to generate.
+ * @param[in] v     Rotation axis.  This is an array of dimension [3 x n]
+ *                  with leading dimension 3.
+ * @param[in] xi    Rotation angles (degrees).  This is an array of
+ *                  dimension [n].
  *
- * @param[in] U     rotation matrices which each [3 x 3] packed in 
- *                  column major format [9*n]
+ * @param[in] U     Rotation matrices.  This is an array of dimension
+ *                  [3 x 3 x n] where each leading [3 x 3] matrix is
+ *                  in column major format.
  *
- * @result 0 indicates success
+ * @result 0 indicates success.
  *
  * @date 2016 - Ben Baker translated Carl Tape's rotmat_gen.m to C
  *
@@ -28,7 +31,7 @@
  */
 int compearth_eulerUtil_rotmatGen(const int n,
                                   const double *__restrict__ v,
-                                  const double *xi,
+                                  const double *__restrict__ xi,
                                   double *__restrict__ U)
 {
     double R1[9], R2[9], R3[9], R4[9], R5[9], R54[9], R543[9], R5432[9];

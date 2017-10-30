@@ -157,7 +157,7 @@ int compearth_eulerUtil_rotmat(const int n, const double *__restrict__ xdeg,
 /* Compute rotation matrices about axis for given angles */
 int compearth_eulerUtil_rotmatGen(const int n,
                                   const double *__restrict__ v,
-                                  const double *xi,
+                                  const double *__restrict__ xi,
                                   double *__restrict__ U);
 /* Converts lune longitude gamma to v */
 void compearth_gamma2v(const int n, const double *__restrict__ gamma,
@@ -249,6 +249,17 @@ int compearth_rect2lune(const int nv, const double *__restrict__ v,
 void compearth_tape2015Eqn7(const double beta, const double gamma,
                             double lam[3]);
 /* Convert a tape and tape parameterized moment tensor to a moment tensor */
+int compearth_TT2CMT(const int nmt,
+                     const double *__restrict__ gamma,
+                     const double *__restrict__ delta,
+                     const double *__restrict__ M0,
+                     const double *__restrict__ kappa,
+                     const double *__restrict__ theta,
+                     const double *__restrict__ sigmaIn,
+                     double *__restrict__ M,
+                     double *__restrict__ lam,
+                     double *__restrict__ U);
+/*
 int compearth_tt2cmt(const double gamma,
                      const double delta,
                      const double M0,
@@ -256,6 +267,7 @@ int compearth_tt2cmt(const double gamma,
                      const double theta,
                      const double sigmaIn,
                      double M[6], double lam[3], double U[9]);
+*/
 /* Converts theta dip angle to h */
 void compearth_theta2h(const int n, const double *__restrict__ theta,
                         double *__restrict__ h);

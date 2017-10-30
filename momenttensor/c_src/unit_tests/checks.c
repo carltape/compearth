@@ -25,6 +25,7 @@ int check_CMTdecom(void);
 int check_fangleSigned(void);
 int check_CMT2faultpar(void);
 int check_CMT2TT(void);
+int check_TT2CMT(void);
 int check_normal2strdip(void);
 int check_CMT2omega(void);
 
@@ -59,6 +60,10 @@ int main(void)
     ierr = check_CMT2TT();
     if (ierr != 0){printf("failed CMT2TT\n"); return EXIT_FAILURE;}
     printf("CMT2TT was successful\n");
+
+    ierr = check_TT2CMT();
+    if (ierr != 0){printf("failed TT2CMT\n"); return EXIT_FAILURE;} 
+    printf("TT2CMT was successful\n"); 
 
     ierr = check_CMT2faultpar();
     if (ierr != 0){printf("failed CMT2faultpar\n"); return EXIT_FAILURE;}
@@ -204,6 +209,218 @@ int check_CMT2faultpar(void)
     CHKERR(lam[2], lamref[2], 1.e-10, __func__, "error checking lam[2]");
     return EXIT_SUCCESS;
 }
+//============================================================================//
+int check_TT2CMT(void)
+{
+    const double M01[1] = {1.0};
+    const double delta1[1] = {0.0};
+    const double gamma1[1] = {0.0};
+    const double kappa1[1] = {320.0};
+    const double theta1[1] = {10.0};
+    const double sigma1[1] = {20.0};
+    const double lam1Ref[3] = {1.0, 0.0, -1.0};
+    const double M61Ref[6] = { 0.116977778440511,
+                               0.112364502228240,
+                              -0.229342280668750,
+                              -0.502322271868946,
+                              -0.841048248646006,
+                               0.029265111955970};
+    const double U1Ref[9] = {-0.434841577578901, -0.515496946820204,
+                              0.738360142632131,  0.856848940622339,
+                             -0.489063917059259,  0.163175911166535,
+                              0.276988619555150,  0.703618776646631,
+                              0.654368338007907};
+    double M61[6], lam1[3], U91[9];
+    int i, ierr;
+    ierr = compearth_TT2CMT(1, gamma1, delta1, M01, kappa1, theta1, sigma1,
+                            M61, lam1, U91);
+    if (ierr != 0)
+    {
+        fprintf(stderr, "%s: error calling TT2CMT\n", __func__);
+        return EXIT_FAILURE;
+    }
+    CHKERR(M61[0], M61Ref[0], 1.e-10, __func__, "error checking M61[0]");
+    CHKERR(M61[1], M61Ref[1], 1.e-10, __func__, "error checking M61[1]");
+    CHKERR(M61[2], M61Ref[2], 1.e-10, __func__, "error checking M61[2]");
+    CHKERR(M61[3], M61Ref[3], 1.e-10, __func__, "error checking M61[3]");
+    CHKERR(M61[4], M61Ref[4], 1.e-10, __func__, "error checking M61[4]");
+    CHKERR(M61[5], M61Ref[5], 1.e-10, __func__, "error checking M61[5]");
+
+    CHKERR(lam1[0], lam1Ref[0], 1.e-10, __func__, "error checking lam[0]");
+    CHKERR(lam1[1], lam1Ref[1], 1.e-10, __func__, "error checking lam[1]");
+    CHKERR(lam1[2], lam1Ref[2], 1.e-10, __func__, "error checking lam[2]");
+
+    CHKERR(U91[0], U1Ref[0], 1.e-10, __func__, "error checking U1[0]");
+    CHKERR(U91[1], U1Ref[1], 1.e-10, __func__, "error checking U1[1]");
+    CHKERR(U91[2], U1Ref[2], 1.e-10, __func__, "error checking U1[2]");
+    CHKERR(U91[3], U1Ref[3], 1.e-10, __func__, "error checking U1[3]");
+    CHKERR(U91[4], U1Ref[4], 1.e-10, __func__, "error checking U1[4]");
+    CHKERR(U91[5], U1Ref[5], 1.e-10, __func__, "error checking U1[5]");
+    CHKERR(U91[6], U1Ref[6], 1.e-10, __func__, "error checking U1[6]");
+    CHKERR(U91[7], U1Ref[7], 1.e-10, __func__, "error checking U1[7]");
+    CHKERR(U91[8], U1Ref[8], 1.e-10, __func__, "error checking U1[8]");
+    // At this stage in the game CMT2TT works.  So let's use it to verify
+    // its inverse operator.
+    int ng = 3;
+    double gamLoc[3] = {-29.0, 0.0, 29.0};
+    int nd = 3;
+    double deltaLoc[3] = {-89, 0.0, 89.0};
+    int nk = 5;
+    double kappaLoc[5] = {1.0, 90.0, 180.0, 270.0, 359.};
+    int ns = 3;
+    double sigmaLoc[3] = {-179.0, 1.0, 179.0};
+    int nt = 3;
+    double thetaLoc[3] = {10.0, 45.0, 80.0}; 
+    int nm = 3;
+    double M0loc[3] = {1.0, 2.0, 3.0};
+    int nmt = ng*nd*nk*ns*nt*nm;
+    double *gamma, *delta, *kappa, *sigma, *theta, *M0, *M, *U, *lam;
+    gamma = (double *) calloc((size_t) nmt, sizeof(double));
+    delta = (double *) calloc((size_t) nmt, sizeof(double));
+    kappa = (double *) calloc((size_t) nmt, sizeof(double));
+    sigma = (double *) calloc((size_t) nmt, sizeof(double));
+    theta = (double *) calloc((size_t) nmt, sizeof(double));
+    M0 = (double *) calloc((size_t) nmt, sizeof(double));
+    int ig, id, ik, is, im, imt, it; 
+    imt = 0;
+    for (im=0; im<nm; im++)
+    {
+        for (ig=0; ig<ng; ig++)
+        {
+            for (id=0; id<nd; id++)
+            {
+                for (ik=0; ik<nk; ik++)
+                {
+                    for (it=0; it<nt; it++)
+                    {
+                        for (is=0; is<ns; is++)
+                        {
+                            gamma[imt] = gamLoc[ig];
+                            delta[imt] = deltaLoc[id];
+                            kappa[imt] = kappaLoc[ik];
+                            sigma[imt] = sigmaLoc[is];
+                            theta[imt] = thetaLoc[it];
+                            M0[imt] = M0loc[im]; 
+                            imt = imt + 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    M = (double *) calloc((size_t) (6*nmt), sizeof(double));
+    lam = (double *) calloc((size_t) (3*nmt), sizeof(double));
+    U = (double *) calloc((size_t) (9*nmt), sizeof(double));
+    ierr = compearth_TT2CMT(nmt, gamma, delta, M0, kappa, theta, sigma,
+                            M, lam, U);
+    if (ierr != 0)
+    {   
+        fprintf(stderr, "%s: error calling TT2CMT\n", __func__);
+        return EXIT_FAILURE;
+    }
+/*
+printf("\n");
+for (i=0; i<nmt; i++)
+{
+printf("%d\n", 6*i);
+ printf("%e %e %e %e %e %e\n", M[6*i], M[6*i+1], M[6*i+2], M[6*i+3], M[6*i+4], M[6*i+5]);
+}
+getchar();
+*/
+    bool ldisplay = false;
+    double *gammaNew = (double *) calloc((size_t) nmt, sizeof(double));
+    double *deltaNew = (double *) calloc((size_t) nmt, sizeof(double));
+    double *M0New = (double *) calloc((size_t) nmt, sizeof(double));
+    double *kappaNew = (double *) calloc((size_t) nmt, sizeof(double));
+    double *thetaNew = (double *) calloc((size_t) nmt, sizeof(double));
+    double *sigmaNew = (double *) calloc((size_t) nmt, sizeof(double)); 
+    double *K = (double *) calloc((size_t) (3*nmt), sizeof(double));
+    double *N = (double *) calloc((size_t) (3*nmt), sizeof(double));
+    double *S = (double *) calloc((size_t) (3*nmt), sizeof(double));
+    double *thetadc = (double *) calloc((size_t) nmt, sizeof(double)); 
+    double *lamNew = (double *) calloc((size_t) (3*nmt), sizeof(double));
+    double *UNew = (double *) calloc((size_t) (9*nmt), sizeof(double));
+    ierr = compearth_CMT2TT(nmt, M, ldisplay,
+                            gammaNew, deltaNew, M0New,
+                            kappaNew, thetaNew, sigmaNew,
+                            K, N, S, thetadc,
+                            lamNew, UNew); 
+    if (ierr != 0)
+    {
+        fprintf(stderr, "%s: Error calling CMT2TT\n", __func__);
+        return EXIT_FAILURE;
+    }
+    double kappa2, theta2, sigma2;
+    for (i=0; i<nmt; i++)
+    {
+        ierr = compearth_auxiliaryPlane(1,
+                                        &kappaNew[i], &thetaNew[i], &sigmaNew[i],
+                                        &kappa2, &theta2, &sigma2);
+        if (fabs(gammaNew[i] - gamma[i]) > 1.e-10)
+        {
+            fprintf(stderr, "%s: Failed to compute gamma %e %e %d\n",
+                    __func__, gamma[i], gammaNew[i], i);
+            return -1;
+        }
+        if (fabs(deltaNew[i] - delta[i]) > 1.e-10)
+        {
+            fprintf(stderr, "%s: Failed to compute delta %e %e %d\n",
+                    __func__, delta[i], deltaNew[i], i);
+            return -1;
+        }
+        if (fabs(M0[i] - M0New[i]) > 1.e-10)
+        {
+            fprintf(stderr, "%s: Failed to compute M0 %e %e %d\n",
+                    __func__, M0[i], M0New[i], i);
+            return -1;
+        }
+        if (fabs(kappaNew[i] - kappa[i]) > 1.e-10 &&
+            fabs(kappa2 - kappa[i]) > 1.e-10)
+        {
+            fprintf(stderr, "%s: Failed to compute kappa %e %e %e %d\n",
+                    __func__, kappa[i], kappaNew[i], kappa2, i);
+            return -1;
+        }
+        if (fabs(thetaNew[i] - theta[i]) > 1.e-10 &&
+            fabs(theta2 - theta[i]) > 1.e-10)
+        {
+            fprintf(stderr, "%s: Failed to compute theta %e %e %d\n",
+                    __func__, theta[i], thetaNew[i], i);
+            return -1;
+        }
+        if (fabs(sigmaNew[i] - sigma[i]) > 1.e-10 &&
+            fabs(sigma2 - sigma[i]) > 1.e-10)
+        {
+            fprintf(stderr, "%s: Failed to compute sigma %e %e %d\n",
+                    __func__, sigma[i], sigmaNew[i], i); 
+            return -1;
+        }
+    }
+    // Free space
+    free(gammaNew);
+    free(deltaNew);
+    free(M0New);
+    free(kappaNew);
+    free(thetaNew);
+    free(sigmaNew);
+    free(K);
+    free(N);
+    free(S);
+    free(thetadc);
+    free(lamNew);
+    free(UNew);
+    free(gamma);
+    free(delta);
+    free(kappa);
+    free(sigma);
+    free(theta);
+    free(M0);
+    free(M);
+    free(U);
+    free(lam);
+    return EXIT_SUCCESS;
+}
+
 //============================================================================//
 int check_CMT2TT(void)
 {

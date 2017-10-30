@@ -35,8 +35,13 @@ int main()
     printf("--------------------------------------------------------\n");
     // Now compute the correponding moment tensor
     delta = M_PI/2.0 - beta;
-    ierr = compearth_tt2cmt(gamma*pi180, delta*pi180, M0,
-                            kappa*pi180, theta*pi180, sigma*pi180,
+    double gammaDeg = gamma*pi180;
+    double deltaDeg = delta*pi180;
+    double kappaDeg = kappa*pi180;
+    double thetaDeg = theta*pi180;
+    double sigmaDeg = sigma*pi180;
+    ierr = compearth_TT2CMT(1, &gammaDeg, &deltaDeg, &M0,
+                            &kappaDeg, &thetaDeg, &sigmaDeg,
                             M_use, lam, U);
     if (ierr != 0){
         printf("\n");

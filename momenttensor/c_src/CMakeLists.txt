@@ -57,7 +57,7 @@ SET (SRCS angleMT.c auxiliaryPlane.c beta2u.c cart2sph.c
           normal2strdip.c normMat.c normMT.c nualpha2lam.c
           privateFunctions.c rect2lune.c standardDecomposition.c
           tape2015Eqn7.c theta2h.c transform_mat.c 
-          tt2cmt.c u2beta.c U2pa.c Udetcheck.c Uorth.c
+          TT2CMT.c u2beta.c U2pa.c Udetcheck.c Uorth.c
           v2gamma.c xyz2latlon.c xyz2tp.c
 )
 IF (COMPEARTH_MAKE_FINTER)
