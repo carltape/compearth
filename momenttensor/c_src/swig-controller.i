@@ -32,6 +32,7 @@
 
 %inline %{
 #include "compearth.h"
+#include "compearth_constants.h"
  int cmt2omega(int nmt1, int nmt1_2, double * M1,
                         int nmt2, int nmt2_2, double * M2,
                         int * nomega, double ** omega )
@@ -92,4 +93,4 @@
 %}
 
 //#%ignore (compearth_angleMT)
-//#%include "compearth.h"
+%include "compearth_constants.h"
