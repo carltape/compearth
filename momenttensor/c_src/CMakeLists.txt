@@ -102,6 +102,7 @@ SET (LINK_LIB_ALL compearth_shared ${LINK_LIB_ALL})
 INSTALL(TARGETS compearth_shared LIBRARY DESTINATION lib)
 IF (BUILD_PYTHON_MODULE)
     FIND_PACKAGE(SWIG REQUIRED)
+    set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/python)
     INCLUDE(${SWIG_USE_FILE})
 
     FIND_PACKAGE(PythonLibs)
@@ -110,7 +111,9 @@ IF (BUILD_PYTHON_MODULE)
 
     swig_add_library(compearth LANGUAGE python SOURCES ${CMAKE_SOURCE_DIR}/swig-controller.i)
     swig_link_libraries(compearth compearth_shared ${PYTHON_LIBRARIES})
-    install(TARGETS ${SWIG_MODULE_compearth_REAL_NAME} LIBRARY DESTINATION
-        lib)
+    SET_TARGET_PROPERTIES(${SWIG_MODULE_compearth_REAL_NAME} PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/python)
+    #install(TARGETS ${SWIG_MODULE_compearth_REAL_NAME} LIBRARY DESTINATION
+    #    lib)
 ENDIF (BUILD_PYTHON_MODULE)
 
