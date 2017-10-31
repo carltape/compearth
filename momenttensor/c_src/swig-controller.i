@@ -37,10 +37,10 @@
                         int nmt2, int nmt2_2, double * M2,
                         int * nomega, double ** omega )
     {
-        if (!*omega)
-            printf("omega NULL\n");
-        else
-            printf("omega SET\n");
+        if (*omega)
+        {
+            free(*omega);
+        }
         *nomega = nmt2>nmt1?nmt2:nmt1;
         *omega=(double *)calloc(*nomega, sizeof(double));
         /*TODO error if nmt1_2 or nmt2_2 is not 6 */
