@@ -1,5 +1,4 @@
 %module compearth
-%rename (standardDecomposition) compearth_standardDecomposition;
 
 %{
 #define SWIG_FILE_WITH_INIT
@@ -16,14 +15,15 @@
 %apply (int DIM1, int DIM2, double* IN_ARRAY2) {(int nmt1, int nmt1_2, double * M1),
                                                 (int nmt2, int nmt2_2, double * M2),
                                                 (int nmt, int nmt_2, double * M)}
-%apply (int * DIM1, double ** ARGOUTVIEWM_ARRAY1) {(int * nomega, double ** omega),
+/*TODO need to do beter memory management ARGOUTVIEWM should do it but caused segfault */
+%apply (int * DIM1, double ** ARGOUTVIEW_ARRAY1) {(int * nomega, double ** omega),
                                                    (int * nM0, double ** M0),
                                                    (int *nMw, double ** Mw),
                                                    (int *nisoPct, double ** isoPct),
                                                    (int *ndevPct, double ** devPct),
                                                    (int *ndcPct, double ** dcPct),
                                                    (int *nclvdPct, double ** clvdPct)}
-%apply (int * DIM1, int * DIM2, double **ARGOUTVIEWM_ARRAY2) {(int *nfp1_1, int *nfp1_2, double ** fp1),
+%apply (int * DIM1, int * DIM2, double **ARGOUTVIEW_ARRAY2) {(int *nfp1_1, int *nfp1_2, double ** fp1),
                                                               (int *nfp2_1, int *nfp2_2, double ** fp2),
                                                               (int *npAxis_1, int *npAxis_2, double ** pAxis),
                                                               (int *nbAxis_1, int *nbAxis_2, double ** bAxis),
@@ -36,6 +36,10 @@
                         int nmt2, int nmt2_2, double * M2,
                         int * nomega, double ** omega )
     {
+        if (!*omega)
+            printf("omega NULL\n");
+        else
+            printf("omega SET\n");
         *nomega = nmt2>nmt1?nmt2:nmt1;
         *omega=(double *)calloc(*nomega, sizeof(double));
         /*TODO error if nmt1_2 or nmt2_2 is not 6 */
@@ -86,3 +90,6 @@
         return  compearth_standardDecomposition(nmt, M, basis, *M0, *Mw, *fp1, *fp2, *pAxis, *bAxis, *tAxis, *isoPct, *devPct, *dcPct, *clvdPct);
     }
 %}
+
+//#%ignore (compearth_angleMT)
+//#%include "compearth.h"
