@@ -22,17 +22,68 @@
                                                    (int *nisoPct, double ** isoPct),
                                                    (int *ndevPct, double ** devPct),
                                                    (int *ndcPct, double ** dcPct),
-                                                   (int *nclvdPct, double ** clvdPct)}
+                                                   (int *nclvdPct, double ** clvdPct),
+                                                   (int *ngamma, double ** gamma),
+                                                   (int *ndelta, double **delta),
+                                                   (int *nbeta, double **beta),
+                                                   (int *ntheta, double ** theta)}
 %apply (int * DIM1, int * DIM2, double **ARGOUTVIEW_ARRAY2) {(int *nfp1_1, int *nfp1_2, double ** fp1),
                                                               (int *nfp2_1, int *nfp2_2, double ** fp2),
                                                               (int *npAxis_1, int *npAxis_2, double ** pAxis),
                                                               (int *nbAxis_1, int *nbAxis_2, double ** bAxis),
                                                               (int *ntAxis_1, int *ntAxis_2, double ** tAxis)}
+%apply (double ARGOUT_ARRAY1[ANY]) {(double M[6]),
+                             (double lam[3]),
+                             (double U[9])}
+%apply (int DIM1, double *IN_ARRAY1) {(int nv, double *v),
+                                      (int nh, double *h),
+                                      (int nw, double *w),
+                                      (int nu, double *u)}
 //%apply (double ARGOUT_ARRAY2[ANY][ANY]) {(double **omega)}
+
+%rename (tt2cmt) compearth_tt2cmt;
 
 %inline %{
 #include "compearth.h"
 #include "compearth_constants.h"
+
+extern int compearth_tt2cmt(const double gamma,
+                     const double delta,
+                     const double M0,
+                     const double kappa,
+                     const double theta,
+                     const double sigmaIn, 
+                     double M[6], double lam[3], double U[9]);
+
+int rect2lune(int nv, double * v,
+              int nw, double * w,
+              int *ngamma, double ** gamma,
+              int *ndelta, double ** delta)
+{
+        *ndelta = nw;
+        *ngamma = nv;
+        *delta=(double *)calloc(*ndelta, sizeof(double));
+        *gamma=(double *)calloc(*ngamma, sizeof(double));
+        return compearth_rect2lune(nv, v, nw, w, *gamma, *delta);
+}
+int u2beta(int maxit, int linvType, int nu, double *u, double tol, int *nbeta, double **beta)
+{
+        *nbeta = nu;
+        *beta=(double *)calloc(*nbeta, sizeof(double));
+        return compearth_u2beta(nu, maxit,linvType, u, tol, *beta);
+}
+int v2gamma(int nv, double *v, int *ngamma, double **gamma)
+{
+   *ngamma = nv;
+   *gamma=(double *)calloc(*ngamma, sizeof(double));
+   compearth_v2gamma(nv,v, *gamma);
+}
+int h2theta(int nh, double *h, int *ntheta, double **theta)
+{
+   *ntheta = nh;
+   *theta=(double *)calloc(*ntheta, sizeof(double));
+   compearth_h2theta(nh,h, *theta);
+}
  int cmt2omega(int nmt1, int nmt1_2, double * M1,
                         int nmt2, int nmt2_2, double * M2,
                         int * nomega, double ** omega )
@@ -93,4 +144,11 @@
 %}
 
 //#%ignore (compearth_angleMT)
+extern int compearth_tt2cmt(const double gamma,
+                     const double delta,
+                     const double M0,
+                     const double kappa,
+                     const double theta,
+                     const double sigmaIn, 
+                     double M[6], double lam[3], double U[9]);
 %include "compearth_constants.h"
