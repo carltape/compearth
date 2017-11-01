@@ -109,7 +109,11 @@ IF (BUILD_PYTHON_MODULE)
     FIND_PACKAGE(NumPy)
     INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIRS} ${PYTHON_NUMPY_INCLUDE_DIR})
 
-    swig_add_library(compearth LANGUAGE python SOURCES ${CMAKE_SOURCE_DIR}/swig-controller.i)
+    IF (CMAKE_VERSION VERSION_LESS 3.0)
+        swig_add_module(compearth python ${CMAKE_SOURCE_DIR}/swig-controller.i)
+    ELSE (CMAKE_VERSION VERSION_LESS 3.0)
+        swig_add_library(compearth LANGUAGE python SOURCES ${CMAKE_SOURCE_DIR}/swig-controller.i)
+    ENDIF (CMAKE_VERSION VERSION_LESS 3.0)
     swig_link_libraries(compearth compearth_shared ${PYTHON_LIBRARIES})
     SET_TARGET_PROPERTIES(${SWIG_MODULE_compearth_REAL_NAME} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/python)
