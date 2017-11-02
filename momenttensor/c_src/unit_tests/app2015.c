@@ -35,6 +35,7 @@ int main()
     printf("--------------------------------------------------------\n");
     // Now compute the correponding moment tensor
     delta = M_PI/2.0 - beta;
+printf("%f %f %f %f %f\n", gamma, delta, kappa, theta, sigma);
     double gammaDeg = gamma*pi180;
     double deltaDeg = delta*pi180;
     double kappaDeg = kappa*pi180;
