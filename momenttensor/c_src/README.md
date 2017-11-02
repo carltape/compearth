@@ -41,6 +41,21 @@ Alternatively, to configure with MKL and the Intel C and Fortran compilers I wou
     -DMKL_LIBRARY="/opt/intel/mkl/lib/intel64_lin/libmkl_intel_lp64.so;/opt/intel/mkl/lib/intel64_lin/libmkl_sequential.so;/opt/intel/mkl/lib/intel64_lin/libmkl_core.so" \
     -DMKL_INCLUDE_DIR=/opt/intel/mkl/include
 
+## Experimental Python Interfacing
+
+With [SWIG](http://www.swig.org/) and [NumPy](http://www.numpy.org/)it may be possible to wrap some components of the library for use from Python.  In this instance a configuration script may look like
+
+    #!/bin/bash
+    /usr/bin/cmake ./ -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=./ \
+    -DCMAKE_C_COMPILER=icc \
+    -DCOMPEARTH_BUILD_PYTHON_MODULE=TRUE \
+    -DSWIG_EXECUTABLE=/usr/bin/swig \
+    -DCMAKE_C_FLAGS="-g3 -xHOST -O3 -ipo -qopenmp -Wall -Wextra -Wcomment -Wcheck" \
+    -DCOMPEARTH_USE_MKL=TRUE \
+    -DMKL_LIBRARY="/opt/intel/mkl/lib/intel64_lin/libmkl_intel_lp64.so;/opt/intel/mkl/lib/intel64_lin/libmkl_sequential.so;/opt/intel/mkl/lib/intel64_lin/libmkl_core.so;/opt/intel/mkl/lib/intel64_lin/libmkl_mc3.so;/opt/intel/lib/intel64_lin/libmkl_def.so" \
+    -DMKL_INCLUDE_DIR=/opt/intel/mkl/include
+
 After configuration the application can be built in the source root directory by typing
 
     make

@@ -57,6 +57,7 @@
 %inline %{
 #include "compearth.h"
 #include "compearth_constants.h"
+#include "compearth_enum.h"
 
 int tt2cmt(int ngamma, double *gamma,
            int ndelta, double *delta,
@@ -187,3 +188,4 @@ int h2theta(int nh, double *h, int *ntheta, double **theta)
 
 //#%ignore (compearth_angleMT)
 %include "compearth_constants.h"
+%include "compearth_enum.h"
