@@ -61,7 +61,11 @@ With [SWIG](http://www.swig.org/) and [NumPy](http://www.numpy.org/)it may be po
     -DMKL_LIBRARY="/opt/intel/mkl/lib/intel64_lin/libmkl_intel_lp64.so;/opt/intel/mkl/lib/intel64_lin/libmkl_sequential.so;/opt/intel/mkl/lib/intel64_lin/libmkl_core.so;/opt/intel/mkl/lib/intel64_lin/libmkl_mc3.so;/opt/intel/lib/intel64_lin/libmkl_def.so" \
     -DMKL_INCLUDE_DIR=/opt/intel/mkl/include
 
-Note, with MKL 2018 it does not appear necessary to include libmkl_mc3 and libmkl_def.
+Note, it may be necessary to include libmkl_avx2, libmkl_mc3, and libmkl_def as needed to the MKL_LIBRARY as required.  In the instance of a failure one may see a terse message from Python similar to:
+
+Intel MKL FATAL ERROR: Cannot load libmkl_avx2.so or libmkl_def.so.
+
+Unfortunately, this will make building the Python module and testing the Python module an iterative process.
 
 # Building
 
