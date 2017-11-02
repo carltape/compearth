@@ -26,34 +26,77 @@
                                                    (int *ngamma, double ** gamma),
                                                    (int *ndelta, double **delta),
                                                    (int *nbeta, double **beta),
+                                                   (int *nlambda, double **lambda),
                                                    (int *ntheta, double ** theta)}
 %apply (int * DIM1, int * DIM2, double **ARGOUTVIEW_ARRAY2) {(int *nfp1_1, int *nfp1_2, double ** fp1),
                                                               (int *nfp2_1, int *nfp2_2, double ** fp2),
                                                               (int *npAxis_1, int *npAxis_2, double ** pAxis),
                                                               (int *nbAxis_1, int *nbAxis_2, double ** bAxis),
-                                                              (int *ntAxis_1, int *ntAxis_2, double ** tAxis)}
-%apply (double ARGOUT_ARRAY1[ANY]) {(double M[6]),
+                                                              (int *ntAxis_1, int *ntAxis_2, double ** tAxis),
+                                                              (int *nM_1, int *nM_2, double ** M)}
+%apply (int * DIM1, int * DIM2, int * DIM3, double **ARGOUTVIEW_ARRAY3) {(int *nU_1, int *nU_2, int *nU_3, double ** U)}
+/*XXX %apply (double ARGOUT_ARRAY1[ANY]) {(double M[6]),
                              (double lam[3]),
-                             (double U[9])}
+                             (double U[9])}*/
 %apply (int DIM1, double *IN_ARRAY1) {(int nv, double *v),
                                       (int nh, double *h),
                                       (int nw, double *w),
-                                      (int nu, double *u)}
+                                      (int nu, double *u),
+                                      (int nM0, double * M0),
+                                      (int nsigmaIn, double * sigmaIn),
+                                      (int ngamma, double * gamma),
+                                      (int ndelta, double *delta),
+                                      /*TODO (int nbeta, double *beta),*/
+                                      (int nkappa, double *kappa),
+                                      (int ntheta, double * theta)}
+
 //%apply (double ARGOUT_ARRAY2[ANY][ANY]) {(double **omega)}
 
-%rename (tt2cmt) compearth_tt2cmt;
+//XXX%rename (tt2cmt) compearth_tt2cmt;
 
 %inline %{
 #include "compearth.h"
 #include "compearth_constants.h"
 
-extern int compearth_tt2cmt(const double gamma,
-                     const double delta,
-                     const double M0,
-                     const double kappa,
-                     const double theta,
-                     const double sigmaIn, 
-                     double M[6], double lam[3], double U[9]);
+int tt2cmt(int ngamma, double *gamma,
+           int ndelta, double *delta,
+           int nM0, double *M0,
+           int nkappa, double *kappa,
+           int ntheta, double *theta,
+           int nsigmaIn, double *sigmaIn, 
+           int *nM_1, int *nM_2, double ** M,
+           int *nlambda,  double ** lambda,
+           int *nU_1, int *nU_2, int *nU_3, double ** U)
+{
+    int ierr=0, i, j ,k;
+    double * tmpU=NULL;
+    *nM_1 = ngamma;
+    *nM_2 = 6;
+    *nlambda = ngamma;
+    *nU_1 = ngamma;
+    *nU_2 = 3;
+    *nU_3 = 3;
+    *M=(double *)calloc((*nM_1)*(*nM_2), sizeof(double));
+    *lambda=(double *)calloc(*nlambda, sizeof(double));
+    tmpU=(double *)calloc((*nU_1)*(*nU_2)*(*nU_3), sizeof(double));
+    *U=(double *)calloc((*nU_1)*(*nU_2)*(*nU_3), sizeof(double));
+    ierr = compearth_TT2CMT(ngamma, gamma, delta, M0, kappa, theta, sigmaIn, *M, *lambda, tmpU);
+    /* Transpose matrix */
+    for(i = 0; i < *nU_1; i++)
+    {
+        for(j = 0; j < *nU_2; j++)
+        {
+            for(k=0; k < j; k++)
+            {
+                printf("i = %d, j = %d, k = %d, swapping %d with %d\n", i,j,k, i*(*nU_2)*(*nU_3) + j*(*nU_2) + k,i*(*nU_2)*(*nU_3) + k*(*nU_3) + j);
+                (*U)[i*(*nU_2)*(*nU_3) + j*(*nU_2) + k] = tmpU[i*(*nU_2)*(*nU_3) + k*(*nU_3) + j];
+                (*U)[i*(*nU_2)*(*nU_3) + k*(*nU_3) + j] = tmpU[i*(*nU_2)*(*nU_3) + j*(*nU_2) + k];
+            }
+        }
+    }
+    free(tmpU);
+    return ierr;
+}
 
 int rect2lune(int nv, double * v,
               int nw, double * w,
@@ -144,11 +187,4 @@ int h2theta(int nh, double *h, int *ntheta, double **theta)
 %}
 
 //#%ignore (compearth_angleMT)
-extern int compearth_tt2cmt(const double gamma,
-                     const double delta,
-                     const double M0,
-                     const double kappa,
-                     const double theta,
-                     const double sigmaIn, 
-                     double M[6], double lam[3], double U[9]);
 %include "compearth_constants.h"
