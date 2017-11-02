@@ -66,7 +66,7 @@ int tt2cmt(int ngamma, double *gamma,
            int ntheta, double *theta,
            int nsigmaIn, double *sigmaIn, 
            int *nM_1, int *nM_2, double ** M,
-           int *nlambda_1, nlambda_2,  double ** lambda,
+           int *nlambda_1, int *nlambda_2,  double ** lambda,
            int *nU_1, int *nU_2, int *nU_3, double ** U)
 {
     int ierr=0, i, j ,k;
