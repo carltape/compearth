@@ -88,7 +88,6 @@ int tt2cmt(int ngamma, double *gamma,
         {
             for(k=0; k < j; k++)
             {
-                printf("i = %d, j = %d, k = %d, swapping %d with %d\n", i,j,k, i*(*nU_2)*(*nU_3) + j*(*nU_2) + k,i*(*nU_2)*(*nU_3) + k*(*nU_3) + j);
                 (*U)[i*(*nU_2)*(*nU_3) + j*(*nU_2) + k] = tmpU[i*(*nU_2)*(*nU_3) + k*(*nU_3) + j];
                 (*U)[i*(*nU_2)*(*nU_3) + k*(*nU_3) + j] = tmpU[i*(*nU_2)*(*nU_3) + j*(*nU_2) + k];
             }
