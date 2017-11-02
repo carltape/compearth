@@ -11,9 +11,12 @@ An effort was made to make this library largely free of many dependencies.  Howe
 * [LAPACK(E)](http://www.netlib.org/lapack/) and [(C)BLAS](http://www.netlib.org/blas/) along with header files.  Vendor implementations are recommended when available.
 * When using Intel processors BLAS, CBLAS, LAPACK, LAPACKE, and the requisite header files are available at Intel's [MKL](https://software.intel.com/en-us/mkl).  This library is available at no cost.
 * [Doxygen](http://www.stack.nl/~dimitri/doxygen/).  This is only required if you wish to generate the API documentation.
+
+# Build Instructions
   
 The purpose of CMake is to serve as a cross-platform Makefile generator.  CMake, however, can be difficult to use.  I usually find the most expedient strategy is to create configuration scripts.  For eample, to configure with clang one could run the following script in the root source directory 
 
+## Configuring With System LAPACK(e) and (C)BLAS
 
     #!/bin/bash
     /usr/bin/cmake ./ -DCMAKE_BUILD_TYPE=DEBUG \
@@ -27,7 +30,9 @@ The purpose of CMake is to serve as a cross-platform Makefile generator.  CMake,
     -DCBLAS_LIBRARY=/usr/lib/libblas.so \
     -DBLAS_LIBRARY=/usr/lib/libblas.so
 
-Alternatively, to configure with MKL and the Intel C and Fortran compilers I would do something like:
+## Configuring With MKL
+
+Alternatively, to configure with MKL and the Intel C and Fortran compilers (which are not required by MKL) I would do something like:
 
     #!/bin/bash
     /usr/bin/cmake ./ -DCMAKE_BUILD_TYPE=Release \
@@ -56,6 +61,14 @@ With [SWIG](http://www.swig.org/) and [NumPy](http://www.numpy.org/)it may be po
     -DMKL_LIBRARY="/opt/intel/mkl/lib/intel64_lin/libmkl_intel_lp64.so;/opt/intel/mkl/lib/intel64_lin/libmkl_sequential.so;/opt/intel/mkl/lib/intel64_lin/libmkl_core.so;/opt/intel/mkl/lib/intel64_lin/libmkl_mc3.so;/opt/intel/lib/intel64_lin/libmkl_def.so" \
     -DMKL_INCLUDE_DIR=/opt/intel/mkl/include
 
+Note, it may be necessary to include libmkl_avx2, libmkl_mc3, and libmkl_def as needed to the MKL_LIBRARY as required.  In the instance of a failure one may see a terse message from Python similar to:
+
+Intel MKL FATAL ERROR: Cannot load libmkl_avx2.so or libmkl_def.so.
+
+Unfortunately, this will make building the Python module and testing the Python module an iterative process.
+
+# Building
+
 After configuration the application can be built in the source root directory by typing
 
     make
@@ -77,4 +90,5 @@ The library is still limited in some aspects.  The following
 * Add more interface modules.  Deal with NULLs.  Might need Fortran pointers.  Yick.
 * Extend unit tests to chunks of matrices
 * Compute intelligent chunk sizes
-
+* Improve portability of python/swig
+* Add documentation/error checking to python modules

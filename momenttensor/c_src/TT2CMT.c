@@ -58,7 +58,8 @@ int compearth_tt2cmt(const double gamma,
  * @param[out] M         Moment tensor in Up-South-East coordinates packed
  *                       {rr, tt, pp, rt, rp, tp}.  This is an array of
  *                       dimension [6 x nmt] with leading dimension 6.
- * @param[out] lam       eigenvalues
+ * @param[out] lam       [3 x nmt] set of eigenvalues corresponding to U with
+ *                       leading dimension 3.
  * @param[out] U         3 x 3 bases in SEU convention.  This is an array of
  *                       dimension [3 x 3 x nmt] where each leading 3 x 3
  *                       matrix is in column major order.
