@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include "compearth_config.h"
+#include "compearth_enum.h"
 #include "compearth_constants.h"
 
 #ifdef __cplusplus
