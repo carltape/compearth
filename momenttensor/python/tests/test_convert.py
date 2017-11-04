@@ -7,6 +7,8 @@ from compearth.convert import cmt2tt, cmt2tt15, tt2cmt, tt152cmt
 
 EPSVAL = 1.e-6
 
+
+# must be in up-south-east (GCMT) convention
 M = np.array([
     1.006279239004, # m11
     0.737173428960, # m22
