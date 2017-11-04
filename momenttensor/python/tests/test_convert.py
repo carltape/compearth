@@ -28,7 +28,7 @@ def test_2012():
 
     e = np.linalg.norm(M1-M2)
     if e > EPSVAL:
-        print e
+        print '||M1 - M2|| = %e' % e
         raise Exception
 
 
@@ -41,16 +41,26 @@ def test_2015():
 
     e = np.linalg.norm(M1-M2)
     if e > EPSVAL:
-        raise Exception()
+        print '||M1 - M2|| = %e' % e
+        raise Exception
 
 
 
 if __name__ == '__main__':
     try:
+        print 'Test 1 of 2'
         test_2012()
+    except:
+        print 'FAILED\n'
+    else:
+        print 'SUCCESS\n'
+
+    try:
+        print 'Test 2 of 2'
         test_2015()
     except:
         print 'FAILED\n'
     else:
         print 'SUCCESS\n'
+
 
