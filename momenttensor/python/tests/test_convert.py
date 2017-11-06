@@ -1,5 +1,4 @@
-
-import unittest
+#!/usr/bin/env python
 
 import numpy as np
 
@@ -48,19 +47,16 @@ def test_2015():
 
 if __name__ == '__main__':
     try:
-        print 'Test 1 of 2'
         test_2012()
     except:
-        print 'FAILED\n'
+        print 'Test 1 of 2...FAILED'
     else:
-        print 'SUCCESS\n'
+        print 'Test 1 of 2...SUCCESS'
 
     try:
-        print 'Test 2 of 2'
         test_2015()
     except:
-        print 'FAILED\n'
+        print 'Test 2 of 2...FAILED'
     else:
-        print 'SUCCESS\n'
-
+        print 'Test 2 of 2...SUCCESS'
 
