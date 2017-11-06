@@ -9,5 +9,5 @@ install:
 
 script:
   - export PYTHONPATH=$PYTHONPATH:$(pwd)/momenttensor/python
-  - momenttensor/python/compearth/tests/test_convert.py
+  - momenttensor/python/tests/test_convert.py
 
