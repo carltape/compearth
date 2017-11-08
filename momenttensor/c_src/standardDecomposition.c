@@ -24,8 +24,9 @@
  *                      The momen tensor terms have units of (N-m).
  * @param[in] basis     Basis of input moment tensors. 
  *
- * @param[out] M0       Scalar moment (N-m) of moment tensors.  This is an array
- *                      of dimension [nmt].
+ * @param[out] M0       Scalar moment (N-m) of moment tensors using the
+ *                      definition of Hudson and Bowers: M0 = Miso + Mdev.
+ *                      This is an array of dimension [nmt].
  * @param[out] Mw       Moment magnitudes computed with the Harvard CMT
  *                      convention:
  *                      \f$ 
