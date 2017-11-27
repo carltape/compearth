@@ -22,7 +22,9 @@ function [M,lam,U] = TT2CMT(gamma,delta,M0,kappa,theta,sigma)
 % Reverse program for CMT2TT.m
 % See WTape and CTape (2012) "A geometric setting for moment tensors" (TT2012).
 %
-% Carl Tape, 12/2012
+% calls lune2lam.m, sdr2U.m
+%
+% Carl Tape, 2012/12
 %
 
 n1 = length(gamma);
@@ -54,65 +56,31 @@ for ii=1:n
     end
 end
 
-%---------------------
 % PART 1: moment tensor source type (or pattern)
-
 lam = lune2lam(gamma,delta,M0);
 
-%---------------------
 % PART 2: moment tensor orientation
-% NOTE: Algorithmically, it would be simpler to compute V directly from the
-% expression in Proposition 2, since this requires fewer calculations.
-% (In the case here, we do not need the fault vectors at all.)
-% The implementaion below is more conceptual.
-% The basis is specified from the components of the north and zenith vectors.
-% The output for M and U can be changed by using convert_MT.m or convertv.m.
-
-% for north-west-up basis (TapeTape2012)
-%north = [1 0 0]'; zenith = [0 0 1]';
-
-% for south-east-up basis (TapeTape2013)
-north = [-1 0 0]'; zenith = [0 0 1]';
-
-% TT2012, p. 485
-phi = -kappa;
-
-% TT2012, Eq 27abc
-K = NaN(3,n);
-N = NaN(3,n);
-S = NaN(3,n);
-for ii=1:n
-    K(:,ii) = rotmat(phi(ii),3) * north;
-    N(:,ii) = rotmat_gen(K(:,ii),theta(ii)) * zenith;
-    S(:,ii) = rotmat_gen(N(:,ii),sigma(ii)) * K(:,ii);
-end
+U = sdr2U(kappa,theta,sigma);   % U is south-east-up basis
 
 % TT2012, Eq 28 (or Proposition 2)
 M = NaN(3,3,n);
-U = NaN(3,3,n);
-Yrot = rotmat(-45,2);
 for ii=1:n
-    V = [S(:,ii) cross(N(:,ii),S(:,ii)) N(:,ii)];
-    Ux = V*Yrot;
-    M(:,:,ii) = Ux*diag(lam(:,ii))*Ux';
-    U(:,:,ii) = Ux;
+    Ux = U(:,:,ii);
+    M(:,:,ii) = Ux * diag(lam(:,ii)) * Ux';
 end
 M = Mvec2Mmat(M,2);
 
-% convert from north-west-up to up-south-east
-%i1 = 3; i2 = 1;
-%M = convert_MT(i1,i2,M);
-%U = convertv(i1,i2,U);
-
-% convert moment tensor from south-east-up to up-south-east
+% transform moment tensor into another basis
 % (note: U is still in south-east-up)
-i1 = 5; i2 = 1;
+i1 = 5; i2 = 1;             % south-east-up to up-south-east
+%i1 = 3; i2 = 1;            % north-west-up to up-south-east
 M = convert_MT(i1,i2,M);
     
 %==========================================================================
 % EXAMPLES
 
 if 0==1
+    % calculate M, then get the input values to check
     M0 = 1;  % seismic moment
     kappa = 320; theta = 10; sigma = 20;
     M = TT2CMT(0,0,M0,kappa,theta,sigma)
