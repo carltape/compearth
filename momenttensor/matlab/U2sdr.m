@@ -248,3 +248,30 @@ thetaA,sigmaA,kappaA,thetaB,sigmaB,kappaB
 error('no selection criterion was met');
 
 %==========================================================================
+% EXAMPLES
+
+if 0==1
+    % single set of angles
+    kappa = 320;
+    theta = 10;
+    sigma = 20;
+    U = sdr2U(kappa,theta,sigma)
+    [kappacheck,thetacheck,sigmacheck] = U2sdr(U);
+    kappa,kappacheck,theta,thetacheck,sigma,sigmacheck
+    
+    % large set of angles
+    deg = 180/pi;
+    n = 1e4;
+    kappa = randomvec(0,360,n);
+    h = randomvec(0,1,n);
+    theta = deg*acos(h);
+    sigma = randomvec(-90,90,n);
+    
+    U = sdr2U(kappa,theta,sigma);
+    [kappacheck,thetacheck,sigmacheck] = U2sdr(U);
+    norm(kappa(:) - kappacheck(:)) / norm(kappa)
+    norm(theta(:) - thetacheck(:)) / norm(theta)
+    norm(sigma(:) - sigmacheck(:)) / norm(sigma)
+end
+    
+%==========================================================================

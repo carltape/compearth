@@ -2,12 +2,14 @@ function U = pst2U(phi,sigma,theta)
 %PST2U phi-sigma-theta to rotation matrix U 
 %
 % INPUT
-%   phi     azimuth spherical coordinate angle, degrees
-%   sigma   longitudinal angle, degrees
-%   theta   polar spherical angle, degrees
+%   phi     n x 1 vector of azimuth spherical coordinate angle, degrees
+%   sigma   n x 1 vector of longitudinal angle, degrees
+%   theta   n x 1 vector of polar spherical angle, degrees
 %
 % OUTPUT
 %   U       3 x 3 x n set of orientation matrices
+%
+% See examples in U2pst.m
 %
 % See WTape and CTape (2017) "Volume in moment tensor space in terms of distance"
 %
@@ -32,17 +34,6 @@ for ii=1:n
     Yt = rotmat(theta(ii),2);
     Zs = rotmat(sigma(ii),3);
     U(:,:,ii) = Zp * Yt * Zs;
-end
-
-%==========================================================================
-
-if 0==1
-    deg = 180/pi;
-    phi = 0.2*deg;
-    sigma = 0.4*deg;
-    z = 0.3;
-    theta = acos(z)*deg;
-    U = pst2U(phi,sigma,theta)
 end
 
 %==========================================================================

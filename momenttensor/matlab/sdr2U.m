@@ -11,6 +11,7 @@ function U = sdr2U(kappa,theta,sigma)
 %
 % See WTape and CTape (2012) "A geometric setting for moment tensors" (TT2012).
 %
+% See examples in U2sdr.m
 % called by TT2CMT.m
 %
 % Carl Tape, 2012/12

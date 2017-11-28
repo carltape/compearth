@@ -59,7 +59,6 @@ if 0==1
     sigma = 0.4*deg;
     z = 0.3;
     theta = acos(z)*deg;
-    
     U = pst2U(phi,sigma,theta)
     [phicheck,sigmacheck,thetacheck] = U2pst(U);
     phi, phicheck, sigma, sigmacheck, theta, thetacheck
