@@ -5,12 +5,14 @@
 
 /*!
  * @brief Computes u from lune colatitude beta as in Equation 24a of
- *        Tape and Tape 2015
+ *        Tape and Tape 2015.
  *
- * @param[in] n         number of points in arrays
- * @param[in] beta      lune colatitude \f$ \beta \in [0, \pi] \f$ [n]
+ * @param[in] n         Number of points in arrays
+ * @param[in] beta      Lune colatitude \f$ \beta \in [0, \pi] \f$.  This
+ *                      is an array of dimension [n].
  *
- * @param[out] u        u of Equation 24a \f$ u \in [0, 3\pi/4 ] \f$ [n]
+ * @param[out] u        u of Equation 24a \f$ u \in [0, 3\pi/4 ] \f$.  This
+ *                      is an array of dimension [n].
  *
  * @date 2016 - Ben Baker converted Carl Tape's beta2u.m to C
  *

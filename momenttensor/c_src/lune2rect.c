@@ -50,7 +50,7 @@ void compearth_lune2rect(const int ng, double *__restrict__ gamma,
         ndLoc = MIN(CE_CHUNKSIZE, nd - i); 
         for (j=0; j<ndLoc; j++)
         {
-            betaRad[j] = pi180*delta[i+j];
+            betaRad[j] = pi180*(90.0 - delta[i+j]);
         }
         compearth_beta2u(ndLoc, betaRad, &w[i]);
         for (j=0; j<ndLoc; j++)
