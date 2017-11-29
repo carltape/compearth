@@ -72,14 +72,25 @@ int compearth_u2beta(const int n,
         if (u[i] < lowerBound || fabs(u[i] - lowerBound) < tol/2.0)
         {
             beta[i] = fmax(0, u[i]); //TODO need small angle approximation
+            if (u[i] <= 0.0)
+            {
+                beta[i] = 0.0;
+                continue;
+            } 
 //compearth_beta2u(1, &beta[i], &f);
 //printf("diff: %e %e\n", f - u[i], u[i]);
- //           continue;
+//            continue;
         }
         if (u[i] > upperBound || fabs(u[i] - upperBound) < tol/2.0)
         {
             // TODO need small angle approximation
             beta[i] = fmax(M_PI, M_PI - fabs(us[nb-2] - u[i]));
+            if (u[i] >= 0.75*M_PI)
+            {
+                beta[i] = M_PI;
+                continue;
+            }
+            
 //compearth_beta2u(1, &beta[i], &f);
 //printf("diff: %e %f\n", f - u[i], u[i]);
 //            continue;
