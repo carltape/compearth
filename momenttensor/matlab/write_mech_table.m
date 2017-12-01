@@ -1,4 +1,4 @@
-function write_mech_table(filename,otime,lon,lat,dep,M,eid)
+function [kappa,theta,sigma,gamma,delta,nu,alpha,phi,zeta,v,w] = write_mech_table(filename,otime,lon,lat,dep,M,eid)
 %WRITE_MECH_TABLE write moment tensor catalog as text file
 %
 % INPUT

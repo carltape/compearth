@@ -31,6 +31,9 @@ else
     C = textscan(fid,'%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%s','headerlines',NHEADER);
 end
 fclose(fid);
+
+ncol = length(C);
+
 otime = datenum(C{1},C{2},C{3},C{4},C{5},C{6});
 % check: datestr(otime,'yyyy-mm-dd HH:MM:SS.FFF')
 lon = C{7};
@@ -39,7 +42,8 @@ dep = C{9};
 % the Mij values are listed with the highest precision
 % (this is why we return M but not strike, dip, rake, M0, Mw, gamma, delta, etc)
 M = [C{10} C{11} C{12} C{13} C{14} C{15}]';
-eid = C{23};
+
+eid = C{ncol};
 
 [Mw,M0] = CMT2mw(M);
 
@@ -47,11 +51,6 @@ eid = C{23};
 % EXAMPLES (these will only work with GEOTOOLS at UAF)
 
 if 0==1
-    % Vipul catalog for Tape2015 paper
-    [otime,lon,lat,dep,M,M0,Mw,eid] = read_mech_table('/home/carltape/tu_test_mech_extended.txt');
-    
-    display_eq_summary(otime,lon,lat,dep,Mw);
-
     % base directory
     bdir = [getenv('REPOS') '/manuscripts/'];
 
