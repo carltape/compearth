@@ -93,7 +93,7 @@ for kk=1:2
         fprintf(fid,'   (2) Poisson ratio (nu) and angle between normal vector and slip vector (alpha) (Aki and Richards, 1980)\n');
         fprintf(fid,'   (3) azimuth on lune (phi) and crack fraction (zeta) (Tape and Tape, 2013)\n');
         fprintf(fid,'   (4) v and w (Tape and Tape, 2015)\n');
-        fprintf(fid,'Options (2) and (3) are based on the crack-plus-double-couple model (Minson et al., 2008).\n');
+        fprintf(fid,'Options (2) and (3) are based on the crack-plus-double-couple model (Minson et al., 2007).\n');
     end
     fprintf(fid,'COLUMNS\n');
     if kk==1
