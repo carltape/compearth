@@ -5,7 +5,7 @@
 % Examples to generate subsets of uniform moment tensors
 % See Tape and Tape, 2015, GJI, "A uniform parameterization of moment tensors"
 %
-% Carl Tape, 7/26/2015
+% Carl Tape, 2015-07-26
 %
 
 clear, clc, close all
@@ -176,18 +176,19 @@ end
 %==========================================================================
 
 % Question: How many fewer points are needed to calculate a uniform
-% distribution of moment tensors, in comparison to using assuming that the
+% distribution of moment tensors, in comparison to using assuming the
 % eigenvalue triples are uniformly distributed on the lune?
 %
-% Suppose he takes eigenvalue triples uniformly distributed on the lune and
+% Answer (see TapeTape2015):
+% Suppose person H takes eigenvalue triples uniformly distributed on the lune and
 % then takes the same number of random orientations at each of his lune points.
-% And suppose he wants to achieve the same density of moment tensors that we
-% have at the double couple. Then from our Eq 44b he wants density 4/pi
+% And suppose H wants to achieve the same density of moment tensors that we
+% have at the double couple. Then from our Eq 44b H wants density 4/pi
 % everywhere on the lune. The integral of that over the lune is
-% 4/pi x lune area = 4\pi x 4 pi^2/6.  The integral of our density is 1,
-% so the other guy is using about 8 times as many points.
+% 4/pi x lune area = 4/pi x (4 pi^2)/6 = 8 pi/3.
+% The integral of our density is 1, so H is using about 8 times as many points.
 %
-%disp(sprintf('savings in number of gridpoints is %.2f',8*pi/3));
+%disp(sprintf('savings in number of gridpoints is the factor %.2f',8*pi/3));
 
 %==========================================================================
 % plot various moment tensor quantities
@@ -231,11 +232,15 @@ axis equal, axis([-1/3 1/3 -3*pi/8 3*pi/8])
 
 break
 
+% ADDITIONAL HISTOGRAMS
+
 % lune longitude and latitude within latitude bands and longitude bands
 plotMT_lune(gamma,delta);
+
 % Mij entries
 Medges = [-sqrt(2):0.1:sqrt(2)];
 plotMT_Mij(M,Medges);
+
 % eigenvalues and plunge-azimuth angles of eigenvectors
 [lam,U] = CMTdecom(M);
 Useu = convertv(1,5,U);

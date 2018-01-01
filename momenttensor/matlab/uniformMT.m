@@ -167,6 +167,8 @@ end
 if 0==1
     % an alternative algorithm to generating uniform moment tensors;
     % these are efficient but involve rand (or randn) and a projection
+    % The randn approach is discussed in TapeTape2015, Section 9,
+    % citing Muller (1959) for the  method.
     close all, clc, clear
     if 0==1
         % use rand for the hyperbox, then toss out points outside the hypersphere
@@ -183,19 +185,24 @@ if 0==1
         disp(sprintf('%i/%i (%.2f) kept',nq,n,nq/n));
 
     else
-        % use randn [PREFERRED ALGORITHM]
+        % use randn [PREFERRED APPROACH]
         nq = 1e5;
         sigma = 1;
         M = randn(1,nq*6);
         M = reshape(M,6,nq);
     end
-
+    % plot
+    edges = 2*[-1:0.05:1]; ymx = 1.5;
+    plotMT_Mij(M,edges); for kk=1:6, subplot(3,2,kk); ylim([0 ymx]); end
+    
     % project to the hypersphere
     mnorm = sqrt( sum(M.^2) );
     M = M ./ repmat(mnorm,6,1);
-
+    plotMT_Mij(M,edges); for kk=1:6, subplot(3,2,kk); ylim([0 ymx]); end
+    
     % divide off-diagonal entries by sqrt(2)
     M(4:6,:) = M(4:6,:) / sqrt(2);
+    plotMT_Mij(M,edges); for kk=1:6, subplot(3,2,kk); ylim([0 ymx]); end
     
     % plot the omega distribution
     iref = randi(nq); Mref = M(:,iref);
