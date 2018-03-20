@@ -6,7 +6,12 @@ IF (COMPEARTH_MAKE_FINTER)
 ENDIF()
 ENABLE_TESTING()
 
-#SET(CMAKE_BUILD_TYPE Release)
+SET(COMPEARTH_VERSION_MAJOR 1)
+SET(COMPEARTH_VERSION_MINOR 1)
+SET(COMPEARTH_VERSION_PATCH 1)
+SET(COMPEARTH_VERSION ${COMPEARTH_VERSION_MAJOR}.${COMPEARTH_VERSION_MINOR}.${COMPEARTH_VERSION_PATCH})
+MESSAGE("Configuring compearth version: " ${COMPEARTH_VERSION})
+
 # Add modules for finding requisites
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeModules)
 # For testing
@@ -132,3 +137,28 @@ IF (COMPEARTH_BUILD_PYTHON_MODULE)
    #INSTALL(TARGETS ${SWIG_MODULE_compearth_REAL_NAME} LIBRARY DESTINATION ${CMAKE_SWIG_OUTDIR}))
 ENDIF (COMPEARTH_BUILD_PYTHON_MODULE)
 
+#------------------------------------------------------------------------------#
+#                              Configuration Details                           #
+#------------------------------------------------------------------------------#
+SET(COMPEARTH_LIBRARY compearth)
+SET(INCLUDE_INSTALL_DIR include/) #${INCLUDE_DIRECTORIES}) #$include/ ... CACHE)
+SET(LIB_INSTALL_DIR lib/)
+SET(SYSCONFIG_INSTALL_DIR etc/compearth/)
+#SET(LIB_INSTALL_DIR ${LIBRARY_OUTPUT_PATH})
+INCLUDE(CMakePackageConfigHelpers)
+CONFIGURE_PACKAGE_CONFIG_FILE(${CMAKE_MODULE_PATH}/FindCompearth.cmake.in
+                              ${CMAKE_BINARY_DIR}/FindCompearth.cmake
+                              INSTALL_DESTINATION ${LIB_INSTALL_DIR}/compearth/cmake
+                              PATH_VARS INCLUDE_INSTALL_DIR SYSCONFIG_INSTALL_DIR)
+WRITE_BASIC_PACKAGE_VERSION_FILE(${LIBRARY_OUTPUT_PATH}/CompearthConfigVersion.cmake
+                                 VERSION ${COMPEARTH_VERSION} 
+                                 COMPATIBILITY SameMajorVersion) #ExactVersion)
+SET(TARGET_NAMES compearth_shared compearth_static)
+INSTALL(TARGETS ${TARGET_NAMES}
+        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_WRITE GROUP_READ WORLD_EXECUTE WORLD_WRITE WORLD_READ
+        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+INSTALL(FILES
+        ${CMAKE_BINARY_DIR}/FindCompearth.cmake
+        ${LIBRARY_OUTPUT_PATH}/CompearthConfigVersion.cmake
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/compearth/cmake)
