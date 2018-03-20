@@ -13,28 +13,6 @@
 #include <cblas.h>
 #endif
 
-/*
-int compearth_tt2cmt(const double gamma,
-                     const double delta,
-                     const double M0, 
-                     const double kappa,
-                     const double theta,
-                     const double sigmaIn,
-                     double M[6], double lam[3], double U[9])
-{
-    int ierr;
-    ierr = compearth_TT2CMT(1,
-                            &gamma, &delta, &M0,
-                            &kappa, &theta, &sigmaIn,
-                            M, lam, U);
-    if (ierr != 0)
-    {
-        fprintf(stderr, "%s: Error calling TT2CMT\n", __func__);
-        return -1;
-    }
-    return 0;
-} 
-*/
 /*!
  * @brief C translation of Carl Tape's utility for converting geometrical
  * parameters into moment tensors.
@@ -137,7 +115,8 @@ int compearth_TT2CMT(const int nmt,
     if (iwarn1 != 0)
     {
         fprintf(stdout,
-                "%s: %d input faults are horizontal; strike angle s undefined\n",                __func__, iwarn1);
+                "%s: %d input faults are horizontal; strike angles undefined\n",
+                __func__, iwarn1);
         fprintf(stdout, "%s: Slip angles will be set to 0\n", __func__);
     }
     // Loop on moment tensor chunks
@@ -189,7 +168,7 @@ int compearth_TT2CMT(const int nmt,
         // TT2012, Eq 28 (or Proposition 2)
         compearth_eulerUtil_rotmat(1, &neg45, 2, Yrot);
         lam3 = (double *) &lam[3*imt];
-        Ux = (double *) &U[9*(imt)]; 
+        Ux = (double *) &U[9*imt];
         for (i=0; i<nmtLoc; i++)
         {
             gemv3_colMajorNoTrans(&R[9*i], &K[3*i], S); // moved to here

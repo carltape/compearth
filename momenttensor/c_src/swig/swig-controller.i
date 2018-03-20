@@ -115,7 +115,7 @@ int u2beta(int maxit, int linvType, int nu, double *u, double tol, int *nbeta, d
 {
         *nbeta = nu;
         *beta=(double *)calloc(*nbeta, sizeof(double));
-        return compearth_u2beta(nu, maxit,linvType, u, tol, *beta);
+        return compearth_u2beta(nu, u, *beta); /*maxit,linvType, u, tol, *beta);*/
 }
 int v2gamma(int nv, double *v, int *ngamma, double **gamma)
 {
