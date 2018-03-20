@@ -4,7 +4,7 @@
 #include "compearth.h"
 
 /*!
- * @brief Commputes lune longitude from point v.
+ * @brief Computes lune longitude from point v.
  *
  * @param[in] n       Number of points in array.
  * @param[in] v       v in rectilinear space s.t.
