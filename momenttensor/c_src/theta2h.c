@@ -5,13 +5,13 @@
 
 /*!
  * @brief Computes h from dip angle theta as in Equation 24c of 
- *        Tape and Tape 2015
+ *        Tape and Tape, 2015.
  *
  * @param[in] n         Number of points in array
- * @param[in] theta     Dip angle \f$ \theta \in [0, \pi/2 \f$.  This
+ * @param[in] theta     Dip angle \f$ \theta \in [0, \pi/2] \f$.  This
  *                      is an array of dimension [n].
  *
- * @param[out] h        h of Equation 24c \f$ h \in [-1,1] \f$.  This
+ * @param[out] h        h of Equation 24c \f$ h \in [0,1] \f$.  This
  *                      is an array of dimension [n].
  *
  * @copyright MIT

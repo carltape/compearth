@@ -7,15 +7,17 @@
  * @brief Computes beta lune colatitude from u.  This applies the inverse
  *        of Equation 24a of Tape and Tape 2015 
  *
- * @param[in] n          number of points
- * @param[in] maxit      max number of iterations
- * @param[in] linvType   if =1 -> Newton-Rhapson iteration.
+ * @param[in] n          Number of points.
+ * @param[in] maxit      Max number of iterations.
+ * @param[in] linvType   If =1 -> Newton-Rhapson iteration. \n
  *                       Otherwise -> Halley iteration (default).
- * @param[in] u          u coordinates \f$ [0, 3*pi/4] \f$ [n]
- * @param[in] tol        convergence achieved when:
+ * @param[in] u          u coordinates in the range \f$ [0, 3*pi/4] \f$.  
+ *                       this is an array of dimension [n].
+ * @param[in] tol        Convergence is achieved when:
  *                         fabs(u - 0.75*beta - 0.5*sin2b + 0.0625*sin4b) < tol
  *
- * @param[out] beta      colalitudes \f$ [0, \pi] \f$ [n]
+ * @param[out] beta      Colalitudes in the range \f$ [0, \pi] \f$.  This
+ *                       is an array of dimension [n].
  *
  * @result 0 indicates success
  *
@@ -76,7 +78,12 @@ int compearth_u2beta(const int n,
             {
                 beta[i] = 0.0;
                 continue;
-            } 
+            }
+            // Taylor expansion of function is: 
+            // u = 2/5*beta^5 - 4/21*beta^7 + 2/45*beta^9 + ...
+            // but this doesn't work so great
+            beta[i] = pow(2.5*u[i], 0.2);
+            continue; // There will be a lot of complaints if this is removed
 //compearth_beta2u(1, &beta[i], &f);
 //printf("diff: %e %e\n", f - u[i], u[i]);
 //            continue;
@@ -90,7 +97,7 @@ int compearth_u2beta(const int n,
                 beta[i] = M_PI;
                 continue;
             }
-            
+            //continue;            
 //compearth_beta2u(1, &beta[i], &f);
 //printf("diff: %e %f\n", f - u[i], u[i]);
 //            continue;
@@ -141,7 +148,8 @@ int compearth_u2beta(const int n,
                 // Avoid a breakdown in Newton Rhapson
                 if (fabs(dfdx) < 1.e-15)
                 {
-                    fprintf(stderr, "%s: Division by zero\n", __func__);
+                    fprintf(stderr, "%s: Division by zero: %f\n",
+                            __func__, fabs(dfdx));
                     lconv = false;
                     break;
                 }
@@ -178,7 +186,8 @@ int compearth_u2beta(const int n,
                 den = 2.0*dfdx*dfdx - f*dfdx2;
                 if (fabs(den) < 1.e-15)
                 {
-                    fprintf(stderr, "%s: Division by zero\n", __func__);
+                    fprintf(stderr, "%s: Division by zero: %e; res=%e\n",
+                            __func__, fabs(den), f);
                     lconv = false;
                     break;
                 }
@@ -204,6 +213,7 @@ int compearth_u2beta(const int n,
         // check convergence
         if (!lconv)
         {
+printf("%e %e\n", u[i], lowerBound);
             compearth_beta2u(1, &betaWork, &f);
             fprintf(stderr,
                     "%s: Failure to converge after %d iterations %d %f %f\n",
