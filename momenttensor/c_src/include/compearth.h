@@ -25,12 +25,16 @@ int compearth_auxiliaryPlane(const int nmt,
                              double *__restrict__ d2, 
                              double *__restrict__ r2);
 /* Converts u to lune colatitude beta */
+int compearth_u2beta(const int n, const double *__restrict__ u,
+                     double *__restrict__ beta);
+/*
 int compearth_u2beta(const int n,
                      const int maxit,
                      const int linvType,
                      const double *__restrict__ u,
                      const double tol,
                      double *__restrict__ beta);
+*/
 /* Converts lune colatitude beta to u */
 void compearth_beta2u(const int n, const double *__restrict__ beta,
                       double *__restrict__ u);

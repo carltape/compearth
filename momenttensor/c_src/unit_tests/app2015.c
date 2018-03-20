@@ -38,7 +38,8 @@ int main()
     printf("--------------------tape appendix 2015------------------\n");
     printf("(beta,gamma)=%12.10e %12.10e\n", beta, gamma);
     printf("--------------------------------------------------------\n");
-    ierr = compearth_u2beta(1, maxit, 2, &u, tol, &beta);
+    ierr = compearth_u2beta(1, &u, &beta);
+    //ierr = compearth_u2beta(1, maxit, 2, &u, tol, &beta);
     compearth_v2gamma(1, &v, &gamma);
     compearth_h2theta(1, &h, &theta);
     printf("--------------------tape appendix 2015------------------\n");

@@ -35,7 +35,7 @@ void compearth_lune2rect(const int ng, double *__restrict__ gamma,
     const double pi38 = 3.0*M_PI/8.0;
     const double pi180 = M_PI/180.0;
     // Compute v from gamma
-    for (i=0; i<ng; i=CE_CHUNKSIZE)
+    for (i=0; i<ng; i=i+CE_CHUNKSIZE)
     {
         ngLoc = MIN(CE_CHUNKSIZE, ng - i); 
         for (j=0; j<ngLoc; j++)

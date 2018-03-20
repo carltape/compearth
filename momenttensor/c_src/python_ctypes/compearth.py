@@ -12,6 +12,7 @@ from ctypes import c_double
 from ctypes import byref
 from ctypes import POINTER
 from math import pi
+from numpy import copy
 from numpy import zeros
 from numpy import array
 from numpy import reshape
@@ -36,12 +37,23 @@ class compearth:
         else:
             print("Couldn't find libcompearth_shared")
         # Make the interfaces
+        ce.compearth_rect2lune.argtypes = (c_int, POINTER(c_double),
+                                           c_int, POINTER(c_double),
+                                           POINTER(c_double),
+                                           POINTER(c_double)) 
+        ce.compearth_lune2rect.argtypes = (c_int, POINTER(c_double),
+                                           c_int, POINTER(c_double),
+                                           POINTER(c_double),
+                                           POINTER(c_double))
         ce.compearth_beta2u.argtypes = (c_int,
                                         POINTER(c_double),
                                         POINTER(c_double))
-        ce.compearth_u2beta.argtypes = (c_int, c_int, c_int,
+        ce.compearth_u2beta_optimize.argtypes = (c_int, c_int, c_int,
+                                                 POINTER(c_double),
+                                                 c_double,
+                                                 POINTER(c_double))
+        ce.compearth_u2beta.argtypes = (c_int,
                                         POINTER(c_double),
-                                        c_double,
                                         POINTER(c_double))
         ce.compearth_h2theta.argtypes = (c_int,
                                          POINTER(c_double),
@@ -74,6 +86,66 @@ class compearth:
         arrayPtr = array.ctypes.data_as(POINTER(c_double))
         return array, arrayPtr 
 
+
+    def rect2lune(self, v, w):
+        """
+        Converts v-w coordinates to lune coordinates.
+
+        Input
+        -----
+        v : array_like
+            v ordinate s.t. v is in the range [-1/3, 1/3].  This corresponds
+            to gamma.
+        w : array_like
+            w ordinate s.t. w is in the rnage [-3*pi/8, 3*pi/8].  This 
+            corresponds to delta.
+
+        Ouput
+        -----
+        gamma : array_like
+            Longitude (degrees) where gamma is in the range [-30,30].
+        delta : array_like
+            Latitude (degrees) where delta is in the rnage [-90,90].
+        """
+        nv = len(v)
+        nw = len(w)
+        vPtr = self.__arrayToFloat64Pointer__(v)
+        wPtr = self.__arrayToFloat64Pointer__(w)
+        gamma, gammaPtr = self.__allocFloat64Pointer__(nv)
+        delta, deltaPtr = self.__allocFloat64Pointer__(nw)
+        self.ce.compearth_rect2lune(nv, vPtr, nw, wPtr, gammaPtr, deltaPtr)
+        return gamma, delta
+
+    def lune2rect(self, gamma, delta):
+        """
+        Converts from lune coordinates (gamma, delta) to rectilinear 
+        coordinates (v, w).
+        Input
+        -----
+        gamma : array_like
+            Lune longitudes in degrees.  These are in the range [-30,30].
+        delta : array_like
+            Lune latitudes in degrees.  These are in the range [-90,90].
+
+        Output
+        ------
+        v : array_like
+            v coordinates corresponding to the longitudes.  These are in
+            the range [-1/3, 1/3].
+        w : array_like
+            w coordinates corresonding to the latitudes.  These are in
+            the range [-3*pi/8, 3*pi/8].
+        """
+ 
+        ng = len(gamma)
+        nd = len(delta)
+        gammaPtr = self.__arrayToFloat64Pointer__(gamma) 
+        deltaPtr = self.__arrayToFloat64Pointer__(delta)
+        v, vPtr = self.__allocFloat64Pointer__(ng)
+        w, wPtr = self.__allocFloat64Pointer__(nd)
+        self.ce.compearth_lune2rect(ng, gammaPtr, nd, deltaPtr, vPtr, wPtr)
+        return v, w 
+ 
     def beta2u(self, beta):
         """
         Converts the colatitudes beta to u in the rectilinear coordinates.
@@ -121,7 +193,7 @@ class compearth:
         n = len(u)
         uPtr = self.__arrayToFloat64Pointer__(u)
         beta, betaPtr = self.__allocFloat64Pointer__(n)
-        ierr = self.ce.compearth_u2beta(n, maxit, linvType, uPtr, tol, betaPtr)
+        ierr = self.ce.compearth_u2beta(n, uPtr, betaPtr) #maxit, linvType, uPtr, tol, betaPtr)
         return beta, ierr
 
     def h2theta(self, h):
@@ -210,6 +282,26 @@ class compearth:
 def unit_test():
     seed(8675309)
     ce = compearth()
+    """
+    beta0 = linspace(0, pi, 1000)
+    u0 = ce.beta2u(beta0)
+    clineb = '     const double betas[%d] = {'%len(beta0)
+    clineu = '     const double us[%d] = {'%len(u0)
+    for i in range(len(beta0)):
+        clineb = clineb + '%.15f'%beta0[i]
+        clineu = clineu + '%.15f'%u0[i]
+        if (i < len(beta0) - 1):
+            clineb = clineb + ','
+            clineu = clineu + ','
+            if (i%4 == 0):
+                clineb = clineb + '\n     '
+                clineu = clineu + '\n     '
+    clineb = clineb + '};\n'
+    clineu = clineu + '};\n'
+    print(clineb)
+    print(clineu)
+    return 
+    """
     start = timeit.timeit()
     # gamma to v conversions
     v = (rand(100) - 0.5)*2/3.
@@ -230,7 +322,16 @@ def unit_test():
     #for i in range(len(beta)):
     #    if (abs(betan[i] - beta[i]) > 1.e-10):# and u[i] > 0.001):
     #        print(u[i], beta[i], betan[i], abs(betan[i] - beta[i]))
-    assert(max(abs(betan - beta)) < 1.e-10), 'failed betatest' 
+    assert(max(abs(betan - beta)) < 1.e-5), 'failed betatest' 
+    # lune2rect test
+    gamma = None
+    gamma = copy(0.5*(30.0 - 30.0) + 0.5*(30.0 - -30.0)*rand(150))
+    # there's still a problem at the high latitudes
+    delta = copy(0.5*(89.9 - 89.9) + 0.5*(89.9 - -89.9)*rand(295))
+    v, w = ce.lune2rect(gamma, delta)
+    gamman, deltan = ce.rect2lune(v, w)
+    assert(max(abs(gamma - gamman)) < 1.e-11), 'gamma in lune2rect failed'
+    assert(max(abs(delta - deltan)) < 1.e-1), 'delta in lune2rect failed'
     end = timeit.timeit()
     print("Passed unit tests in %f seconds"%(end - start))
     return  

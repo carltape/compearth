@@ -12,7 +12,7 @@
  * @brief Converts v-w coordinates to lune coordinates.
  *
  * @param[in] nv      Number of v coordinates.
- * @param[in] v       v coordinates s.t. \f$ v \in [-1,3, 1/3] \f$.  This
+ * @param[in] v       v coordinates s.t. \f$ v \in [-1/3, 1/3] \f$.  This
  *                    an array of dimension [nv].
  * @param[in] nw      Number of w coordinates.
  * @param[in] w       w coordinates (similar to lune latitudes) s.t. 
@@ -41,9 +41,11 @@ int compearth_rect2lune(const int nv, const double *__restrict__ v,
 {
     double u[CE_CHUNKSIZE] __attribute__((aligned(64)));
     int i, j, ierr, nuLoc;
+/*
     const int maxit = 20;
     const int useHalley = 2;
     const double tol = 1.e-12;
+*/
     const double pi38 = 3.0*M_PI/8.0;
     const double pi180i = 180.0/M_PI;
     ierr = 0;
@@ -58,7 +60,8 @@ int compearth_rect2lune(const int nv, const double *__restrict__ v,
             u[j] = pi38 - w[i+j];
         }
         // convert u -> beta
-        ierr = compearth_u2beta(nuLoc, maxit, useHalley, u, tol, &delta[i]);
+        ierr = compearth_u2beta(nuLoc, u, &delta[i]);
+        //ierr = compearth_u2beta(nuLoc, maxit, useHalley, u, tol, &delta[i]);
         if (ierr != 0)
         {
             fprintf(stderr, "%s: Computing u2beta\n", __func__);
