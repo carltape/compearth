@@ -50,7 +50,7 @@ Alternatively, to configure with MKL and the Intel C and Fortran compilers (whic
 
 With [ctypes](https://docs.python.org/3/library/ctypes.html) and [NumPy](http://www.numpy.org/) it is possible to wrap some components of the library for use directly from Python.  While this won't yield the fastest interfaces it will be able to directly call the underlying C library and produce a portable solution.  For this to work one must be sure to only link to shared libraries.  The magic happens for Linux users by scraping your LD_LIBRARY_PATH; thus for this to work it is important that libcompearth_shared.so be one of your LD_LIBRARY_PATH's.  This environment variable is configurable in your .bashrc or .cshrc file.
 
-Additionally, if using MKL, it may be necessary to link to libmkl_avx2, libmkl_mc3, and libmkl_def.  Unfortnately, this will only be obvious should you see something like: Intel MKL FATAL ERROR: Cannot load libmkl_avx2.so or libmkl_def.so..
+Additionally, if using MKL, it may be necessary to link to libmkl_avx2, libmkl_mc3, and libmkl_def.  Unfortnately, this will only be obvious should you see something like: Intel MKL FATAL ERROR: Cannot load libmkl_avx2.so or libmkl_def.so.
  
 ## Experimental Python Interfacing - this is going to be eliminated
 
