@@ -11,6 +11,7 @@ static void strikeDip(const double nRad, const double eRad, const double uRad,
 /*!
  * @brief Computes the strike, dip, and rake of the auxiliary nodal plane.
  *
+ * @param[in] nmt    Number of moment tensors.
  * @param[in] s1     Strike angles (degrees) for plane 1.  These are measured
  *                   positive east from north and should be in the range of 
  *                   \f$ \phi \in [0, 360] \f$.  This is an array of dimension

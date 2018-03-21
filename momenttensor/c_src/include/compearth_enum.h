@@ -26,14 +26,14 @@ enum magType_enum
 enum ceNormType_enum
 {
     CE_UNKNOWN_NORM = 0,          /*!< Unknown norm. */
-    CE_TWO_NORM = 2,              /*!< \$ L_2 = \sqrt{\sum_i x_i^2} \$ norm */
-    CE_ONE_NORM = 1,              /*!< \$ L_1 = \sum_i |x_i| \$ norm */
-    CE_P_NORM = 3,                /*!< \$ L_p 
+    CE_TWO_NORM = 2,              /*!< \f$ L_2 = \sqrt{\sum_i x_i^2} \f$ norm */
+    CE_ONE_NORM = 1,              /*!< \f$ L_1 = \sum_i |x_i| \f$ norm */
+    CE_P_NORM = 3,                /*!< \f$ L_p 
                                     = \left (
                                         \sum_i |x_i|^p \right )^{1/p}
-                                      \right ) \$ norm */
-    CE_INFINITY_NORM = 4,          /*!< \$ L_\infty = max |x| \$ */
-    CE_NEGATIVE_INFINITY_NORM = 5  /*!< \$ L_{-\infty} = min |x| \$ */
+                                      \f$ norm */
+    CE_INFINITY_NORM = 4,          /*!< \f$ L_\infty = max |x| \f$ */
+    CE_NEGATIVE_INFINITY_NORM = 5  /*!< \f$ L_{-\infty} = min |x| \f$ */
 };
 #ifdef __clang__
 #pragma clang diagnostic pop

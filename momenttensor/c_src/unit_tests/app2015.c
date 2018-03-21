@@ -13,8 +13,9 @@ int main()
     double sigma =-M_PI/2.0;
     double M0 = 1.0/sqrt(2.0);
     // This is some junk for obtaining beta from u 
-    double tol = 1.e-12;
-    int maxit = 20, ierr;
+    //double tol = 1.e-12;
+    //int maxit = 20;
+    int ierr;
     const double pi180 = 180.0/M_PI;///180.0; 
     double M_use[6], M_use_ref[6], M_ned[6], M_temp[6], lam[3], U[9],
            M_nwu[6], angle, beta, delta, gamma, theta, xnorm, w;

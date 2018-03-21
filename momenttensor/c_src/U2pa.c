@@ -10,8 +10,8 @@
  * @brief Convert from basis in South, East, Up to plunge/azimuth of
  *        three basis vectors.
  *
- * @param[in] nnt    Number of bases. 
- * @param[in] Uin    This is a [3 x 3 x nmt] array of bases in SEU coordinates.
+ * @param[in] nmt    Number of bases. 
+ * @param[in] U      This is a [3 x 3 x nmt] array of bases in SEU coordinates.
  *                   Each [3 x 3] matrix is in column major format.
  * @param[out] pl1   Plunge angles (degrees) corresponding to first
  *                   eigenvector.

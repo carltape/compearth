@@ -23,23 +23,23 @@
  * @brief Converts a nearly orthogonal matrix into a numerically orthogonal
  *        matrix.
  *
- * @param[in] n       Number of bases.
- * @param[in] itype   Orthogonalization strategy. \n
- *                      CE_ORTH_SVD orthgonalizes with the SVD. \n
- *                      CE_ORTH_TAPE2012 orthogalizes with Tape 2012c 
- *                      Appendix E. \n
- *                      CE_ORTH_QUAT orthogonalizes with quaternions.
- * @param[in] Uin     [3 x 3 x n] set of bases where each [3 x 3] basis is
- *                    in column major order.
+ * @param[in] n        Number of bases.
+ * @param[in] itype    Orthogonalization strategy. \n
+ *                       CE_ORTH_SVD orthgonalizes with the SVD. \n
+ *                       CE_ORTH_TAPE2012 orthogalizes with Tape 2012c 
+ *                       Appendix E. \n
+ *                       CE_ORTH_QUAT orthogonalizes with quaternions.
+ * @param[in] Uin      [3 x 3 x n] set of bases where each [3 x 3] basis is
+ *                     in column major order.
  *
- * @param[out] Uout   [3 x 3 x n] set of re-orthgonalized bases where
- *                    each [3 x 3] bais is in column major order.
- * @param[out] dtUin  If NULL then this will be ignored.  \n
- *                    Otherwise, this is an array of dimension [n] holding
- *                    the determinants of the input basis.
- * @param[out] dtOut  If NULL then this will be ignored.  \n
- *                    Otherwise, this is an array of dimension [n] holding
- *                    the determinants of the output basis.
+ * @param[out] Uout    [3 x 3 x n] set of re-orthgonalized bases where
+ *                     each [3 x 3] bais is in column major order.
+ * @param[out] dtUin   If NULL then this will be ignored.  \n
+ *                     Otherwise, this is an array of dimension [n] holding
+ *                     the determinants of the input basis.
+ * @param[out] dtUout  If NULL then this will be ignored.  \n
+ *                     Otherwise, this is an array of dimension [n] holding
+ *                     the determinants of the output basis.
  *                    
  * @result 0 indicates success.
  *
