@@ -13,17 +13,17 @@
  *
  * @param[in] nmt      Number of moment tensors.
  * @param[in] i1in     Coordinate system for M: \n
- *                       = USE (1) -> up, south, east \n
- *                       = NED (2) -> north, east, down \n
- *                       = NWU (3) -> north west, up \n
- *                       = ENU (4) -> east, north, up \n
- *                       = SEU (5) -> south, east, up \n
+ *                       = CE_USE (1) -> up, south, east \n
+ *                       = CE_NED (2) -> north, east, down \n
+ *                       = CE_NWU (3) -> north west, up \n
+ *                       = CE_ENU (4) -> east, north, up \n
+ *                       = CE_SEU (5) -> south, east, up \n
  * @param[in] i2in     Coordinate system for Mout: \n
- *                       = USE (1) -> up, south, east \n
- *                       = NED (2) -> north, east, down \n
- *                       = NWU (3) -> north west, up \n
- *                       = ENU (4) -> east, north, up \n
- *                       = SEU (5) -> south, east, up \n
+ *                       = CE_USE (1) -> up, south, east \n
+ *                       = CE_NED (2) -> north, east, down \n
+ *                       = CE_NWU (3) -> north west, up \n
+ *                       = CE_ENU (4) -> east, north, up \n
+ *                       = CE_SEU (5) -> south, east, up \n
  * @param[in] M        Input moment tensor in system i1in.  This is an
  *                     an array of dimension [6 x nmt].
  *                     The C indices {0,1,2,3,4,5} correspond to matrix
