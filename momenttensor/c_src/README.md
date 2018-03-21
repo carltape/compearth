@@ -46,9 +46,15 @@ Alternatively, to configure with MKL and the Intel C and Fortran compilers (whic
     -DMKL_LIBRARY="/opt/intel/mkl/lib/intel64_lin/libmkl_intel_lp64.so;/opt/intel/mkl/lib/intel64_lin/libmkl_sequential.so;/opt/intel/mkl/lib/intel64_lin/libmkl_core.so" \
     -DMKL_INCLUDE_DIR=/opt/intel/mkl/include
 
-## Experimental Python Interfacing
+## Python Interfacing With CTypes
 
-With [SWIG](http://www.swig.org/) and [NumPy](http://www.numpy.org/)it may be possible to wrap some components of the library for use from Python.  In this instance a configuration script may look like
+With [ctypes](https://docs.python.org/3/library/ctypes.html) and [NumPy](http://www.numpy.org/) it is possible to wrap some components of the library for use directly from Python.  While this won't yield the fastest interfaces it will be able to directly call the underlying C library and produce a portable solution.  For this to work one must be sure to only link to shared libraries.  The magic happens for Linux users by scraping your LD_LIBRARY_PATH; thus for this to work it is important that libcompearth_shared.so be one of your LD_LIBRARY_PATH's.  This environment variable is configurable in your .bashrc or .cshrc file.
+
+Additionally, if using MKL, it may be necessary to link to libmkl_avx2, libmkl_mc3, and libmkl_def.  Unfortnately, this will only be obvious should you see something like: Intel MKL FATAL ERROR: Cannot load libmkl_avx2.so or libmkl_def.so..
+ 
+## Experimental Python Interfacing - this is going to be eliminated
+
+With [SWIG](http://www.swig.org/) and [NumPy](http://www.numpy.org/) it may be possible to wrap some components of the library for use from Python.  In this instance a configuration script may look like
 
     #!/bin/bash
     /usr/bin/cmake ./ -DCMAKE_BUILD_TYPE=Release \
@@ -90,6 +96,5 @@ The library is still limited in some aspects.  The following
 * Add more interface modules.  Deal with NULLs.  Might need Fortran pointers.  Yick.
 * Extend unit tests to chunks of matrices
 * Compute intelligent chunk sizes
-* Improve portability of python/swig
-* Add documentation/error checking to python modules
-* Possibly switch from swig to CFFI.
+* Wrap more functions in ctypes
+* Make a setup.py for the ctypes wrappers
