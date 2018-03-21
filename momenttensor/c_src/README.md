@@ -98,3 +98,8 @@ The library is still limited in some aspects.  The following
 * Compute intelligent chunk sizes
 * Wrap more functions in ctypes
 * Make a setup.py for the ctypes wrappers
+
+# Credits
+
+This was written by Ben Baker of [ISTI](http://www.isti.com/) and is a derivative of Carl Tape's compearth matlab library.
+
