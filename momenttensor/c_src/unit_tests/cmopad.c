@@ -5,8 +5,16 @@
 #include <math.h>
 #include "compearth.h"
 #ifdef COMPEARTH_USE_MKL
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
+#endif
 #include <mkl_lapacke.h>
 #include <mkl_cblas.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 #else
 #include <lapacke.h>
 #include <cblas.h>

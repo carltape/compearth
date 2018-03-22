@@ -3,10 +3,12 @@
 #define COMPEARTH_PRIVATE_GEM3 1
 #define COMPEARTH_PRIVATE_GEMT3 1
 #include "compearth.h"
+#ifdef DEBUG
 #ifdef COMPEARTH_USE_MKL
 #include <mkl_cblas.h>
 #else
 #include <cblas.h>
+#endif
 #endif
 
 /*!

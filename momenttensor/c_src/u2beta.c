@@ -4,7 +4,7 @@
 #include <math.h>
 #include "compearth.h"
 
-const size_t nbs = 1000;
+static const int nbs = 1000;
 static int compearth_u2beta_findPoint(const double u, const int guessIn);
 static void compearth_u2beta_linearlyInterpolate(const int nb, 
                                                  const double *__restrict__ u,
@@ -278,18 +278,18 @@ printf("%e %e\n", u[i], lowerBound);
     return ierr;
 }
 
-void *last_visited = NULL;
+static const void *last_visited = NULL;
 static int cmp_double_ascending(const void *x, const void *y) 
 {
-    double xx = *(double *) x;
-    double yy = *(double *) y;
-    last_visited = (void *) y;
+    const double xx = *(const double *) x;
+    const double yy = *(const double *) y;
+    last_visited = (const void *) y;
     if (xx < yy) return -1; 
     if (xx > yy) return  1;  
     return 0;
 }
 
-     const double betas[1000] = {0.000000000000000,
+static const double betas[1000] = {0.000000000000000,
      0.003144737390981,0.006289474781962,0.009434212172942,0.012578949563923,
      0.015723686954904,0.018868424345885,0.022013161736865,0.025157899127846,
      0.028302636518827,0.031447373909808,0.034592111300789,0.037736848691769,
@@ -541,7 +541,7 @@ static int cmp_double_ascending(const void *x, const void *y)
      3.122724229243908,3.125868966634889,3.129013704025870,3.132158441416851,
      3.135303178807831,3.138447916198812,3.141592653589793};
 
-     const double us[1000] = {0.000000000000000,
+static const double us[1000] = {0.000000000000000,
      0.000000000000123,0.000000000003937,0.000000000029893,0.000000000125965,
      0.000000000384398,0.000000000956455,0.000000002067150,0.000000004029962,
      0.000000007261541,0.000000012296383,0.000000019801490,0.000000030590997,
@@ -795,7 +795,7 @@ static int cmp_double_ascending(const void *x, const void *y)
 
 static int compearth_u2beta_findPoint(const double u, const int guessIn)
 {
-     double *item;
+     const double *item = NULL;
      int i, indx, guess;
      if (u <= us[0])
      {
@@ -817,8 +817,8 @@ static int compearth_u2beta_findPoint(const double u, const int guessIn)
                                cmp_double_ascending);
      if (item == NULL)
      {
-         item = (double *) last_visited;
-         indx = item - us;
+         item = (const double *) last_visited;
+         indx = (int) (item - us);
          // Might be done early
          if (u >= us[indx] && u < us[indx+1]){return MIN(indx, nbs-2);}
          if (indx > 0)
@@ -837,7 +837,7 @@ static int compearth_u2beta_findPoint(const double u, const int guessIn)
      // Exactly matches
      else
      {
-         indx = item - us; 
+         indx = (int) (item - us);
      }
      indx = MIN(indx, nbs - 2); // Make interpolation work
      if (u < us[indx] || u >= us[indx+1])

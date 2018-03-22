@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "compearth.h"
+/*
 #ifdef COMPEARTH_USE_MKL
 #include <mkl_cblas.h>
 #else
 #include <cblas.h>
 #endif
+*/
 
 /*!
  * @brief Converts a moment tensor, M, from input system defined by i1in
@@ -78,7 +81,8 @@ int compearth_convertMT(const int nmt,
     // Base case
     if (i1 == i2)
     {
-        cblas_dcopy(6*nmt, M, 1, Mout, 1);
+        memcpy(Mout, M, (size_t) nmt*6*sizeof(double));
+        //cblas_dcopy(6*nmt, M, 1, Mout, 1);
         return 0;
     }
     // Convert

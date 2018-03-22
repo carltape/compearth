@@ -4,7 +4,15 @@
 #include <float.h>
 #include "compearth.h"
 #ifdef COMPEARTH_USE_MKL
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
+#endif
 #include <mkl_cblas.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 #else
 #include <cblas.h>
 #endif
@@ -33,7 +41,7 @@ double compearth_matlab_fangle(const int n,
     magVa = cblas_dnrm2(n, va, 1);
     magVb = cblas_dnrm2(n, vb, 1);
     xden = magVa*magVb;
-    angle = NAN;
+    angle = (double) NAN;
     if (xden > 0.0){angle = acos(xnum/xden)*deg;}
     return angle;
 }

@@ -9,12 +9,20 @@
 #define COMPEARTH_PRIVATE_WRAP360 1
 #include "compearth.h"
 #ifdef COMPEARTH_USE_MKL
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
+#endif
 #include <mkl_cblas.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 #else
 #include <cblas.h>
 #endif
 
-#define MAXMT 64
+//#define MAXMT 64
 
 static void setZero(const int nmt, const double tol, double *__restrict__ X);
 static void faultVec2Ang(const double *__restrict__ S,
@@ -337,9 +345,9 @@ static void faultVec2Ang(const double *__restrict__ S,
     const double negZenith[3] = {0, 0, -1};
     const double north[3] = {-1, 0, 0}; 
     *ierr = 0;
-    *kappa = NAN;
-    *theta = NAN;
-    *sigma = NAN;
+    *kappa = (double) NAN;
+    *theta = (double) NAN;
+    *sigma = (double) NAN;
     // Strike vector from TT2012, Eqn 29
     cross3(zenith, N, v);
     vnorm = norm3(v);
@@ -376,7 +384,7 @@ static void setZero(const int nmt, const double tol, double *__restrict__ X)
    double dmax;
    int i, idmax;
    // Compute the largest element of abs(X)
-   idmax = cblas_idamax(3*nmt, X, 1); 
+   idmax = (int) cblas_idamax(3*nmt, X, 1); 
    dmax = X[idmax];
    // Elements near zero whilst trying to eliminate round-off errors
    #pragma omp simd

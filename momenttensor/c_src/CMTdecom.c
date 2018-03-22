@@ -5,7 +5,15 @@
 #define COMPEARTH_PRIVATE_UPDOWN_ABS_ARGSORT3 1
 #include "compearth.h"
 #ifdef COMPEARTH_USE_MKL
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
+#endif
 #include <mkl_lapacke.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 #else
 #include <lapacke.h>
 #endif

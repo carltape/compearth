@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #define COMPEARTH_PRIVATE_DET3X3 1
 #include "compearth.h"
+/*
 #ifdef COMPEARTH_USE_MKL
 #include <mkl_cblas.h>
 #else
 #include <cblas.h>
 #endif
+*/
 
 //static double det3x3ColumnMajor(const double *__restrict__ A);
 
@@ -35,7 +38,8 @@ int compearth_Udetcheck(const int n,
     double det;
     int i, imt;
     // Copy Uin to Uout
-    cblas_dcopy(9*n, Uin, 1, Uout, 1);
+    memcpy(Uout, Uin, 9*(size_t) n*sizeof(double));
+    //cblas_dcopy(9*n, Uin, 1, Uout, 1);
     // Fix
     for (imt=0; imt<n; imt++)
     {

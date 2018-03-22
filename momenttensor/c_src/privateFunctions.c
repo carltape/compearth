@@ -29,7 +29,7 @@ inline double det3x3ColumnMajor(const double *__restrict__ A)
         - A[3]*( A[1]*A[8] - A[2]*A[7])
         + A[6]*( A[1]*A[5] - A[2]*A[4]);
     return det;
-};
+}
 /*!
  * @brief Computes C = A*B where A, B, and C are 3 x 3 matrices in column
  *        major order.

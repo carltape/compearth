@@ -10,11 +10,19 @@
 #define COMPEARTH_PRIVATE_GEMT3 1
 #include "compearth.h"
 #ifdef COMPEARTH_USE_MKL
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
+#endif
 #include <mkl_lapacke.h>
-#include <mkl_cblas.h>
+//#include <mkl_cblas.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 #else
 #include <lapacke.h>
-#include <cblas.h>
+//#include <cblas.h>
 #endif
 
 #define LWORK 15
@@ -140,7 +148,8 @@ int compearth_Uorth(const int n,
     }
     else if (itype == CE_NO_ORTH)
     {
-        cblas_dcopy(9*n, Uin, 1, Uout, 1);
+        memcpy(Uout, Uin, 9*(size_t) n*sizeof(double));
+        //cblas_dcopy(9*n, Uin, 1, Uout, 1);
     }
     else
     {

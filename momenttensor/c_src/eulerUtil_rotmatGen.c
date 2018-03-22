@@ -3,10 +3,20 @@
 #include <math.h>
 #define COMPEARTH_PRIVATE_GEM3 1
 #include "compearth.h"
+#ifdef DEBUG
 #ifdef COMPEARTH_USE_MKL
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
+#endif
 #include <mkl_cblas.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 #else
 #include <cblas.h>
+#endif
 #endif
 
 /*!

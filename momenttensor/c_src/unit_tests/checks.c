@@ -4,7 +4,15 @@
 #include <math.h>
 #include "compearth.h"
 #ifdef COMPEARTH_USE_MKL
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
+#endif
 #include <mkl_cblas.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 #else
 #include <cblas.h>
 #endif
@@ -816,8 +824,8 @@ int check_CMT2omega(void)
     {
         for (j=0; j<6; j++)
         {
-            Mvec1[6*i+j] = ((double) rand()/RAND_MAX - 0.5)*2.0;
-            Mvec2[6*i+j] = ((double) rand()/RAND_MAX - 0.5)*2.0;
+            Mvec1[6*i+j] = ((double) (rand())/RAND_MAX - 0.5)*2.0;
+            Mvec2[6*i+j] = ((double) (rand())/RAND_MAX - 0.5)*2.0;
         }
         compearth_CMT2omega(1, &Mvec1[6*i], 1, &Mvec2[6*i], &refOmega[i]);
     }

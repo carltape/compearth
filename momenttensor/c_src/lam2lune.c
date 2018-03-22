@@ -3,7 +3,7 @@
 #include <math.h>
 #include "compearth.h"
 
-#define MAXMT 64
+//#define MAXMT 64
 
 /*!
  * @brief Convert eigenvalues to lune coordiantes (gamma, delta, M0)
@@ -55,6 +55,7 @@ int compearth_lam2lune(const int nmt, const double *__restrict__ lam,
     const double deg = 180.0/M_PI;
     const double third = 1.0/3.0;
     // Error checks
+    ierr = 0;
     if (nmt < 1 || lam == NULL || gamma == NULL || delta == NULL)
     {
         if (nmt < 1){fprintf(stderr, "%s: No moment tensors\n", __func__);}

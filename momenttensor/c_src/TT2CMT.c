@@ -7,11 +7,6 @@
 #define COMPEARTH_PRIVATE_GEM3 1
 #define COMPEARTH_PRIVATE_GEMT3 1
 #include "compearth.h"
-#ifdef COMPEARTH_USE_MKL
-#include <mkl_cblas.h>
-#else
-#include <cblas.h>
-#endif
 
 /*!
  * @brief C translation of Carl Tape's utility for converting geometrical

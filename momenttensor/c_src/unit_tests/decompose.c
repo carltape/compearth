@@ -5,7 +5,15 @@
 #include "compearth.h"
 #include "cmopad.h"
 #ifdef COMPEARTH_USE_MKL
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
+#endif
 #include <mkl_cblas.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 #else
 #include <cblas.h>
 #endif
@@ -38,6 +46,7 @@ int compearth_standardDecomposition(const int nmt,
                                     double *__restrict__ dcPct,
                                     double *__restrict__ clvdPct);
 */
+int decompose(const int nmt, const double mtUSE[6]);
 
 int decompose(const int nmt, const double mtUSE[6])
 {

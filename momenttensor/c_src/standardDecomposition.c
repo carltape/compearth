@@ -4,11 +4,6 @@
 #include <float.h>
 #define COMPEARTH_PRIVATE_UPDOWN_ABS_ARGSORT3 1
 #include "compearth.h"
-#ifdef COMPEARTH_USE_MKL
-#include <mkl_cblas.h>
-#else
-#include <cblas.h>
-#endif
 
 /*!
  * @brief A utility for calculating the `standard' isotropic/double couple/CLVD
