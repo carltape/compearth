@@ -10,11 +10,11 @@ function Mw = m02mw(imag,M0)
 % EXAMPLE (Denali earthquake):
 %    M0 = 7.48*1e20; Mw = m02mw(1,M0)
 %
-% Carl Tape, 31-Oct-2007
+% Carl Tape, 2007-10-31
 %
 
 % convert moment tensor from N-m to dyne-cm, since these formulas assume dyne-cm
-M0 = 1e7 * M0(:);
+M0 = 1e7 * M0;
 
 if imag==1
     % Kanamori 1978

@@ -1,13 +1,11 @@
 function M0 = mw2m0(imag,Mw)
-%Mw2M0 convert Mw to M0 using published formulas
+%MW2M0 convert Mw to M0 using published formulas
 %
 % This function inputs a column vector of moment magnitudes (Mw)
 % and outputs a column vector of moments (M0) in units of N-m.
 %
-% Carl Tape, 26-Sept-2003
+% Carl Tape, 2003-09-26
 %
-
-Mw = Mw(:);
 
 if imag==1
     % Kanamori 1977
@@ -22,4 +20,4 @@ else
 end
 
 % formulas are designed for units of dyne-cm, not N-m
-M0 = M0(:) / 1e7;
+M0 = M0 / 1e7;
