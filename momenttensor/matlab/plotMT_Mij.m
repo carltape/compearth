@@ -30,7 +30,7 @@ end
 mnorm = norm_MT(M);
 if PLOT_UNIFORM_CURVES
     mfac = mean(mnorm);
-    if std(mnorm) > 0.01
+    if std(mnorm) > 0.01*mfac
         warning('input moment tensors do NOT have the same norm');
         disp('--> setting PLOT_UNIFORM_CURVES = false');
         PLOT_UNIFORM_CURVES = false;
@@ -65,16 +65,16 @@ Mdiag = M(1:3,:);
 Moff  = M(4:6,:);
 
 disp(sprintf('plotMT_Mij.m (%i moment tensors):',n));
-disp(sprintf('Mnorm min/mean/max  : %.3f/%.3f/%.3f',min(mnorm),mean(mnorm),max(mnorm)));
-disp(sprintf('M0    min/mean/max  : %.3f/%.3f/%.3f',min(mnorm)/sqrt(2),mean(mnorm)/sqrt(2),max(mnorm)/sqrt(2)));
-disp(sprintf('Diagonal entries    : min(Mij) = %f, max(Mij) = %f',min(Mdiag(:)),max(Mdiag(:))));
-disp(sprintf('Off-diagonal entries: min(Mij) = %f, max(Mij) = %f',min(Moff(:)),max(Moff(:))));
+disp(sprintf('Mnorm min/mean/max  : %.3e/%.3e/%.3e',min(mnorm),mean(mnorm),max(mnorm)));
+disp(sprintf('M0    min/mean/max  : %.3e/%.3e/%.3e',min(mnorm)/sqrt(2),mean(mnorm)/sqrt(2),max(mnorm)/sqrt(2)));
+disp(sprintf('Diagonal entries    : min(Mij) = %e, max(Mij) = %e',min(Mdiag(:)),max(Mdiag(:))));
+disp(sprintf('Off-diagonal entries: min(Mij) = %e, max(Mij) = %e',min(Moff(:)),max(Moff(:))));
 
 if min(M(:)) < edges(1),
-    disp(sprintf('plotMT_Mij.m WARNING: min(M) (%f) < edges(1) (%f)',min(M(:)),edges(1)));
+    disp(sprintf('plotMT_Mij.m WARNING: min(M) (%e) < edges(1) (%e)',min(M(:)),edges(1)));
 end
 if max(M(:)) > edges(end),
-    disp(sprintf('plotMT_Mij.m WARNING: max(M) (%f) < edges(2) (%f)',max(M(:)),edges(end)));
+    disp(sprintf('plotMT_Mij.m WARNING: max(M) (%e) < edges(2) (%e)',max(M(:)),edges(end)));
 end
 
 %==========================================================================
