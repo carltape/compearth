@@ -1,0 +1,8 @@
+#ifndef COMPEARTH_CONFIG_H__
+#define COMPEARTH_CONFIG_H__ 1
+
+#cmakedefine COMPEARTH_USE_MKL
+#cmakedefine COMPEARTH_DEBUG_SRC @COMPEARTH_DEBUG_SRC@
+#define CE_CHUNKSIZE 64
+
+#endif
