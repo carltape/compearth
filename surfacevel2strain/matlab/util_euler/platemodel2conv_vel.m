@@ -17,14 +17,14 @@ function [vvec_c, vmat_c, vmat_up, vmat_sub, gamma, exyz, names, name_labs] = ..
 %   ifix    index of fixed plate
 %
 % OUTPUT
-%   vvec_c     n x 6: angles (SEE CONVENTIONS BELOW)
+%   vvec_c     n x 6: vs_proj_az: sub, up, con // angle: sub, up, con
 %   vmat_c     n x 6: ve, vn, ve_normal, vn_normal, ve_parallel, vn_parallel
 %   vmat_up    n x 6: ve, vn, ve_normal, vn_normal, ve_parallel, vn_parallel
 %   vmat_sub   n x 6: ve, vn, ve_normal, vn_normal, ve_parallel, vn_parallel
 %   gamma      obliquity angle, in degrees
 %   exyz       plate model: euler vectors
 %   names      plate model: plate names
-%   name_labs  plate mode: plate labels
+%   name_labs  plate model: plate labels
 %
 % Carl Tape, 2006-05-16
 %
@@ -112,7 +112,9 @@ for ii=1:num
         % input point
         Pxyz = latlon2xyz(lat(ii),lon(ii),earthr);
 
-        % azimuth: trench normal vector (in the direction of the subducting plate)
+        % reference azimuth vector
+        % (for subduction zones, this should be the trench normal vector 
+        % in the direction of the subducting plate)
         vaz_local = [0 -cos(azref(ii)/deg) sin(azref(ii)/deg)]';
         vaz_global = global2local(vaz_local, Pxyz, 0);
         
@@ -154,16 +156,17 @@ for ii=1:num
         vmat_up(ii,5:6) = [temp(3) -temp(2)];
         
         %--------------
-        % convergent velocity (Vc = Vsub - Vup)
+        % convergence velocity (Vc = Vsub - Vup)
         
         vmat_c(ii,1:2) = vmat_sub(ii,1:2) - vmat_up(ii,1:2);    % vector
         vmat_c(ii,3:4) = vmat_sub(ii,3:4) - vmat_up(ii,3:4);    % trench normal
         vmat_c(ii,5:6) = vmat_sub(ii,5:6) - vmat_up(ii,5:6);    % trench parallel
         
-        % trench-normal convergence velocity (note sign convention)
-        vvec_c(ii,1) = dot(vaz_global,Vxyz_sub);        % ALWAYS POSITIVE
-        vvec_c(ii,2) = dot(vaz_global,Vxyz_up);         % ALWAYS POSITIVE
+        % components of the convergence velocity (note sign convention)
+        vvec_c(ii,1) = dot(vaz_global,Vxyz_sub);
+        vvec_c(ii,2) = dot(vaz_global,Vxyz_up);
         vvec_c(ii,3) = vvec_c(ii,1) - vvec_c(ii,2);
+        %norm(vaz_global), norm(Vxyz_sub), norm(Vxyz_up), vvec_c
         
         % obliquity from -180 to 180, measured from the azimuth vector
         % direction of azimuth vector is 0
@@ -191,9 +194,10 @@ ph_sub = cart2pol(vmat_sub(:,1),vmat_sub(:,2));
 ph_sub = ph_sub*180/pi;
 az_sub = ph2az(ph_sub);
 
-vvec_c(:,4) = az_c;
+% note order (to match vvec_c(:,1:3))
+vvec_c(:,4) = az_sub;
 vvec_c(:,5) = az_up;
-vvec_c(:,6) = az_sub;
+vvec_c(:,6) = az_c;
 
 bfigure_basic = true;
 bfigure_all = false;
@@ -226,8 +230,8 @@ if bfigure_basic
        ylabel('North velocity, mm/yr');
        legend([h1 h2 h3],'convergence','upper','subduct');
        if num==1
-           title(sprintf('lon %.2f lat %.2f azcon %.1f azsub %.1f azsub %.1f [azref %.1f] %.1f %.1f %.1f',...
-             lon(ii),lat(ii),vvec_c(ii,4:6),azref(ii),vvec_c(ii,1:3)));
+           title(sprintf('lon %.2f lat %.2f azcon %.1f azsub %.1f azup %.1f [azref %.1f] %.1f = %.1f - %.1f mm/yr',...
+             lon(ii),lat(ii),vvec_c(ii,[6 4 5]),azref(ii),vvec_c(ii,[3 1 2])));
        end
        if num > 40, continue; end
     end
@@ -245,8 +249,8 @@ if bfigure_all
        xlabel('East velocity, mm/yr');
        ylabel('North velocity, mm/yr');
        legend([h1 h2 h3],'convergence','upper','subduct');
-       title(sprintf('lon %.2f lat %.2f azcon %.1f azsub %.1f azsub %.1f [azref %.1f] %.1f %.1f %.1f',...
-           lon(ii),lat(ii),vvec_c(ii,4:6),azref(ii),vvec_c(ii,1:3)));
+       title(sprintf('lon %.2f lat %.2f azcon %.1f azsub %.1f azup %.1f [azref %.1f] %.1f = %.1f - %.1f mm/yr',...
+           lon(ii),lat(ii),vvec_c(ii,[6 4 5]),azref(ii),vvec_c(ii,[3 1 2])));
        if num > 40, continue; end
     end
 end
@@ -308,7 +312,9 @@ if 0==1
     ifix = 99;
     [vvec_c, vmat_c, vmat_up, vmat_sub, gamma, exyz, names, name_labs] = ...
         platemodel2conv_vel(iups,isubs,azref,lon,lat,imodel,ifix);
-    
+    ph_c = vvec_c(4);
+    mag_c = norm(vmat_c(1:3));
+    disp(sprintf('convergence is %.0f or N%.0fW with magnitude %.1f mm/yr',ph_c,360-ph_c,mag_c));
     
 end
 

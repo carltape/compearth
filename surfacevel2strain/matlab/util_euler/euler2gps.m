@@ -1,6 +1,5 @@
-%
-% function Vrtp = euler2gps(evec, Pxyz)
-% Carl Tape, 21-Oct-2005
+function [Vrtp, Vxyz] = euler2gps(evec, Pxyz)
+%EULER2GPS calculate surface velocities from input points and euler vectors
 %
 % This function computes the linear velocity (vx,vy,vz) due to angular rotation
 % at a set of input points P(x,y,z), which are expressed in METERS.
@@ -12,18 +11,19 @@
 % To convert to local coordinates, use global2local.m (see plate_model.m).
 %
 % INPUT:
-%    evec = euler pole (wx,wy,wz), omega = norm(evec)
-%    Pxyz = points in space (meters), which revolve around evec
+%    evec   euler pole (wx,wy,wz), omega = norm(evec)
+%    Pxyz   points in space (meters), which revolve around evec
 % OUTPUT:
-%    Vrtp = local velocities (mm/yr)
+%    Vrtp   velocities in local basis (mm/yr)
+%    Vxyz   velocities in global basis (mm/yr)
 %
 % Reverse program is gps2euler.m
 %
 % calls global2local.m, unit.m
 % called by plate_model.m, test_gps2euler.m
 %
-
-function [Vrtp, Vxyz] = euler2gps(evec, Pxyz)
+% Carl Tape, 2005-10-21
+%
 
 % euler pole : convert deg/Myr --> rad/yr
 % NOTE: this is not a unit vector

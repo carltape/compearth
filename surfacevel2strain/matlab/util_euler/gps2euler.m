@@ -1,6 +1,5 @@
-%
-% function [evec, ve_est, vn_est, Pxyz] = gps2euler(dlon, dlat, drad, ve, vn, se, sn)
-% Pablo Muse and Carl Tape, 21-July-2008
+function [evec, ve_est, vn_est, Pxyz] = gps2euler(dlon, dlat, drad, ve, vn, se, sn)
+%GPS2EULER estimate euler pole from a set of surface velocities on the sphere
 %
 % Given a set of surface velocities on the sphere, estimate the euler pole
 % associated with the rotation of the field.
@@ -25,13 +24,11 @@
 %    Pxyz: observations points in Cartesian coordinates (xyz), in METERS
 %    ve_est, vn_est: estimated local velocities, in M/YR
 %
-% EXAMPLE:
-%
 % calls global2local.m, rotmat2euler.m
 % called by test_gps2euler.m
 %
-
-function [evec, ve_est, vn_est, Pxyz] = gps2euler(dlon, dlat, drad, ve, vn, se, sn)
+% Pablo Muse and Carl Tape, 2008-07-21
+%
 
 n = length(ve);
 
