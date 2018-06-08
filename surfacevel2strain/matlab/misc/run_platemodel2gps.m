@@ -437,6 +437,7 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
         odir = [dir_plates 'surface_velocities/'];
         disp('writing to output directory: ');
         disp(odir);
+        disp('columns are: lon lat ve vn vmag');
         
         % KEY: tag for all files
         ftag = [slabel '_fix_' stref '_' smod '_' sgrid stq];

@@ -2,7 +2,7 @@
 % function [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] ...
 %    = platemodel2gps(lon,lat,imodel,ifix,opts)
 %
-% Carl Tape, 11-Jan-2006
+% Carl Tape, 2006-01-11
 %
 % This model computed the surface velocity field based on a plate model
 % (Euler vectors and plate boundaries), given a specified fixed plate and
@@ -60,7 +60,7 @@
 %    griddataXB.m
 %    xyz2latlon.m, latlon2xyz.m
 %
-% called by test_platemodel2gps.m
+% called by run_platemodel2gps.m
 %
 
 function [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] ...
@@ -87,7 +87,7 @@ ieuler_only = opts{3};
 get_plate_model;   % input imodel
 
 % display info on euler poles
-if and(idisplay == 1, ieuler_only == 1)
+if and(idisplay==1, ieuler_only==1)
     
     % convert euler poles (wx,wy,wz) --> (lat,lon,omg)
     outvec1 = euler_convert(exyz,1);
@@ -128,7 +128,7 @@ else
 end
 
 % if all you want is the plate model, then exit
-if ieuler_only == 1
+if ieuler_only==1
     ve = []; vn = []; iplate_vec = [];
     return
 end
@@ -142,11 +142,15 @@ end
 %
 %   This is not an ideal algorithm, since inpolygon.m assumes edges that are
 %   not arcs, but rather chords in the Cartesian lat-lon domain.  This
-%   problem would be overcome with extremely dense sampling of the plat
+%   problem would be overcome with extremely dense sampling of the plate
 %   boundaries.  But for regional plotting purposes, using inpolygon.m is
 %   fine.
 
-ax1 = [min(lon) max(lon) min(lat) max(lat)];
+if length(lon)==1
+    ax1 = [lon-1 lon+1 lat-1 lat+1];
+else
+    ax1 = [min(lon) max(lon) min(lat) max(lat)];
+end
 
 iplate_vec = zeros(num,1);
 
@@ -206,7 +210,7 @@ for ii = pmin:pmax
     
     iplate_vec(in) = ii;
     
-    if ifig_extra == 1
+    if ifig_extra==1
         figure; hold on;
         plot(lon(in),lat(in),'.k');
         plot(plon,      plat,'r');
@@ -220,7 +224,7 @@ for ii = pmin:pmax
     end
 end
 
-if ifig_extra == 1
+if ifig_extra==1
     figure; hold on;
     [X,Y,Z] = griddataXB(lon,lat,iplate_vec,400,'nearest');
     pcolor(X,Y,Z); shading flat; caxis([pmin pmax])
@@ -252,7 +256,7 @@ ve = zeros(num,1);
 for ivel = 1:nump
 
     % gridpoints on plate ivel
-    inds = find( ivel == iplate_vec );
+    inds = find( ivel==iplate_vec );
 
     % compute surface velocity field
     evec = exyz(:,ivel);                            % euler pole
