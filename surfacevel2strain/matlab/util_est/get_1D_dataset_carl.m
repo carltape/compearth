@@ -27,7 +27,8 @@ isource = [];
 ftags = [];
 
 % CALIFORNIA MOHO
-if dopt == 1
+switch dopt
+case 1
     %---------------------------
     % load Moho points from all available sources
     % 1: Crust2.0 global modelcd CV
@@ -196,7 +197,7 @@ if dopt == 1
     ulabel = 'zdep, km';
 
 % GREAT VALLEY BASEMENT SURFACE
-elseif dopt==2
+case 2
     [dlon,dlat,zdep,zdep_sigma] = read_basement_cal;
     d = zdep;
     dsig = zdep_sigma;
@@ -204,7 +205,7 @@ elseif dopt==2
     ulabel = 'zdep, km';
 
 % MARICOPA BASIN (southernmost San Joaquin basin)
-elseif dopt==3
+case 3
     %[dlon,dlat,zdep,zdep_sigma] = read_basement_maricopa;
     [dlon,dlat,zdep,zdep_sigma,isource,ftags] = read_basement_maricopa;
     % up-weight the deeper points
@@ -216,7 +217,7 @@ elseif dopt==3
     ulabel = 'zdep, km';
 
 % SAN JOAQUIN BASIN -- BASE TERTIARY
-elseif dopt==4
+case 4
     [dlon,dlat,zdep,zdep_sigma] = read_basement_sjb; 
     d = zdep;
     dsig = zdep_sigma;
@@ -224,7 +225,7 @@ elseif dopt==4
     ulabel = 'zdep, km';
 
 % ALASKA GRAVITY
-elseif dopt==5
+case 5
     % isostatic residual gravity anomaly (column 5)
     [dlon,dlat,dg,gsig] = read_grav_akusgs(ax0);
     d = dg(:,5);
@@ -233,14 +234,14 @@ elseif dopt==5
     ulabel = 'dgrav, mgal';
 
 % ALASKA MOHO DATA (from alaska_moho.m)
-elseif dopt==6
+case 6
     ifile = '/home/carltape/PROJECTS/alaska/tomo_models/alaska_moho_depth_data.dat';
     [dlon,dlat,d,dsig] = textread(ifile,'%f%f%f%f');
     dlabel = 'moho';
     ulabel = 'zdep, km';
     
 % SIERRA NEVADA zircon data
-elseif dopt==7
+case 7
     ifile = '/home/carltape/Downloads/zircon_enadin_mod.txt';
     [dlat,dlon,d] = textread(ifile,'%f%f%f');
     dsig = 1.0*ones(size(dlon));
@@ -250,6 +251,33 @@ elseif dopt==7
     % remove median
     %d = d - median(d);
     %disp(sprintf('removing the median value of %.0f Ma prior to estimating'));
+
+% SHAKING INTENSITY MAPS IN ALASKA
+case 10 
+    ipick = 7;
+    dlabs = {   'BrazeeCloud1958_Huslia1958'
+                'Carver2004_Denali1912'
+                'CoffmanCloud1970_Rampart1968'
+                'Davis1960_Huslia1958'
+                'Rowe2004_Denali2002'
+                'StAmand1948_Healy1947'
+                'vonHakeCloud1967_Fairbanks1967'};
+    ncol = 4;
+    dlabel = dlabs{ipick};
+    ifile = sprintf('/home/carltape/PROJECTS/alaska/felt_maps/%s_ASCII',dlabel);
+    [data,ilabs,labels,inds] = read_delimited_file(ifile,ncol);
+    inan = find(isnan(data(:,1))==1);
+    data(inan,:) = [];
+    dlon = data(:,1);
+    dlon = wrapTo360(dlon);
+    dlat = data(:,2);
+    d = data(:,3);
+    
+    %dsig = 1.0*ones(size(dlon));
+    % ad hoc error to down-weight the mighest MMI values at the center
+    dsig = 0.1*d.^2 .* (1 + d.^4 / 10^4); % disp([d' dsig'])
+    ulabel = 'shaking intensity, MMI';
+    
 end
 
 % subset

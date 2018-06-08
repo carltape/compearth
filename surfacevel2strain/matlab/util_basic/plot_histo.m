@@ -50,6 +50,13 @@ if make_plot
            length(hdat)-sum(N),length(hdat)));
        %disp(sprintf(' the number of input (%i) does not equal the sum of bin counts (%i).',length(hdat),sum(N)));
     end
+    
+    % if the bin widths are different sizes, then matlab plots asterix symbols
+    % at the base of the bins (WHY?), so here we delete them
+    if length(unique(edges)) > 1
+        sh=findall(gcf,'marker','*');
+        delete(sh);
+    end
 end
 
 centers = edges + dbin/2;
@@ -58,10 +65,3 @@ centers(end) = [];
 % (see histc), so we cut them
 N(end) = [];
 Nplot(end) = [];
-
-% if the bin widths are different sizes, then matlab plots asterix symbols
-% at the base of the bins (WHY?), so here we delete them
-if length(unique(edges)) > 1
-    sh=findall(gcf,'marker','*');
-    delete(sh);
-end

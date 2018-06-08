@@ -15,7 +15,7 @@
 %   ax0         lon-lat box contained desired region
 %   rparm       inversion parameters
 %                   1. nlam, number of lambda values
-%                   2. ilampick (=1,2,3, or ngative), which method to use to pick lambda
+%                   2. ilampick (=1,2,3, or negative), which method to use to pick lambda
 %   pparm       plotting parameters
 %                   1. numx_plot, number of gridpoints in x direction
 %                   2. ulabel, label for the observations (e.g., 'zdep, km')
