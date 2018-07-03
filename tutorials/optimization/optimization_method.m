@@ -287,6 +287,182 @@ switch imethod
         % compare with cpost = inv(Gpost'*icobs*Gpost + icprior)
         Fhat = F * cprior
 
+    case 7      % variable metric (vector version)
+
+        u = NaN(nparm,niter-1);
+        v = NaN(nparm,niter-1);
+        for nn = 1:niter
+            m = mnew;
+
+            % steepest ascent vector
+            delta = d(m);
+            Ga    = G(m);
+            g     = cprior*Ga'*icobs*(delta - dobs) + (m - mprior);
+
+            % update the preconditioner F (Section 6.22.8)
+            if nn > 1
+                dg = g - gold;
+                F_dg = F0*dg;
+                % compute u(k) and v(k)
+                for jj = 1:(nn-2)  % loop is entered only if nn >= 3
+                    vtmp = dg'*icprior*u(:,jj);
+                    F_dg = F_dg + vtmp/v(jj) * u(:,jj);     % Eq. 6.347
+                end
+                u(:,nn-1) = dm - F_dg;                      % Eq. 6.341
+                v(nn-1) = dg'*icprior*u(:,nn-1);            % Eq. 6.348
+            end
+
+            % preconditioning search direction p = F_g (Eq. 6.340, Eq. 6.347)
+            p = F0*g;
+            for jj = 1:(nn-1)   % loop is entered only if nn >= 2
+                p = p + g'*icprior*u(:,jj)/v(jj) * u(:,jj);
+            end
+
+            % update the model
+            b    = Ga*p;
+            mu   = g'*icprior*p / (p'*icprior*p + b'*icobs*b);  % Eq. 6.333
+            dm   = -mu*p;
+            mnew = m + dm;
+            gold = g; 
+
+            disp(sprintf('%i/%i : prior, current, target:',nn,niter));
+            disp([mprior mnew mtarget]);
+            Sd_vec(nn+1) = Sd(mnew,dobs,icobs);
+            Sm_vec(nn+1) = Sm(mnew,mprior,icprior);
+            S_vec(nn+1) = S(mnew,dobs,mprior,icobs,icprior);
+        end
+
+        % estimated posterior covariance matrix from F_hat, Eq. 6.362
+        F = vm_F(F0,icprior,u,v);
+        Fhat = F * cprior
+
+    case 8      % square-root variable metric (matrix version)
+
+        % We should have F = Shat * Shat' * icprior
+        F = F0;
+        F0hat = F0*cprior;
+        S0hat = sqrtm(F0hat);  % works if Fhat is symmetric positive definite
+        % check: a0 = rand(2,2); a = a0*a0', b = sqrtm(a), b*b
+        Shat = S0hat;
+        Fhat = F0hat;
+
+        % store these for checking only
+        a_vec  = zeros(niter-1,1);
+        b_vec  = zeros(niter-1,1);
+        nu_vec = zeros(niter-1,1);
+        w_mat  = zeros(nparm,niter-1);
+
+        for nn = 1:niter
+            m = mnew;
+
+            % gradient
+            delta = d(m);
+            Ga    = G(m);
+            ghat  = Ga'*icobs*(delta - dobs) + icprior*(m - mprior);
+
+            % update the preconditioner F (using S); see Hull and Tapley (1977)
+            if nn >= 2
+                dghat = ghat - ghat_old;
+                yhat  = mu*ghat_old + dghat;
+                w     = Shat'*yhat;
+                a     = yhat'*Fhat*dghat;
+                b     = w'*w;
+                nu    = srvm_nu(a,b);
+                Shat  = Shat*(eye(nparm) - nu/a*w*w' );
+                Fhat  = Shat*Shat';
+
+                % for checking only
+                a_vec(nn-1) = a;
+                b_vec(nn-1) = b;
+                nu_vec(nn-1) = nu;
+                w_mat(:,nn-1) = w;
+            end
+
+            % preconditioned gradient
+            p = Fhat*ghat;
+
+            % update the model
+            c    = Ga*p;
+            mu   = ghat'*p / (p'*icprior*p + c'*icobs*c);  % Eq. 6.333
+            %mu   = g'*icprior*p / (p'*icprior*p + c'*icobs*c);  % Eq. 6.333
+            dm   = -mu*p;
+            mnew = m + dm;
+            ghat_old = ghat; 
+
+            disp(sprintf('%i/%i : prior, current, target:',nn,niter));
+            disp([mprior mnew mtarget]);
+            Sd_vec(nn+1) = Sd(mnew,dobs,icobs);
+            Sm_vec(nn+1) = Sm(mnew,mprior,icprior);
+            S_vec(nn+1) = S(mnew,dobs,mprior,icobs,icprior);
+        end
+
+        % estimated posterior covariance matrix from F_hat, Eq. 6.362
+        Fhat
+        
+        % estimated posterior covariance matrix computed from stored vectors and scalars
+        Fhat_check = srvm_Fhat(S0hat,niter-1,nu_vec,a_vec,w_mat)
+        a = a_vec;
+        b = b_vec;
+        nu = nu_vec;
+        w = w_mat;
+
+    case 9      % square-root variable metric (vector version)
+
+        % We should have F = Shat * Shat' * icprior
+        F = F0;
+        F0hat = F0*cprior;
+        S0hat = sqrtm(F0hat);
+        Shat = S0hat;
+
+        % initialize vectors and scalars
+        a  = zeros(niter-1,1);
+        b  = zeros(niter-1,1);
+        nu = zeros(niter-1,1);
+        w  = zeros(nparm, niter-1);
+
+        for nn = 1:niter
+            m = mnew;
+
+            % gradient
+            delta = d(m);
+            Ga    = G(m);
+            ghat  = Ga'*icobs*(delta - dobs) + icprior*(m - mprior);
+
+            % update the preconditioner F (using S)
+            % see Hull and Tapley (1977)
+            if nn >= 2
+                dghat = ghat - ghat_old;
+                yhat  = mu*ghat_old + dghat;
+
+                w(:,nn-1) = srvm_Shat_chi(yhat,nn-2,S0hat,nu,a,w,1);
+                beta      = w(:,nn-1) - mu*ShatT_ghat;
+                a(nn-1)   = transpose(w(:,nn-1))*beta(:);
+                b(nn-1)   = transpose(w(:,nn-1))*w(:,nn-1);
+                nu(nn-1)  = srvm_nu(a(nn-1),b(nn-1));
+            end
+
+            % update the search direction (does nothing for nn=1)
+            ShatT_ghat = srvm_Shat_chi(ghat,nn-1,S0hat,nu,a,w,1);
+            p          = srvm_Shat_chi(ShatT_ghat,nn-1,S0hat,nu,a,w,0);
+
+            % update the model
+            c        = Ga*p;
+            mu       = ghat'*p / (p'*icprior*p + c'*icobs*c);  % Eq. 6.333
+            %mu       = g'*icprior*p / (p'*icprior*p + c'*icobs*c);  % Eq. 6.333
+            dm       = -mu*p;
+            mnew     = m + dm;
+            ghat_old = ghat; 
+
+            disp(sprintf('%i/%i : prior, current, target:',nn,niter));
+            disp([mprior mnew mtarget]);
+            Sd_vec(nn+1) = Sd(mnew,dobs,icobs);
+            Sm_vec(nn+1) = Sm(mnew,mprior,icprior);
+            S_vec(nn+1) = S(mnew,dobs,mprior,icobs,icprior);
+        end
+
+        % estimated posterior covariance matrix computed from stored vectors and scalars
+        Fhat = srvm_Fhat(S0hat,niter-1,nu,a,w)          
+        
 end  % case imethod
 
 %==========================================================================

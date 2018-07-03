@@ -1,6 +1,6 @@
 Carl Tape
 ctape@alaska.edu
-24-June-2010
+2010-06-24
 
 This directory is aimed at illustrating various gradient-based optimization techniques,
 which are outlined in Section 6.22 of Albert Tarantola's 2005 SIAM book, Inverse Problem Theory.
@@ -8,7 +8,7 @@ which are outlined in Section 6.22 of Albert Tarantola's 2005 SIAM book, Inverse
 Tarantola's book can be purchased from SIAM but is also provided on his website:
 http://www.ipgp.jussieu.fr/~tarantola
 
-The main Matlab code is optimization.m
+The main Matlab code is genlsq.m which stands for generalized least squares.
 
 The corresponding details, including figures, can be found in
 ./INFO/optimization_guide.pdf

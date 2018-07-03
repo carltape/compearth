@@ -19,12 +19,10 @@
 %    forward_crescent.m
 %    plot_histo.m                   plot a particular style of histogram
 %
-% Carl Tape (carltape@gi.alaska), 20-March-2010
+% Carl Tape (ctape@alaska.edu), 2010-03-20
 %
 
-clc
-clear
-close all
+clc, clear, close all
 format compact
 format short
 
@@ -43,7 +41,7 @@ stlabels = {
     };
 stlabels2 = {'none','newton','quasi','steepest','cg','cgpoly','vmmatrix','vmvector','srvmmatrix','srvmvector'}';
 nmethod0 = length(stlabels)-1;
-nmethod0 = 6;   % only first 6 are used here
+%nmethod0 = 6;   % only first 6 are used here
 
 %==========================================================================
 % USER INPUT : choose optimization method
@@ -216,6 +214,42 @@ end
 % misfit for prior model and target model
 %S_mtarget = S(mtarget,dobs,mprior,icobs,icprior);
 %S_mprior  = S(mprior,dobs,mprior,icobs,icprior);
+
+%///////////////////////////////
+% grid search to plot misfit function
+% (In many problems, the reason for using an iterative gradient-based method 
+% is that we do not have the computational resources needed to evaluate the
+% misfit function over the entire model space.)
+
+if iforward==2
+    % regular grid of epicenters
+    numx = 50;
+    [xvec,yvec,numy,a,b,dx] = gridvec(xmin,xmax,numx,ymin,ymax);
+    ng = length(xvec);
+    sd0 = NaN(ng,1);
+    sm0 = NaN(ng,1);
+    for xx=1:length(xvec)
+        mg = [xvec(xx) yvec(xx)]';
+        sd0(xx) = Sd(mg,dobs,icobs);
+        sm0(xx) = Sm(mg,mprior,icprior);
+    end
+    s0 = sd0 + sm0;
+    
+    % plot misfit function and its two parts: S = Sm + Sd
+    X = reshape(xvec,a,b);
+    Y = reshape(yvec,a,b);
+    figure; nr=1; nc=3; cmin = -1e-5;
+    subplot(nr,nc,1); pcolor(X,Y,reshape(s0,a,b)); shading flat;
+    caxis([cmin max(s0)]); colorbar; axis equal, axis(axepi); title('S(m)');
+    subplot(nr,nc,2); pcolor(X,Y,reshape(sd0,a,b)); shading flat;
+    caxis([cmin max(s0)]); colorbar; axis equal, axis(axepi); title('Sd(m)');
+    subplot(nr,nc,3); pcolor(X,Y,reshape(sm0,a,b)); shading flat;
+    caxis([cmin max(sm0)]); colorbar; axis equal, axis(axepi); title('Sm(m)');
+    % for this file: ps2eps -f genlsq_misfit_f2.ps
+    if iprint==1, print(gcf,'-dpsc',sprintf('%sgenlsq_misfit_f%i',pdir,iforward)); end
+end
+
+%///////////////////////////////
 
 %========================================================================
 % USER INPUT : choose optimization method
@@ -481,6 +515,9 @@ for irun = 1:nrun
                 end
                 
                 % convergence curve
+                ya = floor(min(log10([Sm_vec ; Sd_vec ; S_vec])));
+                yb = ceil(max(log10([Sm_vec ; Sd_vec ; S_vec])));
+                ylims = 10.^[ya yb];
                 stit = [stlabels{imethod+1} ': ' num2str(niter) ' iterations, ' ...
                     sprintf('run %i out of %i',irun,nrun) ];
                 figure; hold on;
