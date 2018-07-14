@@ -9,7 +9,7 @@
 % It uses several functions stored within the github project compearth.
 % https://github.com/carltape/compearth
 %
-% Carl Tape, 10/22/2013
+% Carl Tape, 2013-10-22
 %
 
 clear, clc, close all
@@ -44,32 +44,39 @@ for ii=1:n3
 end
 
 % calculate quantities from the eigenvalues
-lambda3 = [Tlam Nlam Plam]' * 1e15;
-MM = CMTrecom(lambda3,U);    % south-east-up
-[gamma3,delta3,M0,mu,lamdev,lamiso] = lam2lune(lambda3);
-nu3 = lambda3(2,:) ./ (lambda3(1,:) + lambda3(3,:));
+lambdaall = [Tlam Nlam Plam]' * 1e15;
+MM = CMTrecom(lambdaall,U);    % south-east-up
+[gamma3,delta3,M0,mu,lamdev,lamiso] = lam2lune(lambdaall);
+nuall = lambdaall(2,:) ./ (lambdaall(1,:) + lambdaall(3,:));
 
 % target event
 ipick = 8;
 fac = 1e17;
-lams = lambda3(:,ipick) / fac;
+lams = lambdaall(:,ipick) / fac;
 Mmat = Mvec2Mmat(MM(:,ipick),1) / fac;
-Umat = U(:,:,ipick);
+Umat = U(:,:,ipick);                % det(Umat) = 1
 % for every U, there are three equivalent versions.
 % flip sign of two columns to match Eq A3
-Umat(:,[2 3]) = -Umat(:,[2 3]);
+Umat(:,[2 3]) = -Umat(:,[2 3]);     % det(Umat) = 1
 
 if 0==1
+   % shortest set of equations
    Mmat = [ 3.108 -4.855 -1.949 ;
            -4.855  3.044  1.110 ; 
            -1.949  1.110  3.382 ];
    [Umat,D] = eig(Mmat);
-   lams = diag(D); ls
-   lams = lams([3 2 1]);
-   Umat = Umat(:,[3 2 1]);
+   lams = diag(D);
+   lams = lams([3 2 1]);    % swap 1 and 3
+   Umat = Umat(:,[3 2 1]);  % swap 1 and 3
+   det(Umat)
    Umat(:,1) = -Umat(:,1);
    det(Umat)
    
+   % check with CMTdecom.m
+   Mx = Mvec2Mmat(Mmat,0);
+   [lams,U] = CMTdecom(Mx,1)
+   det(U)
+  
    %Mvec = [3.108 3.044 3.382 -4.855 -1.949 1.110]';
    %[lams,Umat] = CMTdecom(Mvec)
    %Mmat = Mvec2Mmat(Mvec,1);
@@ -122,11 +129,11 @@ zeta = acos( sqrt(2*(lam1-lam2)*(lam2-lam3)) / rho )*deg
 cosz = cos(zeta/deg);
 sinz = sin(zeta/deg);
 
-% eqs 24
+% Eqs 24
 %phi = atan( (lam1-2*lam2+lam3)/(sqrt(2)*(lam1+lam2+lam3)) )*deg
 phi = atan2( lam1-2*lam2+lam3, sqrt(2)*(lam1+lam2+lam3) )*deg;
 
-% eq S1 (not listed in table)
+% Eq S1 (not listed in table)
 thetadc = acos( (lam1-lam3)/(sqrt(2)*rho) )*deg
 
 % unit double couple tensors
@@ -156,7 +163,7 @@ Uh = [t1 0 -t2 ; 0 1 0 ; t2 0 t1]
 
 disp('======= Table A2 ===========');
 
-% note: eqs 36 and 56 are the same
+% note: Eqs 36 and 56 are the same
 N1 = Umat*rotmat(-alpha/2,2)*[1 0 0]'
 N2 = Umat*rotmat(alpha/2,2)*[1 0 0]'
 
@@ -176,6 +183,16 @@ KU2 = U2*K*U2'
 
 % ultimate check
 % Mmat, rho*(cosz*DU1 + sinz*KU1), rho*(cosz*DU2 + sinz*KU2)
+
+if 1==1
+    % checking with a separate function
+    [K1,D1,K2,D2,KU1x,DU1x,KU2x,DU2x,rho,zeta,Ux] = CMT2CDC(Mmat);
+
+    % Due to the different U
+    Umat,Ux
+    % the order of the output from CMT2CDC.m is swapped with what is shown above.
+    DU1,DU2x,DU2,DU1x,KU1,KU2x,KU2,KU1x
+end
 
 % CHECK ON 10/22/2013
 %
