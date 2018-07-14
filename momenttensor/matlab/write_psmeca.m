@@ -25,7 +25,7 @@ function write_psmeca(filename,otime,lat,lon,dep,M,eid,slabel,slabeltag)
 %
 % calls CMT2m0.m
 %
-% Carl Tape, 02-Feb-2011
+% Carl Tape, 2011-02-02
 %
 
 n = length(lat);
@@ -42,7 +42,7 @@ if length(dep)~=n, whos dep lat, error('dimension mismatch (dep lat)'); end
 M = 1e7 * M;
 
 % exponent for computing magnitude in psmeca
-M0 = CMT2m0(1,M);
+M0 = CMT2m0(1,M);       % dyne-cm
 iexp_all = floor(log10(M0));
 
 % for labeling the moment magnitude
@@ -83,7 +83,7 @@ if isempty(eid), eid = strtrim(cellstr(num2str([1:n]'))); end
 nfile = imax-imin+1;
 disp(sprintf('looping from %i to %i for %i files',imin,imax,nfile));
 
-for ilab = imin:imax
+for ilab = imin:imax            % loop over different text labels
     
     if ilab==0, ext = ''; end
     if ilab==1, ext = '_eid'; end
@@ -97,8 +97,8 @@ for ilab = imin:imax
 
     % write to file for GMT plotting
     file1 = [filename '_psmeca' ext];
-    fid = fopen(file1,'w');
-    for ii = 1:n
+    fid1 = fopen(file1,'w');
+    for ii = 1:n                % loop over events
 
         % title for beachball
         switch ilab
@@ -115,7 +115,7 @@ for ilab = imin:imax
 
         if ilab==5
             stfmt = '%14.6f%14.6f%14.6f%14.6e%14.6e%14.6e%14.6e%14.6e%14.6e%4i\n';
-            fprintf(fid,stfmt,...
+            fprintf(fid1,stfmt,...
                 lon(ii), lat(ii), dep(ii),...
                 M(1,ii)*fac, M(2,ii)*fac, M(3,ii)*fac,...
                 M(4,ii)*fac, M(5,ii)*fac, M(6,ii)*fac,...
@@ -124,7 +124,7 @@ for ilab = imin:imax
             % originally had 16 char for final string; changed to open
             stfmt = '%14.6f%14.6f%14.6f%14.6e%14.6e%14.6e%14.6e%14.6e%14.6e%4i%14.6e%14.6e %s\n';
             %stfmt = '%14.6f%14.6f%14.6f%14.6f%14.6f%14.6f%14.6f%14.6f%14.6f%4i%14.6f%14.6f %s\n';
-            fprintf(fid,stfmt,...
+            fprintf(fid1,stfmt,...
                 lon(ii), lat(ii), dep(ii),...
                 M(1,ii)*fac, M(2,ii)*fac, M(3,ii)*fac,...
                 M(4,ii)*fac, M(5,ii)*fac, M(6,ii)*fac,...
@@ -132,7 +132,7 @@ for ilab = imin:imax
                 lon(ii), lat(ii), cmtlabel);
         end
     end
-    fclose(fid);
+    fclose(fid1);
 end
 
 disp('writing psmeca file for GMT plotting...');
@@ -141,11 +141,11 @@ disp(sprintf('output file (1 of %i): %s',nfile,file1));
 
 if ~isempty(otime)
     % write a list of event IDs (useful to have for other scripts)
-    file2 = [filename '_eid'];
-    fid = fopen(file2,'w');
+    file_eid = [filename '_eid'];
+    fid = fopen(file_eid,'w');
     for ii=1:n, fprintf(fid,'%s\n',char(eid{ii})); end
     fclose(fid);
-    disp(sprintf('output file: %s',file2));
+    disp(sprintf('output file: %s',file_eid));
 end
 
 %==========================================================================
