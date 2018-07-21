@@ -248,4 +248,9 @@ Uout = U2pa(Useu,1);
 plotMT_eigvec(Uout(:,1),Uout(:,2),Uout(:,3),Uout(:,4),Uout(:,5),Uout(:,6));
 plotMT_lam(lam);
 
+% classical model and CDC
+[nu,alpha] = lam2nualpha(lam);
+[phi,zeta] = lam2phizeta(lam);
+plotMT_cdc(nu,alpha,phi,zeta);
+
 %==========================================================================
