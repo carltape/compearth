@@ -2,7 +2,7 @@ function plotMT_lam(lam,edges)
 %PLOTMT_LAM plot histograms of three eigenvalues
 
 if nargin==1
-    nbin = 18;
+    nbin = 36;
     nedge = nbin + 1;
     lmin = min(lam(:));
     lmax = max(lam(:));

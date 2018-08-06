@@ -1,53 +1,127 @@
 function plotMT_cdc(nu,alpha,phi,zeta)
-%PLOTMT_CDC plot histograms of the entries of Mij
+%PLOTMT_CDC plot histograms of moment tensor parameters nu,alpha,phi,zeta
+%
+% CDC = crack-plus-double couple model for seismic moment tensors
+% See Tape and Tape (2013 GJI) and also Minson et al. (2007 JGR).
+%
+% INPUT
+%   nu      vector of Poisson parameter from classical model (-infinity, infinity)
+%   alpha   vector of angles between fault normal and slip vector, degrees [0,180]
+%   phi     vector of phi angles on the lune, degrees [-180,180]
+%   zeta    vector of crack fraction within CDC model [0,90]
+% 
+% See also lam2nualpha.m, lam2phizeta.m
+% See run_uniformMT.m for examples.
+%
+% Carl Tape, 2018-08-06
+%
 
-buse_greek = false;
+PLOT_UNIFORM_CURVES = true;
+PLOT_AS_PDFS = true;
+buse_greek = false;             % =true unless you have an issue rendering latex fonts
 
-%edges_nu = linspace(-1.001,0.501,16);    % to keep 0.50 values in the plot
-edges_nu = linspace(-5,5,21);
-%edges_nu = [-1:0.1:0.5];
-%edges_nu = [-15:0.5:2.5];               % to show all nu values
+if PLOT_AS_PDFS, itype = 3; else itype = 2; end
 
 edges_alpha = [0:5:180];
-edges_phi = [-180:10:180];
-edges_zeta = [0:5:90];
+edges_phi   = [-180:10:180];
+edges_zeta  = [0:5:90];
+
+% edges for nu are tricky, since nu can range from -infinity to infinity
+% Note: for real materials, nu varies from -1 to 0.5
+NUMAX = 5;
+NUMIN = -NUMAX;
+nbinnu = 51;
+edges_nu = linspace(NUMIN,NUMAX,nbinnu);
+%edges_nu = linspace(-1.001,0.501,nbinnu);
+%edges_nu = [-1:0.1:0.5];
+
+edges_alpha = [0:5:180];
+edges_phi   = [-180:10:180];
+edges_zeta  = [0:2:90];
+
+% angles in radians, since we are dealing with PDFs
+deg = 180/pi;
+if PLOT_AS_PDFS
+   alpha = alpha/deg;
+   phi = phi/deg;
+   zeta = zeta/deg;
+   edges_alpha = edges_alpha/deg;
+   edges_phi = edges_phi/deg;
+   edges_zeta = edges_zeta/deg;
+   xtag = 'radians';
+else
+    xtag = 'degrees';
+end
 
 fsizex = 14;
-itype = 1;
 
 figure; nr=2; nc=2;
-subplot(nr,nc,1); hold on; plot_histo(nu,edges_nu,itype);
+subplot(nr,nc,1); hold on;
+plot_histo(nu,edges_nu,itype);
+if PLOT_UNIFORM_CURVES
+    npt = 100;
+    NUMAX = 5;
+    xplot = linspace(NUMIN,NUMAX,npt);
+    qplot = 1./ ((xplot - 1/3).^2 + 2/9);
+    dx = xplot(2) - xplot(1);
+    C = 1 / (sum(qplot) * dx);    % crude integration (should be analytical)
+    uplot = C*qplot;
+    plot(xplot,uplot,'r','linewidth',2);
+    plot(1/3,C*9/2,'ro','markerfacecolor','k','markersize',6);
+end
 if buse_greek
-    xlabel('Poisson ratio \nu','fontsize',fsizex);
+    xlabel('\nu, Poisson ratio','fontsize',fsizex);
 else
-    xlabel('Poisson ratio nu','fontsize',fsizex);
+    xlabel('nu, Poisson ratio','fontsize',fsizex);
 end
 box on;    % note sure why this is needed, but it is
 %title('(a)','Units','normalized','Position',[-0.1 1.05],'HorizontalAlignment','left','fontsize',fsizex-2);
 
-subplot(nr,nc,2); plot_histo(alpha,edges_alpha,itype);
-if buse_greek
-    xlabel('\alpha = \angle (N, S)','fontsize',fsizex);
-else
-    xlabel('alpha = angle(N, S)','fontsize',fsizex);
+subplot(nr,nc,2); hold on;
+plot_histo(alpha,edges_alpha,itype);
+if PLOT_UNIFORM_CURVES
+    xplot = linspace(0,pi,npt);
+    sina = sin(xplot);
+    cosa = cos(xplot);
+    uplot = 27*sina.^3 ./ (2*(3 + cosa.^2).^(5/2));
+    plot(xplot,uplot,'r','linewidth',2);
 end
-set(gca,'xtick',[0:30:180]);
+if buse_greek
+    xlabel(sprintf('\\alpha = \\angle (N, S), %s',xtag),'fontsize',fsizex);
+else
+    xlabel(sprintf('alpha = angle(N, S), %s',xtag),'fontsize',fsizex);
+end
+%set(gca,'xtick',[0:30:180]);
 %title('(b)','Units','normalized','Position',[-0.1 1.05],'HorizontalAlignment','left','fontsize',fsizex-2);
 
-subplot(nr,nc,3); plot_histo(phi,edges_phi,itype);
-if buse_greek
-    xlabel('Azimuth on lune \phi','fontsize',fsizex);
-else
-    xlabel('Azimuth on lune phi','fontsize',fsizex);
+subplot(nr,nc,3); hold on;
+plot_histo(phi,edges_phi,itype);
+if PLOT_UNIFORM_CURVES
+    xplot = linspace(-pi,pi,npt);
+    uplot = 2 ./ (5*pi - 3*pi*cos(2*xplot));
+    plot(xplot,uplot,'r','linewidth',2);
 end
-set(gca,'xtick',[-180:60:180]);
+if buse_greek
+    xlabel(sprintf('\\phi, azimuth on lune, %s',xtag),'fontsize',fsizex);
+else
+    xlabel(sprintf('phi, azimuth on lune, %s',xtag),'fontsize',fsizex);
+end
+%set(gca,'xtick',[-180:60:180]);
 %title('(c)','Units','normalized','Position',[-0.1 1.05],'HorizontalAlignment','left','fontsize',fsizex-2);
 
-subplot(nr,nc,4); plot_histo(zeta,edges_zeta,itype);
+subplot(nr,nc,4); hold on;
+plot_histo(zeta,edges_zeta,itype);
+if PLOT_UNIFORM_CURVES
+    xplot = linspace(0,pi/2,npt);
+    cosz = cos(xplot);
+    sinz = sin(xplot);
+    uplot = 4*cosz.^3.*sinz;
+    plot(xplot,uplot,'r','linewidth',2);
+end
 if buse_greek
-    xlabel('Crack fraction \zeta','fontsize',fsizex);
+    xlabel(sprintf('\\zeta, crack fraction, %s',xtag),'fontsize',fsizex);
 else
-    xlabel('Crack fraction zeta','fontsize',fsizex);
+    xlabel(sprintf('zeta, crack fraction, %s',xtag),'fontsize',fsizex);
 end
 %title('(d)','Units','normalized','Position',[-0.1 1.05],'HorizontalAlignment','left','fontsize',fsizex-2);
 

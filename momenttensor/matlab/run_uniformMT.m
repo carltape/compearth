@@ -241,16 +241,18 @@ plotMT_lune(gamma,delta);
 Medges = [-sqrt(2):0.1:sqrt(2)];
 plotMT_Mij(M,Medges);
 
-% eigenvalues and plunge-azimuth angles of eigenvectors
+% eigenvalues
 [lam,U] = CMTdecom(M);
-Useu = convertv(1,5,U);
-Uout = U2pa(Useu,1);
-plotMT_eigvec(Uout(:,1),Uout(:,2),Uout(:,3),Uout(:,4),Uout(:,5),Uout(:,6));
 plotMT_lam(lam);
 
 % classical model and CDC
 [nu,alpha] = lam2nualpha(lam);
 [phi,zeta] = lam2phizeta(lam);
 plotMT_cdc(nu,alpha,phi,zeta);
+
+% plunge-azimuth angles of eigenvectors
+Useu = convertv(1,5,U);
+Uout = U2pa(Useu,1);
+plotMT_eigvec(Uout(:,1),Uout(:,2),Uout(:,3),Uout(:,4),Uout(:,5),Uout(:,6));
 
 %==========================================================================
