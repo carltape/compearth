@@ -59,15 +59,22 @@ figure; nr=2; nc=2;
 subplot(nr,nc,1); hold on;
 plot_histo(nu,edges_nu,itype);
 if PLOT_UNIFORM_CURVES
-    npt = 100;
-    NUMAX = 5;
+    npt = 500;
     xplot = linspace(NUMIN,NUMAX,npt);
-    qplot = 1./ ((xplot - 1/3).^2 + 2/9);
-    dx = xplot(2) - xplot(1);
-    C = 1 / (sum(qplot) * dx);    % crude integration (should be analytical)
-    uplot = C*qplot;
+    if 1==1
+        qplot = 1 - 2*xplot + 3*xplot.^2;
+        K = sqrt(2) / (atan((1-3*NUMIN)/sqrt(2)) +  atan((-1+3*NUMAX)/sqrt(2)));
+        uplot = K ./ qplot;
+        umax = sqrt(2) ./ (2/3 .* (atan((1-3*NUMIN)/sqrt(2)) +  atan((-1+3*NUMAX)/sqrt(2))) );
+    else
+        qplot = 1./ ((xplot - 1/3).^2 + 2/9);
+        dx = xplot(2) - xplot(1);
+        C = 1 / (sum(qplot) * dx);    % crude integration (should be analytical)
+        uplot = C*qplot;
+        umax = C*9/2;
+    end
     plot(xplot,uplot,'r','linewidth',2);
-    plot(1/3,C*9/2,'ro','markerfacecolor','k','markersize',6);
+    plot(1/3,umax,'ro','markerfacecolor','k','markersize',6);
 end
 if buse_greek
     xlabel('\nu, Poisson ratio','fontsize',fsizex);
