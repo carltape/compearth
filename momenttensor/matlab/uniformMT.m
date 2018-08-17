@@ -9,7 +9,7 @@ function [M,v,w,kappa,sigma,h,lam] = uniformMT(n,gamma0,delta0)
 %               double couple (v=0,w=0) to be in the grid or the deviatoric
 %               moment tensors in the grid (w=0)
 %   gamma0  OPTIONAL: lune longitude, degrees (-30 to 30)
-%   delta0  OPTIONAL: lune latitude, degrees (-90 to 90)
+%   delta0  OPTIONAL: lune latitude,  degrees (-90 to 90)
 %
 % OUTPUT
 %   M       6 x n set of moment tensors
@@ -24,7 +24,7 @@ function [M,v,w,kappa,sigma,h,lam] = uniformMT(n,gamma0,delta0)
 %
 % See examples in run_uniformMT.m
 %
-% Carl Tape, 22-July-2015
+% Carl Tape, 2015-07-22
 %
 
 deg = 180/pi;
@@ -134,7 +134,13 @@ else
         [gamma,delta] = rect2lune(v,w);
     end
 end
-M0 = 1;
+
+% note: the choice of magnitude is arbitrary, though for uniform moment
+% tensors the magnitudes all need to be identical
+M0 = 1;         % M0=1 means that rho = sqrt(2)
+%M0 = 1/sqrt(2); % M0=1/sqrt(2) means that rho = 1
+%M0 = 5;
+
 theta = acos(h) * deg;
 if nargout==7
     [M,lam] = TT2CMT(gamma,delta,M0,kappa,theta,sigma);

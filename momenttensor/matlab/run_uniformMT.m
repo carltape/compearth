@@ -234,16 +234,22 @@ break
 
 % ADDITIONAL HISTOGRAMS
 
-% lune longitude and latitude within latitude bands and longitude bands
-plotMT_lune(gamma,delta);
+rho = sqrt(2)*M0;
+mfac = mean(rho);
 
 % Mij entries
-Medges = [-sqrt(2):0.1:sqrt(2)];
+%Medges = [-sqrt(2):0.1:sqrt(2)];
+Medges = linspace(-mfac,mfac,21);
 plotMT_Mij(M,Medges);
 
 % eigenvalues
 [lam,U] = CMTdecom(M);
 plotMT_lam(lam);
+
+break
+
+% lune longitude and latitude within latitude bands and longitude bands
+plotMT_lune(gamma,delta);
 
 % classical model and CDC
 [nu,alpha] = lam2nualpha(lam);

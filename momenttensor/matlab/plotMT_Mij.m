@@ -35,7 +35,7 @@ if PLOT_UNIFORM_CURVES
         disp('--> setting PLOT_UNIFORM_CURVES = false');
         PLOT_UNIFORM_CURVES = false;
     else
-        disp('input moment tensors have the same norm');
+        disp(sprintf('input moment tensors have the same norm (%.3e)',mfac));
     end
 end
 
