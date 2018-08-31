@@ -1,19 +1,12 @@
-(* Content-type: application/mathematica *)
-
-(*** Wolfram Notebook File ***)
-(* http://www.wolfram.com/nb *)
-
-(* CreatedBy='Mathematica 7.0' *)
-
 (*CacheID: 234*)
 (* Internal cache information:
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
-NotebookDataPosition[       145,          7]
-NotebookDataLength[     24728,        633]
-NotebookOptionsPosition[     23618,        593]
-NotebookOutlinePosition[     23956,        608]
-CellTagsIndexPosition[     23913,        605]
+NotebookDataPosition[         0,          0]
+NotebookDataLength[     24939,        636]
+NotebookOptionsPosition[     23685,        589]
+NotebookOutlinePosition[     24021,        604]
+CellTagsIndexPosition[     23978,        601]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -131,14 +124,16 @@ Cell[BoxData[{
      RowBox[{"Paxes", "[", 
       RowBox[{"True", ",", "True", ",", "True", ",", "u", ",", "c", ",", 
        RowBox[{"1.5", "BBrad"}], ",", "BBrad", ",", "ArrowScale", ",", 
-       RowBox[{"1.5", "tkns"}], ",", "True"}], "]"}]}], "}"}], ",", 
+       RowBox[{"1.5", "tkns"}], ",", "\"\<TriColor\>\"", ",", "dum"}], 
+      "]"}]}], "}"}], ",", 
    RowBox[{"ViewPoint", "\[Rule]", "eye"}], ",", 
    RowBox[{"Lighting", "\[Rule]", "\"\<Neutral\>\""}], ",", 
    RowBox[{"Boxed", "\[Rule]", "False"}]}], "]"}]}], "Input",
  CellChangeTimes->{
   3.5947435734163957`*^9, {3.594743678604041*^9, 3.594743746374135*^9}, {
    3.7111286719078445`*^9, 3.711128673858959*^9}, {3.7111287338593884`*^9, 
-   3.711128765171186*^9}}],
+   3.711128765171186*^9}, {3.7422551884804525`*^9, 3.7422551954491854`*^9}, {
+   3.742255237527204*^9, 3.7422552383240776`*^9}}],
 
 Cell[BoxData[{
  RowBox[{
@@ -169,14 +164,15 @@ Cell[BoxData[{
      RowBox[{"Paxes", "[", 
       RowBox[{"True", ",", "True", ",", "True", ",", "u", ",", "c", ",", 
        RowBox[{"1.5", "BBrad"}], ",", "BBrad", ",", "ArrowScale", ",", 
-       RowBox[{"1.5", "tkns"}], ",", "True"}], "]"}]}], "}"}], ",", 
+       RowBox[{"1.5", "tkns"}], ",", "\"\<Custom\>\"", ",", "Green"}], 
+      "]"}]}], "}"}], ",", 
    RowBox[{"ViewPoint", "\[Rule]", "eye"}], ",", 
    RowBox[{"Lighting", "\[Rule]", "\"\<Neutral\>\""}], ",", 
    RowBox[{"Boxed", "\[Rule]", "False"}]}], "]"}]}], "Input",
  CellChangeTimes->{
   3.5947435734163957`*^9, {3.594743678604041*^9, 3.594743746374135*^9}, {
    3.594743972461953*^9, 3.5947439744719563`*^9}, {3.711128781379117*^9, 
-   3.7111288044994373`*^9}}],
+   3.7111288044994373`*^9}, {3.7422552933707647`*^9, 3.742255300120797*^9}}],
 
 Cell["\<\
 This next command is copied from the file AAcommentMomentTensorFns, but here \
@@ -591,8 +587,8 @@ Cell[BoxData[
    3.5756850477709928`*^9, {3.575685081390952*^9, 3.575685082467354*^9}}]
 }, Open  ]]
 },
-WindowSize->{1281, 750},
-WindowMargins->{{335, Automatic}, {Automatic, 29}},
+WindowSize->{975, 714},
+WindowMargins->{{Automatic, 98}, {Automatic, 32}},
 FrontEndVersion->"9.0 for Linux x86 (64-bit) (February 7, 2013)",
 StyleDefinitions->"Default.nb"
 ]
@@ -608,35 +604,34 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[567, 22, 318, 6, 45, "Subsection"],
-Cell[888, 30, 2341, 44, 55, "Input"],
-Cell[3232, 76, 957, 26, 55, "Input"],
-Cell[4192, 104, 1432, 36, 99, "Input"],
-Cell[5627, 142, 1430, 36, 99, "Input"],
-Cell[7060, 180, 348, 7, 51, "Text"],
-Cell[7411, 189, 6142, 145, 275, "Input"],
-Cell[13556, 336, 2253, 62, 121, "Input"],
-Cell[15812, 400, 1975, 39, 55, "Input"],
-Cell[17790, 441, 255, 5, 31, "Text"]
+Cell[422, 15, 318, 6, 69, "Subsection"],
+Cell[743, 23, 2341, 44, 55, "Input"],
+Cell[3087, 69, 957, 26, 55, "Input"],
+Cell[4047, 97, 1565, 38, 121, "Input"],
+Cell[5615, 137, 1509, 37, 121, "Input"],
+Cell[7127, 176, 348, 7, 49, "Text"],
+Cell[7478, 185, 6142, 145, 385, "Input"],
+Cell[13623, 332, 2253, 62, 143, "Input"],
+Cell[15879, 396, 1975, 39, 55, "Input"],
+Cell[17857, 437, 255, 5, 29, "Text"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[18082, 451, 469, 8, 71, "Subsection"],
-Cell[18554, 461, 1015, 30, 55, "Input"]
+Cell[18149, 447, 469, 8, 69, "Subsection"],
+Cell[18621, 457, 1015, 30, 55, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[19606, 496, 236, 3, 45, "Subsection"],
-Cell[19845, 501, 1629, 28, 32, "Input"]
+Cell[19673, 492, 236, 3, 44, "Subsection"],
+Cell[19912, 497, 1629, 28, 32, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[21511, 534, 281, 6, 45, "Subsection"],
-Cell[21795, 542, 886, 23, 55, "Input"]
+Cell[21578, 530, 281, 6, 69, "Subsection"],
+Cell[21862, 538, 886, 23, 55, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[22718, 570, 266, 3, 45, "Subsection"],
-Cell[22987, 575, 615, 15, 32, "Input"]
+Cell[22785, 566, 266, 3, 44, "Subsection"],
+Cell[23054, 571, 615, 15, 55, "Input"]
 }, Open  ]]
 }
 ]
 *)
 
-(* End of internal cache information *)

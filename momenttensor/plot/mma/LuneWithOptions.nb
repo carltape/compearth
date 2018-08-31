@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[     14840,        395]
-NotebookOptionsPosition[     14277,        375]
-NotebookOutlinePosition[     14693,        391]
-CellTagsIndexPosition[     14650,        388]
+NotebookDataLength[     14902,        396]
+NotebookOptionsPosition[     14419,        377]
+NotebookOutlinePosition[     14755,        392]
+CellTagsIndexPosition[     14712,        389]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -154,22 +154,21 @@ Cell[BoxData[{
        RowBox[{"any", "."}]}]}]}],
     FontColor->RGBColor[1, 0, 0]], " ", "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{
-   RowBox[{"tkns", "=", ".006"}], ";", 
-   RowBox[{"ptsz", "=", ".02"}], ";", 
-   RowBox[{"ArrowScale", "=", ".055"}], ";"}], "  ", 
+  RowBox[{"tkns", "=", ".006"}], ";", 
+  RowBox[{"ptsz", "=", ".02"}], ";", 
+  RowBox[{"ArrowScale", "=", ".14"}], ";", "  ", 
   RowBox[{"(*", " ", 
    StyleBox[
     RowBox[{
     "ptsz", " ", "is", " ", "point", " ", "size", " ", "for", " ", "the", " ",
       "eigenvalue", " ", "triples"}],
-    FontColor->RGBColor[1, 0, 0]], " ", "*)"}]}], "\[IndentingNewLine]", 
- RowBox[{"Lune", "[", 
-  RowBox[{
-  "\[CapitalLambda]list", ",", "ExtraPts", ",", "eye", ",", 
-   "Want\[CapitalLambda]axes", ",", "WantUVWaxes", ",", "WantGrid", ",", 
-   "WantZeroLam1Lam3", ",", "WantDeviatoricArc", ",", "WantLuneBoundary", ",",
-    "\[Nu]List"}], "]"}]}], "Input",
+    FontColor->RGBColor[1, 0, 0]], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"Lune", "[", 
+   RowBox[{
+   "\[CapitalLambda]list", ",", "ExtraPts", ",", "eye", ",", 
+    "Want\[CapitalLambda]axes", ",", "WantUVWaxes", ",", "WantGrid", ",", 
+    "WantZeroLam1Lam3", ",", "WantDeviatoricArc", ",", "WantLuneBoundary", 
+    ",", "\[Nu]List"}], "]"}]}]}], "Input",
  CellChangeTimes->{{3.592687640827312*^9, 3.5926877062774024`*^9}, {
    3.5926879330997167`*^9, 3.592687939259725*^9}, {3.592688055429886*^9, 
    3.5926880555798855`*^9}, {3.5926880881199303`*^9, 
@@ -191,7 +190,8 @@ Cell[BoxData[{
    3.594587693208353*^9, 3.5945877293584023`*^9}, {3.5945878073160105`*^9, 
    3.5945878238160334`*^9}, {3.594589845480216*^9, 3.5945898503902225`*^9}, {
    3.5950184864027305`*^9, 3.595018512746769*^9}, {3.595019818043092*^9, 
-   3.5950198227430983`*^9}, {3.595019907903216*^9, 3.5950199107132196`*^9}}],
+   3.5950198227430983`*^9}, {3.595019907903216*^9, 3.5950199107132196`*^9}, {
+   3.7422537948478737`*^9, 3.742253796644744*^9}}],
 
 Cell[BoxData[{
  RowBox[{
@@ -337,7 +337,7 @@ Cell[BoxData[{
   RowBox[{
    RowBox[{"tkns", "=", ".006"}], ";", 
    RowBox[{"ptsz", "=", ".015"}], ";", 
-   RowBox[{"ArrowScale", "=", ".055"}], ";"}], "  "}], "\[IndentingNewLine]", 
+   RowBox[{"ArrowScale", "=", ".14"}], ";"}], "  "}], "\[IndentingNewLine]", 
  RowBox[{"Lune", "[", 
   RowBox[{
   "\[CapitalLambda]list", ",", "ExtraPts", ",", "eye", ",", 
@@ -348,7 +348,9 @@ Cell[BoxData[{
   3.5927643423569913`*^9, 3.592764343666993*^9}, {3.59458745540952*^9, 
   3.594587456779522*^9}, {3.5945875310396247`*^9, 3.594587532039626*^9}, {
   3.594587569102177*^9, 3.5945875713221807`*^9}, {3.5945876370817723`*^9, 
-  3.5945876394317756`*^9}, {3.5945876946083546`*^9, 3.5945877238883953`*^9}}],
+  3.5945876394317756`*^9}, {3.5945876946083546`*^9, 3.5945877238883953`*^9}, {
+  3.7422502635442514`*^9, 3.742250286372321*^9}, {3.742253818035282*^9, 
+  3.7422538188946877`*^9}}],
 
 Cell[BoxData[{
  RowBox[{
@@ -373,9 +375,8 @@ Cell[BoxData[{
    3.5945876407317777`*^9, {3.594587696258357*^9, 3.594587724628396*^9}, {
    3.5945898950302844`*^9, 3.594589896920287*^9}}]
 },
-WindowSize->{1303, 803},
-WindowMargins->{{258, Automatic}, {36, Automatic}},
-PrivateNotebookOptions->{"VersionedStylesheet"->{"Default.nb"[8.] -> False}},
+WindowSize->{915, 807},
+WindowMargins->{{Automatic, 101}, {0, Automatic}},
 FrontEndVersion->"9.0 for Linux x86 (64-bit) (February 7, 2013)",
 StyleDefinitions->"Default.nb"
 ]
@@ -390,13 +391,13 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[545, 20, 365, 8, 31, "Text"],
+Cell[545, 20, 365, 8, 29, "Text"],
 Cell[913, 30, 390, 11, 32, "Input"],
-Cell[1306, 43, 6115, 150, 341, "Input"],
-Cell[7424, 195, 2602, 68, 297, "Input"],
-Cell[10029, 265, 220, 5, 31, "Text"],
-Cell[10252, 272, 2846, 78, 297, "Input"],
-Cell[13101, 352, 1172, 21, 72, "Input"]
+Cell[1306, 43, 6156, 150, 407, "Input"],
+Cell[7465, 195, 2602, 68, 341, "Input"],
+Cell[10070, 265, 220, 5, 29, "Text"],
+Cell[10293, 272, 2947, 80, 297, "Input"],
+Cell[13243, 354, 1172, 21, 99, "Input"]
 }
 ]
 *)
