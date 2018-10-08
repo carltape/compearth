@@ -50,7 +50,7 @@ if PLOT_AS_PDFS
    edges_zeta = edges_zeta/deg;
    xtag = 'radians';
 else
-    xtag = 'degrees';
+   xtag = 'degrees';
 end
 
 fsizex = 14;
@@ -74,6 +74,7 @@ if PLOT_UNIFORM_CURVES
         umax = C*9/2;
     end
     plot(xplot,uplot,'r','linewidth',2);
+    % maximum of distribution
     plot(1/3,umax,'ro','markerfacecolor','k','markersize',6);
 end
 if buse_greek
@@ -92,6 +93,9 @@ if PLOT_UNIFORM_CURVES
     cosa = cos(xplot);
     uplot = 27*sina.^3 ./ (2*(3 + cosa.^2).^(5/2));
     plot(xplot,uplot,'r','linewidth',2);
+    % maximum of distribution
+    umax = sqrt(3)/2;
+    plot(pi/2,umax,'ro','markerfacecolor','k','markersize',6);
 end
 if buse_greek
     xlabel(sprintf('\\alpha = \\angle (N, S), %s',xtag),'fontsize',fsizex);
@@ -124,6 +128,9 @@ if PLOT_UNIFORM_CURVES
     sinz = sin(xplot);
     uplot = 4*cosz.^3.*sinz;
     plot(xplot,uplot,'r','linewidth',2);
+    % maximum of distribution
+    umax = 3*sqrt(3)/4;
+    plot(pi/6,umax,'ro','markerfacecolor','k','markersize',6);
 end
 if buse_greek
     xlabel(sprintf('\\zeta, crack fraction, %s',xtag),'fontsize',fsizex);
