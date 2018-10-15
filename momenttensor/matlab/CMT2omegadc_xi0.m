@@ -11,18 +11,26 @@ function [omegadc,xi0,U] = CMT2omegadc_xi0(X1,X2,iorthoU,idisplay)
 %   U1,U2     3 x 3 x n bases
 %
 % OUTPUT
-%   omegadc     9-angle between closest double couples
+%   omegadc   9-angle between closest double couples
 %   xi0       minimum rotation angle between principal axes
 %   U         3 x 3 x n rotation matrix U = U1' * U2
 %
-% For details, see TapeTape2012 "Angle between principal axis triples".
-% The omega angle in TapeTape2012 is what we denote as omegadc here;
-% we use omega to represent the angle between two moment tensors (see CMT2omega.m).
+% The angle omegadc is a more sensible angle than xi00 for comparing the
+% difference between two double couple moment tensors; see Figures 14-15
+% of Tape and Tape (2012 GJI), "Angle between principal axis triples".
+% The omega angle in TapeTape2012 (Eq. 66) is what we denote as omegadc here;
+% in the other scripts, we use the notation omega to represent the angle
+% between two moment tensors that are not necessarily double couple moment
+% tensors (see CMT2omega.m).
+%
+% The angle xi0 may be more relevant than omegadc when comparing the
+% difference between two fault surfaces that preserve sense-of-slip indicators.
 %
 % EXAMPLES: see below and also TT2012kaganAppE.m
 % Set bfigure=true to plot histograms of the distributions.
 % 
-% Carl Tape 8/11/2012
+% Carl Tape, 2012-08-11
+%
 
 bfigure = true;
 
