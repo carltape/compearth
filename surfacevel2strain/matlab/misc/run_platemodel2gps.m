@@ -1,6 +1,5 @@
 %
-% test_platemodel2gps.m
-% Carl Tape, 28-Jan-2011
+% run_platemodel2gps.m
 %
 % This program computes the surface velocity field at a set of points on
 % the sphere. The Euler vectors and plate boundaries are provided from
@@ -17,9 +16,24 @@
 %     1 (write)               
 %     1 (fixed plate)        // 0
 %     11 (fixed NAM)         // 
+% (2) user input for manually entered lon-lat points
+%     7 (plate model = bird) // 6, 7
+%     3 (manually entered points)                    
+%     2 (npac)               
+%     0 (no write)               
+%     0 (no fixed plate)
+%
+% EXAMPLE 2 OUTPUT:
+% surface velocities (lon, lat, ve (mm/yr), vn (mm/yr)):
+%    -148.4460      70.2036     3.20   -15.29
+%    -149.5900      68.6274     3.03   -15.11
+%    -150.1100      67.3812     2.79   -15.03
+%    -150.2640      66.2066     2.49   -15.01
+%    -148.5110      65.5114     1.86   -15.28
 % 
-% calls platemodel2gps.m, getxy.m
-% called by xxx
+% calls platemodel2gps.m
+%
+% Carl Tape, 2011-01-28
 %
 
 clear, clc
@@ -142,7 +156,7 @@ elseif igrid == 2
 %     lat_mag = Y(:);
 
 elseif igrid==3
-    if 1==1
+    if 0==1
         % click points that you want
         [lon,lat] = getxy(ax1);
     else
@@ -428,8 +442,13 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
     %======================================================================
     % WRITE VELOCITY FIELD TO FILE
 
-    if iwrite==1
+    if iwrite==0
+        disp('surface velocities (lon, lat, ve (mm/yr), vn (mm/yr)):');
+        for ii=1:num
+            disp(sprintf('%12.4f %12.4f %8.2f %8.2f',lon(ii),lat(ii),ve(ii),vn(ii)));
+        end
         
+    else
         % for GMT plotting, set zero values to <0
         veps = 1e-4; vmag(vmag < veps) = -veps;
         
