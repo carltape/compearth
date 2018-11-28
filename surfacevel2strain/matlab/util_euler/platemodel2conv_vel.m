@@ -29,6 +29,9 @@ function [vvec_c, vmat_c, vmat_up, vmat_sub, gamma, exyz, names, name_labs] = ..
 % Carl Tape, 2006-05-16
 %
 
+bfigure_basic = true;
+bfigure_all = false;
+
 % constants
 deg = 180/pi;
 earthr = 6371*1e3;
@@ -39,36 +42,10 @@ lon = lon(:);
 num = length(lat);
 
 % get euler vectors for plate model
-get_plate_model;
-
-% display info on euler poles
-if 1==1
-    
-    % convert euler poles (wx,wy,wz) --> (lat,lon,omg)
-    outvec1 = euler_convert(exyz,1);
-    elat = outvec1(1,:);
-    elon = outvec1(2,:);
-
-    % rotation rate, deg/Myr
-    omegs = sqrt( exyz(1,:).^2 + exyz(2,:).^2 + exyz(3,:).^2 );
-
-    % maximum surface velocity on a plate, in mm/yr
-    % vmax will be at the points that are del=90 from the euler pole
-    % vmax = omegs/mmyr2degMyr;
-    
-    % display info on euler poles
-    disp('  '); disp(['Here are ' num2str(nump) ' euler poles from the ' smod ' model:']);
-    disp('             label     elon        elat    deg/Myr    name'); 
-    for ii=1:nump  
-        disp(['  Plate #' num2str(sprintf('%2.2i',ii)) ' : ' ...
-            name_labs{ii} ...
-            num2str(sprintf('%12.4f',elon(ii))) ...
-            num2str(sprintf('%12.4f',elat(ii))) ...
-            num2str(sprintf('%10.4f',omegs(ii))) ...
-            '   ' names{ii} ])
-    end
-    disp('-----------------------------');
-end
+%get_plate_model;
+bdisplay = true;
+[exyz,names,name_labs,dir_bounds,ssfx,smod] = get_plate_model(imodel,bdisplay);
+nump = length(names);
 
 %========================================================
 % COMPUTE SURFACE VELOCITY FIELD
@@ -199,9 +176,6 @@ vvec_c(:,4) = az_sub;
 vvec_c(:,5) = az_up;
 vvec_c(:,6) = az_c;
 
-bfigure_basic = true;
-bfigure_all = false;
-
 if bfigure_basic
     if num > 1
         if max(lon) - min(lon) > 180, plon = wrapTo360(lon); else plon = lon; end
@@ -230,8 +204,8 @@ if bfigure_basic
        ylabel('North velocity, mm/yr');
        legend([h1 h2 h3],'convergence','upper','subduct');
        if num==1
-           title(sprintf('lon %.2f lat %.2f azcon %.1f azsub %.1f azup %.1f [azref %.1f] %.1f = %.1f - %.1f mm/yr',...
-             lon(ii),lat(ii),vvec_c(ii,[6 4 5]),azref(ii),vvec_c(ii,[3 1 2])));
+           title(sprintf('[%s] lon %.2f lat %.2f azcon %.1f azsub %.1f azup %.1f [azref %.1f] %.1f = %.1f - %.1f mm/yr',...
+             smod,lon(ii),lat(ii),vvec_c(ii,[6 4 5]),azref(ii),vvec_c(ii,[3 1 2])),'interpreter','none');
        end
        if num > 40, continue; end
     end
@@ -249,8 +223,8 @@ if bfigure_all
        xlabel('East velocity, mm/yr');
        ylabel('North velocity, mm/yr');
        legend([h1 h2 h3],'convergence','upper','subduct');
-       title(sprintf('lon %.2f lat %.2f azcon %.1f azsub %.1f azup %.1f [azref %.1f] %.1f = %.1f - %.1f mm/yr',...
-           lon(ii),lat(ii),vvec_c(ii,[6 4 5]),azref(ii),vvec_c(ii,[3 1 2])));
+       title(sprintf('[%s] lon %.2f lat %.2f azcon %.1f azsub %.1f azup %.1f [azref %.1f] %.1f = %.1f - %.1f mm/yr',...
+           smod,lon(ii),lat(ii),vvec_c(ii,[6 4 5]),azref(ii),vvec_c(ii,[3 1 2])),'interpreter','none');
        if num > 40, continue; end
     end
 end
@@ -302,20 +276,25 @@ if 0==1
            azref(kk),vvec_c(kk,:),gamma(kk) ));
     end
     
-    %% Cook Inlet and Susitna region
-    iups = 32;      % NA
-    isubs = 37;     % PA
+    %% Cook Inlet and Susitna region (Silwal, Tape, Lomax, 2018)
+    iNA = [10 11 11 32 11 32 32 32];
+    iPA = [11 12 13 37 12 37 37 37];
+    %ivec = 7;       % Bird2003 model in MorganMorgan2007 hotspot reference frame
+    ivec = 1:8;
     azref = 0;
     lon = -151.5;
     lat = 61.5;
-    imodel = 7;
     ifix = 99;
-    [vvec_c, vmat_c, vmat_up, vmat_sub, gamma, exyz, names, name_labs] = ...
-        platemodel2conv_vel(iups,isubs,azref,lon,lat,imodel,ifix);
-    ph_c = vvec_c(4);
-    mag_c = norm(vmat_c(1:3));
-    disp(sprintf('convergence is %.0f or N%.0fW with magnitude %.1f mm/yr',ph_c,360-ph_c,mag_c));
-    
+    for imodel = ivec
+        iups = iNA(imodel);
+        isubs = iPA(imodel);
+        [vvec_c, vmat_c, vmat_up, vmat_sub, gamma, exyz, names, name_labs] = ...
+            platemodel2conv_vel(iups,isubs,azref,lon,lat,imodel,ifix);
+        ph_c = vvec_c(4);
+        mag_c = norm(vmat_c(1:3));
+        disp(sprintf('convergence is %.0f or N%.0fW with magnitude %.1f mm/yr',...
+            ph_c, 360-ph_c, mag_c));
+    end
 end
 
 %==========================================================================

@@ -17,7 +17,7 @@
 %     1 (fixed plate)        // 0
 %     11 (fixed NAM)         // 
 % (2) user input for manually entered lon-lat points
-%     7 (plate model = bird) // 6, 7
+%     7 (plate model = bird) // 4, 6, 7
 %     3 (manually entered points)                    
 %     2 (npac)               
 %     0 (no write)               
@@ -30,6 +30,9 @@
 %    -150.1100      67.3812     2.79   -15.03
 %    -150.2640      66.2066     2.49   -15.01
 %    -148.5110      65.5114     1.86   -15.28
+%
+% To calculate surface velocities for points that are outside the plate,
+% e.g., above subducting plates, use platemodel2conv_vel.m.
 % 
 % calls platemodel2gps.m
 %
@@ -181,6 +184,7 @@ end
 
 %==========================================================================
 % EULER POLES FOR PLATE MODEL (see test_euler2gps.m)
+% THESE ARE PRE-SAVED AND THEN LOADED BY get_plate_model.m FROM INSIDE platemodel2gps.m
 
 dir_models = [dir_plates 'plate_models/' smod '/'];
 ww = [dir_models smod '_euler_poles.dat'];

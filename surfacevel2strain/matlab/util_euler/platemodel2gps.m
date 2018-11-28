@@ -1,15 +1,6 @@
-%
-% function [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] ...
-%    = platemodel2gps(lon,lat,imodel,ifix,opts)
-%
-% Carl Tape, 2006-01-11
-%
-% This model computed the surface velocity field based on a plate model
-% (Euler vectors and plate boundaries), given a specified fixed plate and
-% an input set of lat-lon gridpoints.
-%
-% The program will output the surface velocity vector field,
-% as long as there are <5000 gridpoints.
+function [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] ...
+    = platemodel2gps(lon,lat,imodel,ifix,opts)
+%PLATEMODEL2GPS compute surface velocities from a set of plates and euler poles
 %
 % INPUT:
 %   lon,lat     gridpoints for which you want the surface velocities
@@ -34,6 +25,10 @@
 %   (5)         Gripp and Gordon (2002) -- HS3-NUVEL1A
 %   (6)         Bird, but in GrippGordon reference frame
 %   (7)         Bird, but in MorganMorgan reference frame
+%   (8)         Bird, but in no-net-rotation reference frame
+%
+% The program will output the surface velocity vector field,
+% as long as there are <5000 gridpoints.
 %
 % Originally, I adapted a pre-computed velocity field from Eh Tan -- those
 % codes are in plate_model.m.  The key problem is to determine whether a
@@ -62,9 +57,9 @@
 %
 % called by run_platemodel2gps.m
 %
+% Carl Tape, 2006-01-11
+%
 
-function [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] ...
-    = platemodel2gps(lon,lat,imodel,ifix,opts)
 
 % constants
 deg = 180/pi;
@@ -84,7 +79,9 @@ idisplay    = opts{2};
 ieuler_only = opts{3};
 
 % KEY: get euler vectors for plate model
-get_plate_model;   % input imodel
+%get_plate_model;   % input imodel
+[exyz,names,name_labs,dir_bounds,ssfx,smod] = get_plate_model(imodel);
+nump = length(names);
 
 % display info on euler poles
 if and(idisplay==1, ieuler_only==1)
