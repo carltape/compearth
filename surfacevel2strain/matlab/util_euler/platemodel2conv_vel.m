@@ -139,7 +139,7 @@ for ii=1:num
         vmat_c(ii,3:4) = vmat_sub(ii,3:4) - vmat_up(ii,3:4);    % trench normal
         vmat_c(ii,5:6) = vmat_sub(ii,5:6) - vmat_up(ii,5:6);    % trench parallel
         
-        % components of the convergence velocity (note sign convention)
+        % components of the convergence velocity: Vc = Vsub - Vupper
         vvec_c(ii,1) = dot(vaz_global,Vxyz_sub);
         vvec_c(ii,2) = dot(vaz_global,Vxyz_up);
         vvec_c(ii,3) = vvec_c(ii,1) - vvec_c(ii,2);
@@ -279,9 +279,10 @@ if 0==1
     %% Cook Inlet and Susitna region (Silwal, Tape, Lomax, 2018)
     iNA = [10 11 11 32 11 32 32 32];
     iPA = [11 12 13 37 12 37 37 37];
-    %ivec = 7;       % Bird2003 model in MorganMorgan2007 hotspot reference frame
-    ivec = 1:8;
+    ivec = 7;       % Bird2003 model in MorganMorgan2007 hotspot reference frame
+    %ivec = 1:8;
     azref = 0;
+    %azref = 343.1;
     lon = -151.5;
     lat = 61.5;
     ifix = 99;
@@ -290,10 +291,11 @@ if 0==1
         isubs = iPA(imodel);
         [vvec_c, vmat_c, vmat_up, vmat_sub, gamma, exyz, names, name_labs] = ...
             platemodel2conv_vel(iups,isubs,azref,lon,lat,imodel,ifix);
-        ph_c = vvec_c(4);
+        az_c = vvec_c(6);
         mag_c = norm(vmat_c(1:3));
+        % WARNING: THIS IS CUSTOM FOR THIS EXAMPLE ONLY
         disp(sprintf('convergence is %.0f or N%.0fW with magnitude %.1f mm/yr',...
-            ph_c, 360-ph_c, mag_c));
+            az_c, 360-az_c, mag_c));
     end
 end
 
