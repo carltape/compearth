@@ -9,9 +9,11 @@ function [K1,D1,K2,D2,KU1,DU1,KU2,DU2,rho,zeta,U] = CMT2CDC(Mmat)
 %    Mmat   3 x 3 symmetric matrix
 %
 % References:
-%    Tape and Tape (2013), Appendix A.
-%    Minson et al. (2007)
+%    Tape and Tape (2013 GJI), Appendix A (see also TT2013AppA.m)
+%    Minson et al. (2007 JGR)
 %    Aki and Richards (1980)
+% Applications:
+%    Alvizuri and Tape (2018 SRL)
 %
 
 disp('entering CMT2DC.m');
@@ -77,5 +79,26 @@ Mcheck1 = D1 + K1
 Mcheck2 = D2 + K2
 norm(Mmat(:) - Mcheck1(:)) ./ norm(Mmat(:))
 norm(Mmat(:) - Mcheck2(:)) ./ norm(Mmat(:))
+
+%==========================================================================
+
+if 0==1
+    % EXAMPLE 1: see TT2013AppA.m
+    
+    %% EXAMPLE 2: Minson et al. (2007), Eq. A13
+    % note 1: This is a contrived example in the sense that one can see
+    % from inspection that one of the decompositions will be the diagonal
+    % (3,1,1) [crack] and the off-diagonal matrix [DC]. Also the crack
+    % tensor is selected such that nu = 0.25, which is the constraint
+    % preferred by Minson ("In our inversions, we assume a Poisson solid
+    % (nu = 0.25)...")
+    % note 2: The basis is assumed to be north-east-down, but this choice
+    % does not matter for the sake of the CDC decomposition.
+    clear, close all, clc
+    Mmat = [3 1 0 ; 1 1 0 ; 0 0 1];
+    [K1,D1,K2,D2,KU1,DU1,KU2,DU2,rho,zeta,U] = CMT2CDC(Mmat);
+    % display in same order as in Minson
+    K2,D2,K1,D1
+end
 
 %==========================================================================
