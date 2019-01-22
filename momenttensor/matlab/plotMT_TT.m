@@ -157,4 +157,45 @@ subplot(nr,nc,6); hold on;
 plot_histo(sigma,sigmabin); xlabel('rake, deg'); set(gca,'xtick',-180:30:180);
 plot([-90 90], hflat*[1 1],'r','linewidth',2);
 
+%--------------------------------------------------------------------------
+
+if bvw
+    % the five histograms of v, w, kappa, h, sigma should all be flat for a
+    % uniform distribution of moment tensors
+    figure; nr=3; nc=2;
+
+    % v
+    subplot(nr,nc,1); hold on;
+    plot_histo(gamma,gammabin,iplothisto);
+    plot(gsmooth,xgsmooth,'r','linewidth',2);
+    xlabel('v');
+
+    % w
+    subplot(nr,nc,2); hold on;
+    plot_histo(delta,deltabin,iplothisto);
+    plot(dsmooth,xdsmooth,'r','linewidth',2);
+    xlabel('w');
+    %plot([-90 90], hflat*[1 1],'r','linewidth',2);
+
+    % magnitude
+    subplot(nr,nc,3);
+    plot_histo(pM0,magbin); xlabel(stM0); 
+
+    % strike angle
+    subplot(nr,nc,4); hold on;
+    plot_histo(kappa/deg,kappabin/deg); xlabel('strike, radians');
+    plot([0 360]/deg, hflat*[1 1],'r','linewidth',2);
+
+    % cosine of dip angle
+    thetabin = linspace(0,1,nedge);
+    subplot(nr,nc,5); hold on;
+    plot_histo(cos(theta),thetabin,2); xlabel('h = cos(dip)');
+    plot([0 90]/deg, hflat*[1 1],'r','linewidth',2);
+
+    % slip angle (rake)
+    subplot(nr,nc,6); hold on;
+    plot_histo(sigma/deg,sigmabin/deg); xlabel('rake, radians');
+    plot([-90 90]/deg, hflat*[1 1],'r','linewidth',2);
+end
+
 %==========================================================================
