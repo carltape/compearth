@@ -17,27 +17,18 @@
 #
 #  If you use or adapt this script, please consider citing:
 #    TT2012: W. Tape and C. Tape, "A geometric setting for moment tensors," Geophysical J. International, 2012
-#  For additional information, please see:
+#  For additional information:
 #    TT2013: W. Tape and C. Tape, "The classical model for moment tensors," Geophysical J. International, 2013
 #    TT2015: W. Tape and C. Tape, "A uniform parameterization for seismic moment tensors," Geophysical J. International, 2015
 #
-#  Last tested 2016-10-16 with GMT 4.5.3
+#  Last tested 2019-04-19 with GMT 4.5.3
 #  Our psmeca (for plotting beachballs) uses a modified version of utilmeca.c by Doug Dreger.
-#  
+#
 #===================================================================================
 
 # all we use this for is pi
 use Math::Trig;
 use Math::Trig ':pi';
-
-$cshfile = "lune.csh";
-
-$fontno = "1"; 
-$ticklen = "0.0c";    # =0 for no ticks
-
-open(CSH,">$cshfile");
-# set GMT default parameters
-print CSH "gmtset PAPER_MEDIA letter PAGE_ORIENTATION landscape MEASURE_UNIT inch BASEMAP_TYPE plain PLOT_DEGREE_FORMAT D TICK_LENGTH $ticklen LABEL_FONT_SIZE 10 ANOT_FONT_SIZE 10 HEADER_FONT 1 ANOT_FONT 1 LABEL_FONT 1 HEADER_FONT_SIZE 18 FRAME_PEN 2p TICK_PEN 2p\n";
 
 #----------
 # lune source-type plot
@@ -51,16 +42,16 @@ $xtick2 = 5; $ytick2 = 5;
 $Blune = "-Ba${xtick1}f${xtick2}g${xtick1}:\" \":/a${ytick1}f${xtick2}g${ytick1}:\" \":wesn";
 #$Blune = "-Ba${xtick1}f${xtick2}:\" \":/a${ytick1}f${xtick2}:\" \":wesn";   # no gridlines
 
-$wid = "2.8i";
-#$Jlune = "-JA0/0/$wid"; $title = "Lambert equal-area ($Jlune)"; $ftag = "lambert";
-#$Jlune = "-JB0/0/0/90/$wid"; $title = "Albers equal-area ($Jlune)"; $ftag = "albers";
-
-#$Jlune = "-JY0/$wid";  $title1 = "Cylindrical equal-area ($Jlune)"; $ftag = "cylindrical";
-#$Jlune = "-JI0/$wid";  $title1 = "Sinusoidal equal-area ($Jlune)"; $ftag = "sinusoidal";
-#$Jlune = "-JKf0/$wid"; $title1 = "Eckert IV equal-area ($Jlune)"; $ftag = "eckert4";
-#$Jlune = "-JK0/$wid";  $title1 = "Eckert VI equal-area ($Jlune)"; $ftag = "eckert6";
-#$Jlune = "-JW0/$wid";  $title1 = "Mollweide equal-area ($Jlune)"; $ftag = "mollewide";
-$Jlune = "-JH0/$wid";   $title1 = "Hammer equal-area ($Jlune)"; $ftag = "hammer";
+$wid = 2.8;
+#$Jlune = "-JA0/0/${rwid}i"; $title = "Lambert equal-area ($Jlune)"; $ftag = "lambert";
+#$Jlune = "-JY0/${wid}i";  $title1 = "Cylindrical equal-area ($Jlune)"; $ftag = "cylindrical";
+#$Jlune = "-JI0/${wid}i";  $title1 = "Sinusoidal equal-area ($Jlune)"; $ftag = "sinusoidal";
+#$Jlune = "-JKf0/${wid}i"; $title1 = "Eckert IV equal-area ($Jlune)"; $ftag = "eckert4";
+#$Jlune = "-JK0/${wid}i";  $title1 = "Eckert VI equal-area ($Jlune)"; $ftag = "eckert6";
+#$Jlune = "-JW0/${wid}i";  $title1 = "Mollweide equal-area ($Jlune)"; $ftag = "mollewide";
+$Jlune = "-JH0/${wid}i";   $title1 = "Hammer equal-area ($Jlune)"; $ftag = "hammer";
+#$rwid = $wid*0.8; $rhgt = $rwid*3;
+#$Jlune = "-JX${rwid}i/${rhgt}i"; $title1 = "Non-geographical ($Jlune)"; $ftag = "ngeo";
 
 #----------
 # vw rectangle source-type plot
@@ -107,32 +98,40 @@ $dgray = 120;
 @nus = (0.25,0.36);
 
 # PLOTTING OPTIONS
-$iplot = 1;  # =0 (reference lune), =1 (dots from published studies), =2 (reference beachballs), =3 (catalog of full moment tensors)
-$lplot = 1;  # =1-2: reference MTs on the lune (iplot=2 only)
-$kplot = 1;  # =1-4: orientation of MT at center of lune (iplot=2 only)
+$iplot = 1;  # =0 (reference lune)
+             # =1 (dots from published studies)
+             # =2 (reference beachballs)
+             # =3 (catalog of full moment tensors)
+$lplot = 1;  # =1-4: reference MTs on the lune (iplot=2 only)
+$kplot = 1;  # =1-5: orientation of MT at center of lune (iplot=2 only)
+$splot = 0;  # =0-5: text labels above reference beachballs (iplot=2 only, lplot=3 only)
+@splotlabs = ("","_lam","_gammadelta","_alphanu","_zetaphi","_vw");
+$slabel = $splotlabs[$splot];
 if($iplot==2) {
-  $psfile = "lune_${ftag}_iplot${iplot}_lplot${lplot}_kplot${kplot}.ps";
+  $psfile = "lune_${ftag}_iplot${iplot}_lplot${lplot}_kplot${kplot}$slabel.ps";
 } else {
   $psfile = "lune_${ftag}_iplot${iplot}.ps";
 }
 # points
 $plot_ref_points = 1;  # plot reference points on lune (ISO, DC, etc)
 $plot_ref_labels = 1;  # reference labels: =0 (none), =1 (eigs), =2 (ISO, DC, etc)
-$iiplotDC = 0;
+$iiplotDC = 1;         # plot reference point (and label) at DC
 # patches for lam_i = 0 regions
 $ipatch = 1;
 # arcs
-$idev = 0;             # deviatoric arc
-$inup25 = 1;           # nu=0.25 arc between crack points
+$idev = 1;             # deviatoric arc (delta = 0)
+$iiso = 1;             # DC+ISO arc (gamma = 0)
+$inup25 = 0;           # nu=0.25 arc between crack points
 $inup36 = 0;           # nu=0.36 arc between crack points
 $ilam3 = 1;            # lam3 = 0 arc
 $ilam2 = 1;            # lam2 = 0 arc between dipoles
 $ilam1 = 1;            # lam1 = 0 arc
+$arcwid = 3;           # plotting width of arcs (in points)
 # gCDC options
 $ipatchgcdc = 0;       # patches for gCDC model (inugcdc > 0)
 $iarcgcdc = 0;         # boundary arcs for gCDC model (inugcdc > 0)
 @nus = (0.25,0.36);    # Poisson values considered for gCDC model
-$inugcdc = 1;          #   =1 for nu=0.25, =2 for nu=0.36 (ice)
+$inugcdc = 0;          #   =1 for nu=0.25, =2 for nu=0.36 (ice)
 # other options
 $ilegend = 0;          # legend for data points
 $ititle = 0;           # title (see below)
@@ -151,6 +150,24 @@ if($ipatch==1) {$clune = $lgray;}
 # size of markers
 $msize_ref = 8;
 $msize_data = 6;
+
+$fontno = "1";
+#$ticklen = "0.2c";
+$ticklen = "0.0c";    # no ticks
+$tpen = "2p";
+$fpen = "2p";
+
+# modifications for plotting beachball text labels (iplot=2)
+if($iplot==2 && $splot > 0) {
+    $tpen = "0.5p"; $fpen = "0.5p"; $arcwid = 0.5;
+    $idev = 0; $iiso = 0; $inup25 = 0; $inup36 = 0;
+}
+if($iplot==1) {$arcwid = 2;}
+
+$cshfile = "lune.csh";
+open(CSH,">$cshfile");
+# set GMT default parameters
+print CSH "gmtset PAPER_MEDIA letter PAGE_ORIENTATION landscape MEASURE_UNIT inch BASEMAP_TYPE plain PLOT_DEGREE_FORMAT D TICK_LENGTH $ticklen LABEL_FONT_SIZE 10 ANOT_FONT_SIZE 10 HEADER_FONT 1 ANOT_FONT 1 LABEL_FONT 1 HEADER_FONT_SIZE 18 FRAME_PEN $fpen TICK_PEN $tpen\n";
 
 # directories with data files
 # pdir2 is for a user's directory of files that are outside of compearth
@@ -205,7 +222,6 @@ if ( ($ipatchgcdc > 0 || $iarcgcdc > 0) && $inugcdc > 0 ) {
 # 5 CDC nu=0.25
 # 6 lam2=0 (CDC nu=0) between dipoles
 # 7 CDC nu=0.36
-$lwid = 3;
 $fname1 = "$pdir/sourcetype_arc_01.dat";
 $fname2 = "$pdir/sourcetype_arc_02.dat";
 $fname3 = "$pdir/sourcetype_arc_03.dat";
@@ -214,25 +230,27 @@ $fname5 = "$pdir/sourcetype_arc_05.dat";
 $fname6 = "$pdir/sourcetype_arc_06.dat";
 $fname7 = "$pdir/sourcetype_arc_07.dat";
 if ($iplot==1) {
-  $W = "-W2p,0,--";
-  $W = "-W2p,0";
-  if($idev==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | psxy $W -W2p,$blue -J -R -K -O -V >>$psfile\n";}
-  #print CSH "psxy $fname2 $W -J -R -K -O -V >>$psfile\n";
+  # default formatting for arcs
+  $W = "-W${arcwid}p,0,--";
+  #$W = "-W${arcwid}p,0";
+  if($idev==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | psxy $W -J -R -K -O -V >>$psfile\n";}  # -W${arcwid}p,$blue
+  if($iiso==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname2 | psxy $W -J -R -K -O -V >>$psfile\n";}  # -W${arcwid}p,$orange
   if($ilam3==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname3 | psxy $W -J -R -K -O -V >>$psfile\n";}
   if($ilam1==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname4 | psxy $W -J -R -K -O -V >>$psfile\n";}
-  if($inup25==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname5 | psxy $W -W2p,$green -J -R -K -O -V >>$psfile\n";}
-  if($inup36==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname7 | psxy $W -W2p,$green -J -R -K -O -V >>$psfile\n";}
+  if($inup25==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname5 | psxy $W -J -R -K -O -V >>$psfile\n";}  # -W${arcwid}p,$green
+  if($inup36==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname7 | psxy $W -J -R -K -O -V >>$psfile\n";}  # -W${arcwid}p,$green
   if($ilam2==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname6 | psxy $W -J -R -K -O -V >>$psfile\n";}
+
 } else {
   if($ipatch==1) {@cols = ($magenta,$red,$blue,$blue,$black,$blue);}
   else           {@cols = ($magenta,$orange,$black,$black,$blue,$black);}
-  if($idev==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | psxy -W${lwid}p,$cols[0] -J -R -K -O -V >>$psfile\n";}
-  #if($ipatch==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname2 | psxy -W${lwid}p,$cols[1] -J -R -K -O -V >>$psfile\n";}
-  if($ilam3==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname3 | psxy -W${lwid}p,$cols[2] -J -R -K -O -V >>$psfile\n";}
-  if($ilam1==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname4 | psxy -W${lwid}p,$cols[3] -J -R -K -O -V >>$psfile\n";}
-  if($inup25==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname5 | psxy -W${lwid}p,$cols[4] -J -R -K -O -V >>$psfile\n";}
-  if($inup36==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname7 | psxy -W${lwid}p,$cols[4] -J -R -K -O -V >>$psfile\n";}
-  if($ilam2==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname6 | psxy -W${lwid}p,$cols[5] -J -R -K -O -V >>$psfile\n";}
+  if($idev==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | psxy -W${arcwid}p,$cols[0] -J -R -K -O -V >>$psfile\n";}
+  if($iiso==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname2 | psxy -W${arcwid}p,$cols[1] -J -R -K -O -V >>$psfile\n";}
+  if($ilam3==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname3 | psxy -W${arcwid}p,$cols[2] -J -R -K -O -V >>$psfile\n";}
+  if($ilam1==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname4 | psxy -W${arcwid}p,$cols[3] -J -R -K -O -V >>$psfile\n";}
+  if($inup25==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname5 | psxy -W${arcwid}p,$cols[4] -J -R -K -O -V >>$psfile\n";}
+  if($inup36==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname7 | psxy -W${arcwid}p,$cols[4] -J -R -K -O -V >>$psfile\n";}
+  if($ilam2==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname6 | psxy -W${arcwid}p,$cols[5] -J -R -K -O -V >>$psfile\n";}
 }
 if($iarcgcdc==1 && $iplot==1 && $inup25==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname5 | psxy -W2p,$blue -J -R -K -O -V >>$psfile\n";}
 
@@ -248,7 +266,6 @@ if ($plot_ref_points || $plot_ref_labels) {
   #  print CSH "psxy $fname -N -Sc${csize}p -W1p,0/0/0 -G255 -J -R -K -O -V >>$psfile\n";
   #}
   $pinfo = "-N -Sc${msize_ref}p -W1p,0/0/0 -G0";
-  $pinfo = "-N -Sp${msize_ref}p -W1p,0";
   $fsize = 12;
   $fontno = 1;
   # full set of reference points
@@ -321,6 +338,7 @@ if ($iplot==1) {
        $green,$green,$red,$orange,$magenta,$cyan,$cyan,$cyan,$cyan,$dgray,
        $magenta,$brown,$cyan,$white,$red);
 
+  #@inds = ();                      # none
   @inds = (9,8,1,6,5);            # TapeTape2012 figure 25
   #@inds = (11,5,22,21,7,6,10,24,25); # TapeTape2013 figure 14b: mostly volcanic and geothermal
   #@inds = (2..4);                 # TapeTape2013 figure 14c: Ford2009 (nu = 0.25)
@@ -356,42 +374,120 @@ if ($iplot==1) {
 #       print CSH "awk '{print \$8,\$9}' $fname1 | psxy -N -Sc${csize}p -W0.5p,0/0/0 -G$cols[0] -J -R -K -O -V >> $psfile\n";
 #       print CSH "awk '{print \$8,\$9}' $fname2 | psxy -N -Sc${csize}p -W0.5p,0/0/0 -G$cols[1] -J -R -K -O -V >> $psfile\n";
 
-      # # Dreger et al. 2012, colored by F-test significance (comment out default block above)
-      # $cptfile = "color.cpt";
-      # #print CSH "makecpt -Crainbow -T50/100/5 -D > $cptfile\n";
-      # print CSH "makecpt -Cseis -T50/100/5 -D -I > $cptfile\n";
-      # $ilegend = 0;
-      # $fname = "/home/carltape/papers/SOURCE/DATA/bsldreger_fmt_lune.dat";
-      # $Fmin = 40;  # try 40,70,90
-      # `awk '\$3 > $Fmin' $fname > dtemp`;
-      # $nplot = `wc dtemp | awk '{print \$1}'`; chomp($nplot);
-      # print "\n$nplot FMTs with F > $Fmin\n";
-      # print CSH "awk '{print \$1,\$2,\$3}' dtemp | psxy -N -Sc${csize}p -W0.5p,0/0/0 -C$cptfile -J -R -K -O -V >> $psfile\n";
-      # $Dscale = "-D0/1/2/0.2";
-      # $Bscale = "-B10f5:\"F-test significance\": -Eb10p";
-      # print CSH "psscale -C$cptfile $Dscale $Bscale -Xa3.5 -Ya6 -V -K -O >> $psfile\n";
+   if(0==1) {
+       # Dreger et al. 2012, colored by F-test significance (comment out default block above)
+       $cptfile = "color.cpt";
+       #print CSH "makecpt -Crainbow -T50/100/5 -D > $cptfile\n";
+       print CSH "makecpt -Cseis -T50/100/5 -D -I > $cptfile\n";
+       $ilegend = 0;
+       $fname = "/home/carltape/papers/SOURCE/DATA/Dreger2012_data/bsldreger_fmt_iopt1_lune.dat";
+       $Fmin = 40;  # try 40,70,90
+       `awk '\$3 > $Fmin' $fname > dtemp`;
+       $nplot = `wc dtemp | awk '{print \$1}'`; chomp($nplot);
+       print "\n$nplot FMTs with F > $Fmin\n";
+       print CSH "awk '{print \$1,\$2,\$3}' dtemp | psxy -N -Sc${csize}p -W0.5p,0/0/0 -C$cptfile -J -R -K -O -V >> $psfile\n";
+       $Dscale = "-D0/1/2/0.2";
+       $Bscale = "-B10f5:\"F-test significance\": -Eb10p";
+       print CSH "psscale -C$cptfile $Dscale $Bscale -Xa3 -Ya5.5 -V -K -O >> $psfile\n";
+   }
 
 } elsif ($iplot==2) {
-  if($k==2) {die("beachball plotting not yet implemented for rectangle plot -- set kmax = 1\n")}
+  if($k==1) {$xtag = "lune"} else {$xtag = "vw"}
+  #if($k==2) {die("beachball plotting not yet implemented for rectangle plot -- set kmax = 1\n")}
   # reference beachballs on the lune
-  $cmtinfo = "-Sm0.45 -L0.5p/0/0/0 -G255/0/0 -N";
-  $cmtfile = sprintf("$pdir/beachballs_ipts%i_iref%i_lune_psmeca",$lplot,$kplot);
+  $beachballfontsize = "8p"; #if($splot==1) {$beachballfontsize = "6p";}
+  $cmtinfo = "-Sm0.45/$beachballfontsize -L0.5p/0/0/0 -G255/0/0 -N";
+  $cmtfile = sprintf("$pdir/beachballs_ipts%i_iref%i_%s_psmeca%s",$lplot,$kplot,$xtag,$slabel);
+  if (not -f $cmtfile) {die("\n check if cmt file $cmtfile exists\n");}
   print CSH "psmeca $cmtfile $J $R $cmtinfo -K -O -V >> $psfile\n";
+  if($splot > 0) {
+    $textfile = sprintf("$pdir/pstext%s",$slabel);
+    if (not -f $textfile) {die("\n check if text file $textfile exists\n");}
+    print CSH "pstext $textfile -JX11i/8.5i -R0/11/0/8.5 -K -O -V -Xa3.5i -Ya0i >> $psfile\n";
+  }
 
 } elsif ($iplot==3) {
-  if($k==2) {die("beachball plotting not yet implemented for rectangle plot -- set kmax = 1\n")}
-  # catalog of moment tensors on the lune
-  $cmtfile = "/home/carltape/REPOSITORIES/manuscripts/alvizuri/papers/2014fmt/data/utuhalf_P01_V10_R01_S10_lune_fixedmag_psmeca";
-  if (not -f $cmtfile) {die("\n check if cmt file $cmtfile exists\n")}
-  $cptfile = "color.cpt";
-  print CSH "makecpt -Chaxby -T0/3/0.5 -D > $cptfile\n";
-  $cmtinfo = "-Sm0.2 -L0.5p/0/0/0 -N";
-  print CSH "psmeca $cmtfile $J $R $cmtinfo -Z$cptfile -K -O -V >> $psfile\n";
-  $Dscale = "-D3/7/1.5/0.25";
-  $Bscale = "-B1f0.5g0.5:\"Mw\": -Al";
-  print CSH "gmtset TICK_LENGTH 8p\n";
-  print CSH "psscale -C$cptfile $Dscale $Bscale -V -K -O >> $psfile\n";
-} 
+  # catalog of moment tensors plotted as beachballs (not dots)
+  # here the magnitudes of each event were fixed so that the balls are all the same size
+  $icat = 4;
+  $ttag = "Mw"; $Mtick1 = 1; $Mtick2 = 0.5; $cpal = "haxby";
+  print "\n icat = $icat \n";
+  if($icat==1) {        # Ford2009 -- Nevada Test Site
+    $Mran = "3/5/0.5";
+    $dircat = "/home/carltape/manuscripts/2016/fmtu/data";
+    if($k==1) {$cmtfile = "$dircat/Ford2009_lune_fixedmag_psmeca";}
+    else      {$cmtfile = "$dircat/Ford2009_vw_fixedmag_psmeca";}
+
+  } elsif($icat==2) {   # AlvizuriTape2016 -- Uturuncu volcano
+    $Mran = "0/3/0.5";
+    $dircat = "/home/carltape/REPOSITORIES/manuscripts/alvizuri/papers/2014fmt/data/";
+    if($k==1) {$cmtfile = "$dircat/utuhalf_P01_V10_R01_S10_lune_fixedmag_psmeca";}
+    else      {$cmtfile = "$dircat/utuhalf_P01_V10_R01_S10_vw_fixedmag_psmeca";}
+
+  } elsif($icat==3)  { # Alvizuri2017 -- Nevada Test Site
+    # paper_fmtu.m --> read_mech_alvizuri2018.m --> read_mech_celso.m --> capout_fmtu_llnl.txt
+    $dircat = "/home/carltape/REPOSITORIES/manuscripts/alvizuri/papers/2016fmtu/data/";
+    #$Mran = "0/3/0.5"; $mtag = "fmtu_utu63";  # Utu
+    $Mran = "4/5.5/0.5"; $mtag = "fmtu_ak21"; # Alaska
+    #$Mran = "3/5/0.5"; $mtag = "fmtu_llnl"; # LLNL
+    if($k==1) {$cmtfile = "$dircat/${mtag}_lune_fixedmag_psmeca";}
+    else      {$cmtfile = "$dircat/${mtag}_vw_fixedmag_psmeca";}
+
+  } elsif($icat==4)  { # AlvizuriTape2018 -- North Korea
+    # paper_2018nk.m --> read_mech_2018nk.m --> read_mech_celso.m --> capout_fmtu_llnl.txt
+    $dircat = "/home/carltape/REPOSITORIES/manuscripts/alvizuri/papers/2018nk/data/";
+    $Mran = "3.5/5.5/0.5"; $Mtick1 = 0.5; $Mtick2 = 0.5; $mtag = "fmtu_nk_allsta";
+    if($k==1) {$cmtfile = "$dircat/${mtag}_lune_fixedmag_psmeca";}
+    else      {$cmtfile = "$dircat/${mtag}_vw_fixedmag_psmeca";}
+    $cmtfile = "${cmtfile}_eid";
+
+  } elsif($icat==5)  { # beachball as function of depth and VR
+    # Alvizuri2018
+    $dircat = "/home/carltape/REPOSITORIES/manuscripts/alvizuri/papers/2016fmtu/data/";
+    $xtag = "LSM_lohman"; $Mran = "0/40/5"; $Mtick1 = 10; $Mtick2 = 5;
+    $xtag = "LSM_ford"; $Mran = "80/88/1"; $Mtick1 = 2; $Mtick2 = 1;
+    # AlvizuriTape2018
+    $dircat = "/home/carltape/REPOSITORIES/manuscripts/alvizuri/papers/2018nk/data/";
+    $xtag = "nkdc2"; $Mran = "87/89/0.5"; $Mtick1 = 1; $Mtick2 = 0.5;
+    $xtag = "nkdc1"; $Mran = "84/86/0.5"; $Mtick1 = 1; $Mtick2 = 0.5;
+
+    $ttag = "VR"; $cpal = "rainbow";
+    if($k==1) {$cmtfile = "$dircat/${xtag}_depth_test_lune_psmeca_depth";}
+    else      {die("not yet implemented")}
+    # temp: no text above beachball
+    $cmtfile = "$dircat/${xtag}_depth_test_lune_psmeca";
+
+  } elsif($icat==6) { # custom
+    # AlvizuriTape2018
+    $dircat = "/home/carltape/REPOSITORIES/manuscripts/alvizuri/papers/2018nk/data/";
+    $ntag = "NK6";
+    $xtag = "nkfmtu_${ntag}_decom";
+    $cmtfile = "$dircat/${xtag}_lune_psmeca";
+
+    $farc1 = "$dircat/sourcetype_arc_${ntag}_cdc.txt";
+    $farc2 = "$dircat/sourcetype_arc_${ntag}_gam.txt";
+    print CSH "awk '{print \$1,\$2}' $farc1 | psxy -W${arcwid}p,0/255/255 -J -R -K -O -V >>$psfile\n";
+    print CSH "awk '{print \$1,\$2}' $farc2 | psxy -W${arcwid}p,255/0/255 -J -R -K -O -V >>$psfile\n";
+  }
+  if (not -f $cmtfile) {die("\n check if cmt file $cmtfile exists\n");}
+
+  $cmtinfo = "-Sm0.3 -L0.5p/0/0/0 -N";
+  if ($icat==6) {
+      print CSH "psmeca $cmtfile $J $R $cmtinfo -G255/0/0 -K -O -V >> $psfile\n";
+
+  } else {
+      $cptfile = "color.cpt";
+      print CSH "makecpt -C$cpal -T$Mran -D > $cptfile\n";
+      print CSH "psmeca $cmtfile $J $R $cmtinfo -Z$cptfile -K -O -V >> $psfile\n";
+      $Dscale = "-D3/7/1.5/0.25";
+      $Bscale = "-B${Mtick1}f${Mtick2}g${Mtick2}:\"$ttag\": -Al";
+      if ($k==1) {
+          print CSH "gmtset TICK_LENGTH 8p\n";
+	  print CSH "psscale -C$cptfile $Dscale $Bscale -V -K -O >> $psfile\n";
+	  print CSH "gmtset TICK_LENGTH $ticklen\n";
+      }
+  }
+}
 
 #-----------------------------
 

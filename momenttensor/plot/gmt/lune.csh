@@ -3,69 +3,64 @@ psbasemap -JH0/2.8i -R-30/30/-90/90 -Ba10f5g10:" ":/a10f5g10:" ":wesn -G200 -K -
 awk '{print $1,$2}' ./dfiles//sourcetype_patch_01.dat | psxy -G120 -J -R -K -O -V >>lune_hammer_iplot1.ps
 awk '{print $1,$2}' ./dfiles//sourcetype_patch_02.dat | psxy -G255 -J -R -K -O -V >>lune_hammer_iplot1.ps
 psbasemap -JH0/2.8i -R-30/30/-90/90 -Ba10f5g10:" ":/a10f5g10:" ":wesn -K -O -V >> lune_hammer_iplot1.ps
-awk '{print $1,$2}' ./dfiles//sourcetype_arc_03.dat | psxy -W2p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps
-awk '{print $1,$2}' ./dfiles//sourcetype_arc_04.dat | psxy -W2p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps
-awk '{print $1,$2}' ./dfiles//sourcetype_arc_05.dat | psxy -W2p,0 -W2p,50/205/50 -J -R -K -O -V >>lune_hammer_iplot1.ps
-awk '{print $1,$2}' ./dfiles//sourcetype_arc_06.dat | psxy -W2p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps
-psxy -N -Sp8p -W1p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
+awk '{print $1,$2}' ./dfiles//sourcetype_arc_01.dat | psxy -W2p,0,-- -J -R -K -O -V >>lune_hammer_iplot1.ps
+awk '{print $1,$2}' ./dfiles//sourcetype_arc_02.dat | psxy -W2p,0,-- -J -R -K -O -V >>lune_hammer_iplot1.ps
+awk '{print $1,$2}' ./dfiles//sourcetype_arc_03.dat | psxy -W2p,0,-- -J -R -K -O -V >>lune_hammer_iplot1.ps
+awk '{print $1,$2}' ./dfiles//sourcetype_arc_04.dat | psxy -W2p,0,-- -J -R -K -O -V >>lune_hammer_iplot1.ps
+awk '{print $1,$2}' ./dfiles//sourcetype_arc_06.dat | psxy -W2p,0,-- -J -R -K -O -V >>lune_hammer_iplot1.ps
+psxy -N -Sc8p -W1p,0/0/0 -G0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
 0.0000 -90.0000
 EOF
 pstext -N -J -R -K -O -V -D0.00p/-10.00p >>lune_hammer_iplot1.ps<<EOF
 0.0000 -90.0000 12 0 1 CT (-1,-1,-1)
 EOF
-psxy -N -Sp8p -W1p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
+psxy -N -Sc8p -W1p,0/0/0 -G0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
 -30.0000 -54.7356
 EOF
 pstext -N -J -R -K -O -V -D-10.00p/0.00p >>lune_hammer_iplot1.ps<<EOF
 -30.0000 -54.7356 12 0 1 RM (0,-1,-1)
 EOF
-psxy -N -Sp8p -W1p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
+psxy -N -Sc8p -W1p,0/0/0 -G0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
 -30.0000 0.0000
 EOF
 pstext -N -J -R -K -O -V -D-10.00p/0.00p >>lune_hammer_iplot1.ps<<EOF
 -30.0000 0.0000 12 0 1 RM (2,-1,-1)
 EOF
-psxy -N -Sp8p -W1p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
+psxy -N -Sc8p -W1p,0/0/0 -G0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
 -30.0000 35.2644
 EOF
 pstext -N -J -R -K -O -V -D-10.00p/0.00p >>lune_hammer_iplot1.ps<<EOF
 -30.0000 35.2644 12 0 1 RM (1,0,0)
 EOF
-psxy -N -Sp8p -W1p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
+psxy -N -Sc8p -W1p,0/0/0 -G0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
 0.0000 90.0000
 EOF
 pstext -N -J -R -K -O -V -D0.00p/10.00p >>lune_hammer_iplot1.ps<<EOF
 0.0000 90.0000 12 0 1 CB (1,1,1)
 EOF
-psxy -N -Sp8p -W1p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
+psxy -N -Sc8p -W1p,0/0/0 -G0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
 30.0000 54.7356
 EOF
 pstext -N -J -R -K -O -V -D10.00p/0.00p >>lune_hammer_iplot1.ps<<EOF
 30.0000 54.7356 12 0 1 LM (1,1,0)
 EOF
-psxy -N -Sp8p -W1p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
+psxy -N -Sc8p -W1p,0/0/0 -G0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
 30.0000 0.0000
 EOF
 pstext -N -J -R -K -O -V -D10.00p/0.00p >>lune_hammer_iplot1.ps<<EOF
 30.0000 0.0000 12 0 1 LM (1,1,-2)
 EOF
-psxy -N -Sp8p -W1p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
+psxy -N -Sc8p -W1p,0/0/0 -G0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
 30.0000 -35.2644
 EOF
 pstext -N -J -R -K -O -V -D10.00p/0.00p >>lune_hammer_iplot1.ps<<EOF
 30.0000 -35.2644 12 0 1 LM (0,0,-1)
 EOF
-psxy -N -Sp8p -W1p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
--30.0000 60.5038
+psxy -N -Sc8p -W1p,0/0/0 -G0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
+0.0000 0.0000
 EOF
-pstext -N -J -R -K -O -V -D-10.00p/0.00p >>lune_hammer_iplot1.ps<<EOF
--30.0000 60.5038 12 0 1 RM (3,1,1)
-EOF
-psxy -N -Sp8p -W1p,0 -J -R -K -O -V >>lune_hammer_iplot1.ps<<EOF
-30.0000 -60.5038
-EOF
-pstext -N -J -R -K -O -V -D10.00p/0.00p >>lune_hammer_iplot1.ps<<EOF
-30.0000 -60.5038 12 0 1 LM (-1,-1,-3)
+pstext -N -J -R -K -O -V -D10.00p/10.00p >>lune_hammer_iplot1.ps<<EOF
+0.0000 0.0000 12 0 1 LB (1,0,-1)
 EOF
 awk '{print $1,$2}' ./dfiles//sourcetype_gdvw_Walter2010.dat | psxy -N -Sc6p -W0.5p,0/0/0 -G160/32/240 -J -R -K -O -V >> lune_hammer_iplot1.ps
 awk '{print $1,$2}' ./dfiles//sourcetype_gdvw_Walter2009.dat | psxy -N -Sc6p -W0.5p,0/0/0 -G50/205/50 -J -R -K -O -V >> lune_hammer_iplot1.ps
