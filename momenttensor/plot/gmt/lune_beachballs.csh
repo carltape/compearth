@@ -10,7 +10,7 @@ awk '{print $1,$2}' ./dfiles//sourcetype_arc_04.dat | psxy -W3p,30/144/255 -J -R
 awk '{print $1,$2}' ./dfiles//sourcetype_arc_06.dat | psxy -W3p,30/144/255 -J -R -K -O -V >>lune_hammer_iplot2_lplot1_kplot1.ps
 psmeca ./dfiles//beachballs_ipts1_iref1_lune_psmeca -JH0/2.8i -R-30/30/-90/90 -Sm0.45/8p -L0.5p/0/0/0 -G255/0/0 -N -K -O -V >> lune_hammer_iplot2_lplot1_kplot1.ps
 pstext -N -R0/1/0/1 -JX1i -Xa0.5 -Ya8.6 -K -O -V >>lune_hammer_iplot2_lplot1_kplot1.ps<<EOF
- 0 0 16 0 1 LM Reference sets of moment tensors (input files available in carltape comperth github repository)
+ 0 0 16 0 1 LM Reference sets of moment tensors (input files available in carltape compearth github repository)
 EOF
 pstext -N -R0/1/0/1 -JX1i -Xa0.5 -Ya8.3 -K -O -V >>lune_hammer_iplot2_lplot1_kplot1.ps<<EOF
  0 0 12 0 1 LM Plotted using GMT 4.5.3 with a modified version of psmeca

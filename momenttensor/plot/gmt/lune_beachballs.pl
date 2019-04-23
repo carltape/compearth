@@ -1,7 +1,11 @@
 #!/usr/bin/perl -w
 
 # This is a custom script adapted from lune.pl on 2019-04-19
-# Please use lune.pl
+# It is intended for plotting a reference set of moment tensors
+# and to make sure that the plotting capabilities are correct.
+# An abbreviated version of the shell script is lune_beachballs_min.csh
+#
+# Please use lune.pl for research purposes.
 
 #----------
 # lune source-type plot
@@ -269,7 +273,7 @@ $tya = $pwidth - 0.9; $tyb = $tya - 0.3;
 $otitle1 = "-Xa0.5 -Ya$tya"; $fsize1 = 16;
 $otitle2 = "-Xa0.5 -Ya$tyb"; $fsize2 = 12;
 if ($ititle==1 && $x==1) {
-  $title1 = "Reference sets of moment tensors (input files available in carltape comperth github repository)";
+  $title1 = "Reference sets of moment tensors (input files available in carltape compearth github repository)";
   $title2 = "Plotted using GMT 4.5.3 with a modified version of psmeca";
   print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0 0 $fsize1 0 $fontno LM $title1\nEOF\n";
   print CSH "pstext -N $R_title $J_title $otitle2 -K -O -V >>$psfile<<EOF\n 0 0 $fsize2 0 $fontno LM $title2\nEOF\n";
