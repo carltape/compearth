@@ -129,7 +129,7 @@ open(CSH,">$cshfile");
 print CSH "gmtset PAPER_MEDIA Custom_${pwidth}ix${pheight}i PAGE_ORIENTATION landscape MEASURE_UNIT inch BASEMAP_TYPE plain PLOT_DEGREE_FORMAT D TICK_LENGTH $ticklen LABEL_FONT_SIZE 10 ANOT_FONT_SIZE 10 HEADER_FONT 1 ANOT_FONT 1 LABEL_FONT 1 HEADER_FONT_SIZE 18 FRAME_PEN $fpen TICK_PEN $tpen\n";
 
 # directories with data files
-$pdir = "./dfiles/";
+$pdir = "../dfiles/";
 
 $R = $Rlune; $B = $Blune; $J = $Jlune;
 

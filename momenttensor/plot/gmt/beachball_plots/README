@@ -1,0 +1,30 @@
+README
+compearth repository (available on github)
+compearth/momenttensor/plot/gmt/beachball_plots/
+Carl Tape ctape@alaska.edu
+
+These input files and scripts are designed for testing plotting routines for full moment tensors. The figures were generated using GMT 4.5.3 along with a modified version of utilmeca.c, which is available here. This modified file was provided by Doug Dreger's group at UC Berkeley.
+
+Testing of GMT 5.4.2 (on 2019-04-25) reveals that there are bugs when using psmeca.
+
+---
+
+EXAMPLE 1:
+csh -f lune_beachballs_min.csh
+produces the ps file lune_ngeo_iplot2_lplot1_kplot1_min.ps
+
+---
+
+For examples 2 and 3, you will need to have the full compear repository available; or at least have the datafiles present in the directory at ../dfiles/
+
+EXAMPLE 2:
+lune_beachballs.pl
+produces the ps file lune_hammer_iplot2_lplot1_kplot1.ps
+
+EXAMPLE 3:
+uncomment lines 24 and 25 in lune_beachballs.pl, then run
+produces the ps file lune_ngeo_iplot2_lplot1_kplot1.ps
+
+In these figures, there are arcs plotted for directions of eigenvalue space where one of the eiganvalues of the moment tensor is zero: lambda3 = 0 (top), lambda2 = 0 (upper left to lower right), and lambda1 = 0 (bottom).
+
+---
