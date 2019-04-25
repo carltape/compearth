@@ -5,7 +5,7 @@ Carl Tape ctape@alaska.edu
 
 These input files and scripts are designed for testing plotting routines for full moment tensors. The figures were generated using GMT 4.5.3 along with a modified version of utilmeca.c, which is available here. This modified file was provided by Doug Dreger's group at UC Berkeley.
 
-Testing of GMT 5.4.2 (on 2019-04-25) reveals that there are bugs when using psmeca.
+Testing of GMT 5.4.5 (on 2019-04-25) reveals that there are bugs when using psmeca.
 
 ---
 
