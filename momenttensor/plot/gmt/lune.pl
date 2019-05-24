@@ -328,16 +328,18 @@ if ($iplot==1) {
       "Minson2007","Minson2008","Walter2009","Walter2010","Pesicek2012",
       "Miller1996phd","Baig2010","Sileny2006","Sileny2008","Sileny2009",
       "Dreger2012","Julian2010","Pesicek2012_238Fig14","Ross1996","Ross1996phd",
-      "Vavrycuk2001","Vavrycuk2011","Ortega2014","Boyd2015","Alvizuri2016");
+      "Vavrycuk2001","Vavrycuk2011","Ortega2014","Boyd2015","Alvizuri2016",
+      "Kawakatsu1996");
 
   $csize = $msize_data;  # size of dots
   @csizes = ($csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,$csize,
       $csize,$csize/2,$csize,$csize,$csize,$csize/2,$csize,$csize,$csize,$csize,
-      $csize,$csize,$csize,$csize,$csize);
+      $csize,$csize,$csize,$csize,$csize,$csize);
   @cols = ($lgray,$lred,$lpurple,$green,$orange,$cyan,$blue,$green,$magenta,$lgray,
        $green,$green,$red,$orange,$magenta,$cyan,$cyan,$cyan,$cyan,$dgray,
-       $magenta,$brown,$cyan,$white,$red);
+       $magenta,$brown,$cyan,$white,$red,$red);
 
+  #@inds = 26;
   #@inds = ();                      # none
   @inds = (9,8,1,6,5);            # TapeTape2012 figure 25
   #@inds = (11,5,22,21,7,6,10,24,25); # TapeTape2013 figure 14b: mostly volcanic and geothermal
