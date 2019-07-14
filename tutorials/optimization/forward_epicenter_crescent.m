@@ -206,15 +206,15 @@ axepi = [xmin xmax ymin ymax];
 
 % source-receiver geometry with ray paths
 plot_epicenters([],mprior,minitial,mtarget,{xrec,yrec,1,axepi});
-if iprint==1, print(gcf,'-depsc',sprintf('%ssrcrec_rays_f%i',pdir,iforward)); end
+if bprint, print(gcf,'-depsc',sprintf('%ssrcrec_rays_f%i',pdir,iforward)); end
 
 % source-receiver geometry with ray paths
 plot_epicenters(mprior_samples,mprior,minitial,mtarget,{xrec,yrec,1,axepi});
-if iprint==1, print(gcf,'-depsc',sprintf('%smprior_rays_f%i',pdir,iforward)); end
+if bprint, print(gcf,'-depsc',sprintf('%smprior_rays_f%i',pdir,iforward)); end
 
 % with prior samples (no ray paths)
 opts = {xrec,yrec,0,axepi};
 plot_epicenters(mprior_samples,mprior,minitial,mtarget,opts);
-if iprint==1, print(gcf,'-depsc',sprintf('%smprior_f%i',pdir,iforward)); end
+if bprint, print(gcf,'-depsc',sprintf('%smprior_f%i',pdir,iforward)); end
 
 %========================================================================

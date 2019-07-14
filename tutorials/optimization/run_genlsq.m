@@ -1,6 +1,7 @@
 %
-% optimization.m
+% run_genlsq.m
 %
+% genlsq = generalized least squares
 % This program tests several optimization methods presented in Albert
 % Tarantola's book Inverse Problem Theory (2nd Ed., 2005) in Section 6.22.
 % The program was written in July 2007 following Tarantola's sabbatical
@@ -51,17 +52,17 @@ nmethod0 = length(stlabels)-1;
 idefault = 0;
 
 disp('  ');
-disp(' TYPE A NUMBER AFTER EACH PROMPT AND HIT ENTER:');
-disp(' Optimization problem set-up:');
-iforward = input(' Forward problem (1 = epicenter; 2 = epicenter-cresent): ');
-%iforward = input(' Forward problem (1 = epicenter; 2 = epicenter-cresent; 3 = leaf): ');
+disp('TYPE A NUMBER AFTER EACH PROMPT AND HIT ENTER:');
+disp('Optimization problem set-up:');
+iforward = input('Forward problem (1 = epicenter; 2 = epicenter-cresent): ');
+%iforward = input('Forward problem (1 = epicenter; 2 = epicenter-cresent; 3 = leaf): ');
 %iforward = 1;
 if idefault==0
-    nsamples = input(' Select the number of samples for the distributions (1000): ');
-    irandom_initial_model  = input(' Type 1 for random initial model or 0 for fixed: ');
-    irandom_target_model  = input(' Type 1 for random target model or 0 for fixed: ');
-    idata_errors  = input(' Data errors (0 = none, 1 = random, 2 = fixed): ');
-    ifig = input(' Type 1 to plot figures or 0 to not: ');
+    nsamples = input('Select the number of samples for the distributions (1000): ');
+    irandom_initial_model  = input('Type 1 for random initial model or 0 for fixed: ');
+    irandom_target_model  = input('Type 1 for random target model or 0 for fixed: ');
+    idata_errors  = input('Data errors (0 = none, 1 = random, 2 = fixed): ');
+    ifig = input('Type 1 to plot figures or 0 to not: ');
 else
     nsamples = 1000;
     irandom_initial_model = 0;
@@ -69,11 +70,11 @@ else
     idata_errors = 2;
     ifig = 1;
 end
-%inormalization = input(' Type 1 for normalization factors for Cd and Cm: ');
+%inormalization = input('Type 1 for normalization factors for Cd and Cm: ');
 inormalization = 1;
 
 % print figures to EPS files in directory pdir
-iprint = 0;
+bprint = false;
 pdir = strcat(pwd,'/');
 %pdir = '/home/carltape/latex/notes/tomo/figures_optim/';
 if ~exist(pdir,'dir'), error('pdir does not exist'); end
@@ -114,7 +115,7 @@ if ifig==1
         set(gca,'xtick',[1:nparm]);
         %set(gca,'xticklabel',mlabs);
         xlabel('model parameter'); ylabel('model parameter value'); grid on;
-        if iprint==1, orient tall; print(gcf,'-depsc',[pdir 'randn_new']); end
+        if bprint, orient tall; print(gcf,'-depsc',[pdir 'randn_new']); end
     end
 
     %-----------------
@@ -131,7 +132,7 @@ if ifig==1
             ['mean = ' sprintf('%.5f',mean(etemp)) ...
             '; std = ' sprintf('%.5f',std(etemp)) ]});
     end
-    if iprint==1, print(gcf,'-depsc',[pdir 'mprior1']); end
+    if bprint, print(gcf,'-depsc',[pdir 'mprior1']); end
     
     if 0==1
         % display model samples (nsamples COLUMNS of cov_samples_m)
@@ -148,7 +149,7 @@ if ifig==1
         title(' BLACK = prior model;  RED = target model');
         xlim([0.5 nparm+0.5]); set(gca,'xtick',[1:nparm],'xticklabel',mlabs);
         xlabel('model parameter'); ylabel('model parameter value'); grid on;
-        if iprint==1, print(gcf,'-depsc',[pdir 'mprior2']); end
+        if bprint, print(gcf,'-depsc',[pdir 'mprior2']); end
     end
     
     %-----------------
@@ -166,7 +167,7 @@ if ifig==1
             '; std = ' sprintf('%.5f',std(etemp)) ]});
     end
     orient tall, wysiwyg
-    if iprint==1, print(gcf,'-depsc',[pdir 'CD1']); end
+    if bprint, print(gcf,'-depsc',[pdir 'CD1']); end
     
     if 0==1
         % display some length-ndata samples (nsamples COLUMNS of cov_samples_d)
@@ -174,7 +175,7 @@ if ifig==1
         xlim([0.5 ndata+0.5]); set(gca,'xtick',[1:ndata]); grid on;
         xlabel('Data index'); ylabel('Deviation from target data ');
         title([stnsamples ' of the data distribution']);
-        if iprint==1, print(gcf,'-depsc',[pdir 'CD2a']); end
+        if bprint, print(gcf,'-depsc',[pdir 'CD2a']); end
     end
     
     figure; hold on;
@@ -188,7 +189,7 @@ if ifig==1
     %title(' BLACK = d(mprior);  RED DASHED = d(mtarget);  RED = d(mtarget) + errors');
     xlim([0.5 ndata+0.5]); set(gca,'xtick',[1:ndata]);
     xlabel('Data index'); ylabel('Prediction value, g(m)'); grid on;
-    if iprint==1, print(gcf,'-depsc',[pdir 'CD2b']); end
+    if bprint, print(gcf,'-depsc',[pdir 'CD2b']); end
 end
 
 %---------------------------------------------
@@ -246,7 +247,7 @@ if iforward==2
     subplot(nr,nc,3); pcolor(X,Y,reshape(sm0,a,b)); shading flat;
     caxis([cmin max(sm0)]); colorbar; axis equal, axis(axepi); title('Sm(m)');
     % for this file: ps2eps -f genlsq_misfit_f2.ps
-    if iprint==1, print(gcf,'-dpsc',sprintf('%sgenlsq_misfit_f%i',pdir,iforward)); end
+    if bprint, print(gcf,'-dpsc',sprintf('%sgenlsq_misfit_f%i',pdir,iforward)); end
 end
 
 %///////////////////////////////
@@ -260,13 +261,13 @@ for xx=0:nmethod0, disp(['    ' num2str(xx) ' : ' stlabels{xx+1}]); end
 disp('TYPE A NUMBER AFTER EACH PROMPT AND HIT ENTER:');
 disp('   IF YOU WANT MULTIPLE METHODS, LIST THE NUMBERS IN BRACKETS (e.g., [1 4 5])');
 disp(['   IF YOU WANT ALL METHODS, USE [1:' num2str(nmethod0) ']']);
-imethod_vec = input(['Select your optimization method(s) (0-' num2str(nmethod0) '): ']);
+imethod_vec = input(['Select your optimization method(s) (1-' num2str(nmethod0) '): ']);
 if imethod_vec==0, break; end
 nmethod = length(imethod_vec);
 
-niter = input(' Select the number of iterations (10): ');
+niter = input('Select the number of iterations (10): ');
 if any([idata_errors irandom_initial_model irandom_target_model]==1)
-    nrun = input([' Select the number of different runs for each inversion method (1 <= nrun <= ' num2str(nsamples) '): ']);
+    nrun = input(['Select the number of different runs for each inversion method (1 <= nrun <= ' num2str(nsamples) '): ']);
 else
     nrun = 1;
 end
@@ -472,7 +473,7 @@ for irun = 1:nrun
                     set(gca,'xtick',[1:nparm],'xticklabel',mlabs); grid on;
                     xlabel('model parameter'); ylabel('deviation from mean ');
                     title({stlabels{imethod},[num2str(nsamples) ' samples of the posterior']});
-                    if iprint==1, print(gcf,'-depsc',[pdir 'mpost1a_' stlabels2{imethod+1}]); end
+                    if bprint, print(gcf,'-depsc',[pdir 'mpost1a_' stlabels2{imethod+1}]); end
                     
                     figure; hold on; plot(mpost_samples,'.-');
                     p1 = plot(mprior,'ko-','linewidth',2,'markersize',10,'markerfacecolor','k','markeredgecolor','w');
@@ -481,7 +482,7 @@ for irun = 1:nrun
                     legend([p1 p2 p3],'mprior','mtarget','mpost','location','northwest')
                     xlim([0.5 nparm+0.5]); set(gca,'xtick',[1:nparm],'xticklabel',mlabs);
                     xlabel('model parameter'); ylabel('model parameter value'); grid on;
-                    if iprint==1, print(gcf,'-depsc',[pdir 'mpost1b_' ftag]); end
+                    if bprint, print(gcf,'-depsc',[pdir 'mpost1b_' ftag]); end
                 end
 
                 % display distributions for each model parameter (nparm ROWS of cov_samples_m)
@@ -498,7 +499,7 @@ for irun = 1:nrun
                     if kk==1, title({stl1,stl2,stl3});
                     else title({stl2,stl3}); end
                 end
-                if iprint==1, print(gcf,'-depsc',[pdir 'mpost2_' ftag]); end
+                if bprint, print(gcf,'-depsc',[pdir 'mpost2_' ftag]); end
 
                 % epicenter problems only
                 if or(iforward==1, iforward==2)
@@ -508,10 +509,10 @@ for irun = 1:nrun
                     plot(mpost_samples(1,:),mpost_samples(2,:),'c.');
                     plot(mpost(1),mpost(2),'o','markersize',10,'markerfacecolor','c','markeredgecolor','w');
                     plot(mtarget(1),mtarget(2),'o','markersize',10,'markerfacecolor','r','markeredgecolor','w');
-                    title([stlabels{imethod+1} ' -- samples of prior (blue) and posterior (cyan), ' ...
-                        sprintf('run %i out of %i',irun,nrun) ]);
+                    title({stlabels{imethod+1},
+                        sprintf('samples of prior (blue) and posterior (cyan), run %i out of %i',irun,nrun)});
                     %orient tall, wysiwyg
-                    if iprint==1, print(gcf,'-depsc',[pdir 'mpost_' ftag '_epi']); end
+                    if bprint, print(gcf,'-depsc',[pdir 'mpost_' ftag '_epi']); end
                 end
                 
                 % convergence curve
@@ -526,7 +527,7 @@ for irun = 1:nrun
                 legend(stlabS); xlim([-0.5 niter+0.5]); ylim(log10(ylims));
                 set(gca,'xtick',[-1:niter+1]); grid on;
                 xlabel('n, iteration'); ylabel(' log10[ S(m^n) ], misfit function'); title(stit);
-                if iprint==1, print(gcf,'-depsc',[pdir 'converge_' ftag]); end
+                if bprint, print(gcf,'-depsc',[pdir 'converge_' ftag]); end
             end
             
         else
@@ -576,7 +577,7 @@ for irun = 1:nrun
         xlabel('n, iteration'); ylabel('log10[ S(m^n) ], misfit function');
         title(stS0);
         %orient tall, wysiwyg
-        if iprint==1, print(gcf,'-depsc',[pdir 'converge_Nmethod_' stnrun]); end
+        if bprint, print(gcf,'-depsc',[pdir 'converge_Nmethod_' stnrun]); end
         %ylim([-0.1 1.3]); print(gcf,'-depsc',['converge_Nmethod_' stnmodel]);
         
 %         % variable metric methods (check that ALL FOUR ARE the same)
@@ -591,7 +592,7 @@ for irun = 1:nrun
 %             set(gca,'xtick',[-1:niter+1]); grid on;
 %             xlabel('n, iteration'); ylabel('log10[ S(m^n) ], misfit function');
 %             title(stS0);
-%             if iprint==1, print(gcf,'-depsc',[pdir 'variable_metric']); end
+%             if bprint, print(gcf,'-depsc',[pdir 'variable_metric']); end
 %         end
     end
     
@@ -600,7 +601,7 @@ for irun = 1:nrun
 %         plot_epicenters(mprior_samples,mprior,minitial,mtarget,opts,mpost);
 %         title(sprintf('run %i out of %i',irun,nrun));
 %         orient tall, wysiwyg
-%         if iprint==1, print(gcf,'-depsc',[pdir 'mpost_epi']); end
+%         if bprint, print(gcf,'-depsc',[pdir 'mpost_epi']); end
 %     end
 
 end  % for irun
@@ -620,7 +621,7 @@ if and(nrun==1, nmethod==1)
 %     legend(stlabS); xlim([-0.5 niter+0.5]); ylim(log10(ylims));
 %     set(gca,'xtick',[-1:niter+1]); grid on;
 %     xlabel('n, iteration'); ylabel(' log10[ S(m^n) ], misfit function'); title(stit);
-%     if iprint==1, print(gcf,'-depsc',[pdir 'converge_' stlabels2{imethod+1} '_1run']); end
+%     if bprint, print(gcf,'-depsc',[pdir 'converge_' stlabels2{imethod+1} '_1run']); end
     
 elseif and(nrun > 1, nmethod==1)
     % plot figure for a SINGLE method for multiple runs
@@ -665,7 +666,7 @@ elseif and(nrun > 1, nmethod==1)
         else ylabel(sprintf('log10[ %s ]',stlabS{xx})); end
     end
     orient tall, wysiwyg
-    if iprint==1
+    if bprint
         pfile = sprintf('%sconverge_%s_%s_derr%i',pdir,stlabels2{imethod+1},stnrun,idata_errors);
         print(gcf,'-depsc',pfile);
     end
@@ -691,7 +692,7 @@ elseif and(nrun > 1, nmethod==1)
         %set(gca,'xtick',[0:20:100],'ytick',[0:20:100]);
         xlabel('X distance (km)'); ylabel('Y distance (km)'); title(stit);
         orient tall, wysiwyg
-        if iprint==1, print(gcf,'-depsc',[pfile '_epi']); end
+        if bprint, print(gcf,'-depsc',[pfile '_epi']); end
     end
 
 elseif and(nrun > 1, nmethod > 1)
@@ -715,7 +716,7 @@ elseif and(nrun > 1, nmethod > 1)
         title([stlabels{zz+1} ', ' num2str(nrun) ' runs']);
     end
     orient tall, wysiwyg
-    if iprint==1, print(gcf,'-depsc',[pdir 'converge_Nmethod_' stnrun '_all']); end
+    if bprint, print(gcf,'-depsc',[pdir 'converge_Nmethod_' stnrun '_all']); end
 
     figure; hold on;
     for zz=1:nmethod, plot(iter_vec, meancurves(:,zz), stc{zz},'markersize',12); end
@@ -724,7 +725,7 @@ elseif and(nrun > 1, nmethod > 1)
     set(gca,'xtick',[-1:niter+1]); grid on;
     xlabel('n, iteration'); ylabel('log10[ S(m^n) ], misfit function');
     title(['MEANS for each method, ' num2str(nrun) ' runs']);
-    if iprint==1, print(gcf,'-depsc',[pdir 'converge_Nmethod_' stnrun]); end
+    if bprint, print(gcf,'-depsc',[pdir 'converge_Nmethod_' stnrun]); end
     
 else
     if ifig==0, disp('use ifig=1 to compare multiple methods for a single run'); end
