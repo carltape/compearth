@@ -21,7 +21,8 @@ $Blune = "-Ba${xtick1}f${xtick2}g${xtick1}:\" \":/a${ytick1}f${xtick2}g${ytick1}
 $wid = 2.8;  # KEY: width of subplot, in inches
 $Jlune = "-JH0/${wid}i"; $title1 = "Hammer equal-area ($Jlune)"; $ftag = "hammer";
 
-#$wid = $wid*0.8; $rhgt = $wid*3;
+# UNCOMMENT THESE TWO LINES TO GET A RECTANGLE INSTEAD OF A LUNE
+#$rwid = $wid*0.8; $rhgt = $wid*2.8;
 #$Jlune = "-JX${rwid}i/${rhgt}i"; $title1 = "Non-geographical ($Jlune)"; $ftag = "ngeo";
 
 #----------
