@@ -7,12 +7,11 @@
 #
 # Please use lune.pl for research purposes.
 
-
-
-
-
 #----------
 # lune source-type plot
+
+($gmttag) = @ARGV;
+if (@ARGV ne 1) {error("lune_beachballs_gmt6.pl gmttag")}
 
 $Rlune = "-R-30/30/-90/90";
 #$Rlune = "-R-30/30/-90/90r";
@@ -21,6 +20,8 @@ $xtick2 = 5; $ytick2 = 5;
 #$Blune = "-Ba${xtick1}f${xtick2}g${xtick1}:\" \":/a${ytick1}f${xtick2}g${ytick1}:\" \":WesN";
 $Blune = "-Ba${xtick1}f${xtick2}g${xtick1}:\" \":/a${ytick1}f${xtick2}g${ytick1}:\" \":wesn";
 #$Blune = "-Ba${xtick1}f${xtick2}:\" \":/a${ytick1}f${xtick2}:\" \":wesn";   # no gridlines
+
+$Blune = "-Bxa${xtick1}f${xtick2}g${xtick1} -Bya${ytick1}f${ytick2}g${ytick1} -Bwesn";  # 6.0.1
 
 $wid = 2.8;  # KEY: width of subplot, in inches
 $Jlune = "-JH0/${wid}i"; $title1 = "Hammer equal-area ($Jlune)"; $ftag = "hammer";
@@ -65,9 +66,9 @@ $splot = 0;  # =0-5: text labels above reference beachballs (iplot=2 only, lplot
 @splotlabs = ("","_lam","_gammadelta","_alphanu","_zetaphi","_vw");
 $slabel = $splotlabs[$splot];
 if($iplot==2) {
-  $psfile = "lune_${ftag}_iplot${iplot}_lplot${lplot}_kplot${kplot}$slabel.ps";
+  $psfile = "lune_${ftag}_iplot${iplot}_lplot${lplot}_kplot${kplot}_${gmttag}.ps";
 } else {
-  $psfile = "lune_${ftag}_iplot${iplot}.ps";
+  $psfile = "lune_${ftag}_iplot${iplot}_${gmttag}.ps";
 }
 # points
 $plot_ref_points = 0;  # plot reference points on lune (ISO, DC, etc)
@@ -128,10 +129,10 @@ $pwidth = 9.5;
 $dX = $wid + 0.7;
 $pheight = $X0 + $dX*$xmax;
 
-$cshfile = "lune_beachballs.csh";
+$cshfile = "lune_beachballs_${gmttag}.csh";
 open(CSH,">$cshfile");
 # set GMT default parameters
-print CSH "gmtset PAPER_MEDIA Custom_${pwidth}ix${pheight}i PAGE_ORIENTATION landscape MEASURE_UNIT inch BASEMAP_TYPE plain PLOT_DEGREE_FORMAT D TICK_LENGTH $ticklen LABEL_FONT_SIZE 10 ANOT_FONT_SIZE 10 HEADER_FONT 1 ANOT_FONT 1 LABEL_FONT 1 HEADER_FONT_SIZE 18 FRAME_PEN $fpen TICK_PEN $tpen\n";
+print CSH "gmt gmtset PS_MEDIA Custom_${pwidth}ix${pheight}i PS_PAGE_ORIENTATION landscape PROJ_LENGTH_UNIT inch MAP_FRAME_TYPE plain MAP_TICK_LENGTH $ticklen MAP_FRAME_PEN $fpen MAP_TICK_PEN $tpen FONT_ANNOT_PRIMARY 12p,Helevetica,black FONT_HEADING 18p,Helvetiva,black FONT_LABEL 10p,Helvetiva,black\n";
 
 # directories with data files
 $pdir = "../dfiles/";
@@ -143,9 +144,9 @@ for ($x = 1; $x <= $xmax; $x++) {
 if($x==$xmax) {$kplot=3; $lplot=2;} else {$kplot = $x; $lplot = 1;}
 
 if($x==1) {
-  print CSH "psbasemap $J $R $B -G$clune -K -V $origin > $psfile\n"; # START
+  print CSH "gmt psbasemap $J $R ${B}+g$clune -K -V $origin > $psfile\n"; # START
 } else {
-  print CSH "psbasemap $J $R $B -G$clune -K -O -V -X$dX >> $psfile\n";
+  print CSH "gmt psbasemap $J $R ${B}+g$clune -K -O -V -X$dX >> $psfile\n";
 }
 
 # columns 1-2 for lune, columns 3-4 for rectangle
@@ -155,22 +156,24 @@ $col2 = 2;
 # plot patches
 if ($ipatch==1) {
   $fname = "$pdir/sourcetype_patch_01.dat";
-  print CSH "awk '{print \$${col1},\$${col2}}' $fname | psxy -G$dgray -J -R -K -O -V >>$psfile\n";
+  #print CSH "awk '{print \$${col1},\$${col2}}' $fname > temp.txt\n";
+  #print CSH "gmt psxy -R -J -O -K temp.txt -L+x0 -G$dgray >> $psfile\n";
+  print CSH "awk '{print \$${col1},\$${col2}}' $fname | gmt psxy -G$dgray -L+x0 -J -R -K -O -V >>$psfile\n";
   $fname = "$pdir/sourcetype_patch_02.dat";
-  print CSH "awk '{print \$${col1},\$${col2}}' $fname | psxy -G255 -J -R -K -O -V >>$psfile\n";
-  print CSH "psbasemap $J $R $B -K -O -V >> $psfile\n";
+  print CSH "awk '{print \$${col1},\$${col2}}' $fname | gmt psxy -G255 -L+x0 -J -R -K -O -V >>$psfile\n";
+  print CSH "gmt psbasemap $J $R -Bxa10f5g10 -Bya10f5g10 -Bwesn -K -O -V >> $psfile\n";
 }
 if ( ($ipatchgcdc > 0 || $iarcgcdc > 0) && $inugcdc > 0 ) {
   $fname1 = sprintf("$pdir/sourcetype_patch_nu0p%2.2i_01.dat",100*$nus[$inugcdc-1]);
   $fname2 = sprintf("$pdir/sourcetype_patch_nu0p%2.2i_02.dat",100*$nus[$inugcdc-1]);
   if($ipatchgcdc > 0) {
-  print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | psxy -G$red -J -R -K -O -V >>$psfile\n";
-  print CSH "awk '{print \$${col1},\$${col2}}' $fname2 | psxy -G$red -J -R -K -O -V >>$psfile\n";
-  print CSH "psbasemap $J $R $B -K -O -V >> $psfile\n";
+  print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | gmt psxy -G$red -J -R -K -O -V >>$psfile\n";
+  print CSH "awk '{print \$${col1},\$${col2}}' $fname2 | gmt psxy -G$red -J -R -K -O -V >>$psfile\n";
+  print CSH "gmt psbasemap $J $R $B -K -O -V >> $psfile\n";
 }
   if($iarcgcdc > 0) {
-  print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | psxy -W2p,$red -J -R -K -O -V >>$psfile\n";
-  print CSH "awk '{print \$${col1},\$${col2}}' $fname2 | psxy -W2p,$red -J -R -K -O -V >>$psfile\n";
+  print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | gmt psxy -W2p,$red -J -R -K -O -V >>$psfile\n";
+  print CSH "awk '{print \$${col1},\$${col2}}' $fname2 | gmt psxy -W2p,$red -J -R -K -O -V >>$psfile\n";
 }
 }
 
@@ -193,26 +196,26 @@ if ($iplot==1) {
   # default formatting for arcs
   $W = "-W${arcwid}p,0,--";
   #$W = "-W${arcwid}p,0";
-  if($idev==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | psxy $W -J -R -K -O -V >>$psfile\n";}  # -W${arcwid}p,$blue
-  if($iiso==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname2 | psxy $W -J -R -K -O -V >>$psfile\n";}  # -W${arcwid}p,$orange
-  if($ilam3==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname3 | psxy $W -J -R -K -O -V >>$psfile\n";}
-  if($ilam1==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname4 | psxy $W -J -R -K -O -V >>$psfile\n";}
-  if($inup25==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname5 | psxy $W -J -R -K -O -V >>$psfile\n";}  # -W${arcwid}p,$green
-  if($inup36==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname7 | psxy $W -J -R -K -O -V >>$psfile\n";}  # -W${arcwid}p,$green
-  if($ilam2==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname6 | psxy $W -J -R -K -O -V >>$psfile\n";}
+  if($idev==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | gmt psxy $W -J -R -K -O -V >>$psfile\n";}  # -W${arcwid}p,$blue
+  if($iiso==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname2 | gmt psxy $W -J -R -K -O -V >>$psfile\n";}  # -W${arcwid}p,$orange
+  if($ilam3==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname3 | gmt psxy $W -J -R -K -O -V >>$psfile\n";}
+  if($ilam1==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname4 | gmt psxy $W -J -R -K -O -V >>$psfile\n";}
+  if($inup25==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname5 | gmt psxy $W -J -R -K -O -V >>$psfile\n";}  # -W${arcwid}p,$green
+  if($inup36==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname7 | gmt psxy $W -J -R -K -O -V >>$psfile\n";}  # -W${arcwid}p,$green
+  if($ilam2==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname6 | gmt psxy $W -J -R -K -O -V >>$psfile\n";}
 
 } else {
   if($ipatch==1) {@cols = ($magenta,$red,$blue,$blue,$black,$blue);}
   else           {@cols = ($magenta,$orange,$black,$black,$blue,$black);}
-  if($idev==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | psxy -W${arcwid}p,$cols[0] -J -R -K -O -V >>$psfile\n";}
-  if($iiso==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname2 | psxy -W${arcwid}p,$cols[1] -J -R -K -O -V >>$psfile\n";}
-  if($ilam3==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname3 | psxy -W${arcwid}p,$cols[2] -J -R -K -O -V >>$psfile\n";}
-  if($ilam1==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname4 | psxy -W${arcwid}p,$cols[3] -J -R -K -O -V >>$psfile\n";}
-  if($inup25==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname5 | psxy -W${arcwid}p,$cols[4] -J -R -K -O -V >>$psfile\n";}
-  if($inup36==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname7 | psxy -W${arcwid}p,$cols[4] -J -R -K -O -V >>$psfile\n";}
-  if($ilam2==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname6 | psxy -W${arcwid}p,$cols[5] -J -R -K -O -V >>$psfile\n";}
+  if($idev==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname1 | gmt psxy -W${arcwid}p,$cols[0] -J -R -K -O -V >>$psfile\n";}
+  if($iiso==1)   {print CSH "awk '{print \$${col1},\$${col2}}' $fname2 | gmt psxy -W${arcwid}p,$cols[1] -J -R -K -O -V >>$psfile\n";}
+  if($ilam3==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname3 | gmt psxy -W${arcwid}p,$cols[2] -J -R -K -O -V >>$psfile\n";}
+  if($ilam1==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname4 | gmt psxy -W${arcwid}p,$cols[3] -J -R -K -O -V >>$psfile\n";}
+  if($inup25==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname5 | gmt psxy -W${arcwid}p,$cols[4] -J -R -K -O -V >>$psfile\n";}
+  if($inup36==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname7 | gmt psxy -W${arcwid}p,$cols[4] -J -R -K -O -V >>$psfile\n";}
+  if($ilam2==1)  {print CSH "awk '{print \$${col1},\$${col2}}' $fname6 | gmt psxy -W${arcwid}p,$cols[5] -J -R -K -O -V >>$psfile\n";}
 }
-if($iarcgcdc==1 && $iplot==1 && $inup25==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname5 | psxy -W2p,$blue -J -R -K -O -V >>$psfile\n";}
+if($iarcgcdc==1 && $iplot==1 && $inup25==1) {print CSH "awk '{print \$${col1},\$${col2}}' $fname5 | gmt psxy -W2p,$blue -J -R -K -O -V >>$psfile\n";}
 
 # plot lune reference points and labels
 if ($plot_ref_points || $plot_ref_labels) {
@@ -241,27 +244,27 @@ if ($plot_ref_points || $plot_ref_labels) {
     #print "\n--$plon -- $plat-- $plab -- $plab2";
     $D = "-D${Dx}p/${Dy}p";
     if (${plot_ref_points}) {
-      print CSH "psxy $pinfo -J -R -K -O -V >>$psfile<<EOF\n$plon $plat\nEOF\n";
+      print CSH "gmt psxy $pinfo -J -R -K -O -V >>$psfile<<EOF\n$plon $plat\nEOF\n";
     }
     if (${plot_ref_labels} > 0) {
       if(${plot_ref_labels}==1) {$ptext=$plab;} else {$ptext=$plab2;}
-      print CSH "pstext -N -J -R -K -O -V $D >>$psfile<<EOF\n$plon $plat $fsize 0 $fontno $align $ptext\nEOF\n";
+      print CSH "gmt pstext -N -J -R -K -O -V $D >>$psfile<<EOF\n$plon $plat $fsize 0 $fontno $align $ptext\nEOF\n";
     }
   }
-  #print CSH "awk '{print \$1,\$2,$fsize,0,0,\"CM\",\$3}' $fname | pstext -N -J -R -K -O -V >> $psfile\n";
+  #print CSH "awk '{print \$1,\$2,$fsize,0,0,\"CM\",\$3}' $fname | gmt pstext -N -J -R -K -O -V >> $psfile\n";
 }
 if ($iplot==2) {
   $xtag = "lune";
   # reference beachballs on the lune
   $beachballfontsize = "8p"; #if($splot==1) {$beachballfontsize = "6p";}
-  $cmtinfo = "-Sm0.45/$beachballfontsize -L0.5p/0/0/0 -G255/0/0 -N";
+  $cmtinfo = "-Sm0.45/$beachballfontsize -L0.5p,0/0/0 -G255/0/0 -N";
   $cmtfile = sprintf("$pdir/beachballs_ipts%i_iref%i_%s_psmeca%s",$lplot,$kplot,$xtag,$slabel);
   if (not -f $cmtfile) {die("\n check if cmt file $cmtfile exists\n");}
-  print CSH "psmeca $cmtfile $J $R $cmtinfo -K -O -V >> $psfile\n";
+  print CSH "gmt psmeca $cmtfile $J $R $cmtinfo -K -O -V >> $psfile\n";
   if($splot > 0) {
     $textfile = sprintf("$pdir/pstext%s",$slabel);
     if (not -f $textfile) {die("\n check if text file $textfile exists\n");}
-    print CSH "pstext $textfile -JX11i/8.5i -R0/11/0/8.5 -K -O -V -Xa3.5i -Ya0i >> $psfile\n";
+    print CSH "gmt pstext $textfile -JX11i/8.5i -R0/11/0/8.5 -K -O -V -Xa3.5i -Ya0i >> $psfile\n";
   }
 }
 
@@ -279,9 +282,9 @@ $otitle1 = "-Xa0.5 -Ya$tya"; $fsize1 = 16;
 $otitle2 = "-Xa0.5 -Ya$tyb"; $fsize2 = 12;
 if ($ititle==1 && $x==1) {
   $title1 = "Reference sets of moment tensors (input files available in carltape compearth github repository)";
-  $title2 = "Plotted using GMT 4.5.3 with a modified version of psmeca";
-  print CSH "pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0 0 $fsize1 0 $fontno LM $title1\nEOF\n";
-  print CSH "pstext -N $R_title $J_title $otitle2 -K -O -V >>$psfile<<EOF\n 0 0 $fsize2 0 $fontno LM $title2\nEOF\n";
+  $title2 = "Plotted using $gmttag";
+  print CSH "gmt pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0 0 $fsize1 0 $fontno LM $title1\nEOF\n";
+  print CSH "gmt pstext -N $R_title $J_title $otitle2 -K -O -V >>$psfile<<EOF\n 0 0 $fsize2 0 $fontno LM $title2\nEOF\n";
 }
 
 }  # for loop over $x

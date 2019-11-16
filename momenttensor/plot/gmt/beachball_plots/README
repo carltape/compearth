@@ -4,8 +4,7 @@ compearth/momenttensor/plot/gmt/beachball_plots/
 Carl Tape ctape@alaska.edu
 
 These input files and scripts are designed for testing plotting routines for full moment tensors. 
-Unless notes, the codes were tested with GMT 4.5.3
-Testing with GMT 6.0.1 is ongoing (Nov 2019).
+Unless noted, the default codes were tested with GMT 4.5.3 using a modified utilmeca.h
 
 ---
 
@@ -14,49 +13,37 @@ csh -f lune_beachballs_min.csh
 produces the ps file lune_ngeo_iplot2_lplot1_kplot1_min.ps
 
 Alternative scripts for different versions of GMT:
-lune_gmt453dreger.csh --> lune_gmt453dreger.pdf
-lune_gmt544.csh       --> lune_gmt544.pdf
-lune_gmt600.csh       --> lune_gmt600.pdf
-lune_gmt601.csh       --> lune_gmt601.pdf
+lune_gmt453dreger.csh --> lune_gmt453dreger.pdf (good)
+lune_gmt544.csh       --> lune_gmt544.pdf (problems)
+lune_gmt600.csh       --> lune_gmt600.pdf (good)
+lune_gmt600pr2018.csh --> (same as lune_gmt600.pdf) (good)
 
 ---
 
 For examples 2 and 3, you will need to have the full compearth repository available; or at least have the datafiles present in the directory at ../dfiles/
 
 EXAMPLE 2:
-lune_beachballs.pl        --> lune_hammer_iplot2_lplot1_kplot1.pdf
-lune_beachballs_gmt601.pl --> lune_hammer_iplot2_lplot1_kplot1_gmt601.pdf
-
+lune_beachballs.pl
+   --> lune_hammer_iplot2_lplot1_kplot1.pdf (good)
+lune_beachballs_gmt6.pl gmt600pr2018
+   --> lune_hammer_iplot2_lplot1_kplot1_gmt600pr2018.pdf (problems with lambda2=0 sixth set)
+lune_beachballs_gmt6.pl gmt600pr2067
+   --> lune_hammer_iplot2_lplot1_kplot1_gmt600pr2067.pdf (good)
 
 EXAMPLE 3:
-uncomment lines 25 and 26 in lune_beachballs.pl, then run
+uncomment lines 30 and 31 in lune_beachballs.pl, then run
 produces the ps file lune_ngeo_iplot2_lplot1_kplot1.ps
 
 In these figures, there are arcs plotted for directions of eigenvalue space where one of the eiganvalues of the moment tensor is zero: lambda3 = 0 (top), lambda2 = 0 (upper left to lower right), and lambda1 = 0 (bottom).
 
 ---
 
-Status: As of 2019-11-14, GMT 6.0.1 seems to have a bug when plotting lamda2 = 0 full moment tensors.
-See lune_hammer_iplot2_lplot1_kplot1_gmt601.pdf vs lune_hammer_iplot2_lplot1_kplot1_gmt601.pdf
-The issue is in the sixth lune plot.
-
-The error message is:
-Warning: bigisotest failed for record 1, please report the issue to us! 
-Warning: bigisotest failed for record 2, please report the issue to us! 
-Warning: bigisotest failed for record 3, please report the issue to us! 
-Warning: bigisotest failed for record 4, please report the issue to us! 
-Warning: bigisotest failed for record 6, please report the issue to us! 
-Warning: bigisotest failed for record 7, please report the issue to us! 
-Warning: bigisotest failed for record 8, please report the issue to us! 
-Warning: bigisotest failed for record 9, please report the issue to us!
-
-Note that some of these moment tensors, although not double couples, do NOT have a big isotropic component.
-
----
-
-See also:
+Links for the GMT development of psmeca issues tested here:
 https://github.com/GenericMappingTools/gmt/issues/661
-https://github.com/GenericMappingTools/gmt/blob/6.0/test/seis/full_moment_tensor.sh
 https://github.com/GenericMappingTools/gmt/issues/2016
+https://github.com/GenericMappingTools/gmt/pull/882
+https://github.com/GenericMappingTools/gmt/pull/2018
+https://github.com/GenericMappingTools/gmt/pull/2067
+https://github.com/GenericMappingTools/gmt/blob/6.0/test/seis/full_moment_tensor.sh
 
 ---
