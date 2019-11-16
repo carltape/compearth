@@ -9,10 +9,9 @@ Unless noted, the default codes were tested with GMT 4.5.3 using a modified util
 ---
 
 EXAMPLE 1:
-csh -f lune_beachballs_min.csh
-produces the ps file lune_ngeo_iplot2_lplot1_kplot1_min.ps
+csh -f lune_gmtXXX.csh
+produces the ps file lune_XXX.ps
 
-Alternative scripts for different versions of GMT:
 lune_gmt453dreger.csh --> lune_gmt453dreger.pdf (good)
 lune_gmt544.csh       --> lune_gmt544.pdf (problems)
 lune_gmt600.csh       --> lune_gmt600.pdf (good)
@@ -24,17 +23,20 @@ For examples 2 and 3, you will need to have the full compearth repository availa
 
 EXAMPLE 2:
 lune_beachballs.pl
-   --> lune_hammer_iplot2_lplot1_kplot1.pdf (good)
+   --> lune_hammer_iplot2_lplot1_kplot1.pdf
+       (good)
 lune_beachballs_gmt6.pl gmt600pr2018
-   --> lune_hammer_iplot2_lplot1_kplot1_gmt600pr2018.pdf (problems with lambda2=0 sixth set)
+   --> lune_hammer_iplot2_lplot1_kplot1_gmt600pr2018.pdf
+       (problems with lambda2=0 sixth set)
 lune_beachballs_gmt6.pl gmt600pr2067
-   --> lune_hammer_iplot2_lplot1_kplot1_gmt600pr2067.pdf (good)
+   --> lune_hammer_iplot2_lplot1_kplot1_gmt600pr2067.pdf
+       (good)
+
+In these figures, there are arcs plotted for directions of eigenvalue space where one of the eiganvalues of the moment tensor is zero: lambda3 = 0 (top), lambda2 = 0 (upper left to lower right), and lambda1 = 0 (bottom).
 
 EXAMPLE 3:
 uncomment lines 30 and 31 in lune_beachballs.pl, then run
 produces the ps file lune_ngeo_iplot2_lplot1_kplot1.ps
-
-In these figures, there are arcs plotted for directions of eigenvalue space where one of the eiganvalues of the moment tensor is zero: lambda3 = 0 (top), lambda2 = 0 (upper left to lower right), and lambda1 = 0 (bottom).
 
 ---
 
