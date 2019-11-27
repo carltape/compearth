@@ -69,11 +69,19 @@ end
         
 utmstruct.geoid = ellipsoid;        % assign ellipsoid
 utmstruct = defaultm(utmstruct);
+
+[a,b,c] = size(xi);
+ndim = length(size(xi));
+disp(sprintf('input dimension is %i',ndim));
+if ndim==3, xi = xi(:); yi = yi(:); end
+
 if i_type == 1
     [y,x] = minvtran(utmstruct,xi,yi);  % utm2ll
 else
     [x,y] = mfwdtran(utmstruct,yi,xi);  % ll2utm
 end
+
+if ndim==3, x = reshape(x,a,b,c); y = reshape(y,a,b,c); end
 
 %------------------------------
 
