@@ -1,6 +1,6 @@
 %
 % surfacevel2strain.m
-% Carl Tape and Pablo Muse, 20-Jan-2010
+% Carl Tape and Pablo Muse, 2010-01-20
 %
 % This program takes set of discrete velocity observations on the sphere
 % and estimates a continuous field using multi-scale basis functions.
@@ -26,11 +26,9 @@
 %    surfacevel2strain_write.m  -- 
 %
 
-clc
-close all
-format short
-format compact
-warning off
+% NOTE THAT THERE IS NO clear STATEMENT HERE
+clc, close all, format short
+format compact, warning off
 
 ireg  = input(' Type 1 for new inversion or 0 otherwise: ');
 
@@ -808,7 +806,7 @@ if ireg == 1
     disp('  ');
     disp(' got the regularization parameters (vr, vth, vphi):');
     disp(['    lam0 = ' sprintf('%.2e %.2e %.2e',lam0) ]);
-    break
+    error
 
     %========================================================
 end  % ireg

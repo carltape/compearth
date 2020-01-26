@@ -1,6 +1,6 @@
 %
 % sphereinterp.m
-% Carl Tape and Pablo Muse, 17-Jan-2011
+% Carl Tape and Pablo Muse, 2011-01-17
 %
 % This estimates a smooth field on the sphere from discrete points using
 % spherical wavelets. This is the 1D version of surfacevel2strain.m,
@@ -13,9 +13,7 @@
 % called by sphereinterp.m
 %
 
-clc
-clear
-close all
+clc, clear, close all
 format short, format compact
 
 % add path to additional matlab scripts (specify bdir)
@@ -95,6 +93,7 @@ end
 % WRITE FILES
 
 if and(iwavelet==1,iwrite==1)
+    if ~exist(dir_output,'dir'), mkdir(dir_output); end
     
     ftag = sprintf('%s_q%2.2i_q%2.2i_ir%2.2i_id%2.2i',slabel,qmin,qmax,ropt,dopt);
     %flab = [dir_output slabel '_' stqtag{1} '_' sprintf('ic%2.2i_im%2.2i',idata,sub_opt) ];

@@ -3,8 +3,7 @@
 #==========================================================
 #
 #  plot_strain.pl
-#  Carl Tape
-#  24-Jan-2011
+#  Carl Tape, 2011-01-24
 #  
 #  This script plots figures using output files from surfacevel2strain/matlab_output/
 #  See Tape et al. (GJI 2009) for examples and details.
@@ -34,7 +33,7 @@ $circleinfo = "-Sc25p -W1.0p,0/0/0,--";
 # USER PARAMETERS
 
 # base directory
-$dir0 = "/home/carltape/compearth/surfacevel2strain";
+$dir0 = "/home/carltape/REPOSITORIES/compearth/surfacevel2strain";
 
 # velocity, strain rate, etc
 $vel_dir0 = "$dir0/matlab_output";

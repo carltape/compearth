@@ -181,7 +181,7 @@ if ispheroidal==1
     disp('surfacevel2strain_figs.m: spheroidal-toroidal decomposition');
     disp('   has not yet been extended to the regular plotting mesh.');
     disp('   EXIT HERE');
-    break
+    error
 end
 
 %========================================================
@@ -830,7 +830,11 @@ if ifigs2==1
     orient tall, wysiwyg, fontsize(8)
 
     %------------------------------------
-    % overall estimates for 6 scalar quantities
+
+    % kludge: matlab may need time to open a new figure
+    pause(0.1)
+    
+    disp(' plotting overall estimates for 6 scalar quantities...');
     figure; nr=3; nc=2;
     dmin = min(min(dilat_all(:,end))); dmax = max(max(dilat_all(:,end)));
     for ik = 1:6
@@ -859,6 +863,8 @@ if ifigs2==1
     %fontsize(8)
     orient tall; wysiwyg % colormap(seis);
 
+    %error
+    
     %------------------------------------
     % overall estimates for 3 scalar quantities (see cmat above)
     figure; nr=2; nc=2;

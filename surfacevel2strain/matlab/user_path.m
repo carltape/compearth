@@ -10,8 +10,8 @@
 
 % THIS ASSUMES THAT YOU HAVE compearth IN YOUR HOME DIRECTORY
 % IF IT IS NOT, THEN CHANGE IT.
-dir_home = getenv('HOME');
-dir_compearth = strcat(dir_home,'/compearth/');
+dir_repos = getenv('REPOS');
+dir_compearth = strcat(dir_repos,'/compearth/');
 if ~exist(dir_compearth,'dir')
     dir_compearth
     error('user_path.m: compearth directory does not exist: ');
