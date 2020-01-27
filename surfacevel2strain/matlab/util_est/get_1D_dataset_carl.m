@@ -1,4 +1,4 @@
-function [dlon,dlat,d,dsig,ax0,slabel,ulabel,isource,ftags] = get_1D_dataset_carl(ropt,dopt)
+function [dlon,dlat,d,dsig,ax0,slabel,ulabel,isource,ftags,d2] = get_1D_dataset_carl(ropt,dopt)
 %GET_1D_DATASET_CARL
 %
 % This loads a set of discrete (1D) observations on the sphere
@@ -6,7 +6,7 @@ function [dlon,dlat,d,dsig,ax0,slabel,ulabel,isource,ftags] = get_1D_dataset_car
 %
 % called by sphereinterp.m
 %
-% Carl Tape, 01-Feb-2011
+% Carl Tape, 2011-02-01
 %
 
 % GEOGRAPHIC REGION 
@@ -17,7 +17,8 @@ switch ropt
     case 3, rlabel = 'maricopa'; ax0 = [-119.7 -118.5 34.5 35.5]; szone = '11S';    
     case 4, rlabel = 'nenana'; ax0 = [-151.05 -147.45 63.45 65.55]; szone = '6W';
     case 5, rlabel = 'alaska'; ax0 = [190 230 54 72]; szone = '5V';   
-    case 7, rlabel = 'sierra'; ax0 = [-122 -116 34 40]; szone = '11S';  
+    case 7, rlabel = 'sierra'; ax0 = [-122 -116 34 40]; szone = '11S';
+    case 8, rlabel = 'sak'; ax0 = [-158 -147 58.5 62.5]; szone = '5V';
 end
 
 %==========================================================================
@@ -25,6 +26,7 @@ end
 
 isource = [];
 ftags = [];
+d2 = [];
 
 % CALIFORNIA MOHO
 switch dopt
@@ -252,6 +254,35 @@ case 7
     %d = d - median(d);
     %disp(sprintf('removing the median value of %.0f Ma prior to estimating'));
 
+% shear-wave splitting data in Alaska
+case 8
+    idir = '/home/carltape/REPOSITORIES/manuscripts/crichards/papers/aksplit/data/';
+    %ifile = [idir 'lon_lat_phi_dt_event_location_local_splitting.txt'];
+    %ifile = [idir 'lon_lat_phi_dt_proj_midpoint_local_splitting.txt'];
+    ifile = [idir 'lon_lat_phi_dt_100km_proj_SKS_splitting.txt'];
+    [dlon,dlat,az_deg,dt] = textread(ifile,'%f%f%f%f');
+    
+    % estimate direction only
+    %dt = ones(size(dt)); warning('ignoring splitting times in the data set');
+    
+    % ad hoc uncertainty estimates
+    dsig = ones(size(dlon));
+    
+    th_deg = ph2az(az_deg);
+    th = th_deg*pi/180;
+    z = dt.*exp(i*th);
+    Z = z.^2;
+    A = real(Z);
+    B = imag(Z);
+    d = A;
+    d2 = B;
+    
+    % original data
+    figure; quiver(dlon,dlat,real(z),imag(z));
+    
+    ulabel = 'splitting [A]';
+    dlabel = 'alaska_splitting';
+    
 % SHAKING INTENSITY MAPS IN ALASKA
 case 10 
     ipick = 7;

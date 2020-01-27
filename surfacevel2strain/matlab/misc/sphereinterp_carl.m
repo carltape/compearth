@@ -7,9 +7,7 @@
 % called by sphereinterp.m
 %
 
-clc
-clear
-close all
+clc, clear, close all
 format short, format compact
 
 % add path to additional matlab scripts (specify bdir)
@@ -24,19 +22,20 @@ iwrite = 1;
 % CARL EXAMPLES (ropt-dopt)
 % 2-1 california moho
 % 1-1 socal moho
-% 1-2 USGS crystaline basement
+% 1-2 USGS crystalline basement
 % 1-4 SJB base Tertiary
-% 3-3 Maricopa basement
+% 3-3 Maricopa basement (socal)
 % 4-5 nenana gravity
 % 5-6 alaska moho
 % 2-7 California rock data
-ropt  = input(' Type an index corresponding to a region (1=socal, 2=cal, 3=maricopa, 4=nenana): ');
-dopt  = input(' Type an index corresponding to a dataset (1=moho,2,3,4,5=grav): ');
+% 8-8 Alaska shear-wave splitting
+ropt  = input(' Type an index corresponding to a region (1=socal, 2=cal, 3=maricopa, 4=nenana, 5=alaska, 8=sak): ');
+dopt  = input(' Type an index corresponding to a dataset (1=moho,2,3,4,5=grav,8=split): ');
 
 %========================================================
 % GET DATA SET
 
-[dlon,dlat,d,dsig,ax0,slabel,ulabel,isource,ftags] = get_1D_dataset_carl(ropt,dopt);
+[dlon,dlat,d,dsig,ax0,slabel,ulabel,isource,ftags,d2] = get_1D_dataset_carl(ropt,dopt);
 dir_output = '/home/carltape/MOHO/WAVELET/MATLAB_EST/';
 
 %====================================================================
@@ -99,6 +98,25 @@ if iwavelet==1
             nlam = 40; ilampick = 2;
             ntrsh = 3;
             nx = 50;
+            
+        case 8
+            % alaska splitting
+            qmin = 6; qmax = 8;
+            nlam = 40; ilampick = 2;
+            ntrsh = 3;
+            nx = 20;    % number of points controlling plotting grid
+            
+        case 10
+            % note: the default choices will NOT adequately represent the
+            % highest MMI regions -- to do this, you need to choose larger
+            % qmax and lower value of lambda for regularization.
+            % Or if you use low q values, you may want to decrease
+            % minlampwr in sphereinterp_est.m
+            qmin = 0; qmax = 7;
+            nlam = 40;
+            ilampick = 2;
+            ntrsh = 3;
+            nx = 200;
     end
     
     %nx = 50; qmin = 2; qmax = 7;   % testing
@@ -120,6 +138,27 @@ if iwavelet==1
     % KEY COMMAND: call sphereinterp_est.m to perform least-squares estimation
     [dest,dest_plot,destdph_plot,destdth_plot,lam0,dlon_plot,dlat_plot,na,nb] = ...
         sphereinterp_est(spline_tot,dlon,dlat,d,dsig,ax0,rparm,pparm);
+    
+    if dopt==8
+        pparm{2} = 'splitting [B]';
+        [dest2,dest_plot2,destdph_plot2,destdth_plot2,lam02,dlon_plot2,dlat_plot2,na2,nb2] = ...
+            sphereinterp_est(spline_tot,dlon,dlat,d2,dsig,ax0,rparm,pparm);
+        
+        % reconstruct the splitting vectors
+        Z = dest + 1i*dest2;
+        figure; quiver(dlon,dlat,real(sqrt(Z)),imag(sqrt(Z)));
+        Zplot = dest_plot + 1i*dest_plot2;
+        figure; quiver(dlon_plot,dlat_plot,real(sqrt(Zplot)),imag(sqrt(Zplot)));
+        
+        error('stopping here for splitting');
+        
+        % recover dt and splitting angle
+        R = abs(Z);
+        Theta_rad = angle(Z);   % radians
+        theta_rad = Theta_rad / 2;
+        r = sqrt(R);
+        theta = theta_rad*180/pi;
+    end
     
     disp('  ');
     disp(sprintf('Number of observations, ndata = %i',ndata));
@@ -183,8 +222,18 @@ if and(iwavelet==1,iwrite==1)
     fprintf(fid,'%18.8e\n',lam0);
     fclose(fid);
     
+    % save simple matlab file
+    X = reshape(dlon_plot,na,nb);
+    Y = reshape(dlat_plot,na,nb);
+    Z = reshape(dest_plot,na,nb);
+    figure; msize = 6^2; hold on;
+    pcolor(X,Y,Z); shading flat; colorbar
+    scatter(dlon,dlat,msize,d,'filled');
+    scatter(dlon,dlat,msize,'ko');
+    save(flab,'X','Y','Z');
+    
     % optional: write data constraints
-    break
+    error
     write_surf_data(flab,[],dlon,dlat,d,dsig,isource,ftags,szone);
     
     % testing output figure
