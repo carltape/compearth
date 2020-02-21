@@ -58,10 +58,11 @@ user_path;
 % USER PARAMETERS
 
 % plate models
-mod_labs = {'oneill','nuvel1A_nnr','revel','bird','gripp_hs3','bird_gripp','bird_morgan','bird_nnr','morvel_nnr','morvel_nnr_beckersa'};
+mod_labs = {'oneill','nuvel1A_nnr','revel','bird','gripp_hs3','bird_gripp','bird_morgan','bird_nnr','','morvel_nnr'};
 nmod = length(mod_labs);
 disp(sprintf('\nPLATE MODELS (INCLUDING REFERENCE FRAME) TO CHOOSE FROM:'));
-for ii=1:nmod, disp(sprintf('%3i  %s',ii,mod_labs{ii})); end
+for ii=1:nmod, disp(sprintf('%5i  %s',ii,mod_labs{ii})); end
+disp('11-21  morvel_nnr with a reference frames in Becker et al. (2015)');
 imodel = input(sprintf(' Type index for plate model (1-%i), then ENTER: ',nmod));
 
 % type of grid points
@@ -115,7 +116,11 @@ ilon360 = 1;        % =1 for longitudes as [0,360], =0 for [-180,180]
 
 stq = sprintf('q%2.2i', q);
 sgrid = sprintf('g%1i',igrid);
-smod = mod_labs{imodel};
+if imodel <= 10
+    smod = mod_labs{imodel};
+else
+    smod = sprintf('morvel_nnr_becker2015_%2.2i',imodel-10);
+end
 dir_plates  = '/home/carltape/gmt/plates/';
 dir_surface = [dir_plates 'surface_velocities/' smod '/'];
 dir_models  = [dir_plates 'plate_models/' smod '/'];
@@ -206,6 +211,12 @@ ww = [dir_models smod '_euler_poles.dat'];
 
 imake = 0;  % construct the (wx,wy,wz) data file for the plate model
 
+%for imodel = 11:21
+%    smod = sprintf('morvel_nnr_becker2015_%2.2i',imodel-10);
+%    dir_models  = [dir_plates 'plate_models/' smod '/'];
+%    ww = [dir_models smod '_euler_poles.dat'];
+%    imodel
+    
 if imake==1
     % load ORIGINAL euler poles and output in common format: wx, wy, wz, LAB
     switch imodel
@@ -363,31 +374,27 @@ if imake==1
             exyz = exyz(:,inds);
             names = names(inds);
             
-        case 9
+        case 10
             [name_labs,elat,elon,omega,names] = textread([dir_models 'morvel_nnr.txt'],'%s%f%f%f%s');
             elatlon = [elat elon omega]';
             exyz = euler_convert(elatlon, 0);
             inds = 1:length(names);
             
-        case 10
-            % pick a reference from from Becker2015
-            iepick = 1;
-            [ename,elon,elat,omega] = textread('/home/carltape/papers/plate_models/Becker2015/Becker2015_Table1.txt','%s%f%f%f');
-            elatlon = [elat elon omega]';
-            exyz0 = euler_convert(elatlon,0);
-            
-            % NNR-MORVEL56
-            [lon,lat,ve,vn,iplate_vec,exyz,names,name_labs] = platemodel2gps([],[],9,99,{0,1,1});
-            exyz = exyz + repmat(exyz0(:,iepick),1,length(names));
+        otherwise
+            [lon,lat,ve,vn,iplate_vec,exyz,names,name_labs] = platemodel2gps([],[],10,99,{0,1,1});
+            disp('using the NNR-MORVEL56 plate model');
+            %iepick = input(sprintf(' Type index for reference frame from Becker2015 [0 = default morvel_nnr] [0-11]: ',nmod));
+            iepick = imodel - 10;
+            if iepick > 0
+                [ename,elon,elat,omega] = textread('/home/carltape/papers/plate_models/Becker2015/Becker2015_Table1.txt','%s%f%f%f');
+                elatlon = [elat elon omega]';
+                exyz0 = euler_convert(elatlon,0);
+                exyz = exyz + repmat(exyz0(:,iepick),1,length(names));
+            end
             inds = 1:length(names);
             
-        case 11
-            
-            
-        case 12
-            
     end
-    
+
     % check the indexing
     disp([names name_labs])
     
@@ -400,7 +407,11 @@ if imake==1
     fclose(fid);
     
     error
-end
+end   % imake==1
+
+%end  % for imodel=11:21
+
+%error
 
 %==========================================================================
 % COMPUTE SURFACE VELOCITY FIELD
