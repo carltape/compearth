@@ -7,17 +7,18 @@
 % on the sphere is inside or outside of a plate that is
 % described in terms of a closed-contour spherical polygon cap.
 %
-% EXAMPLES:
+% EXAMPLES (note: PA is fixed in the Bird plate model):
 % (1) plate velocity vectors shown in Wang and Tape (2014), Figure 11a
+%     DEFAULT OPTIONS        // SUBSEQUENT EXAMPLES
 %     4 (plate model = bird) // 8, 7, 6
 %     1 (grid)               
 %     4 (q)                  
 %     2 (npac)               
 %     1 (write)               
-%     1 (fixed plate)        // 0
+%     1 (fixed plate)        // 0, 0, 0
 %     11 (fixed NAM)         // 
 % (2) user input for manually entered lon-lat points
-%     7 (plate model = bird) // 4, 6, 7
+%     4 (plate model = bird) // 6, 7
 %     3 (manually entered points)                    
 %     2 (npac)               
 %     0 (no write)               
@@ -31,6 +32,14 @@
 %    -150.2640      66.2066     2.49   -15.01
 %    -148.5110      65.5114     1.86   -15.28
 %
+% (3) figure shown in plate_model.pdf notes
+%     7 (plate model = bird_morgan)
+%     1 (grid)
+%     7 (q)                   // 7
+%     1 (globe)
+%     1 (write) 
+%     0 (fixed plate)
+%
 % To calculate surface velocities for points that are outside the plate,
 % e.g., above subducting plates, use platemodel2conv_vel.m.
 % 
@@ -39,8 +48,7 @@
 % Carl Tape, 2011-01-28
 %
 
-clear, clc
-close all
+clear, clc, close all
 format short
 format compact
 
@@ -50,7 +58,7 @@ user_path;
 % USER PARAMETERS
 
 % plate models
-mod_labs = {'oneill','nuvel1A_nnr','revel','bird','gripp_hs3','bird_gripp','bird_morgan','bird_nnr'};
+mod_labs = {'oneill','nuvel1A_nnr','revel','bird','gripp_hs3','bird_gripp','bird_morgan','bird_nnr','morvel_nnr','morvel_nnr_beckersa'};
 nmod = length(mod_labs);
 disp(sprintf('\nPLATE MODELS (INCLUDING REFERENCE FRAME) TO CHOOSE FROM:'));
 for ii=1:nmod, disp(sprintf('%3i  %s',ii,mod_labs{ii})); end
@@ -164,10 +172,17 @@ elseif igrid==3
         [lon,lat] = getxy(ax1);
     else
         % manually list points (or load from file)
+        disp('USING MANUALLY ENTERED POINTS');
         lon = [-148.446 -149.59 -150.11 -150.264 -148.511];
         lat = [70.2036 68.6274 67.3812 66.2066 65.5114];
     end
 end
+
+% exclude the poles, since you have no concept of east and north there
+ipoles = find(abs(lat) > 89.9);
+lon(ipoles) = [];
+lat(ipoles) = [];
+
 num = length(lat);
 
 %==========================================================================
@@ -179,7 +194,7 @@ if 0==1
         platemodel2gps([],[],imodel,99,{0,1,1});
     end
     disp('displaying euler poles only');
-    break
+    error
 end
 
 %==========================================================================
@@ -197,8 +212,7 @@ if imake==1
         case 1
             % load rotation vectors (units in deg/Myr)
             % (see test_euler_rot_tec.m)
-            [name_labs,wx,wy,wz,names] = textread([dir_mod
-                els 'ind2002_mod.a1'],'%s%f%f%f%s','headerlines',2);
+            [name_labs,wx,wy,wz,names] = textread([dir_models 'ind2002_mod.a1'],'%s%f%f%f%s','headerlines',2);
             exyz = [wx wy wz]';
             
             % indexing into euler poles used in making the plate velocity model
@@ -300,7 +314,7 @@ if imake==1
             
             % Bird euler vectors in NUVEL1A-HS3 reference frame
             exyz = exyz - repmat(exyz_pac_bird - exyz_pac_hs3, 1, length(names));
-            untitled.fig
+
             % indexing into euler poles used in making the plate velocity model
             inds = 1:length(names);
             exyz = exyz(:,inds);
@@ -347,7 +361,31 @@ if imake==1
             % indexing into euler poles used in making the plate velocity model
             inds = 1:length(names);
             exyz = exyz(:,inds);
-            names = names(inds);   
+            names = names(inds);
+            
+        case 9
+            [name_labs,elat,elon,omega,names] = textread([dir_models 'morvel_nnr.txt'],'%s%f%f%f%s');
+            elatlon = [elat elon omega]';
+            exyz = euler_convert(elatlon, 0);
+            inds = 1:length(names);
+            
+        case 10
+            % pick a reference from from Becker2015
+            iepick = 1;
+            [ename,elon,elat,omega] = textread('/home/carltape/papers/plate_models/Becker2015/Becker2015_Table1.txt','%s%f%f%f');
+            elatlon = [elat elon omega]';
+            exyz0 = euler_convert(elatlon,0);
+            
+            % NNR-MORVEL56
+            [lon,lat,ve,vn,iplate_vec,exyz,names,name_labs] = platemodel2gps([],[],9,99,{0,1,1});
+            exyz = exyz + repmat(exyz0(:,iepick),1,length(names));
+            inds = 1:length(names);
+            
+        case 11
+            
+            
+        case 12
+            
     end
     
     % check the indexing
@@ -357,11 +395,11 @@ if imake==1
     % NEED TO MAKE SURE THAT THE DIRECTORY IS THERE!
     fid = fopen(ww,'w');
     for ii=1:length(inds)
-        fprintf(fid,'%13.6f%13.6f%13.6f%9s%16s\n',exyz(1,ii),exyz(2,ii),exyz(3,ii),name_labs{ii},names{ii});   
+        fprintf(fid,'%13.6f%13.6f%13.6f%16s%16s\n',exyz(1,ii),exyz(2,ii),exyz(3,ii),name_labs{ii},names{ii});   
     end
     fclose(fid);
     
-    break
+    error
 end
 
 %==========================================================================
@@ -397,7 +435,9 @@ ifix_mat(:,8) = ifix_mat(:,4);
 % number of options for choosing the fixed plate
 nfix = length(ifix_mat);
 
-ifix0 = input('\n Type 0 to NOT fix a plate, 1 to fix a plate, or 2 to consider a range of fixed plates, then ENTER: ');
+disp(' ');
+disp('Type 0 to NOT fix a plate, 1 to fix a plate,');
+ifix0 = input('or 2 to consider a range of fixed plates, then ENTER: ');
 if ifix0 > 0
    disp('Index for fixed plate:');
    for ii=1:nfix, disp(sprintf('%3i %s',ii,sfix_name{ii})); end
@@ -427,6 +467,7 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
     opts = {0,1,0};
 
     % compute velocity field for VECTORS (coarse mesh)
+    % note: plots a vector field using the quiver command
     [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] ...
         = platemodel2gps(lon,lat,imodel,ifix,opts);
     
@@ -463,7 +504,8 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
         disp('columns are: lon lat ve vn vmag');
         
         % KEY: tag for all files
-        ftag = [slabel '_fix_' stref '_' smod '_' sgrid stq];
+        ftag0 = [slabel '_fix_' stref '_' smod];
+        ftag = [ftag0 '_' sgrid stq];
         
         % write plate model vector COMPONENTS and MAGNITUDES to file (mm/yr)
         ww = [ftag '_vec.dat'];
@@ -472,10 +514,18 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
         fid = fopen(ofile,'w');
         for ii=1:num
             jj = isort(ii);
-            fprintf(fid,'%18.8e%18.8e%18.8e%18.8e%18.8e\n',...
+            fprintf(fid,'%12.4f%12.4f%12.4f%12.4f%12.4f\n',...
                 lon(jj),lat(jj),ve(jj),vn(jj),vmag(jj));   
+            %fprintf(fid,'%18.8e%18.8e%18.8e%18.8e%18.8e\n',...
+            %    lon(jj),lat(jj),ve(jj),vn(jj),vmag(jj));   
         end
         fclose(fid);
+        
+        % check
+        if 0==1
+            a = load('/home/carltape/gmt/plates/surface_velocities/globe_fix_99_bird_morgan_g1q03_vec.dat');
+            figure; quiver(wrapTo360(a(:,1)),a(:,2),a(:,3),a(:,4));
+        end
 
         % write bounds to file
         ww = [ftag '_bounds.dat'];
@@ -493,7 +543,7 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
         [elat_anti,elon_anti] = antipode(elat,elon);
 
         % write euler poles to file (lon-lat)
-        ww = [ftag '_euler_lonlat.dat'];
+        ww = [ftag0 '_euler_lonlat.dat'];
         ofile = [odir ww];
         disp(['writing file ' ww]);
         fid = fopen(ofile,'w');
@@ -501,7 +551,7 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
         fclose(fid);
 
         % write euler anti-poles to file (lon-lat)
-        ww = [ftag '_euler_anti_lonlat.dat'];
+        ww = [ftag0 '_euler_anti_lonlat.dat'];
         ofile = [odir ww];
         disp(['writing file ' ww]);
         fid = fopen(ofile,'w');
@@ -514,7 +564,7 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
 %==========================================================================
 % CODE BELOW NEEDS TO BE REVISED
 
-break
+error
 
     % write to file for GMT plotting -- NON-GLOBAL FIELD (q = 99)
     if and(iwrite == 1, q == 99)
