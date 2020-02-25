@@ -211,7 +211,7 @@ ww = [dir_models smod '_euler_poles.dat'];
 
 imake = 0;  % construct the (wx,wy,wz) data file for the plate model
 
-%for imodel = 11:21
+% for imodel = 11:21
 %    smod = sprintf('morvel_nnr_becker2015_%2.2i',imodel-10);
 %    dir_models  = [dir_plates 'plate_models/' smod '/'];
 %    ww = [dir_models smod '_euler_poles.dat'];
@@ -410,7 +410,6 @@ if imake==1
 end   % imake==1
 
 %end  % for imodel=11:21
-
 %error
 
 %==========================================================================
@@ -443,6 +442,8 @@ ifix_mat = [ 1 1 1 2 1        %  1 AFR
 ifix_mat(:,6) = ifix_mat(:,4);
 ifix_mat(:,7) = ifix_mat(:,4);
 ifix_mat(:,8) = ifix_mat(:,4);
+% the MORVEL56 plates are used in plate models 10,11-21
+ifix_morvel = [14 3 4 5 6 7 9 10 11 16 13 1 17 19 20 23 25]';
 % number of options for choosing the fixed plate
 nfix = length(ifix_mat);
 
@@ -452,7 +453,7 @@ ifix0 = input('or 2 to consider a range of fixed plates, then ENTER: ');
 if ifix0 > 0
    disp('Index for fixed plate:');
    for ii=1:nfix, disp(sprintf('%3i %s',ii,sfix_name{ii})); end
-   if ifix0 ==1
+   if ifix0 == 1
        ifix0 = input(sprintf('\n Type index of plate (between 1 and %i), then ENTER: ',nfix));
        irow1 = ifix0;
        irow2 = ifix0;
@@ -471,8 +472,12 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
     if ifix0==0
         ifix = 99;
     else
-        ifix_vec = ifix_mat(irow,:);
-        ifix = ifix_vec(imodel);
+        if imodel >= 10
+            ifix = ifix_morvel(irow);
+        else
+            ifix_vec = ifix_mat(irow,:);
+            ifix = ifix_vec(imodel);
+        end
     end
     
     opts = {0,1,0};
