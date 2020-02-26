@@ -753,4 +753,62 @@ error
 
 end  % irow
 
-%========================================================
+%==========================================================================
+
+if 0==1
+    % By default, the program will figure out which plate each input point is on,
+    % and then it will return the surface velocity. This next example shows
+    % how one can get the surface velocity of a point that is outside the
+    % boundary of the plate.
+    clear, clc, close all
+    % input points
+    lon = [-144 -150];
+    lat = [59 61];
+    
+    % choose:
+    % a) plate model (with reference frame)
+    % b) whether to fix a plate (this eliminates the relevance of the reference frame)
+    % c) the plate for which you calculate surface velocities
+    imodel = 10;
+    [exyz,names,name_labs,dir_bounds,ssfx,smod] = get_plate_model(imodel,true);
+    
+    % four examples
+    for iex = 1:4
+        iplate = [];
+        switch iex
+            case 1, ifix = 13;              % fixed North America
+            case 2, ifix = 99;              % default reference frame
+            case 3, ifix = 99; iplate = 1;  % Pacific motion
+            case 4, ifix = 99; iplate = 13; % North America motion
+        end
+        opts = {0,1,0,iplate};
+
+        % compute velocity field for VECTORS (coarse mesh)
+        % note: plots a vector field using the quiver command
+        [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] ...
+            = platemodel2gps(lon,lat,imodel,ifix,opts);
+        disp(sprintf('iex = %i',iex));
+        for ii=1:length(lon)
+            if isempty(iplate), ip = iplate_vec(ii); else ip = iplate; end
+            disp(sprintf('input point (%7.2f, %7.2f) is (%.2f, %.2f) [%.2f mm/yr] on %s (%s) [%s, ifix=%i]',...
+                lon(ii),lat(ii),ve(ii),vn(ii),sqrt(ve(ii)^2 + vn(ii)^2),names{ip},name_labs{ip},smod,ifix));
+        end
+        figure; quiver(lon,lat,ve,vn);
+    end
+    
+% input point (-144.00,   59.00) is (-18.07, 52.25) [55.29 mm/yr] on Pacific (pa) [morvel_nnr, ifix=13]
+% input point (-150.00,   61.00) is (0.00, -0.00) [0.00 mm/yr] on North_America (na) [morvel_nnr, ifix=13]
+% 
+% input point (-144.00,   59.00) is (-27.97, 31.58) [42.19 mm/yr] on Pacific (pa) [morvel_nnr, ifix=99]
+% input point (-150.00,   61.00) is (-8.08, -21.64) [23.10 mm/yr] on North_America (na) [morvel_nnr, ifix=99]
+%   
+% input point (-144.00,   59.00) is (-27.97, 31.58) [42.19 mm/yr] on Pacific (pa) [morvel_nnr, ifix=99]
+% input point (-150.00,   61.00) is (-28.82, 32.07) [43.12 mm/yr] on Pacific (pa) [morvel_nnr, ifix=99]
+%   
+% input point (-144.00,   59.00) is (-9.90, -20.67) [22.92 mm/yr] on North_America (na) [morvel_nnr, ifix=99]
+% input point (-150.00,   61.00) is (-8.08, -21.64) [23.10 mm/yr] on North_America (na) [morvel_nnr, ifix=99]
+
+    
+end
+
+%==========================================================================

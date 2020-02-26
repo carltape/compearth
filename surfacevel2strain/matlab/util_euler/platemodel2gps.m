@@ -78,6 +78,15 @@ ifig_extra  = opts{1};
 idisplay    = opts{2};
 ieuler_only = opts{3};
 
+% with this option, the code will return the surface velocity field
+% evaluated at points that may be OUTSIDE the boundary of the designated plate
+if length(opts)==4
+    iplate = opts{4};
+    if isempty(iplate), iplate = 0; end
+else
+    iplate = 0;
+end
+
 % KEY: get euler vectors for plate model
 %get_plate_model;   % input imodel
 [exyz,names,name_labs,dir_bounds,ssfx,smod] = get_plate_model(imodel);
@@ -151,10 +160,12 @@ end
 
 iplate_vec = zeros(num,1);
 
+if iplate == 0
+    
+pmin = 1; pmax = nump;
 disp('platemodel2gps.m: find the plate for each target point');
 
 % loop over plates
-pmin = 1; pmax = nump;
 for ii = pmin:pmax
     disp(sprintf('plate is %s, index %i (%i to %i)',names{ii},ii,pmin,pmax));
     
@@ -242,6 +253,8 @@ if ifig_extra==1
         plot(plon, plat,'k.');
     end
 end
+ 
+end
 
 %========================================================
 % COMPUTE SURFACE VELOCITY FIELD
@@ -250,45 +263,56 @@ disp('platemodel2gps.m: compute surface velocity fields');
 
 vn = zeros(num,1);
 ve = zeros(num,1);
-for ivel = 1:nump
 
-    % gridpoints on plate ivel
-    inds = find( ivel==iplate_vec );
+if iplate==0
+    for ivel = 1:nump   % loop over plates
 
-    % compute surface velocity field
-    evec = exyz(:,ivel);                            % euler pole
-    Pxyz = latlon2xyz(lat(inds),lon(inds),earthr);	% input points
-    Vrtp = euler2gps(evec, Pxyz);                   % surface vel (local r,th,ph)
-    vn(inds) = -Vrtp(2,:)';
-    ve(inds) = Vrtp(3,:)';
-end
+        % gridpoints on plate ivel
+        inds = find( ivel==iplate_vec );
 
-% plot vector field (as long as there are not too many vectors)
-if num <= 5000
-    figure; hold on;
-    quiver(lon,lat,ve,vn,1);
-    title(sprintf('platemodel2gps.m: model %s %s (%i plates, %i gridpoints)',...
-        smod,flab,nump,num),'interpreter','none');
-    xlabel('Longitude'); ylabel('Latitude');
-    axis equal, axis(ax1);
-    
-    pmin = 1; pmax = nump;
-
-    % plot plate boundaries
-    for ii = pmin:pmax   
-        if imodel >= 10, ww = name_labs{ii}; else ww = names{ii}; end
-        load([dir_bounds ww ssfx]);
-        data_plot = eval(ww);
-        plon = data_plot(:,1);
-        if ilon360==1, plon = wrapTo360(plon); end
-        plat = data_plot(:,2);
-
-        plot(plon, plat,'k.');
+        % compute surface velocity field
+        evec = exyz(:,ivel);                            % euler pole
+        Pxyz = latlon2xyz(lat(inds),lon(inds),earthr);	% input points
+        Vrtp = euler2gps(evec, Pxyz);                   % surface vel (local r,th,ph)
+        vn(inds) = -Vrtp(2,:)';
+        ve(inds) = Vrtp(3,:)';
     end
+    
+    % plot vector field (as long as there are not too many vectors)
+    if and(num > 2, num <= 5000)
+        figure; hold on;
+        quiver(lon,lat,ve,vn,1);
+        title(sprintf('platemodel2gps.m: model %s %s (%i plates, %i gridpoints)',...
+            smod,flab,nump,num),'interpreter','none');
+        xlabel('Longitude'); ylabel('Latitude');
+        axis equal, axis(ax1);
+
+        pmin = 1; pmax = nump;
+
+        % plot plate boundaries
+        for ii = pmin:pmax   
+            if imodel >= 10, ww = name_labs{ii}; else ww = names{ii}; end
+            load([dir_bounds ww ssfx]);
+            data_plot = eval(ww);
+            plon = data_plot(:,1);
+            if ilon360==1, plon = wrapTo360(plon); end
+            plat = data_plot(:,2);
+
+            plot(plon, plat,'k.');
+        end
+    else
+        disp(sprintf('platemodel2gps.m: %i points, so not plotting vector field',num));
+    end
+    
 else
-    disp(sprintf('platemodel2gps.m: %i points, so not plotting vector field',num));
+    ivel = iplate;
+    evec = exyz(:,ivel);                % euler pole
+    Pxyz = latlon2xyz(lat,lon,earthr);	% input points
+    Vrtp = euler2gps(evec, Pxyz);       % surface vel (local r,th,ph)
+    vn = -Vrtp(2,:)';
+    ve = Vrtp(3,:)';
 end
 
 disp('returning from platemodel2gps.m');
 
-%========================================================
+%==========================================================================
