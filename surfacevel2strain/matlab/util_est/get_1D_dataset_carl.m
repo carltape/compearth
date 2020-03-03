@@ -256,10 +256,10 @@ case 7
 
 % shear-wave splitting data in Alaska
 case 8
-    idir = '/home/carltape/REPOSITORIES/manuscripts/crichards/papers/aksplit/data/';
+    idir = '/home/carltape/REPOSITORIES//manuscripts/crichards/papers/aksplit/data/';
     %ifile = [idir 'lon_lat_phi_dt_event_location_local_splitting.txt'];
-    %ifile = [idir 'lon_lat_phi_dt_proj_midpoint_local_splitting.txt'];
-    ifile = [idir 'lon_lat_phi_dt_100km_proj_SKS_splitting.txt'];
+    ifile = [idir 'lon_lat_phi_dt_proj_midpoint_local_splitting.txt'];
+    %ifile = [idir 'lon_lat_phi_dt_100km_proj_SKS_splitting.txt'];
     [dlon,dlat,az_deg,dt] = textread(ifile,'%f%f%f%f');
     
     % estimate direction only

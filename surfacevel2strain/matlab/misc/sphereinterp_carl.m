@@ -17,7 +17,7 @@ user_path;
 % USER PARAMETERS
 
 iwavelet = 1;   % =1 for estimation; =0 to view data only
-iwrite = 1;
+iwrite = 0;
 
 % CARL EXAMPLES (ropt-dopt)
 % 2-1 california moho
@@ -140,24 +140,42 @@ if iwavelet==1
         sphereinterp_est(spline_tot,dlon,dlat,d,dsig,ax0,rparm,pparm);
     
     if dopt==8
+        %  d: real part of Z, where Z = z^2 = A + i*B
+        % d2: imaginary part of Z, where Z = z^2 = A + i*B
+        % (see get_1D_dataset_carl.m)
         pparm{2} = 'splitting [B]';
         [dest2,dest_plot2,destdph_plot2,destdth_plot2,lam02,dlon_plot2,dlat_plot2,na2,nb2] = ...
             sphereinterp_est(spline_tot,dlon,dlat,d2,dsig,ax0,rparm,pparm);
         
         % reconstruct the splitting vectors
-        Z = dest + 1i*dest2;
+        [az_deg,dt,Z] = dest2split(dest,dest2);
         figure; quiver(dlon,dlat,real(sqrt(Z)),imag(sqrt(Z)));
-        Zplot = dest_plot + 1i*dest_plot2;
-        figure; quiver(dlon_plot,dlat_plot,real(sqrt(Zplot)),imag(sqrt(Zplot)));
+        
+        if iwrite==1
+            % estimated field at input data points
+            odir = [dir_repos '/manuscripts/crichards/papers/aksplit/data/'];
+            ofile = [odir 'lon_lat_phi_dt_proj_midpoint_local_splitting_est.txt'];
+            fid = fopen(ofile,'w');
+            for ii=1:length(dlon)
+                fprintf(fid,'%12.4f%12.4f%8.1f%10.5f\n',dlon(ii),dlat(ii),az_deg(ii),dt(ii));
+            end
+            fclose(fid);
+            
+            % estimated field at regular gridpoints
+            [az_deg,dt,Z] = dest2split(dest_plot,dest_plot2);
+            figure; quiver(dlon_plot,dlat_plot,real(sqrt(Z)),imag(sqrt(Z)));
+            
+            %ftag = sprintf('%s_q%2.2i_q%2.2i_ir%2.2i_id%2.2i',slabel,qmin,qmax,ropt,dopt);
+            ofile = [odir 'lon_lat_phi_dt_proj_midpoint_local_splitting_est_regular.txt'];
+            fid = fopen(ofile,'w');
+            for ii=1:length(dlon_plot)
+                fprintf(fid,'%12.4f%12.4f%8.1f%10.5f\n',dlon_plot(ii),dlat_plot(ii),az_deg(ii),dt(ii));
+            end
+            fclose(fid);
+        end
         
         error('stopping here for splitting');
-        
-        % recover dt and splitting angle
-        R = abs(Z);
-        Theta_rad = angle(Z);   % radians
-        theta_rad = Theta_rad / 2;
-        r = sqrt(R);
-        theta = theta_rad*180/pi;
+      
     end
     
     disp('  ');
@@ -238,7 +256,6 @@ if and(iwavelet==1,iwrite==1)
     
     % testing output figure
     if 0==1
-        %%
         % multiple values on the western SAF (vertical fault)
         dx = load('/home/carltape/MOHO/WAVELET/MATLAB_EST/maricopa_maricopa_basement_q05_q11_ir03_id03.dat');
         [~,ix] = sort(dx(:,3),'ascend');
