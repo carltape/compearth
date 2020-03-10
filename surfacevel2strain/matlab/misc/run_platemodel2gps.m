@@ -492,12 +492,11 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
 
     % magnitudes: sort to plot largest magnitudes last (in GMT)
     vmag = sqrt(ve.^2 + vn.^2);
-    [~,isort] = sort(vmag);
     
     % plot magnitudes as colored circles
     figure; hold on; grid on;
-    scatter(lon(isort),lat(isort),msize,vmag(isort),'filled');
-    %scatter(lon(isort),lat(isort),msize,'ko');
+    scatter(lon,lat,msize,vmag,'filled');
+    %scatter(lon,lat,msize,'ko');
     axis(ax1); colorbar;
     
     %======================================================================
@@ -510,8 +509,13 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
         end
         
     else
-        % for GMT plotting, set zero values to <0
+        % kludge for GMT plotting: set near-zero values to <0
         veps = 1e-4; vmag(vmag < veps) = -veps;
+        % do not plot points that are fixed
+        izero = find(vmag < veps);
+        warning(sprintf('removing %i/%i points with v < %.3e mm/yr',length(izero),num,veps));
+        lon(izero) = []; lat(izero) = []; ve(izero) = []; vn(izero) = []; vmag(izero) = [];
+        num = length(lon);
         
         % output directory
         odir = [dir_plates 'surface_velocities/'];
@@ -524,6 +528,7 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
         ftag = [ftag0 '_' sgrid stq];
         
         % write plate model vector COMPONENTS and MAGNITUDES to file (mm/yr)
+        [~,isort] = sort(vmag);
         ww = [ftag '_vec.dat'];
         ofile = [odir ww];
         disp(['writing file ' ww]);
