@@ -1,4 +1,4 @@
-function [dlon,dlat,d,dsig,ax0,slabel,ulabel,isource,ftags,d2] = get_1D_dataset_carl(ropt,dopt)
+function [dlon,dlat,d,dsig,ax0,slabel,ulabel,isource,ftags,d2,stout] = get_1D_dataset_carl(ropt,dopt)
 %GET_1D_DATASET_CARL
 %
 % This loads a set of discrete (1D) observations on the sphere
@@ -27,6 +27,7 @@ end
 isource = [];
 ftags = [];
 d2 = [];
+stout = [];
 
 % CALIFORNIA MOHO
 switch dopt
@@ -256,10 +257,11 @@ case 7
 
 % shear-wave splitting data in Alaska
 case 8
+    stout = 'lon_lat_phi_dt_event_location_local_splitting';
+    %stout = 'lon_lat_phi_dt_proj_midpoint_local_splitting';
+    %stout = 'lon_lat_phi_dt_100km_proj_SKS_splitting';
     idir = '/home/carltape/REPOSITORIES//manuscripts/crichards/papers/aksplit/data/';
-    %ifile = [idir 'lon_lat_phi_dt_event_location_local_splitting.txt'];
-    ifile = [idir 'lon_lat_phi_dt_proj_midpoint_local_splitting.txt'];
-    %ifile = [idir 'lon_lat_phi_dt_100km_proj_SKS_splitting.txt'];
+    ifile = [idir stout '.txt'];
     [dlon,dlat,az_deg,dt] = textread(ifile,'%f%f%f%f');
     
     % estimate direction only

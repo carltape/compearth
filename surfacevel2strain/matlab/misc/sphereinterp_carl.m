@@ -35,7 +35,7 @@ dopt  = input(' Type an index corresponding to a dataset (1=moho,2,3,4,5=grav,8=
 %========================================================
 % GET DATA SET
 
-[dlon,dlat,d,dsig,ax0,slabel,ulabel,isource,ftags,d2] = get_1D_dataset_carl(ropt,dopt);
+[dlon,dlat,d,dsig,ax0,slabel,ulabel,isource,ftags,d2,stout] = get_1D_dataset_carl(ropt,dopt);
 dir_output = '/home/carltape/MOHO/WAVELET/MATLAB_EST/';
 
 %====================================================================
@@ -154,7 +154,7 @@ if iwavelet==1
         if iwrite==1
             % estimated field at input data points
             odir = [dir_repos '/manuscripts/crichards/papers/aksplit/data/'];
-            ofile = [odir 'lon_lat_phi_dt_proj_midpoint_local_splitting_est.txt'];
+            ofile = [odir stout '_est.txt'];
             fid = fopen(ofile,'w');
             for ii=1:length(dlon)
                 fprintf(fid,'%12.4f%12.4f%8.1f%10.5f\n',dlon(ii),dlat(ii),az_deg(ii),dt(ii));
@@ -166,7 +166,7 @@ if iwavelet==1
             figure; quiver(dlon_plot,dlat_plot,real(sqrt(Z)),imag(sqrt(Z)));
             
             %ftag = sprintf('%s_q%2.2i_q%2.2i_ir%2.2i_id%2.2i',slabel,qmin,qmax,ropt,dopt);
-            ofile = [odir 'lon_lat_phi_dt_proj_midpoint_local_splitting_est_regular.txt'];
+            ofile = [odir stout '_est_regular.txt'];
             fid = fopen(ofile,'w');
             for ii=1:length(dlon_plot)
                 fprintf(fid,'%12.4f%12.4f%8.1f%10.5f\n',dlon_plot(ii),dlat_plot(ii),az_deg(ii),dt(ii));
