@@ -1,6 +1,6 @@
 %
 % function sphereinterp_est
-% Carl Tape and Pablo Muse, 04-Jan-2011
+% Carl Tape and Pablo Muse, Jan-2011-01-04
 %
 % Estimate a smooth field on the sphere from discrete points using
 % spherical wavelets. This is a stripped-down version of the procedure
@@ -39,6 +39,7 @@ ngrid = length(spline_tot);
 
 nlam = rparm{1};
 ilampick = rparm{2};  % =1 (iL), =2 (iOCV), =3 (iGCV)
+lamvec = rparm{3};
 
 numx_plot = pparm{1};
 ulabel = pparm{2};
@@ -95,17 +96,6 @@ end
 % q for the "secular field" -- which combines the estimates from qmin to
 % qsec for the multiscale analysis (NOT VERY RELEVANT HERE)
 %qsec = round(mean([qmin qmax]));
-
-% vector of regularization (damping) parameters
-% NOTE: in many cases, you MUST have a non-zero damping parameter
-%nlam = 40;
-if icov==0          % unweighted
-    minlampwr = -8; maxlampwr = 2;
-else                % weighted
-    minlampwr = -3; maxlampwr = 6;
-end
-lampwr = linspace(minlampwr,maxlampwr,nlam);
-lamvec = 10.^lampwr;
 
 %========================================================
 % PROPERTIES OF THE GRIDS AND THE SPHERICAL WAVELETS

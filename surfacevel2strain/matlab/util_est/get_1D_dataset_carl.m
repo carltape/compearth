@@ -257,9 +257,9 @@ case 7
 
 % shear-wave splitting data in Alaska
 case 8
-    stout = 'lon_lat_phi_dt_event_location_local_splitting';
+    %stout = 'lon_lat_phi_dt_event_location_local_splitting';
     %stout = 'lon_lat_phi_dt_proj_midpoint_local_splitting';
-    %stout = 'lon_lat_phi_dt_100km_proj_SKS_splitting';
+    stout = 'lon_lat_phi_dt_100km_proj_SKS_splitting';
     idir = '/home/carltape/REPOSITORIES//manuscripts/crichards/papers/aksplit/data/';
     ifile = [idir stout '.txt'];
     [dlon,dlat,az_deg,dt] = textread(ifile,'%f%f%f%f');

@@ -36,63 +36,73 @@ dir_output = [bdir 'matlab_output/'];
 
 [dlon,dlat,d,dsig,ax0,slabel,ulabel] = get_1D_dataset(ropt,dopt,dir_data);
 
+if iwavelet==0, error('view data only'); end
+
 %====================================================================
 % ESTIMATE A SMOOTH MOHO MAP USING SPHERICAL WAVELETS
 
-if iwavelet==1
-    switch dopt
-        case 1            
-            qmin = 2; qmax = 8; % qmax = 8 or 9
-            nlam = 40; ilampick = 2;
-            ntrsh = 3;
-            nx = 50;        % controls density of points in plotting grid
-    end
-    
-    qsec = round(mean([qmin qmax]));
-    qparm = {qmin,qsec,qmax,ntrsh};
-    rparm = {nlam,ilampick};
-    if exist('polylon','var')
-        pparm = {nx,ulabel,polylon,polylat};
-    else
-        pparm = {nx,ulabel};
-    end
-    
-    % KEY COMMAND: call sphereinterp_grid.m to get basis functions
-    [spline_tot] = sphereinterp_grid(dlon,dlat,ax0,qparm);
-    ndata = length(dlon);
-    ngrid = length(spline_tot);
-    
-    % KEY COMMAND: call sphereinterp_est.m to perform least-squares estimation
-    [dest,dest_plot,destdph_plot,destdth_plot,lam0,dlon_plot,dlat_plot,na,nb] = ...
-        sphereinterp_est(spline_tot,dlon,dlat,d,dsig,ax0,rparm,pparm);
-    
-    disp('  ');
-    disp(sprintf('Number of observations, ndata = %i',ndata));
-    disp(sprintf('Number of basis functions, ngrid = %i',ngrid));
-    disp('For testing purposes, try decreasing one of these:');
-    disp(sprintf('  qmax = %i, the densest grid for basis functions',qmax));
-    disp(sprintf('  nx = %i, the grid density for plotting',nx));
-    disp(sprintf('  ndata = %i, the number of observations (or ax0)',ndata));
-    
-    % compute magnitude of surface gradient, then convert to a slope in degrees
-    % note: d is in units of km, so the earth radius must also be in km
-    th_plot = (90 - dlat_plot)*pi/180;
-    destG_plot = sqrt( destdth_plot.^2 + (destdph_plot ./ sin(th_plot)).^2 );
-    destGslope_plot = atan(destG_plot / 6371) * 180/pi;
-    
-    figure; scatter(dlon_plot,dlat_plot,4^2,destGslope_plot,'filled');
-    axis(ax0); title('Slope of surface, degrees'); colorbar;
-    
-    %X = reshape(dlon_plot,na,nb);
-    %Y = reshape(dlat_plot,na,nb);
-    %Z = reshape(destGslope_plot,na,nb);
-    %figure; pcolor(X,Y,Z); shading interp;
+% =1 to use weights, =0 to ignore weights
+if isempty(dsig)
+    minlampwr = -8; maxlampwr = 2;
+else                % weighted
+    minlampwr = -3; maxlampwr = 6;
 end
+
+switch dopt
+    case 1            
+        qmin = 2; qmax = 8; % qmax = 8 or 9
+        nlam = 40; ilampick = 2;
+        ntrsh = 3;
+        nx = 50;        % controls density of points in plotting grid
+end
+
+lampwr = linspace(minlampwr,maxlampwr,nlam);
+lamvec = 10.^lampwr;
+
+qsec = round(mean([qmin qmax]));
+qparm = {qmin,qsec,qmax,ntrsh};
+rparm = {nlam,ilampick,lamvec};
+if exist('polylon','var')
+    pparm = {nx,ulabel,polylon,polylat};
+else
+    pparm = {nx,ulabel};
+end
+
+% KEY COMMAND: call sphereinterp_grid.m to get basis functions
+[spline_tot] = sphereinterp_grid(dlon,dlat,ax0,qparm);
+ndata = length(dlon);
+ngrid = length(spline_tot);
+
+% KEY COMMAND: call sphereinterp_est.m to perform least-squares estimation
+[dest,dest_plot,destdph_plot,destdth_plot,lam0,dlon_plot,dlat_plot,na,nb] = ...
+    sphereinterp_est(spline_tot,dlon,dlat,d,dsig,ax0,rparm,pparm);
+
+disp('  ');
+disp(sprintf('Number of observations, ndata = %i',ndata));
+disp(sprintf('Number of basis functions, ngrid = %i',ngrid));
+disp('For testing purposes, try decreasing one of these:');
+disp(sprintf('  qmax = %i, the densest grid for basis functions',qmax));
+disp(sprintf('  nx = %i, the grid density for plotting',nx));
+disp(sprintf('  ndata = %i, the number of observations (or ax0)',ndata));
+
+% compute magnitude of surface gradient, then convert to a slope in degrees
+% note: d is in units of km, so the earth radius must also be in km
+th_plot = (90 - dlat_plot)*pi/180;
+destG_plot = sqrt( destdth_plot.^2 + (destdph_plot ./ sin(th_plot)).^2 );
+destGslope_plot = atan(destG_plot / 6371) * 180/pi;
+
+figure; scatter(dlon_plot,dlat_plot,4^2,destGslope_plot,'filled');
+axis(ax0); title('Slope of surface, degrees'); colorbar;
+
+%X = reshape(dlon_plot,na,nb);
+%Y = reshape(dlat_plot,na,nb);
+%Z = reshape(destGslope_plot,na,nb);
+%figure; pcolor(X,Y,Z); shading interp;
 
 %----------------------------------------------------------------
 % WRITE FILES
 
-if and(iwavelet==1,iwrite==1)
+if iwrite==1
     if ~exist(dir_output,'dir'), mkdir(dir_output); end
     
     ftag = sprintf('%s_q%2.2i_q%2.2i_ir%2.2i_id%2.2i',slabel,qmin,qmax,ropt,dopt);
