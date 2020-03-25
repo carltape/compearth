@@ -11,14 +11,14 @@ function [exyz,names,name_labs,dir_bounds,ssfx,smod] = get_plate_model(imodel,bd
 if nargin==1, bdisplay=false; end
 
 % string labels for each plate model
-mod_labs    = {'oneill','nuvel1A_nnr','revel','bird','gripp_hs3','bird_gripp','bird_morgan','bird_nnr','','morvel_nnr'};
+mod_labs    = {'oneill','nuvel1A_nnr','revel','bird','gripp_hs3','bird_gripp','bird_morgan','bird_nnr','morvel_morgan','morvel_nnr'};
 
 % directories for plate boundaries for each model
 % NOTE: some models use the same plate boundaries
-dir_labs    = {'oneill/data_mike_13/','nuvel1A/','bird/','bird/','nuvel1A/','bird/','bird/','bird/','','morvel_nnr/'};
+dir_labs    = {'oneill/data_mike_13/','nuvel1A/','bird/','bird/','nuvel1A/','bird/','bird/','bird/','morvel_nnr/','morvel_nnr/'};
 
 % suffixes for plate boundary files for each model
-suffix_labs = {'.xy','.180to180xy','.xy','.xy','.180to180xy','.xy','.xy','.xy','xx','.xy'};
+suffix_labs = {'.xy','.180to180xy','.xy','.xy','.180to180xy','.xy','.xy','.xy','.xy','.xy'};
 
 % imodel is input variable
 if imodel > 10

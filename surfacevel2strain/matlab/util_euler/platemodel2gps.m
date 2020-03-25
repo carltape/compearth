@@ -170,7 +170,7 @@ for ii = pmin:pmax
     disp(sprintf('plate is %s, index %i (%i to %i)',names{ii},ii,pmin,pmax));
     
     % load plate boundary file (assumes longitude in column 1)
-    if imodel >= 10, ww = name_labs{ii}; else ww = names{ii}; end
+    if imodel >= 9, ww = name_labs{ii}; else ww = names{ii}; end
     load([dir_bounds ww ssfx]);
     data_plot = eval(ww);
     plon = data_plot(:,1);
@@ -291,7 +291,7 @@ if iplate==0
 
         % plot plate boundaries
         for ii = pmin:pmax   
-            if imodel >= 10, ww = name_labs{ii}; else ww = names{ii}; end
+            if imodel >= 9, ww = name_labs{ii}; else ww = names{ii}; end
             load([dir_bounds ww ssfx]);
             data_plot = eval(ww);
             plon = data_plot(:,1);

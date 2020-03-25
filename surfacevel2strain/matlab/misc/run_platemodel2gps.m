@@ -58,7 +58,7 @@ user_path;
 % USER PARAMETERS
 
 % plate models
-mod_labs = {'oneill','nuvel1A_nnr','revel','bird','gripp_hs3','bird_gripp','bird_morgan','bird_nnr','','morvel_nnr'};
+mod_labs = {'oneill','nuvel1A_nnr','revel','bird','gripp_hs3','bird_gripp','bird_morgan','bird_nnr','morvel_morgan','morvel_nnr'};
 nmod = length(mod_labs);
 disp(sprintf('\nPLATE MODELS (INCLUDING REFERENCE FRAME) TO CHOOSE FROM:'));
 for ii=1:nmod, disp(sprintf('%5i  %s',ii,mod_labs{ii})); end
@@ -143,6 +143,11 @@ mm2deg = 1e-3 / 6371e3 * deg;
 
 % convert mm/yr on earth surface to deg/Myr
 mmyr2degMyr = mm2deg * 1e6;
+
+% Morgan and Morgan (2007) Pacific plate euler vector
+% WHY DO I NEED TO FLIP THE SIGN ON THEIR LOCATION?
+evec_morgan = [-59.44 84.91 0.8029];
+exyz_pac_morgan = euler_convert(evec_morgan,0);
 
 %==========================================================================
 % INPUT GRIDPOINTS FOR VELOCITY VECTORS AND BACKGROUND VELOCITY MAGNITUDE
@@ -324,6 +329,7 @@ if imake==1
             exyz_pac_bird = exyz(:,37);
             
             % Bird euler vectors in NUVEL1A-HS3 reference frame
+            % note: subtract Bird-Pacific, then add HS3-Pacific
             exyz = exyz - repmat(exyz_pac_bird - exyz_pac_hs3, 1, length(names));
 
             % indexing into euler poles used in making the plate velocity model
@@ -335,15 +341,12 @@ if imake==1
             % Bird model in hotspot reference frame, obtained by using the
             % Morgan and Morgan (2007) Pacific plate euler vector
             
-            % Morgan and Morgan (2007) Pacific plate euler vector
-            % WHY DO I NEED TO FLIP THE SIGN ON THEIR LOCATION?
-            exyz_pac_morgan = euler_convert([-59.44 84.91 0.8029],0);
-            
             % load the Bird euler vectors
             [lon, lat, ve, vn, iplate_vec, exyz, names, name_labs] = platemodel2gps([],[],4,99,{0,1,1});
             exyz_pac_bird = exyz(:,37);
             
             % Bird euler vectors in NUVEL1A-HS3 reference frame
+            % note: subtract Bird-Pacific, then add MM07-Pacific
             exyz = exyz - repmat(exyz_pac_bird - exyz_pac_morgan, 1, length(names));
             
             % indexing into euler poles used in making the plate velocity model
@@ -352,8 +355,7 @@ if imake==1
             names = names(inds);
             
         case 8
-            % Bird model in no-net-rotation frame, obtained by using the
-            % Morgan and Morgan (2007) Pacific plate euler vector
+            % Bird model in no-net-rotation frame
             
             % load the NNR-NUVAL1A euler vectors
             imodel0 = 2;
@@ -366,8 +368,27 @@ if imake==1
             exyz_pac_bird = exyz(:,37);
             
             % Bird euler vectors in NNR reference frame
-            % note: subtract the Bird-Pacific, then add the NNR-Pacific
+            % note: subtract Bird-Pacific, then add NNR-Pacific
             exyz = exyz - repmat(exyz_pac_bird - exyz_pac_nnr, 1, length(names));
+            
+            % indexing into euler poles used in making the plate velocity model
+            inds = 1:length(names);
+            exyz = exyz(:,inds);
+            names = names(inds);
+         
+       case 9
+            % MORVEL model in Morgan and Morgan reference frame
+            
+            % load morvel_nnr
+            [lon,lat,ve,vn,iplate_vec,exyz,names,name_labs] = platemodel2gps([],[],10,99,{0,1,1});
+            disp('using the NNR-MORVEL56 plate model');
+            
+            % Pacific plate in NNR-MORVEL56
+            exyz_pac_morvelnnr = exyz(:,1);
+            
+            % NNR-MORVEL56 euler vectors in MM07 reference frame
+            % note: subtract NNR-MORVEL56-Pacific, then add MM07-Pacific
+            exyz = exyz - repmat(exyz_pac_morvelnnr - exyz_pac_morgan, 1, length(names));
             
             % indexing into euler poles used in making the plate velocity model
             inds = 1:length(names);
@@ -381,14 +402,17 @@ if imake==1
             inds = 1:length(names);
             
         otherwise
+            % load morvel_nnr
             [lon,lat,ve,vn,iplate_vec,exyz,names,name_labs] = platemodel2gps([],[],10,99,{0,1,1});
             disp('using the NNR-MORVEL56 plate model');
             %iepick = input(sprintf(' Type index for reference frame from Becker2015 [0 = default morvel_nnr] [0-11]: ',nmod));
+            % reference frame is chosen by imodel
             iepick = imodel - 10;
             if iepick > 0
                 [ename,elon,elat,omega] = textread('/home/carltape/papers/plate_models/Becker2015/Becker2015_Table1.txt','%s%f%f%f');
                 elatlon = [elat elon omega]';
                 exyz0 = euler_convert(elatlon,0);
+                % KEY: ADD reference frame euler vector in Becker2015 to the morvel_nnr euler vectors
                 exyz = exyz + repmat(exyz0(:,iepick),1,length(names));
             end
             inds = 1:length(names);
@@ -399,7 +423,7 @@ if imake==1
     disp([names name_labs])
     
     % write euler poles to text file
-    % NEED TO MAKE SURE THAT THE DIRECTORY IS THERE!
+    % NEED TO MAKE SURE THAT THE DIRECTORY EXISTS!
     fid = fopen(ww,'w');
     for ii=1:length(inds)
         fprintf(fid,'%13.6f%13.6f%13.6f%16s%16s\n',exyz(1,ii),exyz(2,ii),exyz(3,ii),name_labs{ii},names{ii});   
@@ -472,7 +496,7 @@ for irow = irow1:irow2     % KEY: loop over fixed plates
     if ifix0==0
         ifix = 99;
     else
-        if imodel >= 10
+        if imodel >= 9
             ifix = ifix_morvel(irow);
         else
             ifix_vec = ifix_mat(irow,:);
