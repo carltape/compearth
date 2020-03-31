@@ -35,7 +35,7 @@
 % (3) figure shown in plate_model.pdf notes
 %     7 (plate model = bird_morgan)
 %     1 (grid)
-%     7 (q)                   // 7
+%     3 (q)                   // 3, 7
 %     1 (globe)
 %     1 (write) 
 %     0 (fixed plate)
@@ -145,9 +145,11 @@ mm2deg = 1e-3 / 6371e3 * deg;
 mmyr2degMyr = mm2deg * 1e6;
 
 % Morgan and Morgan (2007) Pacific plate euler vector
-% WHY DO I NEED TO FLIP THE SIGN ON THEIR LOCATION?
-evec_morgan = [-59.44 84.91 0.8029];
-exyz_pac_morgan = euler_convert(evec_morgan,0);
+% this was used until 2020-03-31; presumably Carl Tape obtained this from a
+% pre-published version of Morgan and Morgan (2007)
+%evec_morgan = [-59.44  84.91  0.8029];             % used up until 2020-03-31
+evec_morgan  = [ 59.33 -85.10 -0.8029];             % published version
+exyz_pac_morgan = euler_convert(evec_morgan,0);     % (lat-deg,lon-deg,omega-deg) --> (wx,wy,wz)
 
 %==========================================================================
 % INPUT GRIDPOINTS FOR VELOCITY VECTORS AND BACKGROUND VELOCITY MAGNITUDE
