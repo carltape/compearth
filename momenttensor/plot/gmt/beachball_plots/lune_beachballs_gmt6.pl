@@ -6,8 +6,9 @@
 # An abbreviated version of the shell script is lune_beachballs_min.csh
 # Please use lune.pl for research purposes.
 #
-# To generate the 3-lune plot using -Sm, -Sz, -Sd, uncomment the lines with modx below.
-# Then run: lune_beachballs_gmt6.pl gmt600pr2067_psmeca_flags
+# EXAMPLE A: lune_beachballs_gmt6.pl gmt611
+# EXAMPLE B: uncomment the lines with modx below, then:
+#            lune_beachballs_gmt6.pl gmt611_psmeca_flags
 #
 
 ($gmttag) = @ARGV;
@@ -125,7 +126,7 @@ if($iplot==1) {$arcwid = 2;}
 # KEY: number of lune plots; paper size
 $X0 = 0.5; $Y0 = 0.5; $origin = "-X$X0 -Y$Y0";
 $xmax = 6;
-$xmax = 3;    # modx
+#$xmax = 3;    # modx
 $pwidth = 9.5;
 $dX = $wid + 0.7;
 $pheight = $X0 + $dX*$xmax;
@@ -144,7 +145,7 @@ $R = $Rlune; $B = $Blune; $J = $Jlune;
 for ($x = 1; $x <= $xmax; $x++) {
 
 if($x==$xmax) {$kplot=3; $lplot=2;} else {$kplot=$x; $lplot=1;}
-$kplot = 1; $lplot = 1;  # modx
+#$kplot = 1; $lplot = 1;  # modx
 
 if($x==1) {
   print CSH "gmt psbasemap $J $R ${B}+g$clune -K -V $origin > $psfile\n"; # START
@@ -261,8 +262,8 @@ if ($iplot==2) {
   # reference beachballs on the lune
   $beachballfontsize = "8p"; #if($splot==1) {$beachballfontsize = "6p";}
   $letter = "m";
-  if($x==2) {$letter = "z"}  # modx
-  if($x==3) {$letter = "d"}  # modx
+  #if($x==2) {$letter = "z"}  # modx
+  #if($x==3) {$letter = "d"}  # modx
   $cmtinfo = "-S${letter}0.45/$beachballfontsize -L0.5p,0/0/0 -G255/0/0 -N";
   $cmtfile = sprintf("$pdir/beachballs_ipts%i_iref%i_%s_psmeca%s",$lplot,$kplot,$xtag,$slabel);
   if (not -f $cmtfile) {die("\n check if cmt file $cmtfile exists\n");}
@@ -285,7 +286,7 @@ $otitle1 = "-Xa0.5 -Ya$tya"; $fsize1 = 16;
 $otitle2 = "-Xa0.5 -Ya$tyb"; $fsize2 = 12;
 if ($ititle==1 && $x==1) {
   $title1 = "Reference sets of moment tensors (input files available in carltape compearth github repository)";
-  $title1 = "Examples using the psmeca flags -Sm (full), -Sz (deviatoric), and -Sd (double couple)";  # modx
+  #$title1 = "Examples using the psmeca flags -Sm (full), -Sz (deviatoric), and -Sd (double couple)";  # modx
   $title2 = "Plotted using $gmttag";
   print CSH "gmt pstext -N $R_title $J_title $otitle1 -K -O -V >>$psfile<<EOF\n 0 0 $fsize1 0 $fontno LM $title1\nEOF\n";
   print CSH "gmt pstext -N $R_title $J_title $otitle2 -K -O -V >>$psfile<<EOF\n 0 0 $fsize2 0 $fontno LM $title2\nEOF\n";

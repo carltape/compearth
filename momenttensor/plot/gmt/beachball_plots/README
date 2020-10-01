@@ -4,56 +4,27 @@ compearth/momenttensor/plot/gmt/beachball_plots/
 https://github.com/carltape/compearth/blob/master/momenttensor/plot/gmt/beachball_plots/README
 Carl Tape ctape@alaska.edu
 
-These input files and scripts are designed for testing plotting routines for full moment tensors. 
-Unless noted, the default codes were tested with GMT 4.5.3 using a modified utilmeca.h
-
----
+These input files and scripts are designed for testing plotting routines for full moment tensors.
 
 EXAMPLE 1:
-csh -f lune_gmtXXX.csh
-produces the ps file lune_XXX.ps
-
-lune_gmt453dreger.csh --> lune_gmt453dreger.pdf (good)
-lune_gmt544.csh       --> lune_gmt544.pdf (problems)
-lune_gmt600.csh       --> lune_gmt600.pdf (good)
-lune_gmt600pr2018.csh --> (same as lune_gmt600.pdf) (good)
-
----
+csh -f lune_gmt611.csh
+produces the ps file lune_gmt611.ps
 
 For examples 2 and 3, you will need to have the full compearth repository available; or at least have the datafiles present in the directory at ../dfiles/
 
 EXAMPLE 2:
-lune_beachballs.pl
-   --> lune_hammer_iplot2_lplot1_kplot1.pdf
-       (good)
-lune_beachballs_gmt6.pl gmt600pr2018
-   --> lune_hammer_iplot2_lplot1_kplot1_gmt600pr2018.pdf
-       (problems with lambda2=0 sixth set)
-lune_beachballs_gmt6.pl gmt600pr2067
-   --> lune_hammer_iplot2_lplot1_kplot1_gmt600pr2067.pdf
-       (good)
+lune_beachballs_gmt6.pl gmt611 --> lune_hammer_iplot2_lplot1_kplot1_gmt611.pdf
 
 In these figures, there are arcs plotted for directions of eigenvalue space where one of the eiganvalues of the moment tensor is zero: lambda3 = 0 (top), lambda2 = 0 (upper left to lower right), and lambda1 = 0 (bottom).
 
 EXAMPLE 3:
-uncomment lines 30 and 31 in lune_beachballs_gmt6.pl, then run
-produces the ps file lune_ngeo_iplot2_lplot1_kplot1.ps
+uncomment lines 30 and 31 in lune_beachballs_gmt6.pl, then re-run
+lune_beachballs_gmt6.pl gmt611 --> lune_ngeo_iplot2_lplot1_kplot1.pdf
 
 EXAMPLE 4:
-uncomment out the lines with 'modx' in lune_beachballs_gmt6.pl
+recomment lines 30 and 31
+uncomment out the lines with 'modx', then run:
+lune_beachballs_gmt6.pl gmt611_psmeca_flags
 This will produce the files
-lune_beachballs_gmt600pr2067_psmeca_flags.csh
-lune_hammer_iplot2_lplot1_kplot1_gmt600pr2067_psmeca_flags.pdf
-
----
-
-Links for the GMT development of psmeca issues tested here:
-https://github.com/GenericMappingTools/gmt/issues/661
-https://github.com/GenericMappingTools/gmt/issues/2016
-https://github.com/GenericMappingTools/gmt/pull/882
-https://github.com/GenericMappingTools/gmt/pull/2018
-https://github.com/GenericMappingTools/gmt/pull/2067
-https://github.com/GenericMappingTools/gmt/pull/2135
-https://github.com/GenericMappingTools/gmt/blob/6.0/test/seis/full_moment_tensor.sh
-
----
+lune_beachballs_gmt611_psmeca_flags.csh
+lune_hammer_iplot2_lplot1_kplot1_gmt611_psmeca_flags.pdf
