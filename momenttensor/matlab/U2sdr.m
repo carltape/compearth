@@ -127,7 +127,8 @@ for ii=1:n
         case 3
             % this is a more unusual case, like for horizontal faults
             warning('moment tensor on boundary of orientation domain (%i candidates)',length(itemp));
-            display_vals(thetaall(ii,:),sigmaall(ii,:),kappaall(ii,:),M(:,ii),ii,n);
+            %display_vals(thetaall(ii,:),sigmaall(ii,:),kappaall(ii,:),M(:,ii),ii,n);
+            display_vals(thetaall(ii,:),sigmaall(ii,:),kappaall(ii,:),ii,n);
             itemp
             % just take the first one in the list (for now)
             imatch(ii) = itemp(1);

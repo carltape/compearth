@@ -1,8 +1,8 @@
-function [kappa,theta,sigma,gamma,delta,nu,alpha,phi,zeta,v,w] = write_mech_table(filename,otime,lon,lat,dep,M,eid)
+function [kappa,theta,sigma,gamma,delta,nu,alpha,phi,zeta,v,w] = write_mech_table(filetag,otime,lon,lat,dep,M,eid)
 %WRITE_MECH_TABLE write moment tensor catalog as text file
 %
 % INPUT
-%   filename    files will be appended with _mech.txt
+%   filetag     file name will be appended with _mech.txt
 %   otime       n x 1 origin time (Matlab format)
 %   lon         n x 1 longitude
 %   lat         n x 1 latitude
@@ -51,12 +51,12 @@ disp('write_mech_table.m: writing to file');
 
 for kk=1:2
     if kk==1
-        file = [filename '_mech.txt']
+        file = [filetag '_mech.txt']
         NHEADER = 22;
         stfmt1 = '%24s%10s%10s%10s%14s%14s%14s%14s%14s%14s%14s%7s%7s%7s%7s%7s%7s %s\n';
         stfmt = '%24s%10.4f%10.4f%10.4f%14.6e%14.6e%14.6e%14.6e%14.6e%14.6e%14.6e%7.2f%7.1f%7.1f%7.1f%7.1f%7.1f %s\n';
     else
-        file = [filename '_mech_extended.txt']
+        file = [filetag '_mech_extended.txt']
         NHEADER = NHEADER+6;
         stfmt1 = '%24s%10s%10s%10s%14s%14s%14s%14s%14s%14s%14s%7s%7s%7s%7s%7s%7s%7s%7s%7s%7s%7s%7s %s\n';
         stfmt = '%24s%10.4f%10.4f%10.4f%14.6e%14.6e%14.6e%14.6e%14.6e%14.6e%14.6e%7.2f%7.1f%7.1f%7.1f%7.1f%7.1f%7.2f%7.2f%7.1f%7.1f%7.2f%7.2f %s\n';
@@ -135,9 +135,9 @@ if 0==1
     % GCMT catalog
     axMFFZ = [-151.2 -147.5 63.5 65.5];
     [otime,tshift,hdur,lat,lon,dep,M,M0,Mw,eid] = readCMT([],axMFFZ,[]);
-    filename = './GCMT_mffz';
+    filetag = './GCMT_mffz';
     %write_mech_table(filename,otime,lon,lat,dep,M);
-    write_mech_table(filename,otime,lon,lat,dep,M,eid);
+    write_mech_table(filetag,otime,lon,lat,dep,M,eid);
     
     % illustrate how rounding works (rounding will occur for 0.0001 s)
     seci = 59.9999;

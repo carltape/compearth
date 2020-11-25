@@ -38,6 +38,19 @@ if n1~=n, whos M lat, error('dimension mismatch (M lat)'); end
 if length(lon)~=n, whos lon lat, error('dimension mismatch (lon lat)'); end
 if length(dep)~=n, whos dep lat, error('dimension mismatch (dep lat)'); end
 
+if any(isnan(otime))
+    inan = find(isnan(otime)==1);
+    warning('removing entries with NaN otime');
+    inan
+    otime(inan) = [];
+    lat(inan) = [];
+    lon(inan) = [];
+    dep(inan) = [];
+    M(:,inan) = [];
+    eid(inan) = [];
+    n = length(otime);
+end
+
 % convert moment tensor from N-m to dyne-cm
 M = 1e7 * M;
 
@@ -146,6 +159,18 @@ if ~isempty(otime)
     for ii=1:n, fprintf(fid,'%s\n',char(eid{ii})); end
     fclose(fid);
     disp(sprintf('output file: %s',file_eid));
+end
+
+%==========================================================================
+
+if 0==1
+   %% 2020-08-04 Alaska earthquake
+   otime = datenum(2020,8,4,8,52,11); eid = otime2eid(otime);
+   lon = -151.5109; lat = 64.1059; dep = 10;
+   Mw = 4.0; kappa = 12; theta = 82; sigma = 15;
+   M0 = mw2m0(1,Mw);
+   M = TT2CMT(0,0,M0,kappa,theta,sigma);
+   write_psmeca('./Alaska20200804_capuaf',otime,lat,lon,dep,M,eid);
 end
 
 %==========================================================================
