@@ -13,14 +13,16 @@ function [vout,T] = convertv(i1,i2,v)
 %
 % See also convert_MT.m
 %
+% calls convert_getbasis.m
+%
 % Carl Tape, 10/2013
 %
 
 % get transformation matrix
-T = convert_MT(i1,i2);
+T = convert_getbasis(i1,i2);
 
 [a,b,c] = size(v);
-if c==1
+if c==1     % v is 3 x n matrix
     if a~=3
         v = v'; n = b; disp('convertv.m: taking transpose of input v');
     else
@@ -28,7 +30,7 @@ if c==1
         disp(sprintf('convertv.m: transforming a set of %i vectors by T',n));
     end
     vout = T*v;
-else
+else        % v is 3 x 3 x n
     if and(a==3,b==3)
         disp(sprintf('convertv.m: transforming a set of %i 3 x 3 bases by T',c));
         vout = NaN(a,b,c); 
@@ -65,6 +67,7 @@ if 0==1
     
     % check that converting the basis vectors is the same as converting
     % the moment tensor
+    % Mout = T Min T' = T U D U' T' = (T U) D (T U)' = Uout D Uout'
     i1 = 1; i2 = 2;
     M = rand(6,1);
     Mmat = Mvec2Mmat(M,1);
