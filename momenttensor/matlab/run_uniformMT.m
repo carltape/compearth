@@ -84,7 +84,9 @@ switch iex
     %n = [2 3 5 4 2];
     %n = [6 18 18 9 5];    % 5-degree increments in strike/dip/rake
     %n = [6 18 36 18 10];  % 10-degree increments in strike/dip/rake
-    n = [7 7 7 7 7];
+    %n = [7 7 7 7 7];
+    n = [13 35 11 11 11];   % lune points match Alvizuri et al. (2018), Figure 5d
+                            % IF you set UNIFORM_GAMMAB = true in uniformMT.m
     [M,v,w,kappa,sigma,h] = uniformMT(n);
     ntotal = length(v);
 
@@ -149,7 +151,7 @@ switch iex
     xlabel('angular distance, deg');
     %figure; hold on; plot(xlon,ylat,'.'); plot(xlon(ipick),ylat(ipick),'ro');
     
-    break
+    error
     
     case 9
     % insights into random vs regular grid
@@ -170,7 +172,7 @@ switch iex
     subplot(nr,nc,2); plot(ag,bg,'.'); axis equal, axis([a1 a2 b1 b2]);
     title(sprintf('%i uniform grid points',length(ag)));
     
-    break
+    error
 end
 
 %==========================================================================
@@ -230,7 +232,7 @@ xlabel('lune longitude'); ylabel('lune latitude');
 subplot(1,2,2); plot(v,w,'.'); xlabel('v'); ylabel('w');
 axis equal, axis([-1/3 1/3 -3*pi/8 3*pi/8])
 
-break
+error
 
 % ADDITIONAL HISTOGRAMS
 
@@ -246,7 +248,7 @@ plotMT_Mij(M,Medges);
 [lam,U] = CMTdecom(M);
 plotMT_lam(lam);
 
-break
+error
 
 % lune longitude and latitude within latitude bands and longitude bands
 plotMT_lune(gamma,delta);
