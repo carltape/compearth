@@ -1,3 +1,0 @@
-function [e,n] = creaPuntosObs(minN,pasoN,maxN,minN,pasoN,maxN,archivoSALIDA)
-
-
