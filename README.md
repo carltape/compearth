@@ -5,3 +5,4 @@ On 2021-02-20, the subfolders momenttensor and surfacevel2strain were split off 
 
 https://github.com/carltape/mtbeach  
 https://github.com/carltape/surfacevel2strain
+
