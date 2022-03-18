@@ -262,7 +262,7 @@ disp('TYPE A NUMBER AFTER EACH PROMPT AND HIT ENTER:');
 disp('   IF YOU WANT MULTIPLE METHODS, LIST THE NUMBERS IN BRACKETS (e.g., [1 4 5])');
 disp(['   IF YOU WANT ALL METHODS, USE [1:' num2str(nmethod0) ']']);
 imethod_vec = input(['Select your optimization method(s) (1-' num2str(nmethod0) '): ']);
-if imethod_vec==0, break; end
+if imethod_vec==0, error; end
 nmethod = length(imethod_vec);
 
 niter = input('Select the number of iterations (10): ');
@@ -566,7 +566,6 @@ for irun = 1:nrun
 
     % superimpose convergence plots for difference methods
     if and(ifig==1, nmethod > 1)
-        
         figure; hold on;
         for zz=1:nmethod
             plot(iter_vec, log10(S_mat(:,zz)), stc{zz},'markersize',12);
@@ -578,7 +577,7 @@ for irun = 1:nrun
         title(stS0);
         %orient tall, wysiwyg
         if bprint, print(gcf,'-depsc',[pdir 'converge_Nmethod_' stnrun]); end
-        %ylim([-0.1 1.3]); print(gcf,'-depsc',['converge_Nmethod_' stnmodel]);
+        %ylim([-0.1 1.3]); print(gcf,'-depsc',['converge_Nmethod_' stnrun]);
         
 %         % variable metric methods (check that ALL FOUR ARE the same)
 %         if imethod==9
